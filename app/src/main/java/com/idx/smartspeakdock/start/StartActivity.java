@@ -1,5 +1,6 @@
 package com.idx.smartspeakdock.start;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.util.Log;
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.data.local.Injection;
+import com.idx.smartspeakdock.service.SpeakerService;
 import com.idx.smartspeakdock.utils.ActivityUtils;
 
 public class StartActivity extends BaseActivity implements StartFragment.OnFragmentInteractionListener{
@@ -24,6 +26,7 @@ public class StartActivity extends BaseActivity implements StartFragment.OnFragm
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), startFragment, R.id.container);
         }
 
+        startService(new Intent(this, SpeakerService.class));
         new StartPresenter(Injection.provideUserRepository(getApplicationContext()), startFragment);
     }
 
