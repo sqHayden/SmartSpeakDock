@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.idx.smartspeakdock">
 
+
+    <!--Map权限相关-->
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
 
@@ -16,6 +23,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
+
     <application
         android:name=".SpeakerApplication"
         android:allowBackup="true"
@@ -25,6 +33,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="nxmCoUWO2Kc29Fluq0U2Tfvan8eLAOgV"/>
         <meta-data
             android:name="com.baidu.speech.APP_ID"
             android:value="10540488" />
@@ -40,8 +51,13 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            </intent-filter></activity>
+
+        <activity android:name=".map.MapActivity"/>
+
+        <service android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote"/>
 
         <activity android:name=".weather.ui.WeatherActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"/>
@@ -50,7 +66,6 @@
             android:name="com.idx.smartspeakdock.service.SpeakerService"
             android:enabled="true"
             android:exported="false" />
-
     </application>
 
 </manifest>
