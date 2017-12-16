@@ -42,5 +42,4 @@ ext {
     espressoVersion = '3.0.1'
     guavaVersion = '18.0'
     roomVersion = '1.0.0'
-
 }
