@@ -1,0 +1,9 @@
+<litepal>
+    <dbname value="cool_weather"/>
+    <version value="1"/>
+    <list>
+        <mapping class="com.idx.smartspeakdock.weather.model.area.Province"/>
+        <mapping class="com.idx.smartspeakdock.weather.model.area.City"/>
+        <mapping class="com.idx.smartspeakdock.weather.model.area.County"/>
+    </list>
+</litepal>
