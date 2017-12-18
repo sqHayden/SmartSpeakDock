@@ -2,21 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.idx.smartspeakdock">
 
-    <!--Map权限相关-->
+    <!-- Map权限相关 -->
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -30,10 +27,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="nxmCoUWO2Kc29Fluq0U2Tfvan8eLAOgV"/>
+            android:value="nxmCoUWO2Kc29Fluq0U2Tfvan8eLAOgV" />
         <meta-data
             android:name="com.baidu.speech.APP_ID"
             android:value="10540488" />
@@ -44,7 +40,8 @@
             android:name="com.baidu.speech.SECRET_KEY"
             android:value="bblywoVU01PyIXpBWzhc44jSlWAsush7" />
 
-        <activity android:name=".Swipe.SwipeActivity"
+        <activity
+            android:name=".Swipe.SwipeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -53,23 +50,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".music.MusicMainActivity"/>
-
-        <activity android:name=".map.MapActivity"/>
-
-        <service android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote"/>
-
-        <activity android:name=".weather.ui.WeatherActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".music.MusicMainActivity" />
+        <activity android:name=".map.MapActivity" />
 
         <service
-            android:name="com.idx.smartspeakdock.service.SpeakerService"
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" />
+
+        <activity
+            android:name=".weather.ui.WeatherActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <service
+            android:name=".service.SpeakerService"
             android:enabled="true"
             android:exported="false" />
-        <activity android:name=".start.StartActivity"/>
+
+        <activity android:name=".start.StartActivity" />
+        <activity android:name=".calendar.CalendarActivity"></activity>
     </application>
 
 </manifest>

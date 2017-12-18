@@ -24,6 +24,7 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
     implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
     implementation "com.android.support.constraint:constraint-layout:$rootProject.layoutVersion"
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation "com.android.support.test:runner:$rootProject.runnerVersion"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
@@ -35,4 +36,7 @@ dependencies {
     implementation "com.google.code.gson:gson:2.6.2"
     implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintVersion"
     implementation "com.android.support:design:$rootProject.designVersion"
+    compile project(':calendarviewidx')
+    compile 'com.jakewharton:butterknife:8.1.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.1.0'//增加这一句
 }

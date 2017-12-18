@@ -31,6 +31,7 @@ import android.view.MenuItem;
 
 
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.calendar.CalendarActivity;
 import com.idx.smartspeakdock.map.MapActivity;
 import com.idx.smartspeakdock.music.MusicMainActivity;
 import com.idx.smartspeakdock.start.StartActivity;
@@ -101,6 +102,7 @@ public class SwipeActivity extends AppCompatActivity {
                                 break;
                             case R.id.list_navigation_calendar:
                                 // TODO: 17-12-16 start CalendarActivity
+                                startActivity(new Intent(SwipeActivity.this, CalendarActivity.class));
                                 break;
                             case R.id.list_navigation_music:
                                 // TODO: 17-12-16 start MusicActivity
