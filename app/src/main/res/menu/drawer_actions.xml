@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/list_navigation_weather"
+        android:title="@string/weather_title"/>
+    <item
+        android:id="@+id/list_navigation_calendar"
+        android:title="@string/calendar_title"/>
+    <item
+        android:id="@+id/list_navigation_music"
+        android:title="@string/music_title"/>
+    <item
+        android:id="@+id/list_navigation_shopping"
+        android:title="@string/shopping_title"/>
+    <item
+        android:id="@+id/list_navigation_map"
+        android:title="@string/map_title"/>
+    <item
+        android:id="@+id/list_navigation_voice"
+        android:title="@string/baiduAI_title"/>
+    <item
+        android:id="@+id/list_navigation_setting"
+        android:title="@string/setting_title"/>
+</menu>

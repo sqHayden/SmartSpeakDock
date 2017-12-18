@@ -17,6 +17,7 @@ allprojects {
     repositories {
         jcenter()
         google()
+        maven { url 'https://maven.google.com' }
     }
 }
 
@@ -31,7 +32,7 @@ ext {
     minSdkVersion = 19
     targetSdkVersion = 27
     compileSdkVersion = 27
-    buildToolsVersion = '27.0.1'
+    buildToolsVersion = '27.0.2'
 
     // App dependencies
     supportLibraryVersion = '27.0.2'
@@ -42,4 +43,6 @@ ext {
     espressoVersion = '3.0.1'
     guavaVersion = '18.0'
     roomVersion = '1.0.0'
+    designVersion = '27.0.2'
+    constraintVersion = '1.0.2'
 }
