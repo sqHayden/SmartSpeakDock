@@ -67,6 +67,8 @@
             android:name="com.idx.smartspeakdock.service.SpeakerService"
             android:enabled="true"
             android:exported="false" />
+
+        <activity android:name=".Swipe.SwipeActivity"/>
     </application>
 
 </manifest>
