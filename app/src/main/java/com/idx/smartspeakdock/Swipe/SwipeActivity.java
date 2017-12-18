@@ -31,6 +31,10 @@ import android.view.MenuItem;
 
 
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.map.MapActivity;
+import com.idx.smartspeakdock.music.MusicMainActivity;
+import com.idx.smartspeakdock.start.StartActivity;
+import com.idx.smartspeakdock.weather.ui.WeatherActivity;
 
 import java.util.List;
 
@@ -93,29 +97,33 @@ public class SwipeActivity extends AppCompatActivity {
                         switch (menuItem.getItemId()) {
                             case R.id.list_navigation_weather:
                                 // TODO: 17-12-16  Do nothing, we're already on that screen
+                                startActivity(new Intent(SwipeActivity.this, WeatherActivity.class));
                                 break;
                             case R.id.list_navigation_calendar:
                                 // TODO: 17-12-16 start CalendarActivity
                                 break;
                             case R.id.list_navigation_music:
                                 // TODO: 17-12-16 start MusicActivity
+                                startActivity(new Intent(SwipeActivity.this, MusicMainActivity.class));
                                 break;
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 start ShoppingActivty
                                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.baidu.com"));
                                 //List<ResolveInfo> list = pm.queryIntentActivities(intent,PackageManager.MATCH_DEFAULT_ONLY);
                                 List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 0);
-                                Log.i(TAG, "onClick: list.size() = " + list.size());
+                                Log.i(TAG, "onNavigationItemSelected: list.size() = "+list.size());
                                 if (list.size() > 0) {
-                                    Log.i(TAG, "onClick: 1");
+                                    Log.i(TAG, "onNavigationItemSelected: start");
                                     startActivity(intent);
                                 }
                                 break;
                             case R.id.list_navigation_map:
                                 // TODO: 17-12-16 start MapActivity
+                                startActivity(new Intent(SwipeActivity.this, MapActivity.class));
                                 break;
                             case R.id.list_navigation_voice:
                                 // TODO: 17-12-16 start voice function
+                                startActivity(new Intent(SwipeActivity.this, StartActivity.class));
                                 break;
                             case R.id.list_navigation_setting:
                                 // TODO: 17-12-16 start SettingActivity

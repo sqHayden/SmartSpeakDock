@@ -44,7 +44,9 @@
             android:name="com.baidu.speech.SECRET_KEY"
             android:value="bblywoVU01PyIXpBWzhc44jSlWAsush7" />
 
-        <activity android:name=".start.StartActivity">
+        <activity android:name=".Swipe.SwipeActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -67,8 +69,7 @@
             android:name="com.idx.smartspeakdock.service.SpeakerService"
             android:enabled="true"
             android:exported="false" />
-
-        <activity android:name=".Swipe.SwipeActivity"/>
+        <activity android:name=".start.StartActivity"/>
     </application>
 
 </manifest>
