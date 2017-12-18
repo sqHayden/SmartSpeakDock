@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_vertical">
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5">
+
+        <com.idx.smartspeakdock.standby.TimeView
+            android:id="@+id/time_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="260px"
+            android:typeface="sans"
+            android:layout_centerHorizontal="true"
+            android:text="" />
+
+        <LinearLayout
+            android:id="@+id/linter_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/time_textView">
+            <TextView
+                android:id="@+id/location_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="高雄市"
+                android:textSize="60px" />
+            <TextView
+                android:id="@+id/data_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="15dp"
+                android:text="SUNDAY,FEB 5"
+                android:textSize="60px"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/linter_2"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/linter_1">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/weather_cloudy_60px" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="10"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:text="三等奖快速"
+                android:layout_gravity="center_vertical"
+                android:textSize="48px"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linter_3"
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/linter_2">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/weather_cloudy_60px" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="10"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:text="三等奖快速"
+                android:layout_gravity="center_vertical"
+                android:textSize="48px"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linter_4"
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/linter_3">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/weather_cloudy_60px" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="10"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:text="三等奖快速"
+                android:layout_gravity="center_vertical"
+                android:textSize="48px"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>
+
