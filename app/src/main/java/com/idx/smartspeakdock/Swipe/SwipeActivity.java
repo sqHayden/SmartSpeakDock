@@ -34,14 +34,20 @@ import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.calendar.CalendarActivity;
 import com.idx.smartspeakdock.map.MapActivity;
 import com.idx.smartspeakdock.music.MusicMainActivity;
+import com.idx.smartspeakdock.standby.Info;
+import com.idx.smartspeakdock.standby.StandbyActivity;
 import com.idx.smartspeakdock.start.StartActivity;
 import com.idx.smartspeakdock.weather.ui.WeatherActivity;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SwipeActivity extends AppCompatActivity {
     private static final String TAG = SwipeActivity.class.getSimpleName();
     private DrawerLayout mDrawerLayout;
+    Timer timer;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +59,7 @@ public class SwipeActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
-
+        Info.count = 1;
         // Set up the navigation drawer.
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.setStatusBarBackground(R.color.colorSelfBlack);
@@ -73,6 +79,15 @@ public class SwipeActivity extends AppCompatActivity {
                     getSupportFragmentManager(), shoppingFragment, R.id.contentFrame);
         }
         */
+        intent = new Intent(this, StandbyActivity.class);
+        timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                startActivity(intent);
+            }
+        };
+        timer.schedule(task, 60 * 1000);
     }
 
     @Override
@@ -99,14 +114,17 @@ public class SwipeActivity extends AppCompatActivity {
                             case R.id.list_navigation_weather:
                                 // TODO: 17-12-16  Do nothing, we're already on that screen
                                 startActivity(new Intent(SwipeActivity.this, WeatherActivity.class));
+                                timer.cancel();
                                 break;
                             case R.id.list_navigation_calendar:
                                 // TODO: 17-12-16 start CalendarActivity
                                 startActivity(new Intent(SwipeActivity.this, CalendarActivity.class));
+                                timer.cancel();
                                 break;
                             case R.id.list_navigation_music:
                                 // TODO: 17-12-16 start MusicActivity
                                 startActivity(new Intent(SwipeActivity.this, MusicMainActivity.class));
+                                timer.cancel();
                                 break;
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 start ShoppingActivty
@@ -118,17 +136,21 @@ public class SwipeActivity extends AppCompatActivity {
                                     Log.i(TAG, "onNavigationItemSelected: start");
                                     startActivity(intent);
                                 }
+                                timer.cancel();
                                 break;
                             case R.id.list_navigation_map:
                                 // TODO: 17-12-16 start MapActivity
                                 startActivity(new Intent(SwipeActivity.this, MapActivity.class));
+                                timer.cancel();
                                 break;
                             case R.id.list_navigation_voice:
                                 // TODO: 17-12-16 start voice function
                                 startActivity(new Intent(SwipeActivity.this, StartActivity.class));
+                                timer.cancel();
                                 break;
                             case R.id.list_navigation_setting:
                                 // TODO: 17-12-16 start SettingActivity
+                                timer.cancel();
                                 break;
                             default:
                                 break;
