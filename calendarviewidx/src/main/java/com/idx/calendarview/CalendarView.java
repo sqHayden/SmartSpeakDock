@@ -23,6 +23,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
@@ -340,6 +341,57 @@ public class CalendarView extends FrameLayout {
             }
         } else {
             mMonthPager.setCurrentItem(position, true);
+        }
+        mWeekBar.animate()
+                .translationY(0)
+                .setInterpolator(new LinearInterpolator())
+                .setDuration(180)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        mWeekBar.setVisibility(VISIBLE);
+                        if (mParentLayout != null && mParentLayout.mContentView != null) {
+                            mParentLayout.mContentView.setVisibility(VISIBLE);
+                        }
+                    }
+                });
+        mMonthPager.animate()
+                .scaleX(1)
+                .scaleY(1)
+                .setDuration(180)
+                .setInterpolator(new LinearInterpolator())
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        mMonthPager.setVisibility(VISIBLE);
+
+                    }
+                });
+    }
+
+    /**
+     * 点击按钮月，关闭日历布局，同时会滚动到当前日期
+     *
+     */
+    public void selectCurrentMonth( ) {
+        Log.v("1218","指定未知");
+        mSelectLayout.setVisibility(GONE);
+        mWeekBar.setVisibility(VISIBLE);
+        mMonthPager.setVisibility(VISIBLE);
+
+        Calendar calendar = new Calendar();
+        calendar.setYear(getCurYear());
+        calendar.setMonth(getCurMonth());
+        calendar.setDay(getCurDay());
+        calendar.setLunar(LunarCalendar.getLunarText(calendar));
+        mDelegate.mSelectedCalendar = calendar;
+        if (mDelegate.mDateChangeListener != null) {
+            mDelegate.mDateChangeListener.onDateChange(calendar);
+        }
+        if (mDelegate.mDateSelectedListener != null) {
+            mDelegate.mDateSelectedListener.onDateSelected(calendar);
         }
         mWeekBar.animate()
                 .translationY(0)

@@ -64,6 +64,8 @@ public class CalendarActivity extends Activity implements
                 mTextYear.setText(String.valueOf(mYear+ "年"));
                 break;
             case R.id.selectmonth:
+                mCalendarView.selectCurrentMonth();
+                mCalendarView.scrollToCalendar(mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
                 break;
             default:
                 break;
