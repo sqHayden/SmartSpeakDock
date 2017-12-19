@@ -128,7 +128,7 @@ public class SwipeActivity extends AppCompatActivity {
                                 break;
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 start ShoppingActivty
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.baidu.com"));
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://m.flnet.com"));
                                 //List<ResolveInfo> list = pm.queryIntentActivities(intent,PackageManager.MATCH_DEFAULT_ONLY);
                                 List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 0);
                                 Log.i(TAG, "onNavigationItemSelected: list.size() = "+list.size());
