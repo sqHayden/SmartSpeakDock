@@ -45,4 +45,5 @@ ext {
     roomVersion = '1.0.0'
     designVersion = '27.0.2'
     constraintVersion = '1.0.2'
+    okhttpVersion = '3.6.0'
 }

@@ -3,9 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SmartSpeakDock.iml" filepath="$PROJECT_DIR$/SmartSpeakDock.iml" />
-      <module fileurl="file://$PROJECT_DIR$/SmartSpeakDock.iml" filepath="$PROJECT_DIR$/SmartSpeakDock.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/calendarviewidx/calendarviewidx.iml" filepath="$PROJECT_DIR$/calendarviewidx/calendarviewidx.iml" />
+      <module fileurl="file://$PROJECT_DIR$/chatkit/chatkit.iml" filepath="$PROJECT_DIR$/chatkit/chatkit.iml" />
     </modules>
   </component>
 </project>

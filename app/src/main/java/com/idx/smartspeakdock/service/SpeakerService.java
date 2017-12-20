@@ -3,7 +3,9 @@ package com.idx.smartspeakdock.service;
 import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 
 import com.idx.smartspeakdock.Intents;
