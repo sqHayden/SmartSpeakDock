@@ -8,13 +8,17 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.baidu.speech.asr.SpeechConstant;
+import com.baidu.tts.client.TtsMode;
 import com.idx.smartspeakdock.Intents;
-import com.idx.smartspeakdock.baidu.control.SpeakerRecognizerManager;
-import com.idx.smartspeakdock.baidu.control.SpeakerWakeUpManager;
+import com.idx.smartspeakdock.baidu.control.RecognizerManager;
+import com.idx.smartspeakdock.baidu.control.TTSManager;
+import com.idx.smartspeakdock.baidu.control.UnitManager;
+import com.idx.smartspeakdock.baidu.control.WakeUpManager;
 import com.idx.smartspeakdock.baidu.recognise.IStatus;
 import com.idx.smartspeakdock.baidu.recognise.MessageStatusRecogListener;
 import com.idx.smartspeakdock.baidu.recognise.PidBuilder;
 import com.idx.smartspeakdock.baidu.recognise.StatusRecogListener;
+import com.idx.smartspeakdock.baidu.recognise.TtsStatusListener;
 import com.idx.smartspeakdock.baidu.recognise.WakeupParams;
 import com.idx.smartspeakdock.baidu.wakeup.SimpleWakeupListener;
 import com.idx.smartspeakdock.utils.Logger;
@@ -36,8 +40,8 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
     //识别回溯时长
     private static final int BACK_TRACK = 1500; //ms
 
-    private SpeakerWakeUpManager mWakeUpManager = null;
-    private SpeakerRecognizerManager mRecognizerManager = null;
+    private WakeUpManager mWakeUpManager = null;
+    private RecognizerManager mRecognizerManager = null;
     private WakeupParams mWakeupParams = null;
 
     private PowerManager.WakeLock mWL = null;
@@ -62,10 +66,14 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
                     releaseWLKL();
                     break;
                 case Intents.ACTION_WAKE_UP:
+                    UnitManager.getInstance().setSessionOver(false);
                     if (isLocked) {
                         unlock(context);
                     }
-                    startRecognize();
+                case Intents.ACTION_RECOGNIZE:
+                    if (!UnitManager.getInstance().isSessionOver()) {
+                        startRecognize();
+                    }
                     break;
                 case Intents.ACTION_WAKE_UP_START:
                     startWakeUp(context);
@@ -74,6 +82,7 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
                     stopWakeUp();
                     stopRecognize();
                     break;
+                default:
             }
         }
     }
@@ -106,30 +115,36 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
 
     private void initRecog(final Context context) {
         SimpleWakeupListener listener = new SimpleWakeupListener(context);
-        mWakeUpManager = new SpeakerWakeUpManager(context, listener);
+        mWakeUpManager = new WakeUpManager(context, listener);
         mWakeupParams = new WakeupParams(context);
 
-        StatusRecogListener recogListener = new MessageStatusRecogListener(context);
-        mRecognizerManager = new SpeakerRecognizerManager(context, recogListener);
-    }
+        StatusRecogListener recogListener = new MessageStatusRecogListener();
+        mRecognizerManager = new RecognizerManager(context, recogListener);
 
-    private void startRecognize(){
-            // 此处 开始正常识别流程
-            Map<String, Object> params = new LinkedHashMap<String, Object>();
-            params.put(SpeechConstant.ACCEPT_AUDIO_VOLUME, false);
-            params.put(SpeechConstant.VAD, SpeechConstant.VAD_DNN);
-            int pid = PidBuilder.create().model(PidBuilder.INPUT).toPId(); //如识别短句，不需要需要逗号，将PidBuilder.INPUT改为搜索模型PidBuilder.SEARCH
-            params.put(SpeechConstant.PID, pid);
-            if (BACK_TRACK > 0) { // 方案1， 唤醒词说完后，直接接句子，中间没有停顿。
-                params.put(SpeechConstant.AUDIO_MILLS, System.currentTimeMillis() - BACK_TRACK);
-
-            }
-            mRecognizerManager.cancel();
-            mRecognizerManager.start(params);
+        //初始化语音合成引擎
+        TTSManager.getInstance().init(context, TtsMode.ONLINE, new TtsStatusListener(context));
+        //初始化百度Unit引擎
+        UnitManager.getInstance().init(context);
 
     }
 
-    private void stopRecognize(){
+    private void startRecognize() {
+        // 此处 开始正常识别流程
+        Map<String, Object> params = new LinkedHashMap<String, Object>();
+        params.put(SpeechConstant.ACCEPT_AUDIO_VOLUME, false);
+        params.put(SpeechConstant.VAD, SpeechConstant.VAD_DNN);
+        int pid = PidBuilder.create().model(PidBuilder.INPUT).toPId(); //如识别短句，不需要需要逗号，将PidBuilder.INPUT改为搜索模型PidBuilder.SEARCH
+        params.put(SpeechConstant.PID, pid);
+        if (BACK_TRACK > 0) { // 方案1， 唤醒词说完后，直接接句子，中间没有停顿。
+            params.put(SpeechConstant.AUDIO_MILLS, System.currentTimeMillis() - BACK_TRACK);
+
+        }
+        mRecognizerManager.cancel();
+        mRecognizerManager.start(params);
+
+    }
+
+    private void stopRecognize() {
         mRecognizerManager.stop();
         mRecognizerManager.release();
 
@@ -180,6 +195,9 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
             mRecognizerManager.release();
             mRecognizerManager = null;
         }
+
+        TTSManager.getInstance().release();
+        UnitManager.getInstance().release();
     }
 
 }

@@ -4,9 +4,7 @@ import android.content.Context;
 import android.os.Message;
 import android.util.Log;
 
-import com.baidu.tts.client.TtsMode;
-import com.idx.smartspeakdock.baidu.tts.TTSManager;
-import com.idx.smartspeakdock.baidu.unit.UnitManager;
+import com.idx.smartspeakdock.baidu.control.UnitManager;
 
 import java.util.Date;
 
@@ -20,10 +18,8 @@ public class MessageStatusRecogListener extends StatusRecogListener {
     private long speechEndTime;
 
     private boolean needTime = true;
-    private Context mContext;
 
-    public MessageStatusRecogListener(Context context) {
-        mContext = context;
+    public MessageStatusRecogListener() {
     }
 
 //    public MessageStatusRecogListener(Handler handler) {
@@ -59,10 +55,9 @@ public class MessageStatusRecogListener extends StatusRecogListener {
     @Override
     public void onAsrFinalResult(String[] results, RecogResult recogResult) {
         super.onAsrFinalResult(results, recogResult);
+        Log.d("onAsrFinalResult", "onAsrFinalResult: ");
         //将识别后的语句交由Unit处理
-        UnitManager unitManager = UnitManager.getInstance(mContext);
-        com.baidu.aip.chatkit.model.Message ms = new com.baidu.aip.chatkit.model.Message("0", null, results[0], new Date());
-        unitManager.sendMessage(ms);
+        UnitManager.getInstance().sendMessage(results[0]);
 
         //调试使用
         String message = "识别结束，结果是”" + results[0] + "”";

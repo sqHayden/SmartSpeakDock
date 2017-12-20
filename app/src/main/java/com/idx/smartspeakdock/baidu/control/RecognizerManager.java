@@ -19,7 +19,7 @@ import java.util.Map;
  * EventManager内的方法如send 都可以在主线程中进行，SDK中做过处理
  */
 
-public class SpeakerRecognizerManager {
+public class RecognizerManager {
     /**
      * SDK 内部核心 EventManager 类
      */
@@ -34,14 +34,14 @@ public class SpeakerRecognizerManager {
 
     private static boolean isInited = false;
 
-    private static final String TAG = "SpeakerRecognizerManager";
+    private static final String TAG = "RecognizerManager";
 
     /**
      *  初始化
      * @param context
      * @param IRecogListener 将EventListener结果做解析的DEMO回调。使用RecogEventAdapter 适配EventListener
      */
-    public SpeakerRecognizerManager(Context context, IRecogListener IRecogListener) {
+    public RecognizerManager(Context context, IRecogListener IRecogListener) {
         this(context, new RecogEventAdapter(IRecogListener));
     }
 
@@ -50,7 +50,7 @@ public class SpeakerRecognizerManager {
      * @param context
      * @param eventListener
      */
-    public SpeakerRecognizerManager(Context context, EventListener eventListener) {
+    private RecognizerManager(Context context, EventListener eventListener) {
         if (isInited) {
             Logger.error(TAG, "还未调用release()，请勿新建一个新类");
             throw new RuntimeException("还未调用release()，请勿新建一个新类");

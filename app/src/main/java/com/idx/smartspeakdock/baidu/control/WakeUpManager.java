@@ -18,7 +18,7 @@ import java.util.Map;
  * Created by fujiayi on 2017/6/20.
  */
 
-public class SpeakerWakeUpManager {
+public class WakeUpManager {
 
 
     private static boolean isInited = false;
@@ -26,9 +26,9 @@ public class SpeakerWakeUpManager {
     private EventManager wp;
     private EventListener eventListener;
 
-    private static final String TAG = "SpeakerWakeUpManager";
+    private static final String TAG = "WakeUpManager";
 
-    public SpeakerWakeUpManager(Context context, EventListener eventListener) {
+    private WakeUpManager(Context context, EventListener eventListener) {
         if (isInited) {
             Logger.error(TAG, "还未调用release()，请勿新建一个新类");
             throw new RuntimeException("还未调用release()，请勿新建一个新类");
@@ -39,7 +39,7 @@ public class SpeakerWakeUpManager {
         wp.registerListener(eventListener);
     }
 
-    public SpeakerWakeUpManager(Context context, IWakeupListener eventListener) {
+    public WakeUpManager(Context context, IWakeupListener eventListener) {
         this(context, new WakeupEventAdapter(eventListener));
     }
 

@@ -18,7 +18,7 @@ public class CommunicateParser implements Parser<CommunicateResponse> {
 
     @Override
     public CommunicateResponse parse(String json) throws UnitError {
-        Log.e("xx", "CommunicateParser:" + json);
+        Log.d("xx", "CommunicateParser:" + json);
         try {
             JSONObject jsonObject = new JSONObject(json);
 
