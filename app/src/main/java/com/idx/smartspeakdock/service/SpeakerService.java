@@ -33,6 +33,7 @@ public class SpeakerService extends Service {
         super.onCreate();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intents.ACTION_WAKE_UP);
+        intentFilter.addAction(Intents.ACTION_RECOGNIZE);
         intentFilter.addAction(Intents.ACTION_WAKE_UP_START);
         intentFilter.addAction(Intents.ACTION_WAKE_UP_STOP);
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF);

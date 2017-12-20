@@ -1,14 +1,16 @@
-package com.idx.smartspeakdock.baidu.tts;
+package com.idx.smartspeakdock.baidu.control;
 
 import android.content.Context;
 import android.media.AudioManager;
 import android.util.Log;
 
+import com.baidu.tts.client.SpeechSynthesizeBag;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
 import com.idx.smartspeakdock.utils.AuthInfo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,34 +22,35 @@ public class TTSManager {
     private static final String TAG = TTSManager.class.getName();
     private static TTSManager INSTANCE = null;
     private SpeechSynthesizer mSpeechSynthesizer;
-    private SpeechSynthesizerListener mListener;
 
-    public TTSManager(Context context, TtsMode ttsMode){
-        init(context, ttsMode);
+    private TTSManager() {
     }
 
-    public static TTSManager getInstance(Context context, TtsMode ttsMode){
+    public static TTSManager getInstance() {
         if (INSTANCE == null) {
-            synchronized (TTSManager.class){
+            synchronized (TTSManager.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new TTSManager(context, ttsMode);
+                    INSTANCE = new TTSManager();
                 }
             }
         }
         return INSTANCE;
     }
 
-    private void init(Context context, TtsMode ttsMode) {
+    public void init(Context context, TtsMode ttsMode, SpeechSynthesizerListener listener) {
         Map<String, Object> authParams = AuthInfo.getAuthParams(context);
         mSpeechSynthesizer = SpeechSynthesizer.getInstance();
         mSpeechSynthesizer.setContext(context);
-        mSpeechSynthesizer.setAppId((String)authParams.get(AuthInfo.META_APP_ID));
-        mSpeechSynthesizer.setApiKey((String)authParams.get(AuthInfo.META_APP_KEY),
-                (String)authParams.get(AuthInfo.META_APP_SECRET));
+        mSpeechSynthesizer.setAppId((String) authParams.get(AuthInfo.META_APP_ID));
+        mSpeechSynthesizer.setApiKey((String) authParams.get(AuthInfo.META_APP_KEY),
+                (String) authParams.get(AuthInfo.META_APP_SECRET));
         //授权检验接口
         if (!checkAuth(ttsMode)) {
             return;
         }
+
+        //设置事件监听器
+        mSpeechSynthesizer.setSpeechSynthesizerListener(listener);
 
         //设置合成参数，0女声，1男声
         mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEAKER, "0");
@@ -59,14 +62,9 @@ public class TTSManager {
 
     }
 
-    public void setSpeechSynthesizerListener(){
-        if (mListener != null) {
-            mSpeechSynthesizer.setSpeechSynthesizerListener(mListener);
-        }
-    }
-
     /**
      * 检查appId ak sk 是否填写正确，另外检查官网应用内设置的包名是否与运行时的包名一致。本demo的包名定义在build.gradle文件中
+     *
      * @return
      */
     private boolean checkAuth(TtsMode ttsMode) {
@@ -82,26 +80,33 @@ public class TTSManager {
         }
     }
 
-    public void speak(String text){
+    public void speak(String text) {
         mSpeechSynthesizer.speak(text);
     }
 
-    public int pause(){
+    public void batSpeak(List<SpeechSynthesizeBag> list) {
+        mSpeechSynthesizer.batchSpeak(list);
+    }
+
+    public int pause() {
         return mSpeechSynthesizer.pause();
     }
 
-    public int resume(){
+    public int resume() {
         return mSpeechSynthesizer.resume();
     }
 
-    public int stop(){
+    public int stop() {
         return mSpeechSynthesizer.stop();
     }
 
-    public void release(){
+    public void release() {
         if (mSpeechSynthesizer != null) {
             mSpeechSynthesizer.release();
             mSpeechSynthesizer = null;
+        }
+        if (INSTANCE != null) {
+            INSTANCE = null;
         }
     }
 
