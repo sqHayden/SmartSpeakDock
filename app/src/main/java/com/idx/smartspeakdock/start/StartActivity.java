@@ -11,10 +11,11 @@ import com.idx.smartspeakdock.data.local.Injection;
 import com.idx.smartspeakdock.service.SpeakerService;
 import com.idx.smartspeakdock.utils.ActivityUtils;
 
-public class StartActivity extends BaseActivity implements StartFragment.OnFragmentInteractionListener{
+public class StartActivity extends BaseActivity implements StartFragment.OnFragmentInteractionListener {
 
     private static final String TAG = StartActivity.class.getName();
     private StartFragment startFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +27,10 @@ public class StartActivity extends BaseActivity implements StartFragment.OnFragm
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), startFragment, R.id.container);
         }
 
-        startService(new Intent(this, SpeakerService.class));
+        if (!isServiceRunning(this, "com.idx.smartspeakdock.start.SpeakerService")) {
+            startService(new Intent(this, SpeakerService.class));
+        }
+
         new StartPresenter(Injection.provideUserRepository(getApplicationContext()), startFragment);
     }
 
@@ -34,4 +38,5 @@ public class StartActivity extends BaseActivity implements StartFragment.OnFragm
     public void onFragmentInteraction(Uri uri) {
         Log.d(TAG, "onFragmentInteraction: " + uri);
     }
+
 }

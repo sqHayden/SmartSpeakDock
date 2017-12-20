@@ -1,6 +1,8 @@
 package com.idx.smartspeakdock;
 
 import android.Manifest;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -55,5 +57,21 @@ public abstract class BaseActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, toApplyList.toArray(tmpList), 123);
         }
 
+    }
+
+    public static boolean isServiceRunning(Context context, String ServiceName) {
+        if (("").equals(ServiceName) || ServiceName == null)
+            return false;
+        ActivityManager myManager = (ActivityManager) context
+                .getSystemService(Context.ACTIVITY_SERVICE);
+        ArrayList<ActivityManager.RunningServiceInfo> runningService = (ArrayList<ActivityManager.RunningServiceInfo>) myManager
+                .getRunningServices(30);
+        for (int i = 0; i < runningService.size(); i++) {
+            if (runningService.get(i).service.getClassName().toString()
+                    .equals(ServiceName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

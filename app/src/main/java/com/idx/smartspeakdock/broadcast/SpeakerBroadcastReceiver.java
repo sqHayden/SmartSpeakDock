@@ -109,7 +109,7 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
         mWakeUpManager = new SpeakerWakeUpManager(context, listener);
         mWakeupParams = new WakeupParams(context);
 
-        StatusRecogListener recogListener = new MessageStatusRecogListener();
+        StatusRecogListener recogListener = new MessageStatusRecogListener(context);
         mRecognizerManager = new SpeakerRecognizerManager(context, recogListener);
     }
 
