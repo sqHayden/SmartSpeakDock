@@ -28,13 +28,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.calendar.CalendarActivity;
 import com.idx.smartspeakdock.map.MapActivity;
 import com.idx.smartspeakdock.music.MusicMainActivity;
-import com.idx.smartspeakdock.standby.Info;
 import com.idx.smartspeakdock.standby.StandbyActivity;
 import com.idx.smartspeakdock.start.StartActivity;
 import com.idx.smartspeakdock.weather.ui.WeatherActivity;
@@ -52,6 +52,7 @@ public class SwipeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.swipe_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -59,7 +60,6 @@ public class SwipeActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
-        Info.count = 1;
         // Set up the navigation drawer.
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.setStatusBarBackground(R.color.colorSelfBlack);

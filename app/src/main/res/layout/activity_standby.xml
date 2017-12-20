@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="260px"
-            android:typeface="sans"
+            android:textColor="#FFFFFF"
             android:layout_centerHorizontal="true" />
 
         <LinearLayout
@@ -36,13 +36,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="深圳市"
+                android:textColor="#FFFFFF"
                 android:textSize="60px" />
-            <TextView
+            <com.idx.smartspeakdock.standby.DataView
                 android:id="@+id/data_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
-                android:text="SUNDAY,FEB 5"
+                android:textColor="#FFFFFF"
                 android:textSize="60px"/>
         </LinearLayout>
 
@@ -67,6 +68,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_gravity="center_vertical"
                 android:textSize="48px"
+                android:textColor="#FFFFFF"
                 android:text="17°C/19°C"/>
         </LinearLayout>
 
@@ -89,6 +91,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_gravity="center_vertical"
                 android:textSize="48px"
+                android:textColor="#FFFFFF"
                 android:text="洗车：较适宜"/>
         </LinearLayout>
 
@@ -111,6 +114,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_gravity="center_vertical"
                 android:textSize="48px"
+                android:textColor="#FFFFFF"
                 android:text="穿衣：较冷"/>
         </LinearLayout>
 

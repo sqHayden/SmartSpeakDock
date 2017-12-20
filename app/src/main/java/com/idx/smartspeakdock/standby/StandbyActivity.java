@@ -2,20 +2,13 @@ package com.idx.smartspeakdock.standby;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextClock;
 import android.widget.TextView;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -31,37 +24,30 @@ import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.weather.model.weather.Weather;
 import com.idx.smartspeakdock.weather.utils.HandlerWeatherUtil;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-
 public class StandbyActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
-    private TextView data;
-    private Intent intent;
     private LinearLayout layout;
     private TextView location_textView;
     private TextView standby_life_clothes;
     private TextView standby_life_car;
     private TextView standby_weather_tmp;
-
     private LocationClient mLocationClient;
     private ImageView weatherIcon;
-    private String cityname;
+    private String cityname = "深圳";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mLocationClient = new LocationClient(getApplicationContext());
         mLocationClient.registerLocationListener(new StandbyLocationListener());
         setContentView(R.layout.activity_standby);
         init();
-        data.setText(DataString.StringData());
+        queryWeather(cityname);
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,9 +56,8 @@ public class StandbyActivity extends BaseActivity {
                 mLocationClient.stop();
             }
         });
-        requestLocation();
         cityname = location_textView.getText().toString().trim();
-        queryWeather(cityname);
+        requestLocation();
 
     }
 
@@ -80,10 +65,13 @@ public class StandbyActivity extends BaseActivity {
         layout = findViewById(R.id.line6);
         weatherIcon = findViewById(R.id.weatherIcon);
         location_textView = findViewById(R.id.location_textView);
-        data = findViewById(R.id.data_textView);
         standby_life_clothes = findViewById(R.id.standby_life_clothes);
         standby_life_car = findViewById(R.id.standby_life_car);
         standby_weather_tmp = findViewById(R.id.standby_weather_tmp);
+        location_textView.setTypeface(FontCustom.setHeiTi(getApplicationContext()));
+        standby_life_clothes.setTypeface(FontCustom.setHeiTi(getApplicationContext()));
+        standby_life_car.setTypeface(FontCustom.setHeiTi(getApplicationContext()));
+        standby_weather_tmp.setTypeface(FontCustom.setAvenir(getApplicationContext()));
     }
 
     public void requestLocation(){
@@ -95,7 +83,7 @@ public class StandbyActivity extends BaseActivity {
     private void initLocation(){
         LocationClientOption option = new LocationClientOption();
         option.setIsNeedAddress(true);
-        option.setScanSpan(10);
+        option.setScanSpan(10 * 60 * 1000);
         mLocationClient.setLocOption(option);
     }
 
@@ -105,6 +93,7 @@ public class StandbyActivity extends BaseActivity {
         public void onReceiveLocation(BDLocation bdLocation) {
             Log.d(TAG, "onReceiveLocation: "+ bdLocation.getCity());
             location_textView.setText(bdLocation.getCity());
+            queryWeather(cityname);
         }
     }
 
@@ -129,7 +118,7 @@ public class StandbyActivity extends BaseActivity {
                     String weatherContent=jsonArray.getJSONObject(0).toString();
                     Weather weather=new Gson().fromJson(weatherContent,Weather.class);
                     weatherIcon.setImageResource(HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(weather.now.code)));
-                    standby_weather_tmp.setText(weather.forecastList.get(0).max+"℃ / "+weather.forecastList.get(0).min+"℃");
+                    standby_weather_tmp.setText(weather.forecastList.get(0).max+" / "+weather.forecastList.get(0).min+"℃");
                     standby_life_clothes.setText("穿衣：" + weather.lifestyleList.get(1).brf);
                     standby_life_car.setText("洗车：" + weather.lifestyleList.get(6).brf);
                 } catch (JSONException e) {
@@ -143,5 +132,6 @@ public class StandbyActivity extends BaseActivity {
             }
         });
         queue.add(request);
+        Log.d(TAG, "queryWeather: ");
     }
 }

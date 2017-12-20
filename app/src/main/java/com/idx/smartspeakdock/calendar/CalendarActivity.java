@@ -15,13 +15,14 @@ import com.idx.calendarview.Calendar;
 import com.idx.calendarview.CalendarLayout;
 import com.idx.calendarview.CalendarView;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.calendar.presenter.Presenter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CalendarActivity extends Activity implements
         CalendarView.OnDateSelectedListener,
-        CalendarView.OnYearChangeListener,View.OnClickListener{
+        CalendarView.OnYearChangeListener,View.OnClickListener,Iview{
     @BindView(R.id.tv_month_day)
     TextView mTextMonthDay;
     @BindView(R.id.tv_year)
@@ -36,20 +37,19 @@ public class CalendarActivity extends Activity implements
     ImageView addButton;
     @BindView(R.id.calendarLayout)
     CalendarLayout mCalendarLayout;
-    private int mYear;
-
+    private Presenter presenter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
         ButterKnife.bind(this);
+        presenter = new Presenter(this,mCalendarView);
         addButton.setOnClickListener(this);
         yearSelect.setOnClickListener(this);
         monthSelect.setOnClickListener(this);
         mCalendarView.setOnYearChangeListener(this);
         mCalendarView.setOnDateSelectedListener(this);
         mTextYear.setText(String.valueOf(mCalendarView.getCurYear()+ "年"));
-        mYear = mCalendarView.getCurYear();
         mTextMonthDay.setText(mCalendarView.getCurMonth() + "月");
     }
 
@@ -59,18 +59,29 @@ public class CalendarActivity extends Activity implements
             case R.id.ib_calendar:
                 break;
             case R.id.selectyear:
-                mCalendarView.showSelectLayout(mYear);
-                mTextMonthDay.setVisibility(View.GONE);
-                mTextYear.setText(String.valueOf(mYear+ "年"));
+                presenter.selectyear();
                 break;
             case R.id.selectmonth:
-                mCalendarView.selectCurrentMonth();
-                mCalendarView.scrollToCalendar(mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
+                presenter.selectmonth();
                 break;
             default:
                 break;
         }
     }
+
+    @Override
+    public void showyear(int year) {
+        mCalendarView.showSelectLayout(year);
+        mTextMonthDay.setVisibility(View.GONE);
+        mTextYear.setText(String.valueOf(year+ "年"));
+    }
+
+    @Override
+    public void showmonth(int year, int month, int day) {
+        mCalendarView.selectCurrentMonth();
+        mCalendarView.scrollToCalendar(year,month,day);
+    }
+
     @SuppressLint("SetTextI18n")
     @Override
     public void onDateSelected(Calendar calendar) {
@@ -79,7 +90,6 @@ public class CalendarActivity extends Activity implements
         mTextMonthDay.setVisibility(View.VISIBLE);
         mTextMonthDay.setText(calendar.getMonth() + "月");
         mTextYear.setText(String.valueOf(calendar.getYear()+ "年"));
-        mYear = calendar.getYear();
     }
 
     @Override
