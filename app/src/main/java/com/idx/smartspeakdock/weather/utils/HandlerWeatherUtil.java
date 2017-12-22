@@ -2,6 +2,12 @@ package com.idx.smartspeakdock.weather.utils;
 
 import com.idx.smartspeakdock.R;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by danny on 12/15/17.
  */
@@ -56,5 +62,33 @@ public class HandlerWeatherUtil {
             return R.drawable.weather_smog;
         }
         return R.drawable.weather_unknown;
+    }
+
+    /**
+     * 解析日期，返回指定格式
+     *
+     * @param date 日期××××-××-××
+     * @return ××月××日星期几
+     */
+    public static String parseDate(String date){
+        String result="";
+        DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat format2 = new SimpleDateFormat("MM月dd日");
+        String[] weekOfDays = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+        try {
+            Date date1=format1.parse(date);
+            result=format2.format(date1);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date1);
+            int w = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+            if (date.equals(format1.format(new Date()))){
+                result+="今天";
+            }else {
+                result+=weekOfDays[w];
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }
