@@ -133,7 +133,11 @@
             app:week_bar_view="com.idx.smartspeakdock.calendar.EnglishWeekBar"
             app:week_text_color="#111" />
     </com.idx.calendarview.CalendarLayout>
-
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
 
 </LinearLayout>
 

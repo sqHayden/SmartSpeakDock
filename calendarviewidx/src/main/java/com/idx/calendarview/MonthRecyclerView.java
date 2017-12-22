@@ -16,6 +16,7 @@
 package com.idx.calendarview;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,7 +38,15 @@ public class MonthRecyclerView extends RecyclerView {
     public MonthRecyclerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mAdapter = new MonthAdapter(context);
-        setLayoutManager(new GridLayoutManager(context, 3));
+        // 判断Android当前的屏幕是横屏还是竖屏。横竖屏判断
+        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            //竖屏
+            setLayoutManager(new GridLayoutManager(context, 3));
+        } else {
+            //横屏
+            setLayoutManager(new GridLayoutManager(context, 4));
+        }
+
         setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
             @Override
