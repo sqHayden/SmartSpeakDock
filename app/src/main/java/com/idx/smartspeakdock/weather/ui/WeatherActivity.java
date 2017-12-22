@@ -1,8 +1,12 @@
 package com.idx.smartspeakdock.weather.ui;
 
+import android.app.Application;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,21 +16,20 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.standby.StandbyActivity;
+import com.idx.smartspeakdock.utils.CityUtils;
 import com.idx.smartspeakdock.weather.model.weather.Forecast;
 import com.idx.smartspeakdock.weather.model.weather.Weather;
+import com.idx.smartspeakdock.weather.presenter.WeatherPresenter;
+import com.idx.smartspeakdock.weather.presenter.WeatherPresenterImpl;
 import com.idx.smartspeakdock.weather.utils.HandlerWeatherUtil;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -36,28 +39,31 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by steve on 12/13/17.
+ * Created by danny on 12/13/17.
  */
 
-public class WeatherActivity extends AppCompatActivity implements ChooseCityDialogFragment.OnChooseCityCompleted{
+public class WeatherActivity extends AppCompatActivity implements WeatherUi,ChooseCityDialogFragment.OnChooseCityCompleted{
 
     private static final String TAG = "WeatherActivity";
     private TextView mNowTemperature,mCond,mTemperature,
             mDate,mTitle,mLifestyleClothes,mLifestyleCar,
             mLifestyleAir,mAirQuality,mPM10,mPM25,mNO2,mSO2,mO3,mCO;
-    private ImageView mWeatherNowIcon;
+    private ImageView mWeatherNowIcon,mChooseCity;
+    //private SwipeRefreshLayout mRefreshWeather;
     private ListView mListView;
-    private String weatherUrl="https://free-api.heweather.com/s6/weather?location=深圳&key=537664b7e2124b3c845bc0b51278d4af";
-    private String airUrl="https://free-api.heweather.com/s6/air/now?location=深圳&key=537664b7e2124b3c845bc0b51278d4af";
+    private WeatherPresenter mWeatherPresenter;
+    private Dialog loadingDialog;
+    private String city="深圳";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //this.requestWindowFeature(Window.FEATURE_NO_TITLE);//去掉标题栏
+
         setContentView(R.layout.activity_weather);
         initView();
-        mTitle.setOnClickListener(new View.OnClickListener() {
+        mChooseCity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ChooseCityDialogFragment cityDialogFragment=new ChooseCityDialogFragment();
@@ -65,11 +71,27 @@ public class WeatherActivity extends AppCompatActivity implements ChooseCityDial
                 cityDialogFragment.show(getFragmentManager(),"ChooseCityDialog");
             }
         });
-        queryWeather();
-        queryAir();
+
+        Log.d(TAG, "onCreate: "+city);
+        mWeatherPresenter.getWeather(city);
+        mWeatherPresenter.getWeatherAqi(city);
+//        mRefreshWeather.setColorSchemeResources(R.color.colorPrimary);
+//        mRefreshWeather.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                mWeatherPresenter.getWeather("深圳");
+//                mWeatherPresenter.getWeatherAqi("深圳");
+//            }
+//        });
     }
+
+    /**
+     * 初始化组件
+     */
     private void initView(){
+        //mRefreshWeather=findViewById(R.id.weather_swipe_refresh);
         mWeatherNowIcon=findViewById(R.id.weather_now_icon);
+        mChooseCity=findViewById(R.id.weather_choose_city);
         mNowTemperature=findViewById(R.id.weather_now_temperature);
         mCond=findViewById(R.id.weather_now_cond_txt_n);
         mTemperature=findViewById(R.id.weather_daily_forecast_tmp_max_min);
@@ -86,91 +108,20 @@ public class WeatherActivity extends AppCompatActivity implements ChooseCityDial
         mSO2=findViewById(R.id.weather_air_so2);
         mO3=findViewById(R.id.weather_air_o3);
         mCO=findViewById(R.id.weather_air_co);
+        mWeatherPresenter = new WeatherPresenterImpl(this); //传入WeatherView
+        loadingDialog = new ProgressDialog(this);
+        loadingDialog.setTitle("加载天气中...");
     }
 
     /**
-     * 查询并解析天气
+     * 选择城市回调：县名用于查天气基本信息，市名用于查询空气质量
+     *
+     * @param countyName 县名
+     * @param cityNime 市名
      */
-    public void queryWeather(){
-        RequestQueue queue= Volley.newRequestQueue(this);
-        JsonObjectRequest request=new JsonObjectRequest(
-                weatherUrl,
-                null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject jsonObject) {
-
-                JSONArray jsonArray= null;
-                Log.d(TAG, jsonObject.toString());
-                try {
-                    jsonArray = jsonObject.getJSONArray("HeWeather6");
-                    String weatherContent=jsonArray.getJSONObject(0).toString();
-                    Weather weather=new Gson().fromJson(weatherContent,Weather.class);
-                    mWeatherNowIcon.setImageResource(HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(weather.now.code)));
-                    mNowTemperature.setText(weather.now.tmperature+"℃");
-                    mCond.setText(HandlerWeatherUtil.getWeatherType(Integer.parseInt(weather.now.code)));
-                    mTemperature.setText(weather.forecastList.get(0).max+"℃ / "+weather.forecastList.get(0).min+"℃");
-                    mLifestyleClothes.setText(weather.lifestyleList.get(1).brf);
-                    mLifestyleCar.setText(weather.lifestyleList.get(6).brf);
-                    mLifestyleAir.setText(weather.lifestyleList.get(7).brf);
-//                    mDate.setText(new SimpleDateFormat("HH:mm").format(new Date()));
-                    MyAdapter myAdapter=new MyAdapter(weather.forecastList,getApplicationContext());
-                    mListView.setAdapter(myAdapter);
-                    Log.d(TAG, "onResponse: "+weather.basic.cityName+":"+weather.now.code);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.e(TAG,volleyError.getMessage(),volleyError );
-            }
-        });
-        Log.d(TAG, "onCreate: 2");
-        queue.add(request);
-    }
-
-    /**
-     * 查询并解析空气质量
-     */
-    public void queryAir(){
-        RequestQueue queue= Volley.newRequestQueue(this);
-        JsonObjectRequest request=new JsonObjectRequest(
-                airUrl,
-                null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject jsonObject) {
-                Log.d(TAG, jsonObject.toString());
-                JSONArray jsonArray= null;
-                try {
-                    jsonArray = jsonObject.getJSONArray("HeWeather6");
-                    String weatherContent=jsonArray.getJSONObject(0).toString();
-                    Weather weather=new Gson().fromJson(weatherContent,Weather.class);
-                    mAirQuality.setText(weather.air.qlty);
-                    mPM10.setText(weather.air.pm10);
-                    mPM25.setText(weather.air.pm25);
-                    mNO2.setText(weather.air.no2);
-                    mSO2.setText(weather.air.so2);
-                    mO3.setText(weather.air.o3);
-                    mCO.setText(weather.air.co);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.e(TAG,volleyError.getMessage(),volleyError );
-            }
-        });
-        Log.d(TAG, "onCreate: 2");
-        queue.add(request);
-    }
-
     @Override
     public void chooseCityCompleted(String countyName, String cityNime) {
-        weatherUrl="https://free-api.heweather.com/s6/weather?location="+countyName+"&key=537664b7e2124b3c845bc0b51278d4af";
-        queryWeather();
+        mWeatherPresenter.getWeather(countyName);
         Log.d(TAG,cityNime);
         if (cityNime.equals("东城")||cityNime.equals("西城")){
             cityNime="北京";
@@ -188,13 +139,71 @@ public class WeatherActivity extends AppCompatActivity implements ChooseCityDial
             cityNime="重庆";
         }
         Log.d(TAG, "chooseCityCompleted: "+cityNime);
-        airUrl="https://free-api.heweather.com/s6/air/now?location="+cityNime+"&key=537664b7e2124b3c845bc0b51278d4af";
         if (cityNime.equals("香港")||cityNime.equals("澳门")||cityNime.equals("台北")||cityNime.equals("高雄")||cityNime.equals("台中")){
 
         }else {
-            queryAir();
+            mWeatherPresenter.getWeatherAqi(cityNime);
         }
         mTitle.setText(countyName);
+    }
+
+    /**
+     * 显示进度对话框
+     */
+    @Override
+    public void showLoading() {
+        loadingDialog.show();
+    }
+
+    /**
+     * 隐藏进度对话框
+     */
+    @Override
+    public void hideLoading() {
+        loadingDialog.dismiss();
+    }
+
+    /**
+     * 天气信息获取失败
+     */
+    @Override
+    public void showError() {
+        Toast.makeText(getApplicationContext(), "获取信息失败！", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 天气基本信息
+     *
+     * @param weather 天气
+     */
+    @Override
+    public void setWeatherInfo(Weather weather) {
+        mWeatherNowIcon.setImageResource(HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(weather.now.code)));
+        mNowTemperature.setText(weather.now.tmperature+"℃");
+        mCond.setText(HandlerWeatherUtil.getWeatherType(Integer.parseInt(weather.now.code)));
+        mTemperature.setText(weather.forecastList.get(0).max+"℃ / "+weather.forecastList.get(0).min+"℃");
+        mLifestyleClothes.setText(weather.lifestyleList.get(1).brf);
+        mLifestyleCar.setText(weather.lifestyleList.get(6).brf);
+        mLifestyleAir.setText(weather.lifestyleList.get(7).brf);
+//                    mDate.setText(new SimpleDateFormat("HH:mm").format(new Date()));
+        MyAdapter myAdapter=new MyAdapter(weather.forecastList,getApplicationContext());
+        mListView.setAdapter(myAdapter);
+    }
+
+    /**
+     * 空气适量
+     *
+     * @param weather 天气
+     */
+    @Override
+    public void setWeatherAqi(Weather weather) {
+        mAirQuality.setText(weather.air.qlty);
+        mPM10.setText(weather.air.pm10);
+        mPM25.setText(weather.air.pm25);
+        mNO2.setText(weather.air.no2);
+        mSO2.setText(weather.air.so2);
+        mO3.setText(weather.air.o3);
+        mCO.setText(weather.air.co);
     }
 }
 
@@ -234,6 +243,12 @@ class MyAdapter extends BaseAdapter {
         return view;
     }
 
+    /**
+     * 解析日期，返回指定格式
+     *
+     * @param position 条目位置
+     * @return ××月××日星期几
+     */
     private String parseDate(int position){
         String date="";
         DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -245,9 +260,6 @@ class MyAdapter extends BaseAdapter {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date1);
             int w = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-//            if (w<0){
-//                w=0;
-//            }
             if (position==0){
                 date+="今天";
             }else {

@@ -6,7 +6,8 @@
     android:gravity="bottom"
     android:orientation="vertical"
     android:padding="8dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:theme="@style/AppTheme.NoActionBar">
+    <!--android:theme="@style/ThemeOverlay.AppCompat.Dark">-->
 
     <TextView
         android:layout_width="wrap_content"

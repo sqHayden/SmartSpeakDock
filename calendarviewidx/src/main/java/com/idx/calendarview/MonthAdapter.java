@@ -16,9 +16,13 @@
 package com.idx.calendarview;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
@@ -27,9 +31,10 @@ import java.util.List;
 class MonthAdapter extends BaseRecyclerAdapter<Month> {
     private List<Calendar> mSchemes;
     private int mSchemeColor;
-
+    Context context;
     MonthAdapter(Context context) {
         super(context);
+        this.context = context;
     }
 
     void setSchemes(List<Calendar> mSchemes) {
@@ -42,7 +47,7 @@ class MonthAdapter extends BaseRecyclerAdapter<Month> {
 
     @Override
     RecyclerView.ViewHolder onCreateDefaultViewHolder(ViewGroup parent, int type) {
-        return new MonthViewHolder(mInflater.inflate(R.layout.cv_item_list_month, parent, false));
+        return new MonthViewHolder(mInflater.inflate(R.layout.cv_item_list_month, parent, false),context);
     }
 
     @Override
@@ -58,11 +63,27 @@ class MonthAdapter extends BaseRecyclerAdapter<Month> {
     private static class MonthViewHolder extends RecyclerView.ViewHolder {
         MonthView mMonthView;
         TextView mTextMonth;
-
-        MonthViewHolder(View itemView) {
+        LinearLayout linearLayout;
+        DisplayMetrics dm;
+        int mwith,mheight;
+        MonthViewHolder(View itemView,Context context) {
             super(itemView);
             mMonthView = (MonthView) itemView.findViewById(R.id.selectView);
             mTextMonth = (TextView) itemView.findViewById(R.id.tv_month);
+            linearLayout = (LinearLayout) itemView.findViewById(R.id.linear);
+            dm = context.getResources().getDisplayMetrics();
+            mheight = dm.heightPixels;
+            mwith = dm.widthPixels;
+            ViewGroup.LayoutParams lp= linearLayout.getLayoutParams();
+            // 判断Android当前的屏幕是横屏还是竖屏。横竖屏判断
+            if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                //竖屏
+                lp.height = (mheight-200)/4;
+            } else {
+                //横屏
+                lp.height = (mwith-1000)/3;
+            }
+            linearLayout.setLayoutParams(lp);
         }
     }
 }

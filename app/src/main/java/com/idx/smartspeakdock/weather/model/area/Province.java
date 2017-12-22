@@ -3,7 +3,7 @@ package com.idx.smartspeakdock.weather.model.area;
 import org.litepal.crud.DataSupport;
 
 /**
- * Created by steve on 12/14/17.
+ * Created by danny on 12/14/17.
  */
 
 public class Province extends DataSupport{

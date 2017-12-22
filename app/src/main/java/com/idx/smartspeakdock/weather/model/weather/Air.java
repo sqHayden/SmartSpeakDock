@@ -1,7 +1,7 @@
 package com.idx.smartspeakdock.weather.model.weather;
 
 /**
- * Created by steve on 12/16/17.
+ * Created by danny on 12/16/17.
  */
 
 public class Air {

@@ -50,7 +50,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".music.MusicMainActivity" />
+        <activity android:name=".music.MusicMainActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".map.MapActivity" />
 
         <service
