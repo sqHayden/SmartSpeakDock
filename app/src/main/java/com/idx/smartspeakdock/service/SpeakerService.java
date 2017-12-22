@@ -3,14 +3,12 @@ package com.idx.smartspeakdock.service;
 import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.util.Log;
 
 import com.idx.smartspeakdock.Intents;
-import com.idx.smartspeakdock.broadcast.SpeakerBroadcastReceiver;
 import com.idx.smartspeakdock.baidu.recognise.IStatus;
+import com.idx.smartspeakdock.broadcast.SpeakerBroadcastReceiver;
 
 /**
  * Created by derik on 17-12-15.

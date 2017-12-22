@@ -4,6 +4,7 @@ import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.util.Log;
 
@@ -20,6 +21,7 @@ import com.idx.smartspeakdock.baidu.recognise.PidBuilder;
 import com.idx.smartspeakdock.baidu.recognise.StatusRecogListener;
 import com.idx.smartspeakdock.baidu.recognise.TtsStatusListener;
 import com.idx.smartspeakdock.baidu.recognise.WakeupParams;
+import com.idx.smartspeakdock.baidu.unit.listener.ActionListener;
 import com.idx.smartspeakdock.baidu.wakeup.SimpleWakeupListener;
 import com.idx.smartspeakdock.utils.Logger;
 
@@ -49,6 +51,14 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
 
     private boolean isLocked = false;
     private int wakeUpStatus = STATUS_NONE;
+    private Handler handler = new Handler();
+
+    private Runnable mRecogRunnable = new Runnable() {
+        @Override
+        public void run() {
+            startRecognize();
+        }
+    };
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -72,7 +82,7 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
                     }
                 case Intents.ACTION_RECOGNIZE:
                     if (!UnitManager.getInstance().isSessionOver()) {
-                        startRecognize();
+                        handler.postDelayed(mRecogRunnable, BACK_TRACK);
                     }
                     break;
                 case Intents.ACTION_WAKE_UP_START:
@@ -124,7 +134,7 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
         //初始化语音合成引擎
         TTSManager.getInstance().init(context, TtsMode.ONLINE, new TtsStatusListener(context));
         //初始化百度Unit引擎
-        UnitManager.getInstance().init(context);
+        UnitManager.getInstance().init(context, new ActionListener(context));
 
     }
 
