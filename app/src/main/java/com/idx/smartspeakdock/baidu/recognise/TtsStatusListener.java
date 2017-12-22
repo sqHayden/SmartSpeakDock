@@ -14,18 +14,10 @@ import com.idx.smartspeakdock.utils.AppExecutors;
  */
 
 public class TtsStatusListener implements SpeechSynthesizerListener {
-
-    private String TAG = TtsStatusListener.class.getName();
     private Context mContext;
-
-    private AppExecutors appExecutors = new AppExecutors();
-    private int delayTime = 1200;
-    private DelayRunnable delayRunnable = null;
-
 
     public TtsStatusListener(Context context) {
         mContext = context;
-        delayRunnable = new DelayRunnable(delayTime);
     }
 
     @Override
@@ -55,7 +47,7 @@ public class TtsStatusListener implements SpeechSynthesizerListener {
 
     @Override
     public void onSpeechFinish(String s) {
-        appExecutors.getMainThread().execute(delayRunnable);
+        mContext.sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE));
     }
 
     @Override
@@ -63,23 +55,4 @@ public class TtsStatusListener implements SpeechSynthesizerListener {
 
     }
 
-    public class DelayRunnable implements Runnable {
-        private int time;
-
-        public DelayRunnable(int time) {
-            this.time = time;
-        }
-
-        @Override
-        public void run() {
-            try {
-                Log.d(TAG, "run: sleep now");
-                Thread.sleep(time);
-                mContext.sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE));
-                Log.d(TAG, "run: send now");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }
