@@ -29,7 +29,7 @@ import static com.idx.smartspeakdock.weather.utils.ParseAreaUtil.sendRequestWith
 
 
 /**
- * Created by steve on 12/15/17.
+ * Created by danny on 12/15/17.
  */
 
 public class ChooseCityDialogFragment extends DialogFragment {

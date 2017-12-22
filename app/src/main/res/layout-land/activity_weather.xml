@@ -12,10 +12,17 @@
         android:background="#29cac0"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
+        <ImageView
+            android:id="@+id/weather_choose_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/weather_choose_city" />
+
         <TextView
             android:id="@+id/weather_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:text="深圳"
             android:textSize="30sp" />
     </android.support.v7.widget.Toolbar>
