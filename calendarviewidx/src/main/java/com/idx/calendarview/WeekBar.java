@@ -32,16 +32,6 @@ public class WeekBar extends LinearLayout {
         }
 
     }
-
-    /**
-     * 传递属性
-     *
-     * @param delegate delegate
-     */
-    void setup(CustomCalendarViewDelegate delegate) {
-        setBackgroundColor(delegate.getWeekBackground());
-    }
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         heightMeasureSpec = MeasureSpec.makeMeasureSpec(Util.dipToPx(getContext(), 40), MeasureSpec.EXACTLY);

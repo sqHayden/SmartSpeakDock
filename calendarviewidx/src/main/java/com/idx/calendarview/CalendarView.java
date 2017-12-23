@@ -103,9 +103,6 @@ public class CalendarView extends FrameLayout {
         }
         frameContent.addView(mWeekBar, 2);
         mSelectLayout = (MonthSelectLayout) findViewById(R.id.selectLayout);
-        mWeekBar.setup(mDelegate);
-
-
         this.mMonthPager = (MonthViewPager) findViewById(R.id.vp_calendar);
         this.mMonthPager.mWeekPager = mWeekPager;
 

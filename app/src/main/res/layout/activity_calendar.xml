@@ -4,25 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="@drawable/background"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context="com.idx.smartspeakdock.calendar.CalendarActivity"
     tools:ignore="RtlHardcoded,HardcodedText,RtlSymmetry,SmallSp">
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp">
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/back"/>
+        <ImageView
+            android:id="@+id/calendar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/calendar"
+            android:layout_toRightOf="@+id/back"/>
+        <TextView
+            android:id="@+id/function"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_toRightOf="@+id/calendar"
+            android:text="日历"
+            android:textColor="#ffffff"
+            android:textSize="30sp"
+            />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/rl_tool"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:background="@color/colorPrimary">
+        android:layout_marginBottom="10dp"
+       >
         <TextView
             android:id="@+id/tv_year"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:paddingLeft="20dp"
-            android:textColor="#000000"
+            android:textColor="#FFFFFF"
             android:textSize="26sp"
             android:textStyle="bold"
             tools:ignore="RtlSymmetry" />
@@ -32,7 +61,7 @@
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/tv_year"
             android:gravity="center_vertical"
-            android:textColor="#000000"
+            android:textColor="#FFFFFF"
             android:textSize="26sp"
             android:textStyle="bold"
             tools:ignore="RtlSymmetry" />
@@ -49,8 +78,7 @@
                 android:layout_height="match_parent"
                 android:contentDescription="@string/app_name"
                 android:scaleType="centerInside"
-                android:src="@mipmap/menu_action_calendar_mvp"
-                android:tint="#000000" />
+                android:src="@drawable/select" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -59,7 +87,7 @@
                 android:layout_marginTop="2dp"
                 android:gravity="center"
                 android:text="年"
-                android:textColor="#000000"
+                android:textColor="#FFFFFF"
                 android:textSize="12sp" />
         </FrameLayout>
         <FrameLayout
@@ -75,8 +103,8 @@
                 android:layout_height="match_parent"
                 android:contentDescription="@string/app_name"
                 android:scaleType="centerInside"
-                android:src="@mipmap/menu_action_calendar_mvp"
-                android:tint="#000000" />
+                android:src="@drawable/select"
+                android:tint="#FFFFFF" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -85,30 +113,35 @@
                 android:layout_marginTop="2dp"
                 android:gravity="center"
                 android:text="月"
-                android:textColor="#000000"
+                android:textColor="#FFFFFF"
                 android:textSize="12sp" />
         </FrameLayout>
 
 
         <ImageView
             android:id="@+id/event"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="20dp"
             android:contentDescription="@string/app_name"
             android:scaleType="centerInside"
-            android:src="@mipmap/menu_action_calendar_mvp"
-            android:tint="#000000" />
+            android:src="@drawable/event"
+            />
 
     </RelativeLayout>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="#CFCFCF"
+        />
     <com.idx.calendarview.CalendarLayout
         android:id="@+id/calendarLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#fff"
         android:orientation="vertical"
         app:calendar_content_view_id="@+id/linearView"
         app:default_status="expand">
@@ -117,7 +150,6 @@
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#fff"
             app:current_month_lunar_text_color="#CFCFCF"
             app:current_month_text_color="#333333"
             app:lunar_text_size="10sp"
