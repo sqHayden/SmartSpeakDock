@@ -2,9 +2,13 @@ package com.idx.smartspeakdock.calendar;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -15,7 +19,11 @@ import com.idx.calendarview.Calendar;
 import com.idx.calendarview.CalendarLayout;
 import com.idx.calendarview.CalendarView;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.calendar.adapter.MyRecyclerView;
+import com.idx.smartspeakdock.calendar.bean.Schedule;
 import com.idx.smartspeakdock.calendar.presenter.Presenter;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,17 +41,21 @@ public class CalendarActivity extends Activity implements
     FrameLayout yearSelect;
     @BindView(R.id.selectmonth)
     FrameLayout monthSelect;
-    @BindView(R.id.ib_calendar)
+    @BindView(R.id.event)
     ImageView addButton;
     @BindView(R.id.calendarLayout)
     CalendarLayout mCalendarLayout;
+    @BindView(R.id.recycler)
+    RecyclerView recyclerView;
     private Presenter presenter;
+    private Context context;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
         ButterKnife.bind(this);
-        presenter = new Presenter(this,mCalendarView);
+        context = (Context) CalendarActivity.this;
+        presenter = new Presenter(this,context,mCalendarView);
         addButton.setOnClickListener(this);
         yearSelect.setOnClickListener(this);
         monthSelect.setOnClickListener(this);
@@ -56,7 +68,8 @@ public class CalendarActivity extends Activity implements
     @Override
     public void onClick(View view){
         switch (view.getId()){
-            case R.id.ib_calendar:
+            case R.id.event:
+                presenter.selecttime();
                 break;
             case R.id.selectyear:
                 presenter.selectyear();
@@ -80,6 +93,19 @@ public class CalendarActivity extends Activity implements
     public void showmonth(int year, int month, int day) {
         mCalendarView.selectCurrentMonth();
         mCalendarView.scrollToCalendar(year,month,day);
+    }
+
+    @Override
+    public void showdialog(AlertDialog.Builder dialog) {
+        dialog.show();
+    }
+
+    @Override
+    public void setadapter(List<Schedule> list) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(new MyRecyclerView(list));
     }
 
     @SuppressLint("SetTextI18n")

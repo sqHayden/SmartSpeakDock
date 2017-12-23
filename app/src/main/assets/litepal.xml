@@ -5,5 +5,6 @@
         <mapping class="com.idx.smartspeakdock.weather.model.area.Province"/>
         <mapping class="com.idx.smartspeakdock.weather.model.area.City"/>
         <mapping class="com.idx.smartspeakdock.weather.model.area.County"/>
+        <mapping class="com.idx.smartspeakdock.calendar.bean.Schedule"/>
     </list>
 </litepal>

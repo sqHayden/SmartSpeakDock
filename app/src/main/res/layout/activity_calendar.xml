@@ -91,7 +91,7 @@
 
 
         <ImageView
-            android:id="@+id/ib_calendar"
+            android:id="@+id/event"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_alignParentRight="true"
