@@ -10,4 +10,6 @@
     <string name="map_title">地圖</string>
     <string name="baiduAI_title">語音設置</string>
     <string name="setting_title">設置</string>
+
+    <string name="get_weather_info_error">獲取天氣信息失敗</string>
 </resources>

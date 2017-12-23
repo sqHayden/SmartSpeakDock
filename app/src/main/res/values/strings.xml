@@ -12,4 +12,6 @@
     <string name="map_title">BaiduMap</string>
     <string name="baiduAI_title">BaiduAIVoice</string>
     <string name="setting_title">Setting</string>
+
+    <string name="get_weather_info_error">get weather info error</string>
 </resources>
