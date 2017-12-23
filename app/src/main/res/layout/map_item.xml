@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="10dp"
+    android:layout_marginStart="20dp"
     android:background="@color/item_color"
     >
-
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
+        android:orientation="vertical"
+        android:layout_weight="0.8"
+        >
         <TextView
             android:id="@+id/place_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="龙华文化广场"
             android:textSize="30sp" />
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,14 +43,27 @@
                 />
         </LinearLayout>
     </LinearLayout>
-    <ImageView
-        android:id="@+id/img_point"
-        android:layout_marginRight="10sp"
-        android:layout_marginBottom="15sp"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/map_navigation"
-        android:layout_alignParentRight="true"
-        android:focusable="false"
-        />
-</RelativeLayout>
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical"
+        android:layoutDirection="locale"
+        android:layout_marginEnd="5dp"
+        >
+        <ImageView
+            android:id="@+id/img_point"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/map_navigation"
+            android:focusable="false"
+            android:layout_gravity="center"
+            />
+        <TextView
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="到这儿去"
+            />
+    </LinearLayout>
+</LinearLayout>

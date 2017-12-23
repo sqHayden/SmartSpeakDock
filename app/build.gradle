@@ -5,7 +5,7 @@ android {
         config{
             keyAlias 'key0'
             keyPassword '1365233'
-            storeFile file('./smart_map.jks')
+            storeFile file('./smart.jks')
             storePassword '1365233'
         }
     }

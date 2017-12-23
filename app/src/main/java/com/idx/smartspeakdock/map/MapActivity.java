@@ -1,11 +1,17 @@
 package com.idx.smartspeakdock.map;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -38,7 +44,6 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
-import com.idx.smartspeakdock.map.tools.MyPoiOverlay;
 import com.baidu.mapapi.search.core.PoiInfo;
 import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
@@ -49,11 +54,25 @@ import com.baidu.mapapi.search.poi.PoiNearbySearchOption;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
 import com.baidu.mapapi.utils.DistanceUtil;
+import com.baidu.navisdk.adapter.BNCommonSettingParam;
+import com.baidu.navisdk.adapter.BNOuterLogUtil;
+import com.baidu.navisdk.adapter.BNOuterTTSPlayerCallback;
+import com.baidu.navisdk.adapter.BNRoutePlanNode;
+import com.baidu.navisdk.adapter.BNaviSettingManager;
+import com.baidu.navisdk.adapter.BaiduNaviManager;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.map.tools.BNDemoGuideActivity;
+import com.idx.smartspeakdock.map.tools.BNEventHandler;
+import com.idx.smartspeakdock.map.tools.MyOrientationListener;
+import com.idx.smartspeakdock.map.tools.MyPoiOverlay;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+
 
 public class MapActivity extends Activity implements DialogInterface.OnClickListener {
 
@@ -96,6 +115,41 @@ public class MapActivity extends Activity implements DialogInterface.OnClickList
     private int search_mode = 0;
     //存储poi结果集
     private PoiResult poiResult;
+    //传感器对象
+    private MyOrientationListener myOrientationListener;
+    //旋转角度值
+    private float currentX;
+    //范围距离值
+    private float accu;
+    //路线选择按钮
+    private Button chooseRoute;
+
+    //导航起始点及终点定义
+    private LatLng toLocationData;
+    public static List<Activity> activityList = new LinkedList<Activity>();
+
+    private static final String APP_FOLDER_NAME = "BNSDKSimpleDemo";
+
+    private Button mWgsNaviBtn = null;
+    private Button mGcjNaviBtn = null;
+    private Button mBdmcNaviBtn = null;
+    private Button mDb06ll = null;
+    private String mSDCardPath = null;
+
+    public static final String ROUTE_PLAN_NODE = "routePlanNode";
+    public static final String SHOW_CUSTOM_ITEM = "showCustomItem";
+    public static final String RESET_END_NODE = "resetEndNode";
+    public static final String VOID_MODE = "voidMode";
+
+    private final static String authBaseArr[] =
+            { Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION };
+    private final static String authComArr[] = { Manifest.permission.READ_PHONE_STATE };
+    private final static int authBaseRequestCode = 1;
+    private final static int authComRequestCode = 2;
+
+    private boolean hasInitSuccess = false;
+    private boolean hasRequestComAuth = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,10 +209,35 @@ public class MapActivity extends Activity implements DialogInterface.OnClickList
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("item列表项被点击了","Test Demo");
                 //显示点击时的中心点切换
                 goto_item(poiResult, position);
             }
         });
+//        //监听路径选择事件
+//        chooseRoute.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MapActivity.this,RoutePlanDemo.class);
+//                startActivity(intent);
+//            }
+//        });
+        activityList.add(this);
+        Handler h = new Handler();
+        h.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                String name = Thread.currentThread().getName();
+                Log.i("crug", name);
+                delayTest();
+            }
+        }, 500);
+        BNOuterLogUtil.setLogSwitcher(true);
+        //初始化导航相关
+        if (initDirs()) {
+            initNavi();
+        }
     }
 
     //初始化地图初始资源
@@ -189,6 +268,8 @@ public class MapActivity extends Activity implements DialogInterface.OnClickList
         search_layout = findViewById(R.id.search_edit);
         //获取listView对象
         listView = findViewById(R.id.list_view);
+        //获取路线选择按钮对象
+        chooseRoute = findViewById(R.id.choose_route);
         //设置首次进入
         state = true;
     }
@@ -213,6 +294,25 @@ public class MapActivity extends Activity implements DialogInterface.OnClickList
         mLocationClient.registerLocationListener(mLocationListener);
         //自定义图标对象创建
         bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.map_gpslocked);
+        //传感器对象创建
+        myOrientationListener = new MyOrientationListener(this);
+        //传感器改变方向回调
+        myOrientationListener.setOnOrientationListener(new MyOrientationListener.OnOrientationListener() {
+            @Override
+            public void onOrientationChanged(float x) {
+                currentX = x;
+                if(my_latlng!=null) {
+                    //动态改变地图的图标方向
+                    MyLocationData data = new MyLocationData
+                            .Builder()
+                            .accuracy(accu)
+                            .direction(currentX)
+                            .latitude(my_latlng.latitude)
+                            .longitude(my_latlng.longitude).build();
+                    mBaiduMap.setMyLocationData(data);
+                }
+            }
+        });
     }
 
     //初始化适配器功能
@@ -273,8 +373,17 @@ public class MapActivity extends Activity implements DialogInterface.OnClickList
     @Override
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {
-            case DialogInterface.BUTTON_POSITIVE:            //点击“确定”进入登录界面
+            case DialogInterface.BUTTON_POSITIVE:
                 Toast.makeText(MapActivity.this, "您点击了确定", Toast.LENGTH_SHORT).show();
+                //启用导航功能
+                if (BaiduNaviManager.isNaviInited()) {
+                    Log.d("准备进入导航方法","Test Demo");
+                    Log.d("出发点坐标为：","(lati:"+my_latlng.latitude+","+"long:"+my_latlng.longitude+")");
+                    Log.d("目标点坐标为：","(lati:"+toLocationData.latitude+","+"long:"+toLocationData.longitude+")");
+                    routeplanToNavi(BNRoutePlanNode.CoordinateType.WGS84);
+                }else{
+                    Log.d("地图功能没有准备好","Test Demo");
+                }
                 break;
             case DialogInterface.BUTTON_NEUTRAL:             //点击“取消”
                 Toast.makeText(MapActivity.this, "您点击了取消", Toast.LENGTH_SHORT).show();
@@ -299,6 +408,8 @@ public class MapActivity extends Activity implements DialogInterface.OnClickList
         if (!mLocationClient.isStarted()) {
             mLocationClient.start();
         }
+        //开启传感器
+        myOrientationListener.start();
     }
 
     @Override
@@ -313,6 +424,16 @@ public class MapActivity extends Activity implements DialogInterface.OnClickList
         super.onPause();
         //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
         mMapView.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //停止定位
+        mBaiduMap.setMyLocationEnabled(false);
+        mLocationClient.stop();
+        //停止方向传感器
+        myOrientationListener.stop();
     }
 
     /**
@@ -357,7 +478,7 @@ public class MapActivity extends Activity implements DialogInterface.OnClickList
                 initAdapter();
                 //这传入search对象，因为一般搜索到后，点击时方便发出详细搜索
                 MyPoiOverlay overlay = new MyPoiOverlay(mBaiduMap, mPoiSearch);
-                //设置数据,这里只需要一步，
+                //设置数据,这里只需要一\步，
                 overlay.setData(poiResult);
                 //添加到地图
                 overlay.addToMap();
@@ -406,19 +527,19 @@ public class MapActivity extends Activity implements DialogInterface.OnClickList
         public void onReceiveLocation(BDLocation bdLocation) {
 //            Log.d("进入监听", "Test Log");
             my_latlng = new LatLng(bdLocation.getLatitude(), bdLocation.getLongitude());
-            //显示当前位置图标
-            MyLocationData data = new MyLocationData
-                    .Builder()
-                    .accuracy(bdLocation.getRadius())
-                    .latitude(bdLocation.getLatitude())
-                    .longitude(bdLocation.getLongitude()).build();
-            mBaiduMap.setMyLocationData(data);
             if (state) {
+                accu = bdLocation.getRadius();
+                //显示当前位置图标
+                MyLocationData data = new MyLocationData
+                        .Builder()
+                        .accuracy(accu)
+                        .latitude(bdLocation.getLatitude())
+                        .longitude(bdLocation.getLongitude()).build();
+                mBaiduMap.setMyLocationData(data);
                 //调整地图显示尺寸
                 set_map_size(my_latlng, 15);
                 //获取当前城市名称
                 city_name = bdLocation.getCity();
-                Log.d("当前城市为：", city_name);
             }
         }
     }
@@ -426,7 +547,7 @@ public class MapActivity extends Activity implements DialogInterface.OnClickList
     //listItem点击转换坐标方法
     private void goto_item(PoiResult poiResult, int index) {
         //将中心点设在第index个位置
-        set_map_size(poiResult.getAllPoi().get(index).location, (int) mBaiduMap.getMapStatus().zoom);
+        set_map_size(poiResult.getAllPoi().get(index).location , (int) mBaiduMap.getMapStatus().zoom);
     }
 
     //清空所有覆盖物方法
@@ -528,6 +649,8 @@ public class MapActivity extends Activity implements DialogInterface.OnClickList
             img_point.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //保存查看的地点当做预备的目的地
+                    toLocationData = poiResult.getAllPoi().get(position).location;
                     int index = position+1;
                     //创建一个AlertDialog对话框
                     Dialog dialog = new AlertDialog.Builder(MapActivity.this)
@@ -540,6 +663,365 @@ public class MapActivity extends Activity implements DialogInterface.OnClickList
                 }
             });
             return view;
+        }
+    }
+
+    //导航相关
+
+    public void delayTest() {
+
+    }
+
+    private boolean initDirs() {
+        mSDCardPath = getSdcardDir();
+        if (mSDCardPath == null) {
+            return false;
+        }
+        File f = new File(mSDCardPath, APP_FOLDER_NAME);
+        if (!f.exists()) {
+            try {
+                f.mkdir();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    String authinfo = null;
+
+    /**
+     * 内部TTS播报状态回传handler
+     */
+    private Handler ttsHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            int type = msg.what;
+            switch (type) {
+                case BaiduNaviManager.TTSPlayMsgType.PLAY_START_MSG: {
+                    // showToastMsg("Handler : TTS play start");
+                    break;
+                }
+                case BaiduNaviManager.TTSPlayMsgType.PLAY_END_MSG: {
+                    // showToastMsg("Handler : TTS play end");
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 内部TTS播报状态回调接口
+     */
+    private BaiduNaviManager.TTSPlayStateListener ttsPlayStateListener = new BaiduNaviManager.TTSPlayStateListener() {
+
+        @Override
+        public void playEnd() {
+            // showToastMsg("TTSPlayStateListener : TTS play end");
+        }
+
+        @Override
+        public void playStart() {
+            // showToastMsg("TTSPlayStateListener : TTS play start");
+        }
+    };
+
+    public void showToastMsg(final String msg) {
+        MapActivity.this.runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                Toast.makeText(MapActivity.this, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private boolean hasBasePhoneAuth() {
+        // TODO Auto-generated method stub
+
+        PackageManager pm = this.getPackageManager();
+        for (String auth : authBaseArr) {
+            if (pm.checkPermission(auth, this.getPackageName()) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean hasCompletePhoneAuth() {
+        // TODO Auto-generated method stub
+
+        PackageManager pm = this.getPackageManager();
+        for (String auth : authComArr) {
+            if (pm.checkPermission(auth, this.getPackageName()) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void initNavi() {
+
+        BNOuterTTSPlayerCallback ttsCallback = null;
+
+        // 申请权限
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+
+            if (!hasBasePhoneAuth()) {
+
+                this.requestPermissions(authBaseArr, authBaseRequestCode);
+                return;
+
+            }
+        }
+
+        BaiduNaviManager.getInstance().init(this, mSDCardPath, APP_FOLDER_NAME, new BaiduNaviManager.NaviInitListener() {
+            @Override
+            public void onAuthResult(int status, String msg) {
+                if (0 == status) {
+                    authinfo = "key校验成功!";
+                } else {
+                    authinfo = "key校验失败, " + msg;
+                }
+                MapActivity.this.runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        Toast.makeText(MapActivity.this, authinfo, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+            public void initSuccess() {
+                Toast.makeText(MapActivity.this, "百度导航引擎初始化成功", Toast.LENGTH_SHORT).show();
+                hasInitSuccess = true;
+                initSetting();
+            }
+
+            public void initStart() {
+                Toast.makeText(MapActivity.this, "百度导航引擎初始化开始", Toast.LENGTH_SHORT).show();
+            }
+
+            public void initFailed() {
+                Toast.makeText(MapActivity.this, "百度导航引擎初始化失败", Toast.LENGTH_SHORT).show();
+            }
+
+        }, null, ttsHandler, ttsPlayStateListener);
+
+    }
+
+    private String getSdcardDir() {
+        if (Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
+            return Environment.getExternalStorageDirectory().toString();
+        }
+        return null;
+    }
+
+    private BNRoutePlanNode.CoordinateType mCoordinateType = null;
+
+    private void routeplanToNavi(BNRoutePlanNode.CoordinateType coType) {
+        Log.d("进入导航方法了","Test Demo");
+        mCoordinateType = coType;
+        if (!hasInitSuccess) {
+            Toast.makeText(MapActivity.this, "还未初始化!", Toast.LENGTH_SHORT).show();
+        }
+        // 权限申请
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+            // 保证导航功能完备
+            if (!hasCompletePhoneAuth()) {
+                if (!hasRequestComAuth) {
+                    hasRequestComAuth = true;
+                    this.requestPermissions(authComArr, authComRequestCode);
+                    return;
+                } else {
+                    Toast.makeText(MapActivity.this, "没有完备的权限!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        }
+//        BNRoutePlanNode sNode = null;
+//        BNRoutePlanNode eNode = null;
+//        BNRoutePlanNode sNode = new BNRoutePlanNode(114.052481,22.671418, "我的起点", null, coType);
+//        BNRoutePlanNode eNode = new BNRoutePlanNode(114.04567852765966,22.660850629358585, "我的终点", null, coType);
+        BNRoutePlanNode sNode = new BNRoutePlanNode(my_latlng.longitude,my_latlng.latitude, "我的起点", null, coType);
+        BNRoutePlanNode eNode = new BNRoutePlanNode(toLocationData.longitude,toLocationData.latitude, "我的终点", null, coType);
+
+//        switch (coType) {
+//            case GCJ02: {
+//                sNode = new BNRoutePlanNode(116.30142, 40.05087, "百度大厦", null, coType);
+//                eNode = new BNRoutePlanNode(116.39750, 39.90882, "北京天安门", null, coType);
+//                break;
+//            }
+//            case WGS84: {
+//                sNode = new BNRoutePlanNode(116.300821, 40.050969, "百度大厦", null, coType);
+//                eNode = new BNRoutePlanNode(116.397491, 39.908749, "北京天安门", null, coType);
+//                break;
+//            }
+//            case BD09_MC: {
+//                sNode = new BNRoutePlanNode(12947471, 4846474, "百度大厦", null, coType);
+//                eNode = new BNRoutePlanNode(12958160, 4825947, "北京天安门", null, coType);
+//                break;
+//            }
+//            case BD09LL: {
+//                sNode = new BNRoutePlanNode(116.30784537597782, 40.057009624099436, "百度大厦", null, coType);
+//                eNode = new BNRoutePlanNode(116.40386525193937, 39.915160800132085, "北京天安门", null, coType);
+//                break;
+//            }
+//            default:
+//                ;
+//        }
+        if (sNode != null && eNode != null) {
+            List<BNRoutePlanNode> list = new ArrayList<BNRoutePlanNode>();
+            list.add(sNode);
+            list.add(eNode);
+
+            // 开发者可以使用旧的算路接口，也可以使用新的算路接口,可以接收诱导信息等
+            // BaiduNaviManager.getInstance().launchNavigator(this, list, 1, true, new DemoRoutePlanListener(sNode));
+            BaiduNaviManager.getInstance().launchNavigator(this, list, 1, false, new DemoRoutePlanListener(sNode),
+                    eventListerner);
+        }
+    }
+
+    BaiduNaviManager.NavEventListener eventListerner = new BaiduNaviManager.NavEventListener() {
+
+        @Override
+        public void onCommonEventCall(int what, int arg1, int arg2, Bundle bundle) {
+            BNEventHandler.getInstance().handleNaviEvent(what, arg1, arg2, bundle);
+        }
+    };
+
+    public class DemoRoutePlanListener implements BaiduNaviManager.RoutePlanListener {
+
+        private BNRoutePlanNode mBNRoutePlanNode = null;
+
+        public DemoRoutePlanListener(BNRoutePlanNode node) {
+            mBNRoutePlanNode = node;
+        }
+
+        @Override
+        public void onJumpToNavigator() {
+            /*
+             * 设置途径点以及resetEndNode会回调该接口
+             */
+
+            for (Activity ac : activityList) {
+
+                if (ac.getClass().getName().endsWith("BNDemoGuideActivity")) {
+
+                    return;
+                }
+            }
+            Intent intent = new Intent(MapActivity.this, BNDemoGuideActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(ROUTE_PLAN_NODE, (BNRoutePlanNode) mBNRoutePlanNode);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
+
+        @Override
+        public void onRoutePlanFailed() {
+            // TODO Auto-generated method stub
+            Toast.makeText(MapActivity.this, "算路失败", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void initSetting() {
+        // BNaviSettingManager.setDayNightMode(BNaviSettingManager.DayNightMode.DAY_NIGHT_MODE_DAY);
+        BNaviSettingManager
+                .setShowTotalRoadConditionBar(BNaviSettingManager.PreViewRoadCondition.ROAD_CONDITION_BAR_SHOW_ON);
+        BNaviSettingManager.setVoiceMode(BNaviSettingManager.VoiceMode.Veteran);
+        // BNaviSettingManager.setPowerSaveMode(BNaviSettingManager.PowerSaveMode.DISABLE_MODE);
+        BNaviSettingManager.setRealRoadCondition(BNaviSettingManager.RealRoadCondition.NAVI_ITS_ON);
+        BNaviSettingManager.setIsAutoQuitWhenArrived(true);
+        Bundle bundle = new Bundle();
+        // 必须设置APPID，否则会静音
+        bundle.putString(BNCommonSettingParam.TTS_APP_ID, "9354030");
+        BNaviSettingManager.setNaviSdkParam(bundle);
+    }
+
+    private BNOuterTTSPlayerCallback mTTSCallback = new BNOuterTTSPlayerCallback() {
+
+        @Override
+        public void stopTTS() {
+            // TODO Auto-generated method stub
+            Log.e("test_TTS", "stopTTS");
+        }
+
+        @Override
+        public void resumeTTS() {
+            // TODO Auto-generated method stub
+            Log.e("test_TTS", "resumeTTS");
+        }
+
+        @Override
+        public void releaseTTSPlayer() {
+            // TODO Auto-generated method stub
+            Log.e("test_TTS", "releaseTTSPlayer");
+        }
+
+        @Override
+        public int playTTSText(String speech, int bPreempt) {
+            // TODO Auto-generated method stub
+            Log.e("test_TTS", "playTTSText" + "_" + speech + "_" + bPreempt);
+
+            return 1;
+        }
+
+        @Override
+        public void phoneHangUp() {
+            // TODO Auto-generated method stub
+            Log.e("test_TTS", "phoneHangUp");
+        }
+
+        @Override
+        public void phoneCalling() {
+            // TODO Auto-generated method stub
+            Log.e("test_TTS", "phoneCalling");
+        }
+
+        @Override
+        public void pauseTTS() {
+            // TODO Auto-generated method stub
+            Log.e("test_TTS", "pauseTTS");
+        }
+
+        @Override
+        public void initTTSPlayer() {
+            // TODO Auto-generated method stub
+            Log.e("test_TTS", "initTTSPlayer");
+        }
+
+        @Override
+        public int getTTSState() {
+            // TODO Auto-generated method stub
+            Log.e("test_TTS", "getTTSState");
+            return 1;
+        }
+    };
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        // TODO Auto-generated method stub
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == authBaseRequestCode) {
+            for (int ret : grantResults) {
+                if (ret == 0) {
+                    continue;
+                } else {
+                    Toast.makeText(MapActivity.this, "缺少导航基本的权限!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+            initNavi();
+        } else if (requestCode == authComRequestCode) {
+            for (int ret : grantResults) {
+                if (ret == 0) {
+                    continue;
+                }
+            }
+            routeplanToNavi(mCoordinateType);
         }
     }
 }

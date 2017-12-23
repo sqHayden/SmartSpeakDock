@@ -73,6 +73,14 @@
             android:text="我的位置"
             />
     </LinearLayout>
+    <Button
+        android:id="@+id/choose_route"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/location"
+        android:layout_marginLeft="20dp"
+        android:text="test"
+        />
     <ListView
         android:id="@+id/list_view"
         android:layout_width="match_parent"

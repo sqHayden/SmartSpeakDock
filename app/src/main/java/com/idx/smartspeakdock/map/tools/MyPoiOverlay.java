@@ -5,6 +5,7 @@ package com.idx.smartspeakdock.map.tools;
  */
 
 import android.util.Log;
+
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.search.core.PoiInfo;
 import com.baidu.mapapi.search.poi.PoiDetailSearchOption;
@@ -15,7 +16,7 @@ import com.baidu.mapapi.search.poi.PoiSearch;
  * 用来处理搜索到的对象的信息数据
  * 这里的PoiOverlay是工具类里面的类，需要自己去复制过来使用
  */
-public class MyPoiOverlay extends PoiOverlay {
+ public class MyPoiOverlay extends PoiOverlay {
     /**
      * 构造函数
      */
