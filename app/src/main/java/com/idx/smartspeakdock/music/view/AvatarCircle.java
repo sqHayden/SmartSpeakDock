@@ -1,4 +1,4 @@
-package com.idx.smartspeakdock.music;
+package com.idx.smartspeakdock.music.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -11,13 +11,15 @@ import android.graphics.Paint;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.idx.smartspeakdock.R;
 
 
-public class AvatarCircle extends ImageView {
+public class AvatarCircle extends AppCompatImageView {
 
     //view的宽度
     private int mWidth;
@@ -145,7 +147,6 @@ public class AvatarCircle extends ImageView {
 
 
     }
-
     /**
      * 设置边界笔刷piant
      */
@@ -160,4 +161,5 @@ public class AvatarCircle extends ImageView {
         mBorderPaint.setShadowLayer(12.0f, 3.0f, 3.0f, Color.BLACK);
         //end 设置阴影
     }
+
 }

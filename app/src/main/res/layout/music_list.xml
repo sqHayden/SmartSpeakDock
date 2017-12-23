@@ -3,7 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/now_playing_controls_background_light"
     android:orientation="vertical">
+
     <TextView
         android:id="@+id/classification"
         android:layout_width="match_parent"
@@ -11,23 +13,28 @@
         android:maxLines="1"
         android:ellipsize="end"
         android:paddingLeft="10dp"
-        android:textColor="@color/colorPrimaryDark"
         android:textSize="18sp"
         android:text="" />
+    <!--android:background="@color/colorClassification"-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/list_album"
+            android:layout_width="63dp"
+            android:layout_height="63dp" />
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/list_album"
             android:maxLines="1"
             android:ellipsize="end"
-            android:textSize="25sp"
-            android:text="Title"
-            android:layout_toLeftOf="@+id/status" />
+            android:textSize="23sp"
+            android:text="Title" />
 
         <ImageView
             android:id="@+id/status"
@@ -58,6 +65,5 @@
             android:layout_below="@+id/title"
             android:layout_alignRight="@+id/status"
             android:text="00:00"/>
-
     </RelativeLayout>
 </LinearLayout>

@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.calendar.CalendarActivity;
 import com.idx.smartspeakdock.map.MapActivity;
-import com.idx.smartspeakdock.music.MusicMainActivity;
+import com.idx.smartspeakdock.music.activity.ListActivity;
 import com.idx.smartspeakdock.standby.StandbyActivity;
 import com.idx.smartspeakdock.start.StartActivity;
 import com.idx.smartspeakdock.utils.ActivityUtils;
@@ -121,7 +121,7 @@ public class SwipeActivity extends AppCompatActivity implements OnSelectCityList
                                 break;
                             case R.id.list_navigation_music:
                                 // TODO: 17-12-16 start MusicActivity
-                                startActivity(new Intent(SwipeActivity.this, MusicMainActivity.class));
+                                startActivity(new Intent(SwipeActivity.this, ListActivity.class));
                                 timer.cancel();
                                 break;
                             case R.id.list_navigation_shopping:

@@ -14,4 +14,9 @@
 
     <drawable name="completedTaskBackground">#CCCCCC</drawable>
     <drawable name="touchFeedback">#CFD8DC</drawable>
+    <!--music-->
+    <color name="bar_main">#88BBFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="colorClassification">#EBEBEB</color>
+    <color name="text_color">#3C3F41</color>
 </resources>

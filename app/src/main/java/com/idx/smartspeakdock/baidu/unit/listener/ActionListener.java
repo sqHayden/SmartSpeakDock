@@ -6,7 +6,7 @@ import android.content.Intent;
 import com.idx.smartspeakdock.Actions;
 import com.idx.smartspeakdock.calendar.CalendarActivity;
 import com.idx.smartspeakdock.map.MapActivity;
-import com.idx.smartspeakdock.music.MusicMainActivity;
+import com.idx.smartspeakdock.music.activity.ListActivity;
 import com.idx.smartspeakdock.weather.ui.WeatherActivity;
 
 /**
@@ -48,7 +48,7 @@ public class ActionListener implements IActionListener{
             case Actions.Map.CLOSE_MAP:
                 return true;
             case Actions.Music.OPEN_MUSIC:
-                mIntent = new Intent(mContext, MusicMainActivity.class);
+                mIntent = new Intent(mContext, ListActivity.class);
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 mContext.startActivity(mIntent);
                 return true;
