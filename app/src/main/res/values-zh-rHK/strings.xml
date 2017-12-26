@@ -10,6 +10,10 @@
     <string name="map_title">地圖</string>
     <string name="baiduAI_title">語音設置</string>
     <string name="setting_title">設置</string>
+    //shopping web loading
+    <string name="web_title_loading">網頁加載中</string>
+    <string name="web_message_loading">請等待...</string>
 
+    //weather loading
     <string name="get_weather_info_error">獲取天氣信息失敗</string>
 </resources>
