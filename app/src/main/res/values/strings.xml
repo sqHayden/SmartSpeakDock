@@ -12,6 +12,10 @@
     <string name="map_title">BaiduMap</string>
     <string name="baiduAI_title">BaiduAIVoice</string>
     <string name="setting_title">Setting</string>
+    //shopping web loading
+    <string name="web_title_loading">Loading</string>
+    <string name="web_message_loading">Please wait...</string>
 
+    //weather loading
     <string name="get_weather_info_error">get weather info error</string>
 </resources>

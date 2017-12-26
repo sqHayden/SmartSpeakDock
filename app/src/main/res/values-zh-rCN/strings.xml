@@ -10,6 +10,10 @@
     <string name="map_title">地图</string>
     <string name="baiduAI_title">语音设置</string>
     <string name="setting_title">设置</string>
+    //shopping web loading
+    <string name="web_title_loading">网页加载中</string>
+    <string name="web_message_loading">请等待...</string>
 
+    //weather loading
     <string name="get_weather_info_error">获取天气信息失败</string>
 </resources>

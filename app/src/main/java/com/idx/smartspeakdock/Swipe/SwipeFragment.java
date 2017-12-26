@@ -124,7 +124,7 @@ public class SwipeFragment extends Fragment implements OnWeatherListener {
         mRefreshWeather.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                WeatherUtil.loadWeather(mCurrentCounty,SwipeFragment.this);
+                WeatherUtil.loadWeather(mCurrentCity,SwipeFragment.this);
                 WeatherUtil.loadWeatherAqi(mCurrentCity,SwipeFragment.this);
             }
         });
@@ -159,7 +159,7 @@ public class SwipeFragment extends Fragment implements OnWeatherListener {
             public void run() {
                 updateWeatherINfo(weather);
                 mRefreshWeather.setRefreshing(false);
-                mTitle.setText(mCurrentCounty);
+                mTitle.setText(mCurrentCity);
             }
         });
     }
@@ -232,12 +232,11 @@ public class SwipeFragment extends Fragment implements OnWeatherListener {
             loading();
            /* WeatherUtil.loadWeather(bdLocation.getCity(),SwipeFragment.this);
             WeatherUtil.loadWeatherAqi(bdLocation.getCity(),SwipeFragment.this);*/
-//            mCurrentCity=bdLocation.getCity();
-//            mCurrentCounty=bdLocation.getCountry();
-            Log.d(TAG, "onReceiveLocation: "+mCurrentCity+":"+mCurrentCounty);
-            WeatherUtil.loadWeather(mCurrentCounty,SwipeFragment.this);
+            mCurrentCity=bdLocation.getCity();
+            mCurrentCounty=bdLocation.getCountry();
+            Log.d(TAG, "onReceiveLocation: mCurrentCity = "+mCurrentCity+",mCurrentCounty = "+mCurrentCounty);
+            WeatherUtil.loadWeather(mCurrentCity,SwipeFragment.this);
             WeatherUtil.loadWeatherAqi(mCurrentCity,SwipeFragment.this);
-
         }
     }
 

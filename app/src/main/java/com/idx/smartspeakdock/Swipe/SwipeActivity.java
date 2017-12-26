@@ -21,6 +21,7 @@ import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.calendar.CalendarActivity;
 import com.idx.smartspeakdock.map.MapActivity;
 import com.idx.smartspeakdock.music.activity.ListActivity;
+import com.idx.smartspeakdock.shopping.ShoppingFragment;
 import com.idx.smartspeakdock.standby.StandbyActivity;
 import com.idx.smartspeakdock.start.StartActivity;
 import com.idx.smartspeakdock.utils.ActivityUtils;
@@ -40,6 +41,7 @@ public class SwipeActivity extends AppCompatActivity implements OnSelectCityList
     Timer timer;
     private Intent intent;
     private SwipeFragment swipeFragment;
+    private ShoppingFragment shoppingFragment;
     private String mCurrentCity = "深圳";
     private String mCurrentCounty = "深圳";
 
@@ -105,11 +107,11 @@ public class SwipeActivity extends AppCompatActivity implements OnSelectCityList
                         switch (menuItem.getItemId()) {
                             case R.id.list_navigation_weather:
                                 // TODO: 17-12-16  Do nothing, we're already on that screen
-                               /* if (swipeFragment == null) {
+                                if (swipeFragment == null) {
                                     swipeFragment = SwipeFragment.newInstance();
-                                    ActivityUtils.addFragmentToActivity(
-                                            getSupportFragmentManager(), swipeFragment, R.id.contentFrame);
-                                }*/
+                                }
+                                ActivityUtils.replaceFragmentInActivity(
+                                        getSupportFragmentManager(), swipeFragment, R.id.contentFrame);
                                 timer.cancel();
                                 break;
                             case R.id.list_navigation_calendar:
@@ -124,14 +126,10 @@ public class SwipeActivity extends AppCompatActivity implements OnSelectCityList
                                 break;
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 start ShoppingActivty
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://m.flnet.com"));
-                                //List<ResolveInfo> list = pm.queryIntentActivities(intent,PackageManager.MATCH_DEFAULT_ONLY);
-                                List<ResolveInfo> list = getPackageManager().queryIntentActivities(intent, 0);
-                                Log.i(TAG, "onNavigationItemSelected: list.size() = "+list.size());
-                                if (list.size() > 0) {
-                                    Log.i(TAG, "onNavigationItemSelected: start");
-                                    startActivity(intent);
+                                if(shoppingFragment == null) {
+                                    shoppingFragment = ShoppingFragment.newInstance();
                                 }
+                                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(),shoppingFragment,R.id.contentFrame);
                                 timer.cancel();
                                 break;
                             case R.id.list_navigation_map:
