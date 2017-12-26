@@ -18,8 +18,10 @@ public class MessageStatusRecogListener extends StatusRecogListener {
     private long speechEndTime;
 
     private boolean needTime = true;
+    private Context mContext;
 
-    public MessageStatusRecogListener() {
+    public MessageStatusRecogListener(Context context) {
+        mContext = context;
     }
 
 //    public MessageStatusRecogListener(Handler handler) {
@@ -57,7 +59,7 @@ public class MessageStatusRecogListener extends StatusRecogListener {
         super.onAsrFinalResult(results, recogResult);
         Log.d("onAsrFinalResult", "onAsrFinalResult: ");
         //将识别后的语句交由Unit处理
-        UnitManager.getInstance().sendMessage(results[0]);
+        UnitManager.getInstance().sendMessage(mContext, results[0]);
 
         //调试使用
         String message = "识别结束，结果是”" + results[0] + "”";

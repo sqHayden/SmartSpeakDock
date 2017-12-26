@@ -3,15 +3,18 @@ package com.idx.smartspeakdock;
 import android.Manifest;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 // 只用于继承
 public abstract class BaseActivity extends AppCompatActivity {
@@ -65,7 +68,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         ActivityManager myManager = (ActivityManager) context
                 .getSystemService(Context.ACTIVITY_SERVICE);
         ArrayList<ActivityManager.RunningServiceInfo> runningService = (ArrayList<ActivityManager.RunningServiceInfo>) myManager
-                .getRunningServices(30);
+                .getRunningServices(20);
         for (int i = 0; i < runningService.size(); i++) {
             if (runningService.get(i).service.getClassName().toString()
                     .equals(ServiceName)) {
@@ -74,4 +77,5 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return false;
     }
+
 }
