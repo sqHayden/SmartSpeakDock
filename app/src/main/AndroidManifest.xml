@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.idx.smartspeakdock">
     <uses-sdk tools:overrideLibrary="com.andremion.music.cover"/>
-    <!-- Map权限相关 -->
+
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCES_MOCK_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -28,7 +28,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
-
     <application
         android:name=".SpeakerApplication"
         android:allowBackup="true"
@@ -40,12 +39,18 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="nxmCoUWO2Kc29Fluq0U2Tfvan8eLAOgV" />
+
+        <!--ASR start-->
         <meta-data
             android:name="com.baidu.speech.APP_ID"
             android:value="10570671" />
         <meta-data
+            android:name="com.baidu.speech.API_KEY"
+            android:value="WboUzLTKKUPCybWowQaAdLqd" />
+        <meta-data
             android:name="com.baidu.speech.SECRET_KEY"
             android:value="xFRGimRDN3nBqBX7V1InmM7E1Eb4o6px" />
+        <!--ASR end-->
 
         <activity
             android:name=".standby.StandbyActivity"
@@ -82,17 +87,6 @@
         <activity
             android:name=".weather.ui.WeatherActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-
-
-        <activity
-            android:name=".map.tools.RouteGuideDemo"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
-            android:label="route_guide_demo" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.BAIDUNAVISDK_DEMO" />
-            </intent-filter>
-        </activity>
 
         <activity
             android:name=".map.tools.BNDemoGuideActivity"

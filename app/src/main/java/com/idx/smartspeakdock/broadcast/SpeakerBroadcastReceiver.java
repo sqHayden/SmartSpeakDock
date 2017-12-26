@@ -19,9 +19,7 @@ import com.idx.smartspeakdock.baidu.recognise.IStatus;
 import com.idx.smartspeakdock.baidu.recognise.MessageStatusRecogListener;
 import com.idx.smartspeakdock.baidu.recognise.PidBuilder;
 import com.idx.smartspeakdock.baidu.recognise.StatusRecogListener;
-import com.idx.smartspeakdock.baidu.recognise.TtsStatusListener;
 import com.idx.smartspeakdock.baidu.recognise.WakeupParams;
-import com.idx.smartspeakdock.baidu.unit.listener.ActionListener;
 import com.idx.smartspeakdock.baidu.wakeup.SimpleWakeupListener;
 import com.idx.smartspeakdock.utils.Logger;
 
@@ -76,6 +74,7 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
                     releaseWLKL();
                     break;
                 case Intents.ACTION_WAKE_UP:
+                    //开启会话
                     UnitManager.getInstance().setSessionOver(false);
                     if (isLocked) {
                         unlock(context);
@@ -124,17 +123,20 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
     }
 
     private void initRecog(final Context context) {
+        //初始化语音唤醒
         SimpleWakeupListener listener = new SimpleWakeupListener(context);
         mWakeUpManager = new WakeUpManager(context, listener);
         mWakeupParams = new WakeupParams(context);
 
-        StatusRecogListener recogListener = new MessageStatusRecogListener();
+        //初始化语音识别
+        StatusRecogListener recogListener = new MessageStatusRecogListener(context);
         mRecognizerManager = new RecognizerManager(context, recogListener);
 
-        //初始化语音合成引擎
-        TTSManager.getInstance().init(context, TtsMode.ONLINE, new TtsStatusListener(context));
-        //初始化百度Unit引擎
-        UnitManager.getInstance().init(context, new ActionListener(context));
+        //初始化语音合成
+        TTSManager.getInstance().init(context, TtsMode.ONLINE);
+
+        //初始化Unit交互
+        UnitManager.getInstance().init(context);
 
     }
 

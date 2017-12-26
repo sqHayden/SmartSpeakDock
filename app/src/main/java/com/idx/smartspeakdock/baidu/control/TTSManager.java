@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.util.Log;
 
+import com.baidu.tts.client.SpeechError;
 import com.baidu.tts.client.SpeechSynthesizeBag;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
@@ -22,6 +23,13 @@ public class TTSManager {
     private static final String TAG = TTSManager.class.getName();
     private static TTSManager INSTANCE = null;
     private SpeechSynthesizer mSpeechSynthesizer;
+    private SpeakCallback mCallback;
+
+    public interface SpeakCallback {
+        void onSpeakStart();
+
+        void onSpeakFinish();
+    }
 
     private TTSManager() {
     }
@@ -37,7 +45,7 @@ public class TTSManager {
         return INSTANCE;
     }
 
-    public void init(Context context, TtsMode ttsMode, SpeechSynthesizerListener listener) {
+    public void init(Context context, TtsMode ttsMode) {
         Map<String, Object> authParams = AuthInfo.getAuthParams(context);
         mSpeechSynthesizer = SpeechSynthesizer.getInstance();
         mSpeechSynthesizer.setContext(context);
@@ -50,7 +58,7 @@ public class TTSManager {
         }
 
         //设置事件监听器
-        mSpeechSynthesizer.setSpeechSynthesizerListener(listener);
+        mSpeechSynthesizer.setSpeechSynthesizerListener(new TtsStatusListener());
 
         //设置合成参数，0女声，1男声
         mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEAKER, "0");
@@ -80,11 +88,27 @@ public class TTSManager {
         }
     }
 
+    //播放单个语音时，暂时取消回调
     public void speak(String text) {
+        if (mCallback != null) {
+            mCallback = null;
+        }
         mSpeechSynthesizer.speak(text);
     }
 
+    //播放多条语音
     public void batSpeak(List<SpeechSynthesizeBag> list) {
+        if (mCallback != null) {
+            mCallback = null;
+        }
+        mSpeechSynthesizer.batchSpeak(list);
+    }
+
+    public void batSpeak(List<SpeechSynthesizeBag> list, SpeakCallback callback) {
+        if (mCallback != null) {
+            mCallback = null;
+        }
+        mCallback = callback;
         mSpeechSynthesizer.batchSpeak(list);
     }
 
@@ -110,4 +134,48 @@ public class TTSManager {
         }
     }
 
+    private class TtsStatusListener implements SpeechSynthesizerListener {
+        private TtsStatusListener() {
+        }
+
+        @Override
+        public void onSynthesizeStart(String s) {
+
+        }
+
+        @Override
+        public void onSynthesizeDataArrived(String s, byte[] bytes, int i) {
+
+        }
+
+        @Override
+        public void onSynthesizeFinish(String s) {
+
+        }
+
+        @Override
+        public void onSpeechStart(String s) {
+            if (mCallback != null) {
+                mCallback.onSpeakStart();
+            }
+        }
+
+        @Override
+        public void onSpeechProgressChanged(String s, int i) {
+
+        }
+
+        @Override
+        public void onSpeechFinish(String s) {
+            if (mCallback != null) {
+                mCallback.onSpeakFinish();
+            }
+
+        }
+
+        @Override
+        public void onError(String s, SpeechError speechError) {
+
+        }
+    }
 }
