@@ -1,8 +1,6 @@
 package com.idx.smartspeakdock.Swipe;
 
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.design.widget.NavigationView;
@@ -16,7 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.calendar.CalendarActivity;
 import com.idx.smartspeakdock.map.MapActivity;
@@ -25,20 +23,24 @@ import com.idx.smartspeakdock.shopping.ShoppingFragment;
 import com.idx.smartspeakdock.standby.StandbyActivity;
 import com.idx.smartspeakdock.start.StartActivity;
 import com.idx.smartspeakdock.utils.ActivityUtils;
+import com.idx.smartspeakdock.utils.ToastUtils;
 import com.idx.smartspeakdock.weather.model.weather.Weather;
-import com.idx.smartspeakdock.weather.presenter.OnWeatherListener;
 import com.idx.smartspeakdock.weather.ui.ChooseCityDialogFragment;
-import com.idx.smartspeakdock.weather.utils.WeatherUtil;
+import com.idx.smartspeakdock.weather.ui.WeatherUi;
 
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SwipeActivity extends AppCompatActivity implements OnSelectCityListener,ChooseCityDialogFragment.OnChooseCityCompleted,OnWeatherListener {
+/**
+ * Created by ryan on 17-12-22.
+ * Email: Ryan_chan01212@yeah.net
+ */
+
+public class SwipeActivity extends AppCompatActivity implements OnSelectCityListener,ChooseCityDialogFragment.OnChooseCityCompleted,WeatherUi {
     private static final String TAG = SwipeActivity.class.getSimpleName();
     private DrawerLayout mDrawerLayout;
     private TextView mTitle;
-    Timer timer;
+//    Timer timer;
     private Intent intent;
     private SwipeFragment swipeFragment;
     private ShoppingFragment shoppingFragment;
@@ -54,6 +56,10 @@ public class SwipeActivity extends AppCompatActivity implements OnSelectCityList
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.setStatusBarBackground(R.color.colorSelfBlack);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        //set self color
+        //navigationView.setItemTextColor(null);
+        navigationView.setItemIconTintList(null);
+//        navigationView.setItemBackground(getResources().getDrawable(R.drawable.background));
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
@@ -71,14 +77,14 @@ public class SwipeActivity extends AppCompatActivity implements OnSelectCityList
 
     private void SplashScreen() {
         intent = new Intent(this, StandbyActivity.class);
-        timer = new Timer();
+        /*timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
                 startActivity(intent);
             }
         };
-        timer.schedule(task, 60 * 1000);
+        timer.schedule(task, 60 * 1000);*/
     }
 
     private void initToolBar() {
@@ -112,17 +118,17 @@ public class SwipeActivity extends AppCompatActivity implements OnSelectCityList
                                 }
                                 ActivityUtils.replaceFragmentInActivity(
                                         getSupportFragmentManager(), swipeFragment, R.id.contentFrame);
-                                timer.cancel();
+//                                timer.cancel();
                                 break;
                             case R.id.list_navigation_calendar:
                                 // TODO: 17-12-16 start CalendarActivity
                                 startActivity(new Intent(SwipeActivity.this, CalendarActivity.class));
-                                timer.cancel();
+//                                timer.cancel();
                                 break;
                             case R.id.list_navigation_music:
                                 // TODO: 17-12-16 start MusicActivity
                                 startActivity(new Intent(SwipeActivity.this, ListActivity.class));
-                                timer.cancel();
+//                                timer.cancel();
                                 break;
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 start ShoppingActivty
@@ -130,21 +136,21 @@ public class SwipeActivity extends AppCompatActivity implements OnSelectCityList
                                     shoppingFragment = ShoppingFragment.newInstance();
                                 }
                                 ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(),shoppingFragment,R.id.contentFrame);
-                                timer.cancel();
+//                                timer.cancel();
                                 break;
                             case R.id.list_navigation_map:
                                 // TODO: 17-12-16 start MapActivity
                                 startActivity(new Intent(SwipeActivity.this, MapActivity.class));
-                                timer.cancel();
+//                                timer.cancel();
                                 break;
                             case R.id.list_navigation_voice:
                                 // TODO: 17-12-16 start voice function
                                 startActivity(new Intent(SwipeActivity.this, StartActivity.class));
-                                timer.cancel();
+//                                timer.cancel();
                                 break;
                             case R.id.list_navigation_setting:
                                 // TODO: 17-12-16 start SettingActivity
-                                timer.cancel();
+//                                timer.cancel();
                                 break;
                             default:
                                 break;
@@ -171,8 +177,7 @@ public class SwipeActivity extends AppCompatActivity implements OnSelectCityList
 
     @Override
     public void chooseCityCompleted(String countyName, String cityNime) {
-        swipeFragment.loading();
-        WeatherUtil.loadWeather(cityNime,this);
+        if(swipeFragment != null) swipeFragment.mWeatherPresenter.getWeather(cityNime);
         Log.d(TAG,cityNime);
         mCurrentCounty = countyName;
         mCurrentCity = cityNime;
@@ -197,42 +202,9 @@ public class SwipeActivity extends AppCompatActivity implements OnSelectCityList
         }
         Log.d(TAG, "chooseCityCompleted: "+cityNime);
         if (!(cityNime.equals("香港") || cityNime.equals("澳门") || cityNime.equals("台北") || cityNime.equals("高雄") || cityNime.equals("台中"))) {
-            WeatherUtil.loadWeatherAqi(cityNime,this);
+            if(swipeFragment != null) swipeFragment.mWeatherPresenter.getWeatherAqi(cityNime);
         }
         mTitle.setText(countyName);
-    }
-
-    @Override
-    public void onSuccess(final Weather weather) {
-        swipeFragment.compelete();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                swipeFragment.updateWeatherINfo(weather);
-            }
-        });
-    }
-
-    @Override
-    public void onSuccessAqi(final Weather weather) {
-        swipeFragment.compelete();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                swipeFragment.updateWeatherAqi(weather);
-            }
-        });
-    }
-
-    @Override
-    public void onError() {
-        swipeFragment.compelete();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.get_weather_info_error), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
@@ -243,10 +215,49 @@ public class SwipeActivity extends AppCompatActivity implements OnSelectCityList
     }
 
     @Override
+    public void showLoading() {
+        if(swipeFragment != null) swipeFragment.loading();
+    }
+
+    @Override
+    public void hideLoading() {
+        if(swipeFragment != null) swipeFragment.compelete();
+    }
+
+    @Override
+    public void showError() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ToastUtils.showError(getApplicationContext(),getResources().getString(R.string.get_weather_info_error));
+            }
+        });
+    }
+
+    @Override
+    public void setWeatherInfo(final Weather weather) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(swipeFragment != null) swipeFragment.updateWeatherINfo(weather);
+            }
+        });
+    }
+
+    @Override
+    public void setWeatherAqi(final Weather weather) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(swipeFragment != null) swipeFragment.updateWeatherAqi(weather);
+            }
+        });
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(swipeFragment != null){
-
-        }
+        if(swipeFragment != null) swipeFragment = null;
+        if(shoppingFragment != null) shoppingFragment = null;
     }
 }

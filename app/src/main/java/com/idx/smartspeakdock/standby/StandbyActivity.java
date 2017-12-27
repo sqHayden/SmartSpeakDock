@@ -17,6 +17,7 @@ import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.standby.presenter.StandByPresenter;
+import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.weather.model.weather.Weather;
 import com.idx.smartspeakdock.weather.utils.HandlerWeatherUtil;
 
@@ -40,6 +41,7 @@ public class StandbyActivity extends BaseActivity implements IStandByView{
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mLocationClient = new LocationClient(getApplicationContext());
         mLocationClient.registerLocationListener(new StandbyLocationListener());
+        Logger.setEnable(true);
         setContentView(R.layout.activity_standby);
         init();
         layout.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +109,7 @@ public class StandbyActivity extends BaseActivity implements IStandByView{
 
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
-            Log.d(TAG, "onReceiveLocation: "+ bdLocation.getCity());
+            Logger.info(TAG, "onReceiveLocation: "+ bdLocation.getCity());
             location_textView.setText(bdLocation.getCity());
             mStandByPresenter.requestWeather(bdLocation.getCity());
         }
@@ -121,7 +123,7 @@ public class StandbyActivity extends BaseActivity implements IStandByView{
 
     private void showWeatherInfo(Weather weather) {
         if(weather.now.code != null) {
-            Log.i(TAG, "onResponse: weather.now.code = " + weather.now.code);
+            Logger.info(TAG, "onResponse: weather.now.code = " + weather.now.code);
             weatherIcon.setImageResource(HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(weather.now.code)));
         }else {
             weatherIcon.setImageResource(R.drawable.weather_unknown);

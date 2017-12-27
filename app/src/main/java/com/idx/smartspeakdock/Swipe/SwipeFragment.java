@@ -3,6 +3,7 @@ package com.idx.smartspeakdock.Swipe;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,25 +17,28 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.utils.Logger;
+import com.idx.smartspeakdock.utils.NetStatusUtils;
+import com.idx.smartspeakdock.utils.ToastUtils;
 import com.idx.smartspeakdock.weather.model.weather.Forecast;
 import com.idx.smartspeakdock.weather.model.weather.Weather;
-import com.idx.smartspeakdock.weather.presenter.OnWeatherListener;
+import com.idx.smartspeakdock.weather.presenter.WeatherPresenter;
+import com.idx.smartspeakdock.weather.presenter.WeatherPresenterImpl;
+import com.idx.smartspeakdock.weather.ui.WeatherUi;
 import com.idx.smartspeakdock.weather.utils.HandlerWeatherUtil;
-import com.idx.smartspeakdock.weather.utils.WeatherUtil;
 
 /**
  * Created by ryan on 17-12-22.
  * Email: Ryan_chan01212@yeah.net
  */
 
-public class SwipeFragment extends Fragment implements OnWeatherListener {
+public class SwipeFragment extends Fragment implements WeatherUi {
     private static final String TAG = SwipeFragment.class.getSimpleName();
     ImageView mWeatherSelectCity;
     View mWeatherView;
@@ -50,12 +54,18 @@ public class SwipeFragment extends Fragment implements OnWeatherListener {
     private String mCurrentCity = "深圳";
     private String mCurrentCounty = "深圳";
 
+    public WeatherPresenter mWeatherPresenter;
+    private Resources mResources;
+    private Context mContext;
+
     public static SwipeFragment newInstance(){return new SwipeFragment();}
 
     @Override
     public void onAttach(Context context) {
-        Log.i("ryan", "onAttach: ");
         super.onAttach(context);
+        mResources = context.getResources();
+        mContext = context;
+        Logger.setEnable(true);
     }
 
     @Override
@@ -67,12 +77,13 @@ public class SwipeFragment extends Fragment implements OnWeatherListener {
             mCurrentCity = savedInstanceState.getString("city");
             mCurrentCounty = savedInstanceState.getString("county");
         }
+        mWeatherPresenter = new WeatherPresenterImpl(this);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.i("ryan", "onCreateView: ");
+        Logger.info(TAG,"onCreateView:");
         mWeatherView = inflater.inflate(R.layout.activity_weather,container,false);
         mWeatherSelectCity = mWeatherView.findViewById(R.id.weather_choose_city);
         mWeatherSelectCity.setOnClickListener(new View.OnClickListener() {
@@ -84,7 +95,11 @@ public class SwipeFragment extends Fragment implements OnWeatherListener {
             }
         });
         initView();
-        requestLocation();
+        if(NetStatusUtils.isWifiConnected(mContext) || NetStatusUtils.isMobileConnected(mContext)){
+            requestLocation();
+        }else{
+            ToastUtils.showMessage(mContext,mResources.getString(R.string.network_not_connected));
+        }
         return mWeatherView;
     }
 
@@ -109,13 +124,13 @@ public class SwipeFragment extends Fragment implements OnWeatherListener {
         mSO2 = mWeatherView.findViewById(R.id.weather_air_so2);
         mO3 = mWeatherView.findViewById(R.id.weather_air_o3);
         mCO = mWeatherView.findViewById(R.id.weather_air_co);
-        loadingDialog = new ProgressDialog(getActivity());
-        loadingDialog.setTitle("加载天气中...");
+        loadingDialog = new ProgressDialog(mContext);
+        loadingDialog.setTitle(mResources.getString(R.string.weather_loading_dialog));
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        Log.i("ryan", "onActivityCreated: ");
+        Logger.info("ryan", "onActivityCreated: ");
         super.onActivityCreated(savedInstanceState);
         if(getActivity() instanceof OnSelectCityListener){
             ((OnSelectCityListener)getActivity()).OnInitView(mWeatherView);
@@ -124,8 +139,13 @@ public class SwipeFragment extends Fragment implements OnWeatherListener {
         mRefreshWeather.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                WeatherUtil.loadWeather(mCurrentCity,SwipeFragment.this);
-                WeatherUtil.loadWeatherAqi(mCurrentCity,SwipeFragment.this);
+                if(NetStatusUtils.isMobileConnected(mContext) || NetStatusUtils.isWifiConnected(mContext)){
+                    mWeatherPresenter.getWeather(mCurrentCity);
+                    mWeatherPresenter.getWeatherAqi(mCurrentCity);
+                }else{
+                    mRefreshWeather.setRefreshing(false);
+                    ToastUtils.showMessage(mContext,mResources.getString(R.string.network_not_connected));
+                }
             }
         });
     }
@@ -151,15 +171,35 @@ public class SwipeFragment extends Fragment implements OnWeatherListener {
         mLocationClient.setLocOption(option);
     }
 
+    public void loading(){loadingDialog.show();}
+
+    public void compelete(){loadingDialog.dismiss();}
+
     @Override
-    public void onSuccess(final Weather weather) {
-        compelete();
+    public void showLoading() {loading();}
+
+    @Override
+    public void hideLoading() {compelete();}
+
+    @Override
+    public void showError() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mRefreshWeather.setRefreshing(false);
+                ToastUtils.showError(mContext,mResources.getString(R.string.get_weather_info_error));
+            }
+        });
+    }
+
+    @Override
+    public void setWeatherInfo(final Weather weather) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 updateWeatherINfo(weather);
                 mRefreshWeather.setRefreshing(false);
-                mTitle.setText(mCurrentCity);
+                mTitle.setText(weather.basic.cityName);
             }
         });
     }
@@ -176,7 +216,7 @@ public class SwipeFragment extends Fragment implements OnWeatherListener {
         mTitle.setText(weather.basic.cityName);
         mForecastLayout.removeAllViews();
         for (Forecast forecast : weather.forecastList) {
-            View view = LayoutInflater.from(getActivity()).inflate(R.layout.activity_weather_daily_forecast_item, mForecastLayout, false);
+            View view = LayoutInflater.from(mContext).inflate(R.layout.activity_weather_daily_forecast_item, mForecastLayout, false);
             String date = HandlerWeatherUtil.parseDate(forecast.date);
             ((TextView) view.findViewById(R.id.weather_daily_forecast_item_date)).setText(date);
             ((ImageView) view.findViewById(R.id.weather_daily_forecast_item_icon)).setImageResource(HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(forecast.code)));
@@ -185,9 +225,9 @@ public class SwipeFragment extends Fragment implements OnWeatherListener {
         }
     }
 
+
     @Override
-    public void onSuccessAqi(final Weather weather) {
-        compelete();
+    public void setWeatherAqi(final Weather weather) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -208,42 +248,26 @@ public class SwipeFragment extends Fragment implements OnWeatherListener {
         mScrollView.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    public void onError() {
-        compelete();
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mRefreshWeather.setRefreshing(false);
-                Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.get_weather_info_error), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void loading(){loadingDialog.show();}
-
-    public void compelete(){loadingDialog.dismiss();}
-
     private class StandbyLocationListener  implements BDLocationListener {
 
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
-            Log.d(TAG, "onReceiveLocation: "+ bdLocation.getCity());
+            Logger.info(TAG, "onReceiveLocation: "+ bdLocation.getCity());
             loading();
            /* WeatherUtil.loadWeather(bdLocation.getCity(),SwipeFragment.this);
             WeatherUtil.loadWeatherAqi(bdLocation.getCity(),SwipeFragment.this);*/
             mCurrentCity=bdLocation.getCity();
             mCurrentCounty=bdLocation.getCountry();
-            Log.d(TAG, "onReceiveLocation: mCurrentCity = "+mCurrentCity+",mCurrentCounty = "+mCurrentCounty);
-            WeatherUtil.loadWeather(mCurrentCity,SwipeFragment.this);
-            WeatherUtil.loadWeatherAqi(mCurrentCity,SwipeFragment.this);
+            Logger.info(TAG, "onReceiveLocation: mCurrentCity = "+mCurrentCity+",mCurrentCounty = "+mCurrentCounty);
+            mWeatherPresenter.getWeather(mCurrentCity);
+            mWeatherPresenter.getWeatherAqi(mCurrentCity);
         }
     }
 
 
     @Override
     public void onDestroy() {
-        Log.i("ryan", "onDestroy: ");
+        Logger.info(TAG, "onDestroy: ");
         super.onDestroy();
         mLocationClient.stop();
     }
