@@ -7,6 +7,6 @@ package com.idx.smartspeakdock.calendar.presenter;
 public interface Ipresenter {
     void selectyear();
     void selectmonth();
-    void selecttime();
     void getdata();
+    void setdate(int hours,int minutes,String event);
 }

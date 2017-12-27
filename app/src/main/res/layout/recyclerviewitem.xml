@@ -5,7 +5,6 @@
     android:layout_marginBottom="3dp"
     android:layout_marginLeft="3dp"
     android:layout_marginRight="3dp"
-    android:background="@drawable/bg_item_schedule"
     android:gravity="center_vertical"
     android:orientation="horizontal">
     <View
@@ -23,8 +22,7 @@
         android:layout_weight="1"
         android:ellipsize="end"
         android:lines="1"
-        android:text="和老板吃饭"
-        android:textColor="#272E3E"
+        android:textColor="#FFFFFF"
         android:textSize="16sp"/>
 
     <TextView
@@ -33,6 +31,6 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="12dp"
         android:ellipsize="end"
-        android:textColor="#272E3E"
+        android:textColor="#FFFFFF"
         android:textSize="16sp"/>
 </LinearLayout>

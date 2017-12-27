@@ -12,19 +12,19 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp">
+        android:layout_marginTop="22dp"
+        android:layout_marginLeft="22dp">
         <ImageView
             android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="17dp"
             android:src="@drawable/back"/>
         <ImageView
             android:id="@+id/calendar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="17dp"
             android:src="@drawable/calendar"
             android:layout_toRightOf="@+id/back"/>
         <TextView
@@ -141,7 +141,7 @@
     <com.idx.calendarview.CalendarLayout
         android:id="@+id/calendarLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:calendar_content_view_id="@+id/linearView"
         app:default_status="expand">
@@ -150,26 +150,20 @@
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:current_month_lunar_text_color="#CFCFCF"
-            app:current_month_text_color="#333333"
+            app:current_month_lunar_text_color="#FFFFFF"
+            app:current_month_text_color="#FFFFFF"
             app:lunar_text_size="10sp"
-            app:other_month_text_color="#e1e1e1"
-            app:scheme_lunar_text_color="#CFCFCF"
+            app:other_month_text_color="#B3B3B3"
+            app:scheme_lunar_text_color="#B3B3B3"
             app:scheme_text="假"
-            app:scheme_text_color="#333"
-            app:scheme_theme_color="#128c4b"
             app:selected_lunar_text_color="#CFCFCF"
-            app:selected_text_color="#333"
-            app:selected_theme_color="#108cd4"
-            app:week_background="#fff"
-            app:week_bar_view="com.idx.smartspeakdock.calendar.EnglishWeekBar"
-            app:week_text_color="#111" />
+            app:selected_text_color="#FFFFFF"
+            app:week_bar_view="com.idx.smartspeakdock.calendar.EnglishWeekBar"/>
     </com.idx.calendarview.CalendarLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
-
 </LinearLayout>
 

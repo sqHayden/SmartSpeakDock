@@ -52,4 +52,5 @@ dependencies {
     implementation project(':chatkit')
     compile 'com.belerweb:pinyin4j:2.5.0'
     compile 'com.github.andremion:musiccoverview:1.0.0'
+    compile 'com.android.support:recyclerview-v7:21.0.+'
 }
