@@ -37,15 +37,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-        <!--    <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_add_task"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/fab_margin"
-                android:src="@drawable/ic_add"
-                app:fabSize="normal"
-                app:layout_anchor="@id/contentFrame"
-                app:layout_anchorGravity="bottom|right|end" />-->
+            <!--    <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fab_add_task"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/fab_margin"
+                    android:src="@drawable/ic_add"
+                    app:fabSize="normal"
+                    app:layout_anchor="@id/contentFrame"
+                    app:layout_anchorGravity="bottom|right|end" />-->
         </android.support.design.widget.CoordinatorLayout>
 
     </LinearLayout>
@@ -58,6 +58,13 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_actions" />
+        app:menu="@menu/drawer_actions"
+        app:itemIconTint="#6490E4"
+        />
+    <!--
+
+    app:itemTextColor="#ffffff"
+    app:itemBackground="#57A2E5"
+    -->
 
 </android.support.v4.widget.DrawerLayout>

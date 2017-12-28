@@ -25,8 +25,11 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.Constructor;
 
@@ -66,6 +69,7 @@ public class CalendarView extends FrameLayout {
      * 日历外部收缩布局
      */
     CalendarLayout mParentLayout;
+    private View view;
 
 
     public CalendarView(@NonNull Context context) {
@@ -103,6 +107,7 @@ public class CalendarView extends FrameLayout {
         }
         frameContent.addView(mWeekBar, 2);
         mSelectLayout = (MonthSelectLayout) findViewById(R.id.selectLayout);
+        view = (View) findViewById(R.id.line);
         this.mMonthPager = (MonthViewPager) findViewById(R.id.vp_calendar);
         this.mMonthPager.mWeekPager = mWeekPager;
 
@@ -139,6 +144,8 @@ public class CalendarView extends FrameLayout {
                         && mMonthPager.getCurrentItem() != mDelegate.mCurrentMonthViewItem) {
                     return;
                 }
+                String aa = String.valueOf(calendar.getYear()) + String.valueOf(calendar.getMonth());
+                EventBus.getDefault().post(new MessageEvent(aa,calendar.getDay()));
                 mDelegate.mSelectedCalendar = calendar;
                 mWeekPager.updateSelected(mDelegate.mSelectedCalendar);
                 mMonthPager.updateSelected();
@@ -215,7 +222,7 @@ public class CalendarView extends FrameLayout {
             mParentLayout.mContentView.setVisibility(GONE);
         }
         mWeekPager.setVisibility(GONE);
-
+        view.setVisibility(GONE);
         mWeekBar.animate()
                 .translationY(-mWeekBar.getHeight())
                 .setInterpolator(new LinearInterpolator())
@@ -377,7 +384,7 @@ public class CalendarView extends FrameLayout {
         mSelectLayout.setVisibility(GONE);
         mWeekBar.setVisibility(VISIBLE);
         mMonthPager.setVisibility(VISIBLE);
-
+        view.setVisibility(VISIBLE);
         Calendar calendar = new Calendar();
         calendar.setYear(getCurYear());
         calendar.setMonth(getCurMonth());

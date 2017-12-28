@@ -11,4 +11,5 @@ import java.util.List;
 public interface Imodel {
     void setdata(int hour,int minute,String event);
     List<Schedule> getdata();
+    void deletedate(String date,Integer day,String event,String time);
 }

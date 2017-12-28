@@ -49,50 +49,19 @@ public class Presenter implements Ipresenter{
     public void selectmonth() {
       iview.showmonth(mYear,mMonth,mDay);
     }
+    @Override
+    public void setdate(int hours, int minutes, String event) {
+        model.setdata(hours,minutes,event);
+    }
 
     @Override
-    public void selecttime() {
-        AlertDialog.Builder dialog = setCustomDialog();
-        iview.showdialog(dialog);
+    public void deletedate(String date, Integer day, String event, String time) {
+        Log.v("1218","删除"+ date + day + event + time);
+     model.deletedate(date,day,event,time);
     }
 
     @Override
     public void getdata() {
         List<Schedule> list = model.getdata();
-        iview.setadapter(list);
-    }
-    private AlertDialog.Builder setCustomDialog(){
-        AlertDialog.Builder customdialog = new AlertDialog.Builder(context);
-        final View dialogView = LayoutInflater.from(context).inflate(R.layout.custom_dialog,null);
-        TimePicker timePicker = (TimePicker) dialogView.findViewById(R.id.time);
-        final EditText editText = (EditText) dialogView.findViewById(R.id.editevent);
-        timePicker.setIs24HourView(true);
-        timePicker.setOnTimeChangedListener(new TimeListener());
-        customdialog.setTitle("请添加事件");
-        customdialog.setView(dialogView);
-        customdialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Log.v("1218",hour +"//"+ minutes+"//" + editText.getText().toString());
-                model.setdata(hour,minutes,editText.getText().toString());
-            }
-        });
-        customdialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        return customdialog;
-    }
-    class TimeListener implements TimePicker.OnTimeChangedListener {
-
-        @Override
-        public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-            // TODO Auto-generated method stub
-            hour = hourOfDay;
-            minutes = minute;
-        }
-
     }
 }

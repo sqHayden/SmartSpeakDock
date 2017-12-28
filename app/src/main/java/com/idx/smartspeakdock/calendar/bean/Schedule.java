@@ -9,10 +9,16 @@ import org.litepal.crud.DataSupport;
 public class Schedule extends DataSupport{
     private String event;
     private String time;
-    private Integer year;
-    private Integer month;
+    private String date;
     private Integer day;
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
     public String getEvent() {
         return event;
     }
@@ -27,22 +33,6 @@ public class Schedule extends DataSupport{
 
     public void setTime(String time) {
         this.time = time;
-    }
-
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
-    }
-
-    public Integer getMonth() {
-        return month;
-    }
-
-    public void setMonth(Integer month) {
-        this.month = month;
     }
 
     public Integer getDay() {
