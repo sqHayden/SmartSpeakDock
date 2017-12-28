@@ -18,6 +18,7 @@ import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.baidu.control.UnitManager;
+import com.idx.smartspeakdock.baidu.unit.listener.IMusicVoiceListener;
 import com.idx.smartspeakdock.music.adapter.LocalListAdapter;
 import com.idx.smartspeakdock.music.adapter.ViewPagerAdapter;
 import com.idx.smartspeakdock.music.entity.LocalMusic;
@@ -49,7 +53,7 @@ import java.util.List;
  * Email: Ryan_chan01212@yeah.net
  */
 
-public class ListFragment extends Fragment implements View.OnClickListener{
+public class ListFragment extends BaseFragment implements View.OnClickListener{
     private static final String TAG = ListFragment.class.getSimpleName();
     private static final int PERMISSION_REQUEST_CODE = 1;
     private static String[] permissionArray = new String[] {
@@ -104,6 +108,41 @@ public class ListFragment extends Fragment implements View.OnClickListener{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         addListener();
+
+        UnitManager.getInstance().setMusicVoiceListener(new IMusicVoiceListener() {
+            @Override
+            public void onPlay(int index) {
+                Log.d(TAG, "onPlay: index");
+                start();
+            }
+
+            @Override
+            public void onPlay(String name) {
+                Log.d(TAG, "onPlay: name");
+                mPlayingIndex = 1;
+                start();
+            }
+
+            @Override
+            public void onPause() {
+                pause();
+            }
+
+            @Override
+            public void onContinue() {
+                start();
+            }
+
+            @Override
+            public void onNext() {
+                musicChange(true, true);
+            }
+
+            @Override
+            public void onPrevious() {
+
+            }
+        });
     }
 
     private void addListener() {
@@ -448,6 +487,19 @@ public class ListFragment extends Fragment implements View.OnClickListener{
     public void finish() {
         getActivity().moveTaskToBack(false);
     }*/
+
+    private void start() {
+        if (mPlayingIndex >= 0 && mPlayingIndex < mListOfAudioItemList.size()) {
+            List<LocalMusicItem> localMusicItemList = mListOfAudioItemList.get(mPlayingIndex);
+            if (mLastPlay >= 0 && mLastPlay < localMusicItemList.size()) {
+                Intent intent = getAudioIntent(localMusicItemList.get(mLastPlay).getAudio());
+                intent.setClass(mContext, PlayerActivity.class);
+                intent.putExtra(LocalPlayService.AUDIO_IS_PLAYING_BOOL, mIsPlaying);
+                startActivity(intent);
+//                        overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_top);
+            }
+        }
+    }
 
     @Override
     public void onClick(View v) {

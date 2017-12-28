@@ -6,13 +6,11 @@ import android.util.Log;
 
 import com.idx.smartspeakdock.Actions;
 import com.idx.smartspeakdock.Modules;
+import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.TTSManager;
 import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
-import com.idx.smartspeakdock.calendar.CalendarActivity;
 import com.idx.smartspeakdock.map.MapActivity;
-import com.idx.smartspeakdock.music.activity.ListActivity;
-import com.idx.smartspeakdock.shopping.ShoppingActivity;
-import com.idx.smartspeakdock.weather.ui.WeatherActivity;
+import com.idx.smartspeakdock.utils.GlobalUtils;
 
 
 /**
@@ -161,28 +159,34 @@ public class VoiceActionAdapter implements IVoiceActionListener {
     }
 
     private void openModule(String name) {
+        if(mIntent != null) mIntent = null;
+        mIntent = new Intent(mContext, SwipeActivity.class);
         switch (name){
             case Modules.CALENDER:
-                mIntent = new Intent(mContext, CalendarActivity.class);
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID);
                 mContext.startActivity(mIntent);
                 break;
             case Modules.WEATHER:
-                mIntent = new Intent(mContext, WeatherActivity.class);
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.WEATHER_FRAGMENT_INTENT_ID);
                 mContext.startActivity(mIntent);
                 break;
             case Modules.MAP:
-                mIntent = new Intent(mContext, MapActivity.class);
+                if(mIntent != null) mIntent = null;
+                mIntent = new Intent(mContext,MapActivity.class);
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 mContext.startActivity(mIntent);
                 break;
             case Modules.MUSIC:
-                mIntent = new Intent(mContext, ListActivity.class);
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
                 mContext.startActivity(mIntent);
                 break;
             case Modules.SHOPPING:
+                mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
+                mContext.startActivity(mIntent);
                 break;
 
         }

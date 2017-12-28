@@ -10,24 +10,18 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
-import com.idx.smartspeakdock.calendar.CalendarActivity;
 import com.idx.smartspeakdock.map.MapActivity;
-import com.idx.smartspeakdock.music.activity.ListActivity;
 import com.idx.smartspeakdock.service.SpeakerService;
-import com.idx.smartspeakdock.shopping.ShoppingFragment;
 import com.idx.smartspeakdock.standby.StandByFragment;
-import com.idx.smartspeakdock.start.StartActivity;
 import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
@@ -62,8 +56,6 @@ public class DrawerActivity extends BaseActivity {
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), standByFragment, R.id.contentFrame);
         }
-
-        SplashScreen();
 
         if (!isServiceRunning(this, "com.idx.smartspeakdock.start.SpeakerService")) {
             startService(new Intent(this, SpeakerService.class));
@@ -114,18 +106,6 @@ public class DrawerActivity extends BaseActivity {
         });
     }
 
-    private void SplashScreen() {
-//        mIntent = new Intent(this, StandbyActivity.class);
-        /*timer = new Timer();
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                startActivity(mIntent);
-            }
-        };
-        timer.schedule(task, 60 * 1000);*/
-    }
-
     private void initToolBar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -156,38 +136,28 @@ public class DrawerActivity extends BaseActivity {
                                 // TODO: 17-12-16  Do nothing, we're already on that screen
                                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.WEATHER_FRAGMENT_INTENT_ID);
                                 startActivity(mIntent);
-//                                timer.cancel();
                                 break;
                             case R.id.list_navigation_calendar:
                                 // TODO: 17-12-16 start CalendarActivity
                                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID);
                                 startActivity(mIntent);
-//                                timer.cancel();
                                 break;
                             case R.id.list_navigation_music:
                                 // TODO: 17-12-16 start MusicActivity
                                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
                                 startActivity(mIntent);
-//                                timer.cancel();
                                 break;
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 start ShoppingActivty
                                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
                                startActivity(mIntent);
-//                                timer.cancel();
                                 break;
                             case R.id.list_navigation_map:
                                 // TODO: 17-12-16 start MapActivity
                                 startActivity(new Intent(DrawerActivity.this, MapActivity.class));
-//                                timer.cancel();
-                                break;
-                            case R.id.list_navigation_voice:
-                                // TODO: 17-12-16 start voice function
-//                                timer.cancel();
                                 break;
                             case R.id.list_navigation_setting:
                                 // TODO: 17-12-16 start SettingActivity
-//                                timer.cancel();
                                 break;
                             default:
                                 break;

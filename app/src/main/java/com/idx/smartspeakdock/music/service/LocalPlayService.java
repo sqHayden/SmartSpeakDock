@@ -14,8 +14,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.idx.smartspeakdock.R;
-import com.idx.smartspeakdock.music.activity.ListActivity;
+import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.music.util.MediaUtils;
+import com.idx.smartspeakdock.utils.GlobalUtils;
 
 
 public class LocalPlayService extends Service {
@@ -191,8 +192,9 @@ public class LocalPlayService extends Service {
 
     private void openPlayerActivity() {
         Intent intent = getAudioIntent();
-        intent.setClass(this, ListActivity.class);
+        intent.setClass(this, SwipeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
         startActivity(intent);
     }
 

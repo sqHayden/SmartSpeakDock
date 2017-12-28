@@ -12,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -21,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.calendar.CalendarFragment;
 import com.idx.smartspeakdock.map.MapActivity;
@@ -36,7 +36,7 @@ import com.idx.smartspeakdock.utils.Logger;
  * Email: Ryan_chan01212@yeah.net
  */
 
-public class SwipeActivity extends AppCompatActivity {
+public class SwipeActivity extends BaseActivity {
     private static final String TAG = SwipeActivity.class.getSimpleName();
     Toolbar toolbar;
     private DrawerLayout mDrawerLayout;
@@ -216,10 +216,6 @@ public class SwipeActivity extends AppCompatActivity {
                             case R.id.list_navigation_map:
                                 // TODO: 17-12-16 start MapActivity
                                 startActivity(new Intent(SwipeActivity.this, MapActivity.class));
-                                break;
-                            case R.id.list_navigation_voice:
-                                // TODO: 17-12-16 start voice function
-                                startActivity(new Intent(SwipeActivity.this, StartActivity.class));
                                 break;
                             case R.id.list_navigation_setting:
                                 // TODO: 17-12-16 start SettingActivity

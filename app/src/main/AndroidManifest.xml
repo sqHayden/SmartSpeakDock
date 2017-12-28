@@ -63,8 +63,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".music.activity.ListActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
         <service android:name=".music.service.LocalPlayService"
             android:enabled="true"/>
         <activity android:name=".music.activity.PlayerActivity"
@@ -77,12 +75,6 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:configChanges="orientation|screenSize|keyboardHidden"/>
-
-        <activity android:name=".calendar.CalendarActivity" />
-
-        <activity
-            android:name=".weather.ui.WeatherActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <activity
             android:name=".map.tools.BNDemoGuideActivity"
