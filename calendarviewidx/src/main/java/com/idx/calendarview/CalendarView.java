@@ -192,7 +192,19 @@ public class CalendarView extends FrameLayout {
     public int getCurDay() {
         return mDelegate.getCurrentDay().getDay();
     }
-
+    /*
+    * 获取当天的农历
+    * */
+    public String getLunar(){
+        return mDelegate.getCurrentDay().getLunar();
+    }
+    /*
+    *
+    * 获取当天星期几
+    * */
+    public int getWeek(){
+        return mDelegate.getCurrentDay().getWeek();
+    }
     /**
      * 获取本月
      *

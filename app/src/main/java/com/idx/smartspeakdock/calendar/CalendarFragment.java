@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import com.idx.calendarview.CalendarView;
 import com.idx.calendarview.MessageEvent;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.baidu.control.UnitManager;
+import com.idx.smartspeakdock.baidu.unit.listener.ICalenderVoiceListener;
 import com.idx.smartspeakdock.calendar.adapter.MyRecyclerView;
 import com.idx.smartspeakdock.calendar.bean.Schedule;
 import com.idx.smartspeakdock.calendar.model.Model;
@@ -32,6 +35,7 @@ import com.idx.smartspeakdock.utils.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.litepal.crud.DataSupport;
 
 import java.util.List;
 
@@ -62,7 +66,10 @@ public class CalendarFragment extends BaseFragment implements
     private Integer day;
     public MyRecyclerView myRecyclerView;
     int hour,minutes;
-
+    String answer;
+    String lunar;
+    int week;
+    String answer1;
     public static CalendarFragment newInstance(){return new CalendarFragment();}
 
     @Override
@@ -91,6 +98,60 @@ public class CalendarFragment extends BaseFragment implements
         super.onActivityCreated(savedInstanceState);
         presenter = new Presenter(this,mContext,mCalendarView);
         initData();
+        Log.v("1218","launch" + mCalendarView.getLunar());
+        Log.v("1218","week" + mCalendarView.getWeek());
+        List<Schedule> listSchedule = DataSupport.where("date = ?",date).where("day = ?",day.toString()).find(Schedule.class);
+        if (listSchedule.size() != 0){
+            for(int i = 0;i<listSchedule.size();i++) {
+                answer1 = "今天"+listSchedule.get(i).getTime() + listSchedule.get(i).getEvent();
+                answer = answer + answer1;
+            }
+
+        }else {
+            answer = "今天没有安排事情";
+        }
+        Log.v("1218","event" + answer);
+
+        UnitManager.getInstance().setCalenderVoiceListener(new ICalenderVoiceListener() {
+            @Override
+            public String onWeekInfo() {
+                answer = "今天星期"+mCalendarView.getWeek();
+                return answer;
+            }
+
+            @Override
+            public String onFestivalInfo() {
+                return null;
+            }
+
+            @Override
+            public String onActInfo() {
+                answer= "";
+                List<Schedule> listSchedule = DataSupport.where("date = ? and day = ?",date,day.toString()).find(Schedule.class);
+                if (listSchedule.size() != 0){
+                    for(int i = 0;i<listSchedule.size();i++) {
+                        answer1 = "今天"+listSchedule.get(i).getTime() + listSchedule.get(i).getEvent();
+                        answer = answer + answer1;
+                    }
+
+                }else {
+                    answer = "今天没有安排事情";
+                }
+                return answer;
+            }
+
+            @Override
+            public String onDateInfo() {
+                answer = "今天" + mCalendarView.getCurMonth() + "月" + mCalendarView.getCurDay() + "号";
+                return answer;
+            }
+
+            @Override
+            public String onLunarDateInfo() {
+                answer = "今天农历" +mCalendarView.getLunar();
+                return answer;
+            }
+        });
     }
 
     private void initData() {
@@ -117,6 +178,7 @@ public class CalendarFragment extends BaseFragment implements
 
             @Override
             public void onDeleteClick(String event, String time) {
+                myRecyclerView.removeItem(date,day,event,time);
                 presenter.deletedate(date,day,event,time);
             }
         });
@@ -208,7 +270,7 @@ public class CalendarFragment extends BaseFragment implements
                 if (editText.getText().toString().isEmpty()){
                     Toast.makeText(mContext,"请添加事件",Toast.LENGTH_SHORT).show();
                 }else {
-                    presenter.setdate(hour,minutes,editText.getText().toString());
+                    presenter.setdate(date,day,hour,minutes,editText.getText().toString());
                     Schedule schedule = new Schedule();
                     schedule.setDate(date);
                     schedule.setDay(day);
