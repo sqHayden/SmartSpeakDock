@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CommunicateResponse  extends ResponseResult {
+public class CommunicateResponse extends ResponseResult {
 
     public List<Action> actionList = new ArrayList<>();
 
@@ -41,6 +41,42 @@ public class CommunicateResponse  extends ResponseResult {
         public List botMergedSlots = new ArrayList();
         public String currentQueryInent;
         public int intentConfidence;
+
+        public static class MergedSlots {
+            public int begin;
+            public int confidence;
+            public int length;
+            public String merge_method;
+            public String normalized_word;
+            public String original_word;
+            public int session_offset;
+            public String type;
+            public String word_type;
+
+            @Override
+            public String toString() {
+                return "begin:" + begin +
+                        "confidence:" + confidence +
+                        "length:" + length +
+                        "merge_method:" + merge_method +
+                        "normalized_word:" + normalized_word +
+                        "original_word:" + original_word +
+                        "session_offset:" + session_offset +
+                        "type:" + type +
+                        "word_type:" + word_type;
+            }
+        }
+
+        @Override
+        public String toString() {
+            StringBuffer buffer = new StringBuffer();
+            for (Object slots:
+                 botMergedSlots) {
+                buffer.append(slots.toString());
+                buffer.append("\n");
+            }
+            return buffer.toString();
+        }
     }
 
 }

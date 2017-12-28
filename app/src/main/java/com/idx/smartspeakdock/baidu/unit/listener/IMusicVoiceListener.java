@@ -12,7 +12,7 @@ public interface IMusicVoiceListener {
 
     void onPause();
 
-    void onStop();
+    void onContinue();
 
     void onNext();
 
