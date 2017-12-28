@@ -67,8 +67,30 @@ public class CommunicateParser implements Parser<CommunicateResponse> {
                     actionList.add(action);
                 }
             }
-
             result.sessionId = resultObject.optString("session_id");
+            CommunicateResponse.Schema schema = new CommunicateResponse.Schema();
+            result.schema = schema;
+
+            JSONObject schemaObject = resultObject.getJSONObject("schema");
+            JSONArray slotsArray = schemaObject.getJSONArray("bot_merged_slots");
+            List<CommunicateResponse.Schema.MergedSlots> mergedSlots = schema.botMergedSlots;
+            if (slotsArray != null) {
+                for(int i=0; i<slotsArray.length(); i++){
+                    JSONObject slotObject = slotsArray.getJSONObject(i);
+                    CommunicateResponse.Schema.MergedSlots slots = new CommunicateResponse.Schema.MergedSlots();
+                    slots.begin = slotObject.optInt("begin");
+                    slots.confidence = slotObject.optInt("confidence");
+                    slots.length = slotObject.optInt("length");
+                    slots.merge_method = slotObject.optString("merge_method");
+                    slots.normalized_word = slotObject.optString("normalized_word");
+                    slots.original_word = slotObject.optString("original_word");
+                    slots.session_offset = slotObject.optInt("session_offset");
+                    slots.type = slotObject.optString("type");
+                    slots.word_type = slotObject.optString("word_type");
+                    mergedSlots.add(slots);
+                }
+            }
+
 
             return result;
         } catch (JSONException e) {

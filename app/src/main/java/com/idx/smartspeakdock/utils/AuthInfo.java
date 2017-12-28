@@ -3,6 +3,7 @@ package com.idx.smartspeakdock.utils;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.HashMap;
@@ -27,15 +28,10 @@ public class AuthInfo {
                 authInfo = new HashMap<String, Object>(3);
 
                 ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-                String appId = appInfo.metaData.getString(META_APP_ID);
-
+                String appId = Integer.toString(appInfo.metaData.getInt(META_APP_ID));
                 String appKey = appInfo.metaData.getString(META_APP_KEY);
                 String appSecret = appInfo.metaData.getString(META_APP_SECRET);
-
-//                ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-//                int appId =  appInfo.metaData.getInt("com.baidu.speech.APP_ID");
-//                String configKey = appInfo.metaData.getString("com.baidu.speech.API_KEY");
-//                String configSecret = appInfo.metaData.getString("com.baidu.speech.SECRET_KEY");
+                
                 authInfo.put(META_APP_ID, appId); // 认证相关, key, 从开放平台(http://yuyin.baidu.com)中获取的key
                 authInfo.put(META_APP_KEY, appKey); // 认证相关, key, 从开放平台(http://yuyin.baidu.com)中获取的key
                 authInfo.put(META_APP_SECRET, appSecret); // 认证相关, secret, 从开放平台(http://yuyin.baidu.com)secret

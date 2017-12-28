@@ -5,5 +5,14 @@ package com.idx.smartspeakdock.baidu.unit.listener;
  */
 
 public interface ICalenderVoiceListener {
+    String onWeekInfo();
+
+    String onFestivalInfo();
+
+    String onActInfo();
+
+    String onDateInfo();
+
+    String onLunarDateInfo();
 
 }

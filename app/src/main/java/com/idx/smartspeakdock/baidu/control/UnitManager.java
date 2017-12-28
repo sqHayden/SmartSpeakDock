@@ -127,6 +127,7 @@ public class UnitManager {
 
             } else if (actionList.size() == 1) {
                 final CommunicateResponse.Action action = actionList.get(0);
+                final CommunicateResponse.Schema schema = result.schema;
 
                 if (!TextUtils.isEmpty(action.say)) {
                     List<SpeechSynthesizeBag> bags = new ArrayList<>();
@@ -147,7 +148,7 @@ public class UnitManager {
                         @Override
                         public void onSpeakFinish() {
                             // 执行自己的业务逻辑，回调执行
-                            executeTask(context, action);
+                            executeTask(context, action, schema);
                         }
                     });
                 }
@@ -156,12 +157,13 @@ public class UnitManager {
         }
     }
 
-    private void executeTask(final Context context, final CommunicateResponse.Action action) {
+    private void executeTask(final Context context, final CommunicateResponse.Action action,
+                             final CommunicateResponse.Schema schema) {
         mAppExecutors.getMainThread().execute(new Runnable() {
             @Override
             public void run() {
                 if (mVoiceAdapter != null) {
-                    isSessionOver = mVoiceAdapter.onAction(action);
+                    isSessionOver = mVoiceAdapter.onAction(action, schema);
                     //会话未结束，继续开始语音识别
                     if (!isSessionOver) {
                         context.sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE));

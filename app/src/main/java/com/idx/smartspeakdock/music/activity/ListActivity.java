@@ -40,6 +40,8 @@ import android.widget.TextView;
 
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.Swipe.SwipeFragment;
+import com.idx.smartspeakdock.baidu.control.UnitManager;
+import com.idx.smartspeakdock.baidu.unit.listener.IMusicVoiceListener;
 import com.idx.smartspeakdock.calendar.CalendarActivity;
 import com.idx.smartspeakdock.map.MapActivity;
 import com.idx.smartspeakdock.music.adapter.LocalListAdapter;
@@ -404,6 +406,41 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
+
+        UnitManager.getInstance().setMusicVoiceListener(new IMusicVoiceListener() {
+            @Override
+            public void onPlay(int index) {
+                Log.d(TAG, "onPlay: index");
+                start();
+            }
+
+            @Override
+            public void onPlay(String name) {
+                Log.d(TAG, "onPlay: name");
+                mPlayingIndex = 1;
+                start();
+            }
+
+            @Override
+            public void onPause() {
+                pause();
+            }
+
+            @Override
+            public void onContinue() {
+                start();
+            }
+
+            @Override
+            public void onNext() {
+                musicChange(true, true);
+            }
+
+            @Override
+            public void onPrevious() {
+
+            }
+        });
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -509,21 +546,25 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         moveTaskToBack(false);
     }
 
+    private void start() {
+        if (mPlayingIndex >= 0 && mPlayingIndex < mListOfAudioItemList.size()) {
+            List<LocalMusicItem> localMusicItemList = mListOfAudioItemList.get(mPlayingIndex);
+            if (mLastPlay >= 0 && mLastPlay < localMusicItemList.size()) {
+                Intent intent = getAudioIntent(localMusicItemList.get(mLastPlay).getAudio());
+                intent.setClass(ListActivity.this, PlayerActivity.class);
+                intent.putExtra(LocalPlayService.AUDIO_IS_PLAYING_BOOL, mIsPlaying);
+                startActivity(intent);
+//                        overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_top);
+            }
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             // 弹出播放器界面
             case R.id.bar:
-                if (mPlayingIndex >= 0 && mPlayingIndex < mListOfAudioItemList.size()) {
-                    List<LocalMusicItem> localMusicItemList = mListOfAudioItemList.get(mPlayingIndex);
-                    if (mLastPlay >= 0 && mLastPlay < localMusicItemList.size()) {
-                        Intent intent = getAudioIntent(localMusicItemList.get(mLastPlay).getAudio());
-                        intent.setClass(ListActivity.this, PlayerActivity.class);
-                        intent.putExtra(LocalPlayService.AUDIO_IS_PLAYING_BOOL, mIsPlaying);
-                        startActivity(intent);
-//                        overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_top);
-                    }
-                }
+                start();
                 break;
             // 暂停按钮
             case R.id.home_pauseButton: case R.id.homebar_background:

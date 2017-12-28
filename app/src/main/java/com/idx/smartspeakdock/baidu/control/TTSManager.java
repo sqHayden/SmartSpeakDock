@@ -49,7 +49,7 @@ public class TTSManager {
         Map<String, Object> authParams = AuthInfo.getAuthParams(context);
         mSpeechSynthesizer = SpeechSynthesizer.getInstance();
         mSpeechSynthesizer.setContext(context);
-        mSpeechSynthesizer.setAppId((String) authParams.get(AuthInfo.META_APP_ID));
+        mSpeechSynthesizer.setAppId((String)authParams.get(AuthInfo.META_APP_ID));
         mSpeechSynthesizer.setApiKey((String) authParams.get(AuthInfo.META_APP_KEY),
                 (String) authParams.get(AuthInfo.META_APP_SECRET));
         //授权检验接口
