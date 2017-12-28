@@ -1,93 +1,215 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    android:layout_height="match_parent">
 
-    <com.baidu.mapapi.map.MapView
-        android:id="@+id/bmapView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:clickable="true" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+        <com.baidu.mapapi.map.MapView
+            android:id="@+id/bmapView"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clickable="true" />
+        <ListView
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/search_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:visibility="gone"
-        >
+        android:visibility="gone">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="关键字查询："
-            />
+            android:text="关键字查询：" />
+
         <EditText
             android:id="@+id/edit_key"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="例：车站、酒店等"
-            android:singleLine="true"
             android:focusable="true"
-            android:imeOptions="actionSearch"
             android:focusableInTouchMode="true"
-            />
+            android:hint="例：车站、酒店等"
+            android:imeOptions="actionSearch"
+            android:singleLine="true" />
+
         <Button
             android:id="@+id/nearby_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="搜索附近"
             android:layout_marginLeft="10dp"
-            />
+            android:text="搜索附近" />
+
         <Button
             android:id="@+id/city_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="全市搜索"
             android:layout_marginLeft="10dp"
-            />
+            android:text="全市搜索" />
     </LinearLayout>
+
     <LinearLayout
-        android:id="@+id/location"
-        android:layout_width="wrap_content"
+        android:id="@+id/ptp_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="50dp"
-        android:layout_marginLeft="40dp"
-        android:layout_alignParentBottom="true"
-        android:clickable="true"
-        >
-        <ImageView
-            android:id="@+id/my_location"
-            android:clickable="true"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
-            android:src="@drawable/map_location"
-            />
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+      >
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="地点选择：" />
+
+        <EditText
+            android:id="@+id/route_start"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:singleLine="true"
             android:text="我的位置"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:imeOptions="actionSearch"
             />
+        <Button
+            android:id="@+id/route_start_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="定位"
+            />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/map_narrow" />
+
+        <EditText
+            android:id="@+id/route_end"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:hint="输入终点"
+            android:imeOptions="actionSearch"
+            android:singleLine="true" />
+        <Button
+            android:id="@+id/route_end_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="定位" />
     </LinearLayout>
-    <Button
-        android:id="@+id/choose_route"
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:id="@+id/go_style"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/location"
-        android:layout_marginLeft="20dp"
-        android:text="test"
-        />
-    <ListView
-        android:id="@+id/list_view"
+        android:layout_below="@+id/ptp_layout"
+        android:layout_marginStart="10dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="出行方式：" />
+
+        <Button
+            android:id="@+id/route_drive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="驾车" />
+
+        <Button
+            android:id="@+id/route_bus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="公交" />
+
+        <Button
+            android:id="@+id/route_walk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="步行" />
+
+        <Button
+            android:id="@+id/route_bike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="骑行" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50dp"
+        android:layout_marginStart="40dp">
+
+        <ImageView
+            android:id="@+id/my_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="3dp"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/map_location" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/my_location"
+            android:text="我的位置" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@android:drawable/ic_menu_search"
+            android:visibility="gone"
+            app:backgroundTint="#0480ce"
+            app:elevation="6dp"
+            app:fabSize="normal"
+            app:pressedTranslationZ="8dp"
+            app:rippleColor="#ff87ffeb"
+            app:useCompatPadding="false" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/map_go"
+        android:background="#af4578"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
         android:visibility="gone"
         >
-    </ListView>
-
+        <Button
+            android:id="@+id/choose_route"
+            android:text="开始导航"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="@drawable/map_go"
+            />
+    </LinearLayout>
 </RelativeLayout>

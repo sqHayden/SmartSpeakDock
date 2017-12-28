@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.idx.smartspeakdock.R;
 
+
 public class BNEventDialog extends Dialog {
 
     private Context mContext;
