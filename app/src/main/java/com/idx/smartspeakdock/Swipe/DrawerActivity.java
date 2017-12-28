@@ -19,10 +19,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.calendar.CalendarActivity;
 import com.idx.smartspeakdock.map.MapActivity;
 import com.idx.smartspeakdock.music.activity.ListActivity;
+import com.idx.smartspeakdock.service.SpeakerService;
 import com.idx.smartspeakdock.shopping.ShoppingFragment;
 import com.idx.smartspeakdock.standby.StandByFragment;
 import com.idx.smartspeakdock.start.StartActivity;
@@ -35,7 +37,7 @@ import com.idx.smartspeakdock.utils.Logger;
  * Email: Ryan_chan01212@yeah.net
  */
 
-public class DrawerActivity extends AppCompatActivity {
+public class DrawerActivity extends BaseActivity {
     private static final String TAG = DrawerActivity.class.getSimpleName();
     private DrawerLayout mDrawerLayout;
     //    Timer timer;
@@ -62,6 +64,10 @@ public class DrawerActivity extends AppCompatActivity {
         }
 
         SplashScreen();
+
+        if (!isServiceRunning(this, "com.idx.smartspeakdock.start.SpeakerService")) {
+            startService(new Intent(this, SpeakerService.class));
+        }
     }
 
     private void initDrawer() {
@@ -177,7 +183,6 @@ public class DrawerActivity extends AppCompatActivity {
                                 break;
                             case R.id.list_navigation_voice:
                                 // TODO: 17-12-16 start voice function
-                                startActivity(new Intent(DrawerActivity.this, StartActivity.class));
 //                                timer.cancel();
                                 break;
                             case R.id.list_navigation_setting:

@@ -151,6 +151,12 @@ public class UnitManager {
                             executeTask(context, action, schema);
                         }
                     });
+
+                } else if (!TextUtils.isEmpty(action.mainExe)) {
+                    //没有语音回复时执行
+                    Log.d(TAG, "handleResponse: mainExe, " + action.mainExe);
+                    //Toast.makeText(UnitManager.this, "请执行函数：" + action.mainExe, Toast.LENGTH_SHORT).show();
+                    executeTask(context, action, schema);
                 }
 
             }
@@ -170,10 +176,6 @@ public class UnitManager {
                     }
                 }
 
-                if (!TextUtils.isEmpty(action.mainExe)) {
-                    Log.d(TAG, "handleResponse: mainExe, " + action.mainExe);
-                    //Toast.makeText(UnitManager.this, "请执行函数：" + action.mainExe, Toast.LENGTH_SHORT).show();
-                }
             }
         });
     }
