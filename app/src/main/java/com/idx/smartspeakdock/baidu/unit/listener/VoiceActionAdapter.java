@@ -11,6 +11,7 @@ import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
 import com.idx.smartspeakdock.calendar.CalendarActivity;
 import com.idx.smartspeakdock.map.MapActivity;
 import com.idx.smartspeakdock.music.activity.ListActivity;
+import com.idx.smartspeakdock.shopping.ShoppingActivity;
 import com.idx.smartspeakdock.weather.ui.WeatherActivity;
 
 

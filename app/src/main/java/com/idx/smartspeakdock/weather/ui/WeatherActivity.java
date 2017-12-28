@@ -16,7 +16,15 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.Swipe.SwipeFragment;
+import com.idx.smartspeakdock.utils.Logger;
+import com.idx.smartspeakdock.utils.NetStatusUtils;
+import com.idx.smartspeakdock.utils.ToastUtils;
 import com.idx.smartspeakdock.weather.model.weather.Forecast;
 import com.idx.smartspeakdock.weather.model.weather.Weather;
 import com.idx.smartspeakdock.weather.presenter.WeatherPresenter;
@@ -40,8 +48,9 @@ public class WeatherActivity extends AppCompatActivity implements WeatherUi,Choo
     private ListView mListView;
     private WeatherPresenter mWeatherPresenter;
     private Dialog loadingDialog;
-    private String city="深圳";
-    private String county="深圳";
+    private String mCurrentCity = "深圳";
+    private String mCurrentCounty = "深圳";
+    private LocationClient mLocationClient;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,23 +68,61 @@ public class WeatherActivity extends AppCompatActivity implements WeatherUi,Choo
             }
         });
 
-        Log.d(TAG, "onCreate: "+city);
-        mWeatherPresenter.getWeather(county);
-        mWeatherPresenter.getWeatherAqi(city);
+        if(NetStatusUtils.isWifiConnected(this) || NetStatusUtils.isMobileConnected(this)){
+            requestLocation();
+        }else{
+            ToastUtils.showMessage(this,getResources().getString(R.string.network_not_connected));
+        }
         mRefreshWeather.setColorSchemeResources(R.color.colorPrimary);
         mRefreshWeather.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mWeatherPresenter.getWeather(county);
-                mWeatherPresenter.getWeatherAqi(city);
+                if(NetStatusUtils.isMobileConnected(WeatherActivity.this) || NetStatusUtils.isWifiConnected(WeatherActivity.this)){
+                    mWeatherPresenter.getWeather(mCurrentCity);
+                    mWeatherPresenter.getWeatherAqi(mCurrentCity);
+                }else{
+                    mRefreshWeather.setRefreshing(false);
+                    ToastUtils.showMessage(WeatherActivity.this,getResources().getString(R.string.network_not_connected));
+                }
             }
         });
     }
 
+    public void requestLocation(){
+        initLocation();
+        mLocationClient.start();
+    }
+
+
+    private void initLocation(){
+        LocationClientOption option = new LocationClientOption();
+        option.setIsNeedAddress(true);
+        option.setScanSpan(10 * 60 * 1000);
+//        option.setScanSpan(0);
+        mLocationClient.setLocOption(option);
+    }
+
+    private class StandbyLocationListener  implements BDLocationListener {
+
+        @Override
+        public void onReceiveLocation(BDLocation bdLocation) {
+            Logger.info(TAG, "onReceiveLocation: "+ bdLocation.getCity());
+            loadingDialog.show();
+           /* WeatherUtil.loadWeather(bdLocation.getCity(),SwipeFragment.this);
+            WeatherUtil.loadWeatherAqi(bdLocation.getCity(),SwipeFragment.this);*/
+            mCurrentCity=bdLocation.getCity();
+            mCurrentCounty=bdLocation.getCountry();
+            Logger.info(TAG, "onReceiveLocation: mCurrentCity = "+mCurrentCity+",mCurrentCounty = "+mCurrentCounty);
+            mWeatherPresenter.getWeather(mCurrentCity);
+            mWeatherPresenter.getWeatherAqi(mCurrentCity);
+        }
+    }
     /**
      * 初始化组件
      */
     private void initView(){
+        mLocationClient = new LocationClient(getApplicationContext());
+        mLocationClient.registerLocationListener(new WeatherActivity.StandbyLocationListener());
         mRefreshWeather=findViewById(R.id.weather_swipe_refresh);
         mScrollView=findViewById(R.id.weather_layout);
         mWeatherNowIcon=findViewById(R.id.weather_now_icon);
@@ -110,34 +157,38 @@ public class WeatherActivity extends AppCompatActivity implements WeatherUi,Choo
      */
     @Override
     public void chooseCityCompleted(String countyName, String cityNime) {
-        mWeatherPresenter.getWeather(countyName);
-        Log.d(TAG,cityNime);
-        county=countyName;
-        city=cityNime;
-        if (cityNime.equals("东城")||cityNime.equals("西城")){
-            cityNime="北京";
-            city="北京";
-        }else if (cityNime.equals("黄浦")||cityNime.equals("长宁")||
-                cityNime.equals("静安")||cityNime.equals("普陀")||
-                cityNime.equals("虹口")||cityNime.equals("杨浦")){
-            cityNime="上海";
-            city="上海";
-        }else if (cityNime.equals("和平")||cityNime.equals("河东")||
-                cityNime.equals("河西")||cityNime.equals("南开")||
-                cityNime.equals("河北")||cityNime.equals("红桥")){
-            cityNime="天津";
-            city="天津";
-        }else if (cityNime.equals("渝中")||cityNime.equals("大渡口")||
-                cityNime.equals("江北")||cityNime.equals("沙坪坝")||
-                cityNime.equals("九龙坡")||cityNime.equals("南岸")||cityNime.equals("开州")){
-            cityNime="重庆";
-            city="重庆";
+        if(NetStatusUtils.isWifiConnected(this) || NetStatusUtils.isMobileConnected(this)) {
+            mWeatherPresenter.getWeather(cityNime);
+            Log.d(TAG, cityNime);
+            mCurrentCounty = countyName;
+            mCurrentCity = cityNime;
+            if (cityNime.equals("东城") || cityNime.equals("西城")) {
+                cityNime = "北京";
+                mCurrentCity = "北京";
+            } else if (cityNime.equals("黄浦") || cityNime.equals("长宁") ||
+                    cityNime.equals("静安") || cityNime.equals("普陀") ||
+                    cityNime.equals("虹口") || cityNime.equals("杨浦")) {
+                cityNime = "上海";
+                mCurrentCity = "上海";
+            } else if (cityNime.equals("和平") || cityNime.equals("河东") ||
+                    cityNime.equals("河西") || cityNime.equals("南开") ||
+                    cityNime.equals("河北") || cityNime.equals("红桥")) {
+                cityNime = "天津";
+                mCurrentCity = "天津";
+            } else if (cityNime.equals("渝中") || cityNime.equals("大渡口") ||
+                    cityNime.equals("江北") || cityNime.equals("沙坪坝") ||
+                    cityNime.equals("九龙坡") || cityNime.equals("南岸") || cityNime.equals("开州")) {
+                cityNime = "重庆";
+                mCurrentCity = "重庆";
+            }
+            Log.d(TAG, "chooseCityCompleted: " + cityNime);
+            if (!(cityNime.equals("香港") || cityNime.equals("澳门") || cityNime.equals("台北") || cityNime.equals("高雄") || cityNime.equals("台中"))) {
+                mWeatherPresenter.getWeatherAqi(cityNime);
+            }
+            mTitle.setText(countyName);
+        }else{
+            ToastUtils.showError(this,getResources().getString(R.string.network_not_connected));
         }
-        Log.d(TAG, "chooseCityCompleted: "+cityNime);
-        if (!(cityNime.equals("香港")||cityNime.equals("澳门")||cityNime.equals("台北")||cityNime.equals("高雄")||cityNime.equals("台中"))){
-            mWeatherPresenter.getWeatherAqi(cityNime);
-        }
-        mTitle.setText(countyName);
     }
 
     /**
@@ -182,6 +233,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherUi,Choo
             public void run() {
                 updateWeatherINfo(weather);
                 mRefreshWeather.setRefreshing(false);
+                mTitle.setText(weather.basic.cityName);
             }
         });
     }

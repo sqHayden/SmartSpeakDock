@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item
-        android:id="@+id/list_navigation_weather"
-        android:icon="@drawable/drawer_weather"
-        android:title="@string/weather_title"/>
-    <item
-        android:id="@+id/list_navigation_calendar"
-        android:icon="@drawable/drawer_calendar"
-        android:title="@string/calendar_title"/>
-    <item
-        android:id="@+id/list_navigation_music"
-        android:icon="@drawable/drawer_music"
-        android:title="@string/music_title"/>
-    <item
-        android:id="@+id/list_navigation_shopping"
-        android:icon="@drawable/drawer_shopping"
-        android:title="@string/shopping_title"/>
-    <item
-        android:id="@+id/list_navigation_map"
-        android:icon="@drawable/drawer_map"
-        android:title="@string/map_title"/>
-    <item
-        android:id="@+id/list_navigation_voice"
-        android:icon="@drawable/drawer_info"
-        android:title="@string/baiduAI_title"/>
-    <item
-        android:id="@+id/list_navigation_setting"
-        android:icon="@drawable/drawer_setting"
-        android:title="@string/setting_title"/>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/list_navigation_weather"
+            android:icon="@drawable/drawer_weather_not_pressed"
+            android:title="@string/weather_title" />
+        <item
+            android:id="@+id/list_navigation_calendar"
+            android:icon="@drawable/drawer_calendar_not_pressed"
+            android:title="@string/calendar_title" />
+        <item
+            android:id="@+id/list_navigation_music"
+            android:icon="@drawable/drawer_music_not_pressed"
+            android:title="@string/music_title" />
+        <item
+            android:id="@+id/list_navigation_shopping"
+            android:icon="@drawable/drawer_shopping_not_pressed"
+            android:title="@string/shopping_title" />
+        <item
+            android:id="@+id/list_navigation_map"
+            android:icon="@drawable/drawer_map_not_pressed"
+            android:title="@string/map_title" />
+        <item
+            android:id="@+id/list_navigation_voice"
+            android:icon="@drawable/drawer_info_not_pressed"
+            android:title="@string/baiduAI_title" />
+        <item
+            android:id="@+id/list_navigation_setting"
+            android:icon="@drawable/drawer_setting_not_pressed"
+            android:title="@string/setting_title" />
+    </group>
 </menu>

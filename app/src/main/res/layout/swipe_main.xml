@@ -57,13 +57,14 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:background="#57A0E7"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_actions"
-        app:itemIconTint="#6490E4"
         />
     <!--
-
-    app:itemTextColor="#ffffff"
+    app:itemIconTint="#6490E4"
+     app:itemTextColor="#FFFFFF"
+     app:itemIconTint="#FFFFFF"
     app:itemBackground="#57A2E5"
     -->
 

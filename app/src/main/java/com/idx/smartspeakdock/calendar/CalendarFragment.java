@@ -1,0 +1,241 @@
+package com.idx.smartspeakdock.calendar;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
+
+import com.idx.calendarview.Calendar;
+import com.idx.calendarview.CalendarLayout;
+import com.idx.calendarview.CalendarView;
+import com.idx.calendarview.MessageEvent;
+import com.idx.smartspeakdock.BaseFragment;
+import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.calendar.adapter.MyRecyclerView;
+import com.idx.smartspeakdock.calendar.bean.Schedule;
+import com.idx.smartspeakdock.calendar.model.Model;
+import com.idx.smartspeakdock.calendar.presenter.Presenter;
+import com.idx.smartspeakdock.utils.Logger;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.util.List;
+
+/**
+ * Created by ryan on 17-12-28.
+ * Email: Ryan_chan01212@yeah.net
+ */
+
+public class CalendarFragment extends BaseFragment implements
+        CalendarView.OnDateSelectedListener,
+        CalendarView.OnYearChangeListener,View.OnClickListener,Iview {
+    private static final String TAG = CalendarFragment.class.getSimpleName();
+    TextView mTextMonthDay;
+    TextView mTextYear;
+    CalendarView mCalendarView;
+    FrameLayout yearSelect;
+    FrameLayout monthSelect;
+    ImageView addButton;
+    CalendarLayout mCalendarLayout;
+    Context mContext;
+    View mView;
+
+    ItemRemoveRecyclerView recyclerView;
+    private Presenter presenter;
+    private Context context;
+    private List<Schedule> list;
+    private String date ="";
+    private Integer day;
+    public MyRecyclerView myRecyclerView;
+    int hour,minutes;
+
+    public static CalendarFragment newInstance(){return new CalendarFragment();}
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Logger.setEnable(true);
+        EventBus.getDefault().register(this);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mView = inflater.inflate(R.layout.activity_calendar,container,false);
+        initView();
+        return mView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        presenter = new Presenter(this,mContext,mCalendarView);
+        initData();
+    }
+
+    private void initData() {
+        addButton.setOnClickListener(this);
+        yearSelect.setOnClickListener(this);
+        monthSelect.setOnClickListener(this);
+        mCalendarView.setOnYearChangeListener(this);
+        mCalendarView.setOnDateSelectedListener(this);
+        mTextYear.setText(String.valueOf(mCalendarView.getCurYear()+ "年"));
+        mTextMonthDay.setText(mCalendarView.getCurMonth() + "月");
+        date = String.valueOf(mCalendarView.getCurYear()) + String.valueOf(mCalendarView.getCurMonth());
+        day = mCalendarView.getCurDay();
+        list = new Model().getdata();
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
+        myRecyclerView = new MyRecyclerView(date,day,context,list);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(myRecyclerView);
+        recyclerView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onDeleteClick(String event, String time) {
+                presenter.deletedate(date,day,event,time);
+            }
+        });
+    }
+
+    public void initView(){
+        mTextMonthDay = mView.findViewById(R.id.tv_month_day);
+        mTextYear = mView.findViewById(R.id.tv_year);
+        mCalendarView = mView.findViewById(R.id.calendarView);
+        yearSelect = mView.findViewById(R.id.selectyear);
+        monthSelect = mView.findViewById(R.id.selectmonth);
+        addButton = mView.findViewById(R.id.event);
+        mCalendarLayout = mView.findViewById(R.id.calendarLayout);
+        recyclerView = mView.findViewById(R.id.recycler);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.event:
+                if (date.isEmpty() || day.equals(0)){
+                    Toast.makeText(mContext,"请选择日期",Toast.LENGTH_SHORT).show();
+                }else {
+                    setCustomDialog();
+                }
+                break;
+            case R.id.selectyear:
+                presenter.selectyear();
+                break;
+            case R.id.selectmonth:
+                presenter.selectmonth();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void showyear(int year) {
+        mCalendarView.showSelectLayout(year);
+        mTextMonthDay.setVisibility(View.GONE);
+        mTextYear.setText(String.valueOf(year+ "年"));
+    }
+
+    @Override
+    public void showmonth(int year, int month, int day) {
+        mCalendarView.selectCurrentMonth();
+        mCalendarView.scrollToCalendar(year,month,day);
+    }
+
+
+    @Override
+    public void onDateSelected(Calendar calendar) {
+        Logger.info(TAG,"dataselected");
+        mTextYear.setVisibility(View.VISIBLE);
+        mTextMonthDay.setVisibility(View.VISIBLE);
+        mTextMonthDay.setText(calendar.getMonth() + "月");
+        mTextYear.setText(String.valueOf(calendar.getYear()+ "年"));
+    }
+
+    @Override
+    public void onYearChange(int year) {mTextYear.setText(String.valueOf(year+ "年"));}
+
+    @Subscribe
+    public void onEvent(MessageEvent messageEvent){
+        date = messageEvent.getMessage();
+        day = messageEvent.getday();
+        myRecyclerView.notifyDataSetChanged();
+    }
+
+    private void setCustomDialog(){
+        AlertDialog.Builder customdialog = new AlertDialog.Builder(mContext);
+        final View dialogView = LayoutInflater.from(mContext).inflate(R.layout.custom_dialog,null);
+        TimePicker timePicker = (TimePicker) dialogView.findViewById(R.id.time);
+        final EditText editText = (EditText) dialogView.findViewById(R.id.editevent);
+        timePicker.setIs24HourView(true);
+        timePicker.setOnTimeChangedListener(new CalendarFragment.TimeListener());
+        customdialog.setTitle("请添加事件");
+        customdialog.setView(dialogView);
+        customdialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                if (editText.getText().toString().isEmpty()){
+                    Toast.makeText(mContext,"请添加事件",Toast.LENGTH_SHORT).show();
+                }else {
+                    presenter.setdate(hour,minutes,editText.getText().toString());
+                    Schedule schedule = new Schedule();
+                    schedule.setDate(date);
+                    schedule.setDay(day);
+                    schedule.setTime(hour + ":" + minutes);
+                    schedule.setEvent(editText.getText().toString());
+                    list.add(schedule);
+                    myRecyclerView.notifyItemInserted(list.size() - 1);
+                }
+
+            }
+        });
+        customdialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        customdialog.show();
+    }
+
+    class TimeListener implements TimePicker.OnTimeChangedListener {
+
+        @Override
+        public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+            // TODO Auto-generated method stub
+            hour = hourOfDay;
+            minutes = minute;
+        }
+    }
+}
