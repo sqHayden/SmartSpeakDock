@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.idx.calendarview.MessageEvent;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.calendar.bean.Schedule;
+import com.idx.smartspeakdock.calendar.presenter.MyViewHolder;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -22,7 +23,7 @@ import java.util.List;
  * Created by geno on 22/12/17.
  */
 
-public class MyRecyclerView extends RecyclerView.Adapter<MyRecyclerView.MyViewHolder>{
+public class MyRecyclerView extends RecyclerView.Adapter{
     List<Schedule> list;
     Context context;
     String date;
@@ -40,23 +41,27 @@ public class MyRecyclerView extends RecyclerView.Adapter<MyRecyclerView.MyViewHo
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerviewitem,parent,false);
-        MyViewHolder myViewHolder = new MyViewHolder(view);
-        return myViewHolder;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.v("1218","oncreateviewholder");
+       /* View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycleritem,parent,false);
+        MyViewHolder vh = new MyViewHolder(view);
+        return vh;*/
+        return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerviewitem, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        Log.v("1218","" + mlist.size() + "positon:" + position);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        Log.v("1218bind","" + mlist.size() + "positon:" + position);
+        final MyViewHolder viewHolder = (MyViewHolder) holder;
         if (mlist.get(position).getDate().equals(date)&&mlist.get(position).getDay().equals(day)){
             Log.v("1218","aa" + position);
             Log.v("1218","bingview" +mlist.get(position).getEvent());
-            holder.eventTextView.setText(mlist.get(position).getEvent());
-            holder.timeTextView.setText(mlist.get(position).getTime());
+            viewHolder.eventTextView.setText(mlist.get(position).getEvent());
+            viewHolder.timeTextView.setText(mlist.get(position).getTime());
         }else{
 
         }
+
     }
 
     @Override
@@ -71,20 +76,14 @@ public class MyRecyclerView extends RecyclerView.Adapter<MyRecyclerView.MyViewHo
                 count = count - 1;
             }
         }
-          Log.v("1218","getitemcount" + count);
+        //  Log.v("1218","getitemcount" + count);
         return count;
     }
-
-    public class MyViewHolder extends RecyclerView.ViewHolder{
-        TextView eventTextView;
-        TextView timeTextView;
-        public MyViewHolder(View itemView) {
-            super(itemView);
-            Log.v("1218","myholder");
-            eventTextView = (TextView) itemView.findViewById(R.id.thing);
-            timeTextView = (TextView) itemView.findViewById(R.id.time);
-        }
+    public void removeItem(int position) {
+        list.remove(position);
+        notifyDataSetChanged();
     }
+
     @Subscribe
     public void onEvent(MessageEvent messageEvent){
         Log.v("1218","adapteronevent");

@@ -45,4 +45,10 @@ public class Model implements Imodel {
         List<Schedule> list = DataSupport.findAll(Schedule.class);
         return list;
     }
+
+    @Override
+    public void deletedate(String date, Integer day, String event, String time) {
+        Log.v("1218","删除11"+ date + day + event + time);
+        DataSupport.deleteAll(Schedule.class,"date = ? and day = ? and event = ? and time = ?","201712","28","受到当地","9:30");
+    }
 }

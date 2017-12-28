@@ -160,7 +160,7 @@
             app:selected_text_color="#FFFFFF"
             app:week_bar_view="com.idx.smartspeakdock.calendar.EnglishWeekBar"/>
     </com.idx.calendarview.CalendarLayout>
-    <android.support.v7.widget.RecyclerView
+    <com.idx.smartspeakdock.calendar.ItemRemoveRecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

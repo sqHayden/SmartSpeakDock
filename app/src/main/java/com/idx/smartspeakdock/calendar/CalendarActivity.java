@@ -56,7 +56,7 @@ public class CalendarActivity extends Activity implements
     @BindView(R.id.calendarLayout)
     CalendarLayout mCalendarLayout;
     @BindView(R.id.recycler)
-    RecyclerView recyclerView;
+    ItemRemoveRecyclerView recyclerView;
     private Presenter presenter;
     private Context context;
     private List<Schedule> list;
@@ -91,6 +91,17 @@ public class CalendarActivity extends Activity implements
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(myRecyclerView);
+        recyclerView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onDeleteClick(String event, String time) {
+               presenter.deletedate(date,day,event,time);
+            }
+        });
     }
     @Override
     public void onClick(View view){
@@ -126,8 +137,6 @@ public class CalendarActivity extends Activity implements
         mCalendarView.scrollToCalendar(year,month,day);
     }
 
-
-
     @SuppressLint("SetTextI18n")
     @Override
     public void onDateSelected(Calendar calendar) {
@@ -141,12 +150,14 @@ public class CalendarActivity extends Activity implements
     public void onYearChange(int year) {
         mTextYear.setText(String.valueOf(year+ "年"));
     }
+
     @Subscribe
     public void onEvent(MessageEvent messageEvent){
         date = messageEvent.getMessage();
         day = messageEvent.getday();
         myRecyclerView.notifyDataSetChanged();
     }
+
     private void setCustomDialog(){
         AlertDialog.Builder customdialog = new AlertDialog.Builder(this);
         final View dialogView = LayoutInflater.from(this).inflate(R.layout.custom_dialog,null);

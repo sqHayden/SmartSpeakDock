@@ -9,4 +9,5 @@ public interface Ipresenter {
     void selectmonth();
     void getdata();
     void setdate(int hours,int minutes,String event);
+    void deletedate(String date,Integer day,String event,String time);
 }
