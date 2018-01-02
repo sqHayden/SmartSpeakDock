@@ -10,4 +10,5 @@ public interface Ipresenter {
     void getdata();
     void setdate(String date,Integer day,int hours,int minutes,String event);
     void deletedate(String date,Integer day,String event,String time);
+    void getcurrenttime();
 }

@@ -21,7 +21,7 @@ import android.text.TextUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-class LunarCalendar {
+public class LunarCalendar {
 
 
     /**
@@ -169,7 +169,7 @@ class LunarCalendar {
      * @param day   公历日期
      * @return 公历节日
      */
-    private static String getSolarCalendar(int month, int day) {
+    public static String getSolarCalendar(int month, int day) {
         String text = getString(month, day);
         String solar = "";
         for (String aMSolarCalendar : SOLAR_CALENDAR) {
@@ -181,7 +181,7 @@ class LunarCalendar {
         return solar;
     }
 
-    private static String getString(int month, int day) {
+    public static String getString(int month, int day) {
         return (month >= 10 ? String.valueOf(month) : "0" + month) + (day >= 10 ? day : "0" + day);
     }
 
@@ -194,7 +194,7 @@ class LunarCalendar {
      * @param day   日
      * @return 返回24节气
      */
-    private static String getTermString(int year, int month, int day) {
+    public static String getTermString(int year, int month, int day) {
         if (!SOLAR_TERMS.containsKey(year)) {
             SOLAR_TERMS.put(year, SolarTermUtil.getSolarTerms(year));
         }
@@ -219,7 +219,7 @@ class LunarCalendar {
      * @param day   日
      * @return 农历节日
      */
-    static String getLunarText(int year, int month, int day) {
+  public  static String getLunarText(int year, int month, int day) {
         String termText = LunarCalendar.getTermString(year, month, day);
         String solar = LunarCalendar.getSolarCalendar(month, day);
         if (!TextUtils.isEmpty(solar))
@@ -240,7 +240,7 @@ class LunarCalendar {
      * @param calendar calendar
      * @return 获取农历节日
      */
-    static String getLunarText(Calendar calendar) {
+   public static String getLunarText(Calendar calendar) {
         return getLunarText(calendar.getYear(), calendar.getMonth(), calendar.getDay());
     }
 }

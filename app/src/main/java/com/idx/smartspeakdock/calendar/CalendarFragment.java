@@ -1,17 +1,19 @@
 package com.idx.smartspeakdock.calendar;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 import com.idx.calendarview.Calendar;
 import com.idx.calendarview.CalendarLayout;
 import com.idx.calendarview.CalendarView;
+import com.idx.calendarview.LunarCalendar;
 import com.idx.calendarview.MessageEvent;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
@@ -50,6 +53,7 @@ public class CalendarFragment extends BaseFragment implements
     private static final String TAG = CalendarFragment.class.getSimpleName();
     TextView mTextMonthDay;
     TextView mTextYear;
+    TextView mCurrentTime;
     CalendarView mCalendarView;
     FrameLayout yearSelect;
     FrameLayout monthSelect;
@@ -98,8 +102,6 @@ public class CalendarFragment extends BaseFragment implements
         super.onActivityCreated(savedInstanceState);
         presenter = new Presenter(this,mContext,mCalendarView);
         initData();
-        Log.v("1218","launch" + mCalendarView.getLunar());
-        Log.v("1218","week" + mCalendarView.getWeek());
         List<Schedule> listSchedule = DataSupport.where("date = ?",date).where("day = ?",day.toString()).find(Schedule.class);
         if (listSchedule.size() != 0){
             for(int i = 0;i<listSchedule.size();i++) {
@@ -115,13 +117,25 @@ public class CalendarFragment extends BaseFragment implements
         UnitManager.getInstance().setCalenderVoiceListener(new ICalenderVoiceListener() {
             @Override
             public String onWeekInfo() {
+                answer="";
                 answer = "今天星期"+mCalendarView.getWeek();
                 return answer;
             }
 
             @Override
             public String onFestivalInfo() {
-                return null;
+               answer="";
+                String aa =  LunarCalendar.getSolarCalendar(mCalendarView.getCurMonth(),mCalendarView.getCurDay());
+                if (!aa.isEmpty()){
+                    answer = "今天是" + aa;
+                }else {
+                    if (mCalendarView.getWeek() == 6||mCalendarView.getWeek() == 7){
+                        answer = "今天是周末";
+                    }else {
+                        answer = "今天是平常日";
+                    }
+                }
+               return answer;
             }
 
             @Override
@@ -142,12 +156,14 @@ public class CalendarFragment extends BaseFragment implements
 
             @Override
             public String onDateInfo() {
+                answer="";
                 answer = "今天" + mCalendarView.getCurMonth() + "月" + mCalendarView.getCurDay() + "号";
                 return answer;
             }
 
             @Override
             public String onLunarDateInfo() {
+                answer="";
                 answer = "今天农历" +mCalendarView.getLunar();
                 return answer;
             }
@@ -160,6 +176,7 @@ public class CalendarFragment extends BaseFragment implements
         monthSelect.setOnClickListener(this);
         mCalendarView.setOnYearChangeListener(this);
         mCalendarView.setOnDateSelectedListener(this);
+        presenter.getcurrenttime();
         mTextYear.setText(String.valueOf(mCalendarView.getCurYear()+ "年"));
         mTextMonthDay.setText(mCalendarView.getCurMonth() + "月");
         date = String.valueOf(mCalendarView.getCurYear()) + String.valueOf(mCalendarView.getCurMonth());
@@ -187,6 +204,7 @@ public class CalendarFragment extends BaseFragment implements
     public void initView(){
         mTextMonthDay = mView.findViewById(R.id.tv_month_day);
         mTextYear = mView.findViewById(R.id.tv_year);
+        mCurrentTime = mView.findViewById(R.id.currenttime);
         mCalendarView = mView.findViewById(R.id.calendarView);
         yearSelect = mView.findViewById(R.id.selectyear);
         monthSelect = mView.findViewById(R.id.selectmonth);
@@ -198,6 +216,7 @@ public class CalendarFragment extends BaseFragment implements
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -225,6 +244,7 @@ public class CalendarFragment extends BaseFragment implements
     public void showyear(int year) {
         mCalendarView.showSelectLayout(year);
         mTextMonthDay.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
         mTextYear.setText(String.valueOf(year+ "年"));
     }
 
@@ -233,7 +253,13 @@ public class CalendarFragment extends BaseFragment implements
         mCalendarView.selectCurrentMonth();
         mCalendarView.scrollToCalendar(year,month,day);
     }
-
+/*
+* 显示时间
+ */
+    @Override
+    public void showtime(String time) {
+        mCurrentTime.setText(time);
+    }
 
     @Override
     public void onDateSelected(Calendar calendar) {
@@ -249,24 +275,34 @@ public class CalendarFragment extends BaseFragment implements
 
     @Subscribe
     public void onEvent(MessageEvent messageEvent){
+        if (recyclerView.getVisibility() == View.GONE){
+            recyclerView.setVisibility(View.VISIBLE);
+        }
         date = messageEvent.getMessage();
         day = messageEvent.getday();
         myRecyclerView.notifyDataSetChanged();
     }
 
     private void setCustomDialog(){
-        AlertDialog.Builder customdialog = new AlertDialog.Builder(mContext);
+        final AlertDialog customdialog = new AlertDialog.Builder(mContext).create();
         final View dialogView = LayoutInflater.from(mContext).inflate(R.layout.custom_dialog,null);
-        TimePicker timePicker = (TimePicker) dialogView.findViewById(R.id.time);
+        final  TextView titleview = (TextView) dialogView.findViewById(R.id.title);
+        final TimePicker timePicker = (TimePicker) dialogView.findViewById(R.id.time);
         final EditText editText = (EditText) dialogView.findViewById(R.id.editevent);
+        final Button cancel = (Button) dialogView.findViewById(R.id.cancel);
+        final Button yes = (Button) dialogView.findViewById(R.id.yes);
+        customdialog.setView(dialogView);
         timePicker.setIs24HourView(true);
         timePicker.setOnTimeChangedListener(new CalendarFragment.TimeListener());
-        customdialog.setTitle("请添加事件");
-        customdialog.setView(dialogView);
-        customdialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-
+            public void onClick(View view) {
+                customdialog.dismiss();
+            }
+        });
+        yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 if (editText.getText().toString().isEmpty()){
                     Toast.makeText(mContext,"请添加事件",Toast.LENGTH_SHORT).show();
                 }else {
@@ -278,14 +314,8 @@ public class CalendarFragment extends BaseFragment implements
                     schedule.setEvent(editText.getText().toString());
                     list.add(schedule);
                     myRecyclerView.notifyItemInserted(list.size() - 1);
+                    customdialog.dismiss();
                 }
-
-            }
-        });
-        customdialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
             }
         });
         customdialog.show();

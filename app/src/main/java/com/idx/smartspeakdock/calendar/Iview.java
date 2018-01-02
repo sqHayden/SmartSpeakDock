@@ -13,4 +13,5 @@ import java.util.List;
 public interface Iview {
     void showyear(int year);
     void showmonth(int year,int month,int day);
+    void showtime(String time);
 }
