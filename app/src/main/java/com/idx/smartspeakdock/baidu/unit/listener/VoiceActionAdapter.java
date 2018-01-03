@@ -8,9 +8,15 @@ import com.idx.smartspeakdock.Actions;
 import com.idx.smartspeakdock.Modules;
 import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.TTSManager;
+import com.idx.smartspeakdock.baidu.control.UnitManager;
 import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
 import com.idx.smartspeakdock.map.MapActivity;
+import com.idx.smartspeakdock.map.PathWay;
+import com.idx.smartspeakdock.map.SearchArea;
 import com.idx.smartspeakdock.utils.GlobalUtils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -26,6 +32,8 @@ public class VoiceActionAdapter implements IVoiceActionListener {
     private IMusicVoiceListener mMusicListener;
     private IMapVoiceListener mMapListener;
     private IShoppingVoiceListener mShoppingListener;
+
+    private Set originalWords = new HashSet<String>();
 
     public VoiceActionAdapter(Context context) {
         mContext = context;
@@ -56,11 +64,26 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         mShoppingListener = listener;
     }
 
+    /**
+     * @param action
+     * @param schema
+     * @return boolean 会话是否结束，true为结束，不再监听语音输入
+     */
     private boolean handleAction(CommunicateResponse.Action action, CommunicateResponse.Schema schema) {
 
-        Log.d("handleAction", ": " + action.actionId);
+        Log.d("handleAction name", ": " + action.actionId);
         String musicIndex = null;
         String musicName = null;
+
+        SearchArea searchArea = null;
+        String searchName = null;
+        PathWay pathWay = null;
+        originalWords.clear();
+
+        for (int i = 0; i < schema.botMergedSlots.size(); i++) {
+            String word = ((CommunicateResponse.Schema.MergedSlots) schema.botMergedSlots.get(i)).original_word;
+            originalWords.add(word);
+        }
 
         switch (action.actionId) {
 
@@ -68,9 +91,17 @@ public class VoiceActionAdapter implements IVoiceActionListener {
             case Actions.OPEN_MODULE:
                 return false;
             case Actions.OPEN_NOW:
-                //多个槽点时，需另做处理
-                String moduleName = ((CommunicateResponse.Schema.MergedSlots) schema.botMergedSlots.get(0)).original_word;
-                openModule(moduleName);
+                if (originalWords.contains(Modules.CALENDER)) {
+                    openModule(Modules.CALENDER);
+                } else if (originalWords.contains(Modules.WEATHER)) {
+                    openModule(Modules.WEATHER);
+                } else if (originalWords.contains(Modules.MAP)) {
+                    openModule(Modules.MAP);
+                } else if (originalWords.contains(Modules.MUSIC)) {
+                    openModule(Modules.MUSIC);
+                } else if (originalWords.contains(Modules.SHOPPING)) {
+                    openModule(Modules.SHOPPING);
+                }
                 return true;
 
             /**音乐指令*/
@@ -83,7 +114,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                 if (mMusicListener != null) {
                     if (musicIndex != null) {
                         mMusicListener.onPlay(musicIndex);
-                    } else if (musicName != null){
+                    } else if (musicName != null) {
                         mMusicListener.onPlay(musicName);
                     } else {
                         mMusicListener.onPlay(0);
@@ -152,6 +183,37 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                     }
                 }
                 return true;
+
+            /**
+             * 地图指令
+             */
+            case Actions.Map.MAP_LOCATION_INFO:
+                if (mMapListener != null) {
+                    String locationInfo = mMapListener.onLocationInfo();
+                    if (locationInfo != null && !locationInfo.equals("")) {
+                        TTSManager.getInstance().speak(locationInfo);
+                    }
+                }
+                return true;
+            case Actions.Map.MAP_SEARCH_AREA:
+                //TODO searchArea =
+                return false;
+            case Actions.Map.MAP_SEARCH_NAME:
+                searchName = UnitManager.getInstance().getSendMsg();
+                if (mMapListener != null) {
+                    mMapListener.onSearchInfo(searchName, searchArea);
+                }
+                return false;
+            case Actions.Map.MAP_SEARCH_ADDRESS:
+                if (mMapListener != null) {
+                    mMapListener.onSearchAddress("");
+                }
+                return true;
+            case Actions.Map.MAP_PATH_INFO:
+                if (mMapListener != null) {
+                    mMapListener.onPathInfo("", "", null);
+                }
+                return false;
             default:
                 return false;
         }
@@ -159,33 +221,33 @@ public class VoiceActionAdapter implements IVoiceActionListener {
     }
 
     private void openModule(String name) {
-        if(mIntent != null) mIntent = null;
+        if (mIntent != null) mIntent = null;
         mIntent = new Intent(mContext, SwipeActivity.class);
-        switch (name){
+        switch (name) {
             case Modules.CALENDER:
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID);
+                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID);
                 mContext.startActivity(mIntent);
                 break;
             case Modules.WEATHER:
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.WEATHER_FRAGMENT_INTENT_ID);
+                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.WEATHER_FRAGMENT_INTENT_ID);
                 mContext.startActivity(mIntent);
                 break;
             case Modules.MAP:
-                if(mIntent != null) mIntent = null;
-                mIntent = new Intent(mContext,MapActivity.class);
+                if (mIntent != null) mIntent = null;
+                mIntent = new Intent(mContext, MapActivity.class);
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 mContext.startActivity(mIntent);
                 break;
             case Modules.MUSIC:
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
+                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
                 mContext.startActivity(mIntent);
                 break;
             case Modules.SHOPPING:
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
+                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
                 mContext.startActivity(mIntent);
                 break;
 
