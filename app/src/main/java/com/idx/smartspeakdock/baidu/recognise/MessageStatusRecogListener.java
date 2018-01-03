@@ -50,6 +50,7 @@ public class MessageStatusRecogListener extends StatusRecogListener {
 
     @Override
     public void onAsrPartialResult(String[] results, RecogResult recogResult) {
+
         sendStatusMessage("临时识别结果，结果是“" + results[0] + "”；原始json：" + recogResult.getOrigalJson());
         super.onAsrPartialResult(results, recogResult);
     }
@@ -59,10 +60,12 @@ public class MessageStatusRecogListener extends StatusRecogListener {
         super.onAsrFinalResult(results, recogResult);
         Log.d("onAsrFinalResult", "onAsrFinalResult: ");
         //将识别后的语句交由Unit处理
-        UnitManager.getInstance().sendMessage(mContext, results[0]);
+        int length = results[0].length() - 1;
+        String msg = results[0].substring(0, length);
+        UnitManager.getInstance().sendMessage(mContext, msg);
 
         //调试使用
-        String message = "识别结束，结果是”" + results[0] + "”";
+        String message = "识别结束，结果是“" + msg + "”";
         sendStatusMessage(message + "“；原始json：" + recogResult.getOrigalJson());
         if (speechEndTime > 0) {
             long diffTime = System.currentTimeMillis() - speechEndTime;
