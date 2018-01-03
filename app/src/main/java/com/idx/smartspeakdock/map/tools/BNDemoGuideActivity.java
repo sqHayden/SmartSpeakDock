@@ -1,6 +1,5 @@
 package com.idx.smartspeakdock.map.tools;
 
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;

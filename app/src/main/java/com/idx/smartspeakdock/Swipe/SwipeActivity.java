@@ -26,8 +26,14 @@ import com.idx.smartspeakdock.calendar.CalendarFragment;
 import com.idx.smartspeakdock.map.MapActivity;
 import com.idx.smartspeakdock.music.activity.ListFragment;
 import com.idx.smartspeakdock.shopping.ShoppingFragment;
-import com.idx.smartspeakdock.start.StartActivity;
 import com.idx.smartspeakdock.utils.ActivityUtils;
+import com.idx.smartspeakdock.weather.model.weather.Weather;
+import com.idx.smartspeakdock.weather.presenter.OnWeatherListener;
+import com.idx.smartspeakdock.weather.ui.ChooseCityDialogFragment;
+import com.idx.smartspeakdock.weather.utils.WeatherUtil;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
 

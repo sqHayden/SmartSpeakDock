@@ -1,14 +1,15 @@
-package com.idx.smartspeakdock.map.tools;
+package com.idx.smartspeakdock.map.overlayutil;
 
 import android.os.Bundle;
+
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Polyline;
-import com.baidu.mapapi.search.core.PoiInfo;
 import com.baidu.mapapi.search.poi.PoiResult;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,15 +54,13 @@ public class PoiOverlay extends OverlayManager {
             if (mPoiResult.getAllPoi().get(i).location == null) {
                 continue;
             }
-            //获取点击的标记物的数据
-            PoiInfo poiInfo = mPoiResult.getAllPoi().get(i);
             markerSize++;
             Bundle bundle = new Bundle();
             bundle.putInt("index", i);
             markerList.add(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromAssetWithDpi("Icon_mark"
                             + markerSize + ".png")).extraInfo(bundle)
-                    .position(poiInfo.location));
+                    .position(mPoiResult.getAllPoi().get(i).location));
             
         }
         return markerList;
@@ -81,7 +80,7 @@ public class PoiOverlay extends OverlayManager {
      * 
      * @param i
      *            被点击的poi在
-     *            {@link PoiResult#getAllPoi()} 中的索引
+     *            {@link com.baidu.mapapi.search.poi.PoiResult#getAllPoi()} 中的索引
      * @return
      */
     public boolean onPoiClick(int i) {
