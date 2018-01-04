@@ -45,7 +45,6 @@ public class UnitManager {
     //语音响应处理适配
     private VoiceActionAdapter mVoiceAdapter;
     private AppExecutors mAppExecutors;
-    private String sendMsg;
 
     private UnitManager() {
     }
@@ -98,8 +97,6 @@ public class UnitManager {
             return;
         }
 
-        sendMsg = message;
-
         Log.d(TAG, "send to unit: " + message);
         mApiService.communicate(new OnResultListener<CommunicateResponse>() {
             @Override
@@ -114,10 +111,6 @@ public class UnitManager {
             }
         }, sceneId, message, sessionId);
 
-    }
-
-    public String getSendMsg() {
-        return sendMsg;
     }
 
     /**
