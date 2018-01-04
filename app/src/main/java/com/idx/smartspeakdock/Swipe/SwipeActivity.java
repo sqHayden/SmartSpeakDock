@@ -31,6 +31,8 @@ import com.idx.smartspeakdock.weather.model.weather.Weather;
 import com.idx.smartspeakdock.weather.presenter.OnWeatherListener;
 import com.idx.smartspeakdock.weather.ui.ChooseCityDialogFragment;
 import com.idx.smartspeakdock.weather.utils.WeatherUtil;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -57,6 +59,7 @@ public class SwipeActivity extends BaseActivity {
     private boolean isDrawer = false;
     private String extraIntentId;
     private Fragment mCurrentFragment;
+    private ArrayList<MyOnTouchListener> onTouchListeners = new ArrayList<MyOnTouchListener>(10);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,25 @@ public class SwipeActivity extends BaseActivity {
         extraIntentId = getIntent().getStringExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT);
         mCurrentFragment = getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         changeFragment(extraIntentId);
+    }
+    public interface MyOnTouchListener {
+        public boolean onTouch(MotionEvent ev);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        for (MyOnTouchListener listener : onTouchListeners) {
+            if(listener != null) {
+                listener.onTouch(ev);
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+    public void registerMyOnTouchListener(MyOnTouchListener myOnTouchListener) {
+        onTouchListeners.add(myOnTouchListener);
+    }
+    public void unregisterMyOnTouchListener(MyOnTouchListener myOnTouchListener) {
+        onTouchListeners.remove(myOnTouchListener) ;
     }
 
     private void changeFragment(String extraIntentId) {

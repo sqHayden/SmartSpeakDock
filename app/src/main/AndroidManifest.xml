@@ -118,7 +118,7 @@
                 <category android:name="android.intent.category.BAIDUNAVISDK_DEMO" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".standby.StandByActivity"/>
         <activity
             android:name=".map.tools.BNDemoGuideActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
@@ -130,6 +130,10 @@
             android:enabled="true"
             android:process=":remote">
         </service>
+        <service
+            android:name=".service.SplachService"
+            android:enabled="true"
+            android:exported="false"/>
     </application>
 
 </manifest>
