@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.idx.smartspeakdock.Actions;
 import com.idx.smartspeakdock.Modules;
+import com.idx.smartspeakdock.SlotsTypes;
 import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.TTSManager;
 import com.idx.smartspeakdock.baidu.control.UnitManager;
@@ -15,8 +16,7 @@ import com.idx.smartspeakdock.map.PathWay;
 import com.idx.smartspeakdock.map.SearchArea;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
 
 
 /**
@@ -24,6 +24,7 @@ import java.util.Set;
  */
 
 public class VoiceActionAdapter implements IVoiceActionListener {
+    private static final String TAG = VoiceActionAdapter.class.getName();
     private Context mContext;
     private Intent mIntent;
 
@@ -33,7 +34,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
     private IMapVoiceListener mMapListener;
     private IShoppingVoiceListener mShoppingListener;
 
-    private Set originalWords = new HashSet<String>();
+    private HashMap<String, String> mSlots = new HashMap<>();
 
     public VoiceActionAdapter(Context context) {
         mContext = context;
@@ -72,17 +73,11 @@ public class VoiceActionAdapter implements IVoiceActionListener {
     private boolean handleAction(CommunicateResponse.Action action, CommunicateResponse.Schema schema) {
 
         Log.d("handleAction name", ": " + action.actionId);
-        String musicIndex = null;
-        String musicName = null;
-
-        SearchArea searchArea = null;
-        String searchName = null;
-        PathWay pathWay = null;
-        originalWords.clear();
-
+        mSlots.clear();
         for (int i = 0; i < schema.botMergedSlots.size(); i++) {
+            String type = ((CommunicateResponse.Schema.MergedSlots) schema.botMergedSlots.get(i)).type;
             String word = ((CommunicateResponse.Schema.MergedSlots) schema.botMergedSlots.get(i)).original_word;
-            originalWords.add(word);
+            mSlots.put(type, word);
         }
 
         switch (action.actionId) {
@@ -91,137 +86,81 @@ public class VoiceActionAdapter implements IVoiceActionListener {
             case Actions.OPEN_MODULE:
                 return false;
             case Actions.OPEN_NOW:
-                if (originalWords.contains(Modules.CALENDER)) {
-                    openModule(Modules.CALENDER);
-                } else if (originalWords.contains(Modules.WEATHER)) {
-                    openModule(Modules.WEATHER);
-                } else if (originalWords.contains(Modules.MAP)) {
-                    openModule(Modules.MAP);
-                } else if (originalWords.contains(Modules.MUSIC)) {
-                    openModule(Modules.MUSIC);
-                } else if (originalWords.contains(Modules.SHOPPING)) {
-                    openModule(Modules.SHOPPING);
-                }
+                openModule();
                 return true;
 
             /**音乐指令*/
             case Actions.Music.MUSIC_INDEX:
-                //TODO musicIndex =
             case Actions.Music.MUSIC_NAME:
-                //TODO musicName =
                 return false;
             case Actions.Music.MUSIC_PLAY:
-                if (mMusicListener != null) {
-                    if (musicIndex != null) {
-                        mMusicListener.onPlay(musicIndex);
-                    } else if (musicName != null) {
-                        mMusicListener.onPlay(musicName);
-                    } else {
-                        mMusicListener.onPlay(0);
-                    }
-                }
+                musicPlay();
                 return true;
             case Actions.Music.MUSIC_PAUSE:
-                if (mMusicListener != null) {
-                    mMusicListener.onPause();
-                }
+                musicPause();
                 return true;
             case Actions.Music.MUSIC_CONTINUE:
-                if (mMusicListener != null) {
-                    mMusicListener.onContinue();
-                }
+                musicContinue();
                 return true;
             case Actions.Music.MUSIC_NEXT:
-                if (mMusicListener != null) {
-                    mMusicListener.onNext();
-                }
+                musicNext();
                 return true;
             case Actions.Music.MUSIC_PREVIOUS:
-                if (mMusicListener != null) {
-                    mMusicListener.onPrevious();
-                }
+                musicPrevious();
                 return true;
 
             /**日历指令*/
             case Actions.Calender.CALENDER_WEEK_INFO:
-                if (mCalenderListener != null) {
-                    String weekInfo = mCalenderListener.onWeekInfo();
-                    if (weekInfo != null && !weekInfo.equals("")) {
-                        TTSManager.getInstance().speak(weekInfo);
-                    }
-                }
+                queryWeekInfo();
                 return true;
             case Actions.Calender.CALENDER_FESTIVAL_INFO:
-                if (mCalenderListener != null) {
-                    String festivalInfo = mCalenderListener.onFestivalInfo();
-                    if (festivalInfo != null && !festivalInfo.equals("")) {
-                        TTSManager.getInstance().speak(festivalInfo);
-                    }
-                }
+                queryFestivalInfo();
                 return true;
             case Actions.Calender.CALENDER_ACT_INFO:
-                if (mCalenderListener != null) {
-                    String actInfo = mCalenderListener.onActInfo();
-                    if (actInfo != null && !actInfo.equals("")) {
-                        TTSManager.getInstance().speak(actInfo);
-                    }
-                }
+                queryActInfo();
                 return true;
             case Actions.Calender.CALENDER_DATE_INFO:
-                if (mCalenderListener != null) {
-                    String dateInfo = mCalenderListener.onDateInfo();
-                    if (dateInfo != null && !dateInfo.equals("")) {
-                        TTSManager.getInstance().speak(dateInfo);
-                    }
-                }
+                queryDateInfo();
                 return true;
             case Actions.Calender.CALENDER_LUNAR_DATE_INFO:
-                if (mCalenderListener != null) {
-                    String lunarDateInfo = mCalenderListener.onLunarDateInfo();
-                    if (lunarDateInfo != null && !lunarDateInfo.equals("")) {
-                        TTSManager.getInstance().speak(lunarDateInfo);
-                    }
-                }
+                queryLunarInfo();
                 return true;
 
             /**
              * 地图指令
              */
             case Actions.Map.MAP_LOCATION_INFO:
-                if (mMapListener != null) {
-                    String locationInfo = mMapListener.onLocationInfo();
-                    if (locationInfo != null && !locationInfo.equals("")) {
-                        TTSManager.getInstance().speak(locationInfo);
-                    }
-                }
+                queryLocationInfo();
                 return true;
             case Actions.Map.MAP_SEARCH_AREA:
-                //TODO searchArea =
                 return false;
             case Actions.Map.MAP_SEARCH_NAME:
-                searchName = UnitManager.getInstance().getSendMsg();
-                if (mMapListener != null) {
-                    mMapListener.onSearchInfo(searchName, searchArea);
-                }
                 return false;
-            case Actions.Map.MAP_SEARCH_ADDRESS:
-                if (mMapListener != null) {
-                    mMapListener.onSearchAddress("");
-                }
+            case Actions.Map.MAP_SEARCH_INFO:
+                searchInfo();
                 return true;
-            case Actions.Map.MAP_PATH_INFO:
-                if (mMapListener != null) {
-                    mMapListener.onPathInfo("", "", null);
-                }
+            //只支持地区搜索
+            case Actions.Map.MAP_SEARCH_ADDRESS:
+                searchAddressInfo();
+                return true;
+            //只支持地区到地区的路线
+            case Actions.Map.MAP_PATH_FROM_NAME:
                 return false;
+            //只支持地区到地区的路线
+            case Actions.Map.MAP_PATH_WAY:
+                return false;
+            //只支持地区到地区的路线
+            case Actions.Map.MAP_PATH_INFO:
+                searchPathInfo();
+                return true;
             default:
                 return false;
         }
 
     }
 
-    private void openModule(String name) {
-        if (mIntent != null) mIntent = null;
+    private void openModule() {
+        String name = mSlots.get(SlotsTypes.USER_MODULE_NAME);
         mIntent = new Intent(mContext, SwipeActivity.class);
         switch (name) {
             case Modules.CALENDER:
@@ -235,7 +174,6 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                 mContext.startActivity(mIntent);
                 break;
             case Modules.MAP:
-                if (mIntent != null) mIntent = null;
                 mIntent = new Intent(mContext, MapActivity.class);
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 mContext.startActivity(mIntent);
@@ -252,6 +190,153 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                 break;
 
         }
+    }
+
+    private void musicPlay() {
+        String musicIndex = mSlots.get(SlotsTypes.USER_MUSIC_INDEX);
+        String musicName = mSlots.get(SlotsTypes.USER_MUSIC_NAME);
+        if (mMusicListener != null) {
+            if (musicIndex != null && !musicIndex.equals("")) {
+                mMusicListener.onPlay(musicIndex);
+            } else if (musicName != null && !musicName.equals("")) {
+                mMusicListener.onPlay(musicName);
+            } else {
+                mMusicListener.onPlay(0);
+            }
+        }
+    }
+
+    private void musicPause() {
+        if (mMusicListener != null) {
+            mMusicListener.onPause();
+        }
+    }
+
+    private void musicContinue() {
+        if (mMusicListener != null) {
+            mMusicListener.onContinue();
+        }
+    }
+
+    private void musicNext() {
+        if (mMusicListener != null) {
+            mMusicListener.onNext();
+        }
+    }
+
+    private void musicPrevious() {
+        if (mMusicListener != null) {
+            mMusicListener.onPrevious();
+        }
+    }
+
+    private void queryWeekInfo() {
+        if (mCalenderListener != null) {
+            String weekInfo = mCalenderListener.onWeekInfo();
+            if (weekInfo != null && !weekInfo.equals("")) {
+                TTSManager.getInstance().speak(weekInfo);
+            }
+        }
+    }
+
+    private void queryFestivalInfo() {
+        if (mCalenderListener != null) {
+            String festivalInfo = mCalenderListener.onFestivalInfo();
+            if (festivalInfo != null && !festivalInfo.equals("")) {
+                TTSManager.getInstance().speak(festivalInfo);
+            }
+        }
+    }
+
+    private void queryActInfo() {
+        if (mCalenderListener != null) {
+            String actInfo = mCalenderListener.onActInfo();
+            if (actInfo != null && !actInfo.equals("")) {
+                TTSManager.getInstance().speak(actInfo);
+            }
+        }
+    }
+
+    private void queryDateInfo() {
+        if (mCalenderListener != null) {
+            String dateInfo = mCalenderListener.onDateInfo();
+            if (dateInfo != null && !dateInfo.equals("")) {
+                TTSManager.getInstance().speak(dateInfo);
+            }
+        }
+    }
+
+    private void queryLunarInfo() {
+        if (mCalenderListener != null) {
+            String lunarDateInfo = mCalenderListener.onLunarDateInfo();
+            if (lunarDateInfo != null && !lunarDateInfo.equals("")) {
+                TTSManager.getInstance().speak(lunarDateInfo);
+            }
+        }
+    }
+
+    private void queryLocationInfo() {
+        if (mMapListener != null) {
+            String locationInfo = mMapListener.onLocationInfo();
+            if (locationInfo != null && !locationInfo.equals("")) {
+                TTSManager.getInstance().speak(locationInfo);
+            }
+        }
+    }
+
+    private void searchInfo() {
+        String area = mSlots.get(SlotsTypes.USER_MAP_SEARCH_AREA);
+        String searchName = mSlots.get(SlotsTypes.USER_MAP_SEARCH_NAME);
+        Log.d(TAG, "area: " + area + ", name:" + searchName);
+        if (mMapListener != null) {
+            mMapListener.onSearchInfo(searchName, convertArea(area));
+        }
+    }
+
+    private void searchAddressInfo() {
+        String address = mSlots.get(SlotsTypes.USER_SEARCH_ADDRESS);
+        Log.d(TAG, "address: " + address);
+        if (mMapListener != null) {
+            mMapListener.onSearchAddress(address);
+        }
+    }
+
+    private void searchPathInfo() {
+        String fromName = "";
+        if (mSlots.containsKey(SlotsTypes.USER_PATH_FROM_NAME)) {
+            fromName = mSlots.get(SlotsTypes.USER_PATH_FROM_NAME);
+        }
+        String toName = mSlots.get(SlotsTypes.USER_PATH_TO_NAME);
+        String way = mSlots.get(SlotsTypes.USER_MAP_PATH_WAY);
+        Log.d(TAG, "toName:" + toName + ", fromName:" + fromName + ", way:" + way);
+        if (mMapListener != null) {
+            mMapListener.onPathInfo(fromName, toName, convertWay(way));
+        }
+    }
+
+    private SearchArea convertArea(String area) {
+        SearchArea searchArea;
+        if (area.equals(SearchArea.AREA_NEARBY.getDesc())) {
+            searchArea = SearchArea.AREA_NEARBY;
+        } else {
+            searchArea = SearchArea.AREA_CITY;
+        }
+        return searchArea;
+    }
+
+    private PathWay convertWay(String way) {
+        PathWay pathWay;
+        if (way.equals(PathWay.DRIVE.getDesc())) {
+            pathWay = PathWay.DRIVE;
+        } else if (way.equals(PathWay.RIDE.getDesc())) {
+            pathWay = PathWay.RIDE;
+        } else if (way.equals(PathWay.TRANSIT.getDesc())) {
+            pathWay = PathWay.TRANSIT;
+        } else {
+            pathWay = PathWay.WALK;
+        }
+
+        return pathWay;
     }
 
 }

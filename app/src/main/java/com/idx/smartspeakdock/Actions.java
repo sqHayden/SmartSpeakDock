@@ -22,8 +22,12 @@ public interface Actions {
     interface Map {
         String MAP_LOCATION_INFO = "map_location_info_satisfy";
         String MAP_SEARCH_AREA = "map_search_info_user_map_search_area_clarify";
-        String MAP_SEARCH_NAME = "map_search_info_satisfy";
+        String MAP_SEARCH_NAME = "map_search_info_user_map_search_name_clarify";
+        String MAP_SEARCH_INFO = "map_search_info_satisfy";
         String MAP_SEARCH_ADDRESS = "map_search_address_satisfy";
+        //        String MAP_PATH_TO_NAME = "map_path_info_user_path_to_name_clarify";
+        String MAP_PATH_FROM_NAME = "map_path_info_user_path_from_name_clarify";
+        String MAP_PATH_WAY = "map_path_info_user_map_path_way_clarify";
         String MAP_PATH_INFO = "map_path_info_satisfy";
     }
 
