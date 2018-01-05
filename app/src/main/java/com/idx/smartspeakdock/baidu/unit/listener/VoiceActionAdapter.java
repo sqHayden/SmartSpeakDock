@@ -10,11 +10,9 @@ import com.idx.smartspeakdock.SlotsTypes;
 import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.TTSManager;
 import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
-import com.idx.smartspeakdock.map.MapActivity;
 import com.idx.smartspeakdock.map.PathWay;
 import com.idx.smartspeakdock.map.SearchArea;
 import com.idx.smartspeakdock.utils.GlobalUtils;
-
 import java.util.HashMap;
 
 
@@ -173,8 +171,8 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                 mContext.startActivity(mIntent);
                 break;
             case Modules.MAP:
-                mIntent = new Intent(mContext, MapActivity.class);
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MAP_FRAGMENT_INTENT_ID);
                 mContext.startActivity(mIntent);
                 break;
             case Modules.MUSIC:

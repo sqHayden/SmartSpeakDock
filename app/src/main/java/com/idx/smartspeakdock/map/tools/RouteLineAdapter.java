@@ -2,6 +2,7 @@
  * Copyright (C) 2016 Baidu, Inc. All Rights Reserved.
  */
 package com.idx.smartspeakdock.map.tools;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,6 @@ import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.MassTransitRouteLine;
 import com.idx.smartspeakdock.R;
-
 import java.util.List;
 
 public class RouteLineAdapter extends BaseAdapter {

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+
 import com.baidu.navisdk.adapter.BNRouteGuideManager;
 import com.baidu.navisdk.adapter.BNRouteGuideManager.CustomizedLayerItem;
 import com.baidu.navisdk.adapter.BNRouteGuideManager.OnNavigationListener;
@@ -17,7 +18,7 @@ import com.baidu.navisdk.adapter.BaiduNaviCommonModule;
 import com.baidu.navisdk.adapter.NaviModuleFactory;
 import com.baidu.navisdk.adapter.NaviModuleImpl;
 import com.idx.smartspeakdock.R;
-import com.idx.smartspeakdock.map.MapActivity;
+import com.idx.smartspeakdock.map.MapFragment;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class BNDemoGuideActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MapActivity.activityList.add(this);
+        MapFragment.activityList.add(this);
         createHandler();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
         }
@@ -74,16 +75,13 @@ public class BNDemoGuideActivity extends Activity {
         if (intent != null) {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                mBNRoutePlanNode = (BNRoutePlanNode) bundle.getSerializable(MapActivity.ROUTE_PLAN_NODE);
+                mBNRoutePlanNode = (BNRoutePlanNode) bundle.getSerializable(MapFragment.ROUTE_PLAN_NODE);
             }
         }
         //显示自定义图标
         if (hd != null) {
             hd.sendEmptyMessageAtTime(MSG_SHOW, 5000);
         }
-
-        BNEventHandler.getInstance().getDialog(this);
-        BNEventHandler.getInstance().showDialog();
     }
 
     @Override
@@ -117,8 +115,7 @@ public class BNDemoGuideActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MapActivity.activityList.remove(this);
-        BNEventHandler.getInstance().disposeDialog();
+        MapFragment.activityList.remove(this);
         if(useCommonInterface) {
             if(mBaiduNaviCommonModule != null) {
                 mBaiduNaviCommonModule.onDestroy();

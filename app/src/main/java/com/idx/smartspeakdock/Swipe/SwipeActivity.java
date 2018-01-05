@@ -13,31 +13,23 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.calendar.CalendarFragment;
-import com.idx.smartspeakdock.map.MapActivity;
+import com.idx.smartspeakdock.map.MapFragment;
 import com.idx.smartspeakdock.music.activity.ListFragment;
 import com.idx.smartspeakdock.shopping.ShoppingFragment;
 import com.idx.smartspeakdock.utils.ActivityUtils;
-import com.idx.smartspeakdock.weather.model.weather.Weather;
-import com.idx.smartspeakdock.weather.presenter.OnWeatherListener;
-import com.idx.smartspeakdock.weather.ui.ChooseCityDialogFragment;
-import com.idx.smartspeakdock.weather.utils.WeatherUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
+import java.util.ArrayList;
 
 /**
  * Created by ryan on 17-12-22.
@@ -54,6 +46,7 @@ public class SwipeActivity extends BaseActivity {
     private CalendarFragment calendarFragment;
     private ListFragment musicFragment;
     private ShoppingFragment shoppingFragment;
+    private MapFragment mapFragment;
     private CoordinatorLayout right;
     private NavigationView left;
     private boolean isDrawer = false;
@@ -64,6 +57,7 @@ public class SwipeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("SwipeActivity","onCreate()...");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.drawer_main);
         Logger.setEnable(true);
@@ -121,6 +115,12 @@ public class SwipeActivity extends BaseActivity {
                 ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(),musicFragment,R.id.contentFrame);
                 break;
             case GlobalUtils.MAP_FRAGMENT_INTENT_ID:
+                if (mCurrentFragment == null) mapFragment = MapFragment.newInstance();
+                else{
+                    if (mCurrentFragment instanceof MapFragment)
+                        mapFragment = (MapFragment) mCurrentFragment;
+                }
+                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(),mapFragment,R.id.contentFrame);
                 break;
             case GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID:
                 if (mCurrentFragment == null) shoppingFragment = ShoppingFragment.newInstance();
@@ -243,7 +243,10 @@ public class SwipeActivity extends BaseActivity {
                                 break;
                             case R.id.list_navigation_map:
                                 // TODO: 17-12-16 start MapActivity
-                                startActivity(new Intent(SwipeActivity.this, MapActivity.class));
+                                if (mapFragment == null) {
+                                    mapFragment = MapFragment.newInstance();
+                                }
+                                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), mapFragment, R.id.contentFrame);
                                 break;
                             case R.id.list_navigation_setting:
                                 // TODO: 17-12-16 start SettingActivity
@@ -302,6 +305,7 @@ public class SwipeActivity extends BaseActivity {
         if (calendarFragment != null) calendarFragment = null;
         if (musicFragment != null) musicFragment = null;
         if (shoppingFragment != null) shoppingFragment = null;
+        if (mapFragment != null) mapFragment = null;
     }
 
     @Override
