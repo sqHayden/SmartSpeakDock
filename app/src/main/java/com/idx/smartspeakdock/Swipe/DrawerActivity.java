@@ -1,5 +1,7 @@
 package com.idx.smartspeakdock.Swipe;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,7 +35,6 @@ import com.idx.smartspeakdock.utils.Logger;
 public class DrawerActivity extends BaseActivity {
     private static final String TAG = DrawerActivity.class.getSimpleName();
     private DrawerLayout mDrawerLayout;
-    //    Timer timer;
     private Intent mIntent;
     private StandByFragment standByFragment;
     Toolbar toolbar;
@@ -59,6 +60,20 @@ public class DrawerActivity extends BaseActivity {
         if (!isServiceRunning(this, "com.idx.smartspeakdock.start.SpeakerService")) {
             startService(new Intent(this, SpeakerService.class));
         }
+    }
+
+    @Override
+    public boolean isTopActivity() {
+        isActivityTop = false;
+        ActivityManager am = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
+        ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+        Logger.info(TAG, "isTopActivity = " + cn.getClassName());
+        if (cn.getClassName().contains(TAG))
+        {
+            isActivityTop = true;
+        }
+        Logger.info(TAG, "isTop = " + isActivityTop);
+        return isActivityTop;
     }
 
     private void initDrawer() {
@@ -177,9 +192,8 @@ public class DrawerActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }

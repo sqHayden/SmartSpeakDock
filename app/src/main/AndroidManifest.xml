@@ -48,7 +48,6 @@
         <meta-data
             android:name="com.baidu.speech.SECRET_KEY"
             android:value="xFRGimRDN3nBqBX7V1InmM7E1Eb4o6px" />
-
         <!--ASR end-->
 
         <meta-data

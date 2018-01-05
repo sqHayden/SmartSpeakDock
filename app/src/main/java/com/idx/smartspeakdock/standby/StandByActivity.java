@@ -34,6 +34,12 @@ public class StandByActivity extends BaseActivity {
                     getSupportFragmentManager(), standByFragment, R.id.contentFrame);
         }
     }
+
+    @Override
+    public boolean isTopActivity() {
+        return false;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         Log.d(TAG, "onTouchEvent: ");

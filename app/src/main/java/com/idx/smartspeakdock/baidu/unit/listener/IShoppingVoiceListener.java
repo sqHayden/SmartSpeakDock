@@ -5,5 +5,5 @@ package com.idx.smartspeakdock.baidu.unit.listener;
  */
 
 public interface IShoppingVoiceListener {
-
+    void openSpecifyWebsites(String web_sites_url);
 }

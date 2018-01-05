@@ -16,4 +16,26 @@ public class GlobalUtils {
     public static final String SHOPPING_FRAGMENT_INTENT_ID = "shopping.fragment.intent.id";
     public static final String START_FRAGMENT_INTENT_ID = "start.fragment.intent.id";
     public static final String SETTING_FRAGMENT_INTENT_ID = "setting.fragment.intent.id";
+
+    //top activity
+    public static final String IS_DRAWER_ACTIVITY_TOP_NAME = "DrawerActivity";
+    public static final String IS_SWIPE_ACTIVITY_TOP_NAME = "SwipeActivity";
+
+    //shopping website id
+    public static final String SHOPPING_WEBSITES_EXTRA_ID = "shopping.websites.extra.id";
+    public static final String WO_SHOPPING = "我要购物";
+    public static final String PHONE_DIGITAI = "手机数码";
+    public static final String COMPUTER_OFFICE = "电脑办公";
+    public static final String SMART_HOME = "智能家居";
+    public static final String IPHONE = "苹果专区";
+    public static final String SHARPE = "夏普专区";
+    public static final String FIND = "发现";
+    public static final String BUSSIESE_GROUP = "企业团购";
+    public static final String LOGIN_PAGE = "登录页面";
+
+    //weather part
+    public static final String WEATHER_TIME_TODAY = "今天";
+    public static final String WEATHER_TIME_TOMM = "明天";
+    public static final String WEATHER_TIME_POSTNATAL = "后天";
+
 }

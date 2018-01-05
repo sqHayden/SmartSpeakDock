@@ -1,5 +1,7 @@
 package com.idx.smartspeakdock.Swipe;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,9 +29,9 @@ import com.idx.smartspeakdock.map.MapFragment;
 import com.idx.smartspeakdock.music.activity.ListFragment;
 import com.idx.smartspeakdock.shopping.ShoppingFragment;
 import com.idx.smartspeakdock.utils.ActivityUtils;
+import java.util.ArrayList;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
-import java.util.ArrayList;
 
 /**
  * Created by ryan on 17-12-22.
@@ -40,7 +42,6 @@ public class SwipeActivity extends BaseActivity {
     private static final String TAG = SwipeActivity.class.getSimpleName();
     Toolbar toolbar;
     private DrawerLayout mDrawerLayout;
-    //    Timer timer;
     private Intent intent;
     private SwipeFragment swipeFragment;
     private CalendarFragment calendarFragment;
@@ -52,6 +53,7 @@ public class SwipeActivity extends BaseActivity {
     private boolean isDrawer = false;
     private String extraIntentId;
     private Fragment mCurrentFragment;
+    private String websites_url;
     private ArrayList<MyOnTouchListener> onTouchListeners = new ArrayList<MyOnTouchListener>(10);
 
     @Override
@@ -85,6 +87,20 @@ public class SwipeActivity extends BaseActivity {
     }
     public void unregisterMyOnTouchListener(MyOnTouchListener myOnTouchListener) {
         onTouchListeners.remove(myOnTouchListener) ;
+    }
+
+    @Override
+    public boolean isTopActivity() {
+        isActivityTop = false;
+        ActivityManager am = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
+        ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+        Logger.info(TAG, "isTopActivity = " + cn.getClassName());
+        if (cn.getClassName().contains(TAG))
+        {
+            isActivityTop = true;
+        }
+        Logger.info(TAG, "isTop = " + isActivityTop);
+        return isActivityTop;
     }
 
     private void changeFragment(String extraIntentId) {
@@ -123,7 +139,7 @@ public class SwipeActivity extends BaseActivity {
                 ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(),mapFragment,R.id.contentFrame);
                 break;
             case GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID:
-                if (mCurrentFragment == null) shoppingFragment = ShoppingFragment.newInstance();
+                if (mCurrentFragment == null) shoppingFragment = ShoppingFragment.newInstance(websites_url);
                 else {
                     if (mCurrentFragment instanceof ShoppingFragment)
                         shoppingFragment = (ShoppingFragment) mCurrentFragment;
@@ -194,6 +210,7 @@ public class SwipeActivity extends BaseActivity {
         ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
+        websites_url = "https://mall.flnet.com";
     }
 
     @Override
@@ -237,7 +254,7 @@ public class SwipeActivity extends BaseActivity {
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 start ShoppingActivty
                                 if (shoppingFragment == null) {
-                                    shoppingFragment = ShoppingFragment.newInstance();
+                                    shoppingFragment = ShoppingFragment.newInstance(websites_url);
                                 }
                                 ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), shoppingFragment, R.id.contentFrame);
                                 break;
@@ -310,11 +327,8 @@ public class SwipeActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else super.onBackPressed();
     }
 }

@@ -19,6 +19,7 @@
     //shopping web loading
     <string name="web_title_loading">Loading</string>
     <string name="web_message_loading">Please wait...</string>
+    <string name="web_sites_not_exists">Sorry,this websites not exists</string>
 
     //weather loading
     <string name="get_weather_info_error">get weather info error</string>
