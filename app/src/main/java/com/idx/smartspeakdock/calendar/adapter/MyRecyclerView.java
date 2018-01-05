@@ -31,7 +31,6 @@ public class MyRecyclerView extends RecyclerView.Adapter{
     List<Schedule> mlist = new ArrayList<>();
     public MyRecyclerView(String date, Integer day, Context context , List<Schedule> list) {
         super();
-        Log.v("1218","myrecyclerview" + list.size());
         EventBus.getDefault().register(this);
         this.context = context;
         this.list = list;
@@ -42,20 +41,13 @@ public class MyRecyclerView extends RecyclerView.Adapter{
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.v("1218","oncreateviewholder");
-       /* View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycleritem,parent,false);
-        MyViewHolder vh = new MyViewHolder(view);
-        return vh;*/
         return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerviewitem, parent, false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Log.v("1218bind","" + mlist.size() + "positon:" + position);
         final MyViewHolder viewHolder = (MyViewHolder) holder;
         if (mlist.get(position).getDate().equals(date)&&mlist.get(position).getDay().equals(day)){
-            Log.v("1218","aa" + position);
-            Log.v("1218","bingview" +mlist.get(position).getEvent());
             viewHolder.eventTextView.setText(mlist.get(position).getEvent());
             viewHolder.timeTextView.setText(mlist.get(position).getTime());
         }else{
@@ -67,26 +59,33 @@ public class MyRecyclerView extends RecyclerView.Adapter{
     @Override
     public int getItemCount() {
         mlist.clear();
-        Log.v("1218","getitemaaa" + list.size());
         int count = list.size();
-        for(int i = 0;i<list.size();i++){
-            if (list.get(i).getDate().equals(date)&&list.get(i).getDay().equals(day)) {
-                mlist.add(list.get(i));
-            }else {
-                count = count - 1;
+        Log.v("1218","listsize" + list.size());
+        if (list.size() != 0){
+            for(int i = 0;i<list.size();i++){
+                if (list.get(i).getDate().equals(date)&&list.get(i).getDay().equals(day)) {
+                    mlist.add(list.get(i));
+                }else {
+                    count = count - 1;
+                }
+            }
+            return count;
+        }else {
+            return 0;
+        }
+
+    }
+    public void removeItem(String date,Integer day,String event,String time) {
+        for (int i = 0;i<list.size();i++){
+            if (list.get(i).getDate().equals(date)&&list.get(i).getDay().equals(day)&&list.get(i).getEvent().equals(event)&&list.get(i).getTime().equals(time)){
+                list.remove(i);
             }
         }
-        //  Log.v("1218","getitemcount" + count);
-        return count;
-    }
-    public void removeItem(int position) {
-        list.remove(position);
         notifyDataSetChanged();
     }
 
     @Subscribe
     public void onEvent(MessageEvent messageEvent){
-        Log.v("1218","adapteronevent");
         date = messageEvent.getMessage();
         day = messageEvent.getday();
         notifyDataSetChanged();

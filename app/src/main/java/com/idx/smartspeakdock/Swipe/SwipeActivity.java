@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.calendar.CalendarFragment;
@@ -30,6 +29,7 @@ import com.idx.smartspeakdock.shopping.ShoppingFragment;
 import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
+import java.util.ArrayList;
 
 /**
  * Created by ryan on 17-12-22.
@@ -52,6 +52,7 @@ public class SwipeActivity extends BaseActivity {
     private boolean isDrawer = false;
     private String extraIntentId;
     private Fragment mCurrentFragment;
+    private ArrayList<MyOnTouchListener> onTouchListeners = new ArrayList<MyOnTouchListener>(10);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,25 @@ public class SwipeActivity extends BaseActivity {
         extraIntentId = getIntent().getStringExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT);
         mCurrentFragment = getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         changeFragment(extraIntentId);
+    }
+    public interface MyOnTouchListener {
+        public boolean onTouch(MotionEvent ev);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        for (MyOnTouchListener listener : onTouchListeners) {
+            if(listener != null) {
+                listener.onTouch(ev);
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+    public void registerMyOnTouchListener(MyOnTouchListener myOnTouchListener) {
+        onTouchListeners.add(myOnTouchListener);
+    }
+    public void unregisterMyOnTouchListener(MyOnTouchListener myOnTouchListener) {
+        onTouchListeners.remove(myOnTouchListener) ;
     }
 
     private void changeFragment(String extraIntentId) {

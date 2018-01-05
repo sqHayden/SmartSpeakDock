@@ -3,6 +3,7 @@ package com.idx.smartspeakdock.Swipe;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -25,6 +27,7 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.service.SplachService;
 import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.NetStatusUtils;
 import com.idx.smartspeakdock.utils.ToastUtils;
@@ -60,6 +63,7 @@ public class SwipeFragment extends BaseFragment implements WeatherUi,ChooseCityD
     public WeatherPresenter mWeatherPresenter;
     private Resources mResources;
     private Context mContext;
+    private SwipeActivity.MyOnTouchListener onTouchListener;
 
     public static SwipeFragment newInstance(){return new SwipeFragment();}
 
@@ -106,6 +110,29 @@ public class SwipeFragment extends BaseFragment implements WeatherUi,ChooseCityD
         }else{
             ToastUtils.showMessage(mContext,mResources.getString(R.string.network_not_connected));
         }
+        onTouchListener = new SwipeActivity.MyOnTouchListener() {
+            @Override
+            public boolean onTouch(MotionEvent ev) {
+                switch (ev.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+
+                        Log.d(TAG, "onTouch: down");
+                        mContext.stopService(new Intent(mContext.getApplicationContext(), SplachService.class));
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        Log.d(TAG, "onTouch: move");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        Log.d(TAG, "onTouch: up");
+                        mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
+                        break;
+                }
+                return false;
+            }
+        };
+
+        ((SwipeActivity) getActivity()).registerMyOnTouchListener(onTouchListener);
+
         return mWeatherView;
     }
 
@@ -314,5 +341,13 @@ public class SwipeFragment extends BaseFragment implements WeatherUi,ChooseCityD
         Logger.info(TAG, "onDestroy: ");
         super.onDestroy();
         mLocationClient.stop();
+        mContext.stopService(new Intent(mContext.getApplicationContext(), SplachService.class));
+        ((SwipeActivity) getActivity()).unregisterMyOnTouchListener(onTouchListener);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
+        Log.d(TAG, "onResume: ");
     }
 }

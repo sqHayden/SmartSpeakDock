@@ -33,13 +33,16 @@ public class UnitManager {
 
     private static final String TAG = UnitManager.class.getName();
     private static UnitManager INSTANCE = null;
+    //每次会话Id
     private String sessionId;
+    //SmartSpeakDock的场景ID
     private int sceneId = 15213;
     private String accessToken;
     //会话标识
     private boolean isSessionOver = false;
     private TTSManager ttsManager;
     private APIService mApiService;
+    //语音响应处理适配
     private VoiceActionAdapter mVoiceAdapter;
     private AppExecutors mAppExecutors;
 
@@ -57,6 +60,11 @@ public class UnitManager {
         return INSTANCE;
     }
 
+    /**
+     * 初始化
+     *
+     * @param context 上下文
+     **/
     public void init(Context context) {
         Map<String, Object> authParams = AuthInfo.getAuthParams(context);
         mApiService = APIService.getInstance();
@@ -78,6 +86,12 @@ public class UnitManager {
         mAppExecutors = new AppExecutors();
     }
 
+    /**
+     * 发送数据至语音云端处理接口
+     *
+     * @param context 上下文
+     * @param message 语音转化后的文本信息
+     */
     public void sendMessage(final Context context, String message) {
         if (TextUtils.isEmpty(accessToken)) {
             return;
@@ -99,14 +113,19 @@ public class UnitManager {
 
     }
 
+    /**
+     * 处理数据，播放语音，调用动作执行函数
+     *
+     * @param context 上下文
+     * @param result  解析后的数据
+     **/
     private void handleResponse(final Context context, CommunicateResponse result) {
         if (result != null) {
             sessionId = result.sessionId;
             //  如果有对于的动作action，请执行相应的逻辑
             List<CommunicateResponse.Action> actionList = result.actionList;
-            Log.e(TAG, "handleResponse: size, " + actionList.size());
             if (actionList.size() > 1) {
-
+                //意图引导
                 List<SpeechSynthesizeBag> bags = new ArrayList<>();
                 for (CommunicateResponse.Action action : actionList) {
 
@@ -126,10 +145,12 @@ public class UnitManager {
                 ttsManager.batSpeak(bags);
 
             } else if (actionList.size() == 1) {
+                //单一意图，意图引导最后出口亦是单一意图
                 final CommunicateResponse.Action action = actionList.get(0);
                 final CommunicateResponse.Schema schema = result.schema;
 
                 if (!TextUtils.isEmpty(action.say)) {
+                    //有语音文本信息返回
                     List<SpeechSynthesizeBag> bags = new ArrayList<>();
                     SpeechSynthesizeBag msg = new SpeechSynthesizeBag();
                     msg.setText(action.say);
@@ -147,15 +168,15 @@ public class UnitManager {
 
                         @Override
                         public void onSpeakFinish() {
-                            // 执行自己的业务逻辑，回调执行
+                            //执行自己的业务逻辑，回调执行，即语音播放结束后回调
                             executeTask(context, action, schema);
                         }
                     });
 
                 } else if (!TextUtils.isEmpty(action.mainExe)) {
-                    //没有语音回复时执行
+                    //没有语音信息返回
                     Log.d(TAG, "handleResponse: mainExe, " + action.mainExe);
-                    //Toast.makeText(UnitManager.this, "请执行函数：" + action.mainExe, Toast.LENGTH_SHORT).show();
+                    //执行自己的业务逻辑
                     executeTask(context, action, schema);
                 }
 
@@ -163,6 +184,11 @@ public class UnitManager {
         }
     }
 
+    /**
+     * @param context 上下文
+     * @param action  执行的动作信息
+     * @param schema  对应的词槽
+     */
     private void executeTask(final Context context, final CommunicateResponse.Action action,
                              final CommunicateResponse.Schema schema) {
         mAppExecutors.getMainThread().execute(new Runnable() {
@@ -180,28 +206,46 @@ public class UnitManager {
         });
     }
 
+    /**
+     * @param listener 音乐语音监听器
+     */
     public void setMusicVoiceListener(IMusicVoiceListener listener) {
         Log.d(TAG, "setMusicVoiceListener: ");
         mVoiceAdapter.setMusicListener(listener);
 
     }
 
+    /**
+     * @param listener 日历语音监听器
+     */
     public void setCalenderVoiceListener(ICalenderVoiceListener listener) {
         mVoiceAdapter.setCalenderListener(listener);
     }
 
+    /**
+     * @param listener 地图语音监听器
+     */
     public void setMapVoiceListener(IMapVoiceListener listener) {
         mVoiceAdapter.setMapListener(listener);
     }
 
+    /**
+     * @param listener 天气语音监听器
+     */
     public void setWeatherVoiceListener(IWeatherVoiceListener listener) {
         mVoiceAdapter.setWeatherListener(listener);
     }
 
+    /**
+     * @param listener 购物语音监听器
+     */
     public void setShoppingVoiceListener(IShoppingVoiceListener listener) {
         mVoiceAdapter.setShoppingListener(listener);
     }
 
+    /**
+     * 判断当前会话是否结束，是否继续监听语音输入
+     */
     public boolean isSessionOver() {
         return isSessionOver;
     }

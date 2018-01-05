@@ -192,7 +192,19 @@ public class CalendarView extends FrameLayout {
     public int getCurDay() {
         return mDelegate.getCurrentDay().getDay();
     }
-
+    /*
+    * 获取当天的农历
+    * */
+    public String getLunar(){
+        return mDelegate.getCurrentDay().getLunar();
+    }
+    /*
+    *
+    * 获取当天星期几
+    * */
+    public int getWeek(){
+        return mDelegate.getCurrentDay().getWeek();
+    }
     /**
      * 获取本月
      *
@@ -327,6 +339,7 @@ public class CalendarView extends FrameLayout {
      * @param position 某一年
      */
     public void closeSelectLayout(final int position) {
+        Log.v("1218","guandaoyiyue");
         mSelectLayout.setVisibility(GONE);
         mWeekBar.setVisibility(VISIBLE);
         mMonthPager.setVisibility(VISIBLE);
@@ -338,12 +351,15 @@ public class CalendarView extends FrameLayout {
             calendar.setLunar(LunarCalendar.getLunarText(calendar));
             mDelegate.mSelectedCalendar = calendar;
             if (mDelegate.mDateChangeListener != null) {
+                Log.v("1218","guandaoyiyue11");
                 mDelegate.mDateChangeListener.onDateChange(calendar);
             }
             if (mDelegate.mDateSelectedListener != null) {
+                Log.v("1218","guandaoyiyue22");
                 mDelegate.mDateSelectedListener.onDateSelected(calendar);
             }
         } else {
+            Log.v("1218","guandaoyiyue33b" + position);
             mMonthPager.setCurrentItem(position, true);
         }
         mWeekBar.animate()

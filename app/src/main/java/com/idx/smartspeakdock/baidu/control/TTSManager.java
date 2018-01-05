@@ -45,11 +45,17 @@ public class TTSManager {
         return INSTANCE;
     }
 
+    /**
+     * 语音合成管理器初始化
+     *
+     * @param context 上下文
+     * @param ttsMode Tts模式
+     */
     public void init(Context context, TtsMode ttsMode) {
         Map<String, Object> authParams = AuthInfo.getAuthParams(context);
         mSpeechSynthesizer = SpeechSynthesizer.getInstance();
         mSpeechSynthesizer.setContext(context);
-        mSpeechSynthesizer.setAppId((String)authParams.get(AuthInfo.META_APP_ID));
+        mSpeechSynthesizer.setAppId((String) authParams.get(AuthInfo.META_APP_ID));
         mSpeechSynthesizer.setApiKey((String) authParams.get(AuthInfo.META_APP_KEY),
                 (String) authParams.get(AuthInfo.META_APP_SECRET));
         //授权检验接口
@@ -88,7 +94,11 @@ public class TTSManager {
         }
     }
 
-    //播放单个语音时，暂时取消回调
+    /**
+     * 播放单个语音时，暂时取消回调
+     *
+     * @param text 要播放的文本
+     */
     public void speak(String text) {
         if (mCallback != null) {
             mCallback = null;
@@ -96,7 +106,11 @@ public class TTSManager {
         mSpeechSynthesizer.speak(text);
     }
 
-    //播放多条语音
+    /**
+     * 播放多条语音
+     *
+     * @param list 语音文本包
+     */
     public void batSpeak(List<SpeechSynthesizeBag> list) {
         if (mCallback != null) {
             mCallback = null;
@@ -104,6 +118,12 @@ public class TTSManager {
         mSpeechSynthesizer.batchSpeak(list);
     }
 
+    /**
+     * 播放多条语音
+     *
+     * @param list     语音文本包
+     * @param callback 语音回调函数
+     */
     public void batSpeak(List<SpeechSynthesizeBag> list, SpeakCallback callback) {
         if (mCallback != null) {
             mCallback = null;

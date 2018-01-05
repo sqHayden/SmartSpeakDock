@@ -67,7 +67,7 @@ public class MonthViewPager extends ViewPager {
                 Calendar calendar = new Calendar();
                 calendar.setYear((position + mDelegate.getMinYearMonth() -1) / 12 + mDelegate.getMinYear());
                 calendar.setMonth((position + mDelegate.getMinYearMonth() -1 ) % 12 + 1);
-                calendar.setDay(1);
+                calendar.setDay(32);
                 calendar.setCurrentMonth(calendar.getYear() == mDelegate.getCurrentDay().getYear() &&
                         calendar.getMonth() == mDelegate.getCurrentDay().getMonth());
                 calendar.setLunar(LunarCalendar.getLunarText(calendar));
