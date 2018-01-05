@@ -6,5 +6,6 @@ package com.idx.smartspeakdock.weather.model.weather;
 
 public class Lifestyle {
     public String brf;
+    public String txt;
     public String type;
 }

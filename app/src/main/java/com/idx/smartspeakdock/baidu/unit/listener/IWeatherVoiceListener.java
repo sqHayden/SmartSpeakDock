@@ -5,5 +5,14 @@ package com.idx.smartspeakdock.baidu.unit.listener;
  */
 
 public interface IWeatherVoiceListener {
+    void onWeatherInfo(String cityName);
 
+    String onRangeTempInfo(String cityName,String time);
+    String onAirQualityInfo(String cityName);
+    String onCurrentTempInfo(String cityName);
+
+    String onWeatherStatus(String cityName,String time);
+    String onDressInfo(String cityName);
+    String onUitravioletLevelInfo(String cityName);
+    String onSmogInfo(String cityName,String time);
 }

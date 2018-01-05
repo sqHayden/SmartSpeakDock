@@ -20,6 +20,7 @@ import com.idx.smartspeakdock.baidu.unit.model.AccessToken;
 import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
 import com.idx.smartspeakdock.utils.AppExecutors;
 import com.idx.smartspeakdock.utils.AuthInfo;
+import com.idx.smartspeakdock.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -195,6 +196,7 @@ public class UnitManager {
             @Override
             public void run() {
                 if (mVoiceAdapter != null) {
+                    Log.i(TAG, "run: action.id = "+action.actionId);
                     isSessionOver = mVoiceAdapter.onAction(action, schema);
                     //会话未结束，继续开始语音识别
                     if (!isSessionOver) {
@@ -240,6 +242,7 @@ public class UnitManager {
      * @param listener 购物语音监听器
      */
     public void setShoppingVoiceListener(IShoppingVoiceListener listener) {
+        Log.i(TAG, "setShoppingVoiceListener: ");
         mVoiceAdapter.setShoppingListener(listener);
     }
 

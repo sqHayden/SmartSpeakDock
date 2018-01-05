@@ -106,12 +106,12 @@ public class StandByFragment extends BaseFragment implements IStandByView{
 
     @Override
     public void setCurrentCityWeatherInfo(final Weather weather) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                showWeatherInfo(weather);
-            }
-        });
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showWeatherInfo(weather);
+                }
+            });
     }
 
     @Override

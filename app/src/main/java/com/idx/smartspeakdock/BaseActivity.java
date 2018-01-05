@@ -18,11 +18,12 @@ import java.util.List;
 
 // 只用于继承
 public abstract class BaseActivity extends AppCompatActivity {
+    public  boolean isActivityTop = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_base);
+//        setContentView(R.layout.drawer_main);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -78,4 +79,5 @@ public abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
+    public abstract boolean isTopActivity();
 }
