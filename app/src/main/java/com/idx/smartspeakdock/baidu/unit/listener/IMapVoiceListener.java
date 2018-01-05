@@ -14,6 +14,13 @@ public interface IMapVoiceListener {
 
     String onSearchAddress(String address);
 
+    /**
+     *
+     * @param fromAddress replace it with the local address when it is null
+     * @param toAddress
+     * @param pathWay
+     * @return
+     */
     String onPathInfo(String fromAddress, String toAddress, PathWay pathWay);
 
 }
