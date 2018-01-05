@@ -27,6 +27,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:background="@drawable/toplayoutstyle"
+        android:layout_marginTop="10dp"
         android:visibility="gone">
 
         <TextView
@@ -65,6 +67,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:orientation="horizontal"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:background="@drawable/toplayoutstyle"
         android:visibility="gone"
       >
 
@@ -154,7 +159,7 @@
     <RelativeLayout
         android:id="@+id/location"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="110dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="50dp"
         android:layout_marginStart="40dp">
@@ -166,6 +171,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="3dp"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="40dp"
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/map_location" />
@@ -174,26 +180,46 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/my_location"
-            android:text="我的位置" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
+            android:text="我的位置"
+            />
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="30dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@android:drawable/ic_menu_search"
+            android:layout_height="80dp"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal"
+            android:id="@+id/fab_parent"
             android:visibility="gone"
-            app:backgroundTint="#0480ce"
-            app:elevation="6dp"
-            app:fabSize="normal"
-            app:pressedTranslationZ="8dp"
-            app:rippleColor="#ff87ffeb"
-            app:useCompatPadding="false" />
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#0480ce"
+                android:textSize="25sp"
+                android:text="路径"
+                android:layout_gravity="center"
+                />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@android:drawable/ic_menu_search"
+                app:backgroundTint="#0480ce"
+                app:fabSize="normal"
+                app:rippleColor="#FF3F91C4"
+                android:layout_gravity="center"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#0480ce"
+                android:textSize="25sp"
+                android:layout_gravity="center"
+                android:text="选择"
+                />
+        </LinearLayout>
     </RelativeLayout>
-
     <LinearLayout
         android:id="@+id/map_go"
         android:background="#af4578"
@@ -201,15 +227,46 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:gravity="center"
+        android:orientation="horizontal"
         android:visibility="gone"
         >
+        <TextView
+            android:id="@+id/spend_time"
+            android:layout_marginStart="3dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="总耗时：17分钟"
+            android:layout_weight="0.25"
+            android:gravity="center"
+            android:textSize="18sp"
+            />
+        <TextView
+            android:id="@+id/distance_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="总距离：4.4公里"
+            android:layout_weight="0.25"
+            android:gravity="center"
+            android:textSize="18sp"
+            />
+        <TextView
+            android:id="@+id/traffic_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="红绿灯7个"
+            android:layout_weight="0.25"
+            android:gravity="center"
+            android:textSize="18sp"
+            />
         <Button
             android:id="@+id/choose_route"
             android:text="开始导航"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:layout_marginEnd="3dp"
             android:background="@drawable/map_go"
+            android:layout_weight="0.25"
             />
     </LinearLayout>
 </RelativeLayout>

@@ -19,7 +19,6 @@ import android.view.WindowManager;
 
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
-import com.idx.smartspeakdock.map.MapActivity;
 import com.idx.smartspeakdock.service.SpeakerService;
 import com.idx.smartspeakdock.standby.StandByFragment;
 import com.idx.smartspeakdock.utils.ActivityUtils;
@@ -154,7 +153,8 @@ public class DrawerActivity extends BaseActivity {
                                 break;
                             case R.id.list_navigation_map:
                                 // TODO: 17-12-16 start MapActivity
-                                startActivity(new Intent(DrawerActivity.this, MapActivity.class));
+                                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MAP_FRAGMENT_INTENT_ID);
+                                startActivity(mIntent);
                                 break;
                             case R.id.list_navigation_setting:
                                 // TODO: 17-12-16 start SettingActivity

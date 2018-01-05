@@ -1,6 +1,7 @@
 package com.idx.smartspeakdock.map.tools;
 
 import android.os.Bundle;
+
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.Marker;
@@ -9,6 +10,7 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.search.core.PoiInfo;
 import com.baidu.mapapi.search.poi.PoiResult;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -9,7 +9,6 @@ import com.idx.smartspeakdock.Modules;
 import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.TTSManager;
 import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
-import com.idx.smartspeakdock.map.MapActivity;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 
 
@@ -173,9 +172,8 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                 mContext.startActivity(mIntent);
                 break;
             case Modules.MAP:
-                if(mIntent != null) mIntent = null;
-                mIntent = new Intent(mContext,MapActivity.class);
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MAP_FRAGMENT_INTENT_ID);
                 mContext.startActivity(mIntent);
                 break;
             case Modules.MUSIC:
