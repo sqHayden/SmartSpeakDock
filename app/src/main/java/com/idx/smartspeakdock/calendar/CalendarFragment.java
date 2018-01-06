@@ -1,12 +1,9 @@
 package com.idx.smartspeakdock.calendar;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
@@ -197,60 +194,6 @@ public class CalendarFragment extends BaseFragment implements
                 return null;
             }
         });
-       /* UnitManager.getInstance().setCalenderVoiceListener(new ICalenderVoiceListener() {
-            @Override
-            public String onWeekInfo() {
-                answer="";
-                answer = "今天星期"+mCalendarView.getWeek();
-                return answer;
-            }
-
-            @Override
-            public String onFestivalInfo() {
-               answer="";
-                String aa =  LunarCalendar.getSolarCalendar(mCalendarView.getCurMonth(),mCalendarView.getCurDay());
-                if (!aa.isEmpty()){
-                    answer = "今天是" + aa;
-                }else {
-                    if (mCalendarView.getWeek() == 6||mCalendarView.getWeek() == 7){
-                        answer = "今天是周末";
-                    }else {
-                        answer = "今天是平常日";
-                    }
-                }
-               return answer;
-            }
-
-            @Override
-            public String onActInfo() {
-                answer= "";
-                List<Schedule> listSchedule = DataSupport.where("date = ? and day = ?",date,day.toString()).find(Schedule.class);
-                if (listSchedule.size() != 0){
-                    for(int i = 0;i<listSchedule.size();i++) {
-                        answer1 = "今天"+listSchedule.get(i).getTime() + listSchedule.get(i).getEvent();
-                        answer = answer + answer1;
-                    }
-
-                }else {
-                    answer = "今天没有安排事情";
-                }
-                return answer;
-            }
-
-            @Override
-            public String onDateInfo() {
-                answer="";
-                answer = "今天" + mCalendarView.getCurMonth() + "月" + mCalendarView.getCurDay() + "号";
-                return answer;
-            }
-
-            @Override
-            public String onLunarDateInfo() {
-                answer="";
-                answer = "今天农历" +mCalendarView.getLunar();
-                return answer;
-            }
-        });*/
     }
 
     private void initData() {

@@ -35,8 +35,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ZoomControls;
 
+import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
@@ -88,6 +88,8 @@ import com.baidu.navisdk.adapter.BaiduNaviManager;
 import com.baidu.vi.VDeviceAPI;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.baidu.control.UnitManager;
+import com.idx.smartspeakdock.baidu.unit.listener.IMapVoiceListener;
 import com.idx.smartspeakdock.map.overlayutil.BikingRouteOverlay;
 import com.idx.smartspeakdock.map.overlayutil.DrivingRouteOverlay;
 import com.idx.smartspeakdock.map.overlayutil.MassTransitRouteOverlay;
@@ -99,7 +101,6 @@ import com.idx.smartspeakdock.map.tools.BNEventHandler;
 import com.idx.smartspeakdock.map.tools.MyOrientationListener;
 import com.idx.smartspeakdock.map.tools.MyPoiOverlay;
 import com.idx.smartspeakdock.map.tools.RouteLineAdapter;
-import com.idx.smartspeakdock.shopping.ShoppingFragment;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -111,6 +112,7 @@ import java.util.Map;
 
 
 public class MapFragment extends BaseFragment implements DialogInterface.OnClickListener, OnGetRoutePlanResultListener, BaiduMap.OnMapClickListener {
+   public static final String TAG = MapFragment.class.getSimpleName();
     //fragment相关
     private View view;
     //定义适配器
@@ -234,6 +236,9 @@ public class MapFragment extends BaseFragment implements DialogInterface.OnClick
     //路线相关信息
     private TextView spend_time,distance_count,traffic_count;
 
+    //语音交互模块参数
+    String my_address = "未查询到地址";
+
     public static MapFragment newInstance(){return new MapFragment();}
 
     @Override
@@ -258,6 +263,52 @@ public class MapFragment extends BaseFragment implements DialogInterface.OnClick
         if (initDirs()) {
             initNavi();
         }
+
+        UnitManager.getInstance().setMapVoiceListener(new IMapVoiceListener() {
+            //语句：打開地图/我在哪兒/這是哪裡/這是哪兒/我現在在哪裡  测试完成 可以实现
+            @Override
+            public String onLocationInfo() {
+                //执行地点查询方案
+                Log.d(TAG, "onLocationInfo: ");
+                return my_address;
+            }
+            //语句：搜索(市/县/区)  /   搜索附近[NAME]   需要修改skill
+            @Override
+            public String onSearchInfo(String name, SearchArea searchArea) {
+                Log.d(TAG, "onSearchInfo: ");
+                Log.d("key:"+name,"area"+searchArea.getDesc());
+                return null;
+            }
+            //语句：我要搜索[NAME]
+            @Override
+            public String onSearchAddress(String address) {
+                return null;
+            }
+            //语句：我要从哪儿到哪儿  可以了
+            //语句：我要从哪儿驾车去哪儿 可以了
+            //语句：我要去哪儿   语音代码修改中
+            @Override
+            public String onPathInfo(String fromAddress, String toAddress, PathWay pathWay) {
+                Log.d("出行方式:",pathWay.toString());
+                Log.d(TAG, "onPathInfo:");
+                //调用我的位置
+                pointToLocation();
+                //隐藏路径选择视图
+                fab_parent.setVisibility(View.GONE);
+                //显示点对点视图
+                ptp_layout.setVisibility(View.VISIBLE);
+                //设置起点名字
+                if(fromAddress!=null){//说了出发点
+                    route_start.setText(fromAddress);
+                }else{//没说按照“我的位置处理”
+                    route_start.setText("我的位置");
+                    start_llg = my_latlng;
+                }
+                //设置终点名字
+                route_end.setText(toAddress);
+                return "已为您进行查询，请在地图中选择精确的始末地点，启动路径导航操作";
+            }
+        });
     }
 
     @Nullable
@@ -568,13 +619,30 @@ public class MapFragment extends BaseFragment implements DialogInterface.OnClick
         mLocationListener = new MyLocationListener();
         //设置定位的相关配置
         LocationClientOption option = new LocationClientOption();
-        option.setIsNeedAddress(true);
-        //设置坐标类型
-        option.setCoorType("bd09ll");
         //打开GPS
         option.setOpenGps(true);
-        //每隔一秒进行一次定位
-        option.setScanSpan(1000);
+        //可选，默认高精度，设置定位模式，高精度，低功耗，仅设备
+        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
+        //可选，默认gcj02，设置返回的定位结果坐标系，如果配合百度地图使用，建议设置为bd09ll;
+        option.setCoorType("bd09ll");
+        //可选，默认0，即仅定位一次，设置发起定位请求的间隔需要大于等于1000ms才是有效的
+        option.setScanSpan(3000);
+        //可选，设置是否需要地址信息，默认不需要
+        option.setIsNeedAddress(true);
+        //可选，设置是否需要地址描述
+        option.setIsNeedLocationDescribe(true);
+        // 可选，设置是否需要设备方向结果
+        option.setNeedDeviceDirect(false);
+        //可选，默认false，设置是否当gps有效时按照1S1次频率输出GPS结果
+        option.setLocationNotify(false);
+        //可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
+        option.setIgnoreKillProcess(true);
+        //可选，默认false，设置是否需要位置语义化结果，可以在BDLocation.getLocationDescribe里得到，结果类似于“在北京天安门附近”
+        option.setIsNeedLocationDescribe(true);
+        //可选，默认false，设置是否需要POI结果，可以在BDLocation.getPoiList里得到
+        option.setIsNeedLocationPoiList(true);
+        //可选，默认false，设置是否收集CRASH信息，默认收集
+        option.SetIgnoreCacheException(false);
         //应用
         mLocationClient.setLocOption(option);
         //注册回调监听器到定位客户端
@@ -872,26 +940,44 @@ public class MapFragment extends BaseFragment implements DialogInterface.OnClick
     };
 
     //请求定位回调监听
-    public class MyLocationListener implements BDLocationListener {
+    public class MyLocationListener extends BDAbstractLocationListener {
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
-//            Log.d("进入监听", "Test Log");
-            my_latlng = new LatLng(bdLocation.getLatitude(), bdLocation.getLongitude());
-            if (state) {
-                my_reallatlng = my_latlng;
-                accu = bdLocation.getRadius();
-                //显示当前位置图标
-                MyLocationData data = new MyLocationData
-                        .Builder()
-                        .accuracy(accu)
-                        .latitude(my_reallatlng.latitude)
-                        .longitude(my_reallatlng.longitude).build();
-                mBaiduMap.setMyLocationData(data);
-                //调整地图显示尺寸
-                set_map_size(my_latlng, 15);
-                //获取当前城市名称
-                city_name = bdLocation.getCity();
+            if(null != bdLocation && bdLocation.getLocType() != BDLocation.TypeServerError) {
+                my_latlng = new LatLng(bdLocation.getLatitude(), bdLocation.getLongitude());
+                StringBuffer sb = new StringBuffer(256);
+                if (state) {
+                    sb.append(bdLocation.getProvince());    //获取省份
+                    sb.append(bdLocation.getCity());   //获取城市
+                    sb.append(bdLocation.getDistrict());//获取区县
+                    sb.append(bdLocation.getStreet()); //获取街道信息
+                    Log.d("街道信息:",bdLocation.getStreet());
+                    sb.append(bdLocation.getLocationDescribe());//位置描述信息
+                    Log.d("位置描述信息:",bdLocation.getLocationDescribe());
+
+                    Log.d("我的位置为:",sb.toString());
+                    if(my_address.equals("未查询到地址")) {
+                        my_address = sb.toString();
+                    }
+                    Log.d("定位方式:",""+bdLocation.getNetworkLocationType());
+                    if(bdLocation.hasAddr()){
+                        Log.d("有地址信息","abdce");
+                    }
+                    my_reallatlng = my_latlng;
+                    accu = bdLocation.getRadius();
+                    //显示当前位置图标
+                    MyLocationData data = new MyLocationData
+                            .Builder()
+                            .accuracy(accu)
+                            .latitude(my_reallatlng.latitude)
+                            .longitude(my_reallatlng.longitude).build();
+                    mBaiduMap.setMyLocationData(data);
+                    //调整地图显示尺寸
+                    set_map_size(my_latlng, 15);
+                    //获取当前城市名称
+                    city_name = bdLocation.getCity();
 //                Log.d("当前城市为：", city_name);
+                }
             }
         }
     }
@@ -1320,7 +1406,7 @@ public class MapFragment extends BaseFragment implements DialogInterface.OnClick
         BNaviSettingManager.setIsAutoQuitWhenArrived(true);
         Bundle bundle = new Bundle();
         // 必须设置APPID，否则会静音
-        bundle.putString(BNCommonSettingParam.TTS_APP_ID, "9354030");
+        bundle.putString(BNCommonSettingParam.TTS_APP_ID, "10636332");
         BNaviSettingManager.setNaviSdkParam(bundle);
     }
 

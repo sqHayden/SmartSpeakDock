@@ -4,7 +4,9 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -13,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -21,6 +24,7 @@ import android.view.WindowManager;
 
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.service.GetCityService;
 import com.idx.smartspeakdock.service.SpeakerService;
 import com.idx.smartspeakdock.standby.StandByFragment;
 import com.idx.smartspeakdock.utils.ActivityUtils;
@@ -40,7 +44,27 @@ public class DrawerActivity extends BaseActivity {
     private Toolbar toolbar;
     private CoordinatorLayout right;
     private NavigationView left;
+    private GetCityService.MyBinder myBinder;
+
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            myBinder = (GetCityService.MyBinder) service;
+            String city_name = myBinder.getCity();
+            if(city_name!=null) {
+                Log.d("Test Demo", city_name);
+            }else{
+                Log.d("拿到的地名是空的","123456");
+            }
+        }
+    };
     private boolean isDrawer;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +84,16 @@ public class DrawerActivity extends BaseActivity {
         if (!isServiceRunning(this, "com.idx.smartspeakdock.start.SpeakerService")) {
             startService(new Intent(this, SpeakerService.class));
         }
+
+
+//        if(!isServiceRunning(this,"com.idx.smartspeakdock.start.GetCityService")){
+//            Log.d("start my service","123456");
+//            //启动
+//            startService(new Intent(this, GetCityService.class));
+//            //绑定
+//            Intent bindIntent = new Intent(this, GetCityService.class);
+//            bindService(bindIntent, connection, BIND_AUTO_CREATE);
+//        }
     }
 
     @Override
