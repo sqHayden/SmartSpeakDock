@@ -100,6 +100,9 @@ public class TTSManager {
      * @param text 要播放的文本
      */
     public void speak(String text) {
+        if (text == null || text.equals("")) {
+            return;
+        }
         if (mCallback != null) {
             mCallback = null;
         }
@@ -112,6 +115,9 @@ public class TTSManager {
      * @param list 语音文本包
      */
     public void batSpeak(List<SpeechSynthesizeBag> list) {
+        if (list == null || list.size() == 0) {
+            return;
+        }
         if (mCallback != null) {
             mCallback = null;
         }
@@ -125,6 +131,9 @@ public class TTSManager {
      * @param callback 语音回调函数
      */
     public void batSpeak(List<SpeechSynthesizeBag> list, SpeakCallback callback) {
+        if (list == null || list.size() == 0) {
+            return;
+        }
         if (mCallback != null) {
             mCallback = null;
         }
