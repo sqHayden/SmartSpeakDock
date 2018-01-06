@@ -5,11 +5,12 @@ package com.idx.smartspeakdock;
  */
 
 public interface Actions {
-    String OPEN_MODULE = "open_user_module_name_clarify";
+    String OPEN_MODULE_NAME = "open_user_module_name_clarify";
     String OPEN_NOW = "open_satisfy";
 
     interface Calender {
         String CALENDER_WEEK_INFO = "calender_week_info_satisfy";
+        String CALENDER_TIME_INFO = "calender_time_info_satisfy";
         String CALENDER_FESTIVAL_INFO = "calender_festival_info_satisfy";
         String CALENDER_ACT_INFO = "calender_act_info_satisfy";
         String CALENDER_DATE_INFO = "calender_date_info_satisfy";

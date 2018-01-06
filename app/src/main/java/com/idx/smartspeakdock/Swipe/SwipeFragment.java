@@ -28,13 +28,22 @@ import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.baidu.control.UnitManager;
 import com.idx.smartspeakdock.baidu.unit.listener.IWeatherVoiceListener;
-import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.service.SplachService;
+import com.idx.smartspeakdock.standby.Utility;
+import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.NetStatusUtils;
 import com.idx.smartspeakdock.utils.ToastUtils;
 import com.idx.smartspeakdock.weather.model.weather.Forecast;
 import com.idx.smartspeakdock.weather.model.weather.Weather;
+import com.idx.smartspeakdock.weather.model.weatherroom.WeatherAqi;
+import com.idx.smartspeakdock.weather.model.weatherroom.WeatherAqiDataSource;
+import com.idx.smartspeakdock.weather.model.weatherroom.WeatherAqiInjection;
+import com.idx.smartspeakdock.weather.model.weatherroom.WeatherAqiRepository;
+import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasic;
+import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicDataSource;
+import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicInjection;
+import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicRepository;
 import com.idx.smartspeakdock.weather.presenter.WeatherPresenter;
 import com.idx.smartspeakdock.weather.presenter.WeatherPresenterImpl;
 import com.idx.smartspeakdock.weather.ui.ChooseCityDialogFragment;
@@ -49,6 +58,8 @@ import com.idx.smartspeakdock.weather.utils.WeatherUtil;
 
 public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCityDialogFragment.OnChooseCityCompleted {
     private static final String TAG = SwipeFragment.class.getSimpleName();
+    private static final int VOICE=0;
+    private static final int UNVOICE=1;
     public SwipeRefreshLayout mRefreshWeather;
     public WeatherPresenter mWeatherPresenter;
     ImageView mWeatherSelectCity;
@@ -69,6 +80,9 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
 
     private String voice_answer;
     private Weather voice_weather;
+
+    private WeatherBasicRepository mWeatherBasicRepository;
+    private WeatherAqiRepository mWeatherAqiRepository;
 
     public static SwipeFragment newInstance() {
         return new SwipeFragment();
@@ -195,7 +209,9 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
             public String onRangeTempInfo(String cityName, String time) {
                 Log.i(TAG, "onRangeTempInfo: cityName = "+cityName+",time = "+time);
                 voice_answer = "";
-                voice_weather = WeatherUtil.loadWeather(cityName);
+
+                getWeatherBasic(VOICE,cityName);
+
                 if (voice_weather != null && voice_weather.status.equals("ok")){
                     judgeRangeTempInfo(cityName,time);
                 } else {
@@ -207,7 +223,8 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
             @Override
             public String onAirQualityInfo(String cityName) {
                 Log.i(TAG, "onAirQualityInfo: cityName = " + cityName);
-                voice_weather = WeatherUtil.loadWeatherAqi(cityName);
+                getWeatherAqi(VOICE,cityName);
+
                 if (voice_weather != null && voice_weather.status.equals("ok")) {
                     voice_answer = cityName+"空气质量为" + voice_weather.air.qlty;
                 } else {
@@ -219,7 +236,8 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
             @Override
             public String onCurrentTempInfo(String cityName) {
                 Log.i(TAG, "onCurrentTempInfo: cityName = " + cityName);
-                voice_weather = WeatherUtil.loadWeather(cityName);
+                getWeatherBasic(VOICE,cityName);
+
                 if (voice_weather != null && voice_weather.status.equals("ok")) {
                     voice_answer = cityName+"当前温度为" + voice_weather.now.tmperature + "度";
                 } else {
@@ -231,7 +249,8 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
             @Override
             public String onWeatherStatus(String cityName, String time) {
                 Log.i(TAG, "onWeatherStatus: cityName = "+cityName+",time = "+time);
-                voice_weather = WeatherUtil.loadWeather(cityName);
+                getWeatherBasic(VOICE,cityName);
+
                 if (voice_weather != null && voice_weather.status.equals("ok")){
                     judgeStatusInfo(cityName,time);
                 } else {
@@ -243,7 +262,8 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
             @Override
             public String onDressInfo(String cityName) {
                 Log.i(TAG, "onDressInfo: cityName = "+cityName);
-                voice_weather = WeatherUtil.loadWeather(cityName);
+                getWeatherBasic(VOICE,cityName);
+
                 if (voice_weather != null && voice_weather.status.equals("ok")){
                     voice_answer = voice_weather.lifestyleList.get(1).txt;
                 } else {
@@ -255,7 +275,8 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
             @Override
             public String onUitravioletLevelInfo(String cityName) {
                 Log.i(TAG, "onUitravioletLevelInfo: cityName = "+cityName);
-                voice_weather = WeatherUtil.loadWeather(cityName);
+                getWeatherBasic(VOICE,cityName);
+
                 if (voice_weather != null && voice_weather.status.equals("ok")){
                     voice_answer = cityName + "紫外线强度" + voice_weather.lifestyleList.get(5).brf;
                 } else {
@@ -267,7 +288,8 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
             @Override
             public String onSmogInfo(String cityName,String time) {
                 Log.i(TAG, "onSmogInfo: cityName = "+cityName);
-                voice_weather = WeatherUtil.loadWeather(cityName);
+                getWeatherBasic(VOICE,cityName);
+
                 if (voice_weather != null && voice_weather.status.equals("ok")) {
                     String weather_type = HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.now.code));
                     if (weather_type.equals("雾")) {
@@ -323,8 +345,10 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
             @Override
             public void onRefresh() {
                 if (NetStatusUtils.isMobileConnected(mContext) || NetStatusUtils.isWifiConnected(mContext)) {
-                    mWeatherPresenter.getWeather(mCurrentCity);
-                    mWeatherPresenter.getWeatherAqi(mCurrentCity);
+//                    mWeatherPresenter.getWeather(mCurrentCity);
+//                    mWeatherPresenter.getWeatherAqi(mCurrentCity);
+                    getWeatherBasic(UNVOICE,mCurrentCity);
+                    getWeatherAqi(UNVOICE,mCurrentCity);
                 } else {
                     mRefreshWeather.setRefreshing(false);
                     ToastUtils.showMessage(mContext, mResources.getString(R.string.network_not_connected));
@@ -502,8 +526,83 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
             mCurrentCity = bdLocation.getCity();
             mCurrentCounty = bdLocation.getCountry();
             Logger.info(TAG, "onReceiveLocation: mCurrentCity = " + mCurrentCity + ",mCurrentCounty = " + mCurrentCounty);
-            mWeatherPresenter.getWeather(mCurrentCity);
-            mWeatherPresenter.getWeatherAqi(mCurrentCity);
+            getWeatherBasic(UNVOICE,mCurrentCity);
+            getWeatherAqi(UNVOICE,mCurrentCity);
         }
+    }
+
+    //优先加载本地天气数据
+    private void getWeatherBasic(final int way, final String cityName){
+        mWeatherBasicRepository= WeatherBasicInjection.getNoteRepository(getActivity());
+        mWeatherBasicRepository.getWeatherBasic(cityName+"%%", new WeatherBasicDataSource.LoadWeatherBasicsCallback() {
+            @Override
+            public void onWeatherBasicsLoaded(WeatherBasic weatherBasic) {
+                switch (way){
+                    case UNVOICE:
+                        Log.d(TAG, "onWeatherBasicsLoaded: 加载数据库天气数据");
+                        String weatherBasicInfo=weatherBasic.weatherBasic;
+                        Weather weather= Utility.handleWeatherResponse(weatherBasicInfo);
+                        setWeatherInfo(weather);
+                        break;
+                    case VOICE:
+                        Log.d(TAG, "onWeatherBasicsLoaded: 语音加载数据库天气数据");
+                        String weatherBasicInfo2=weatherBasic.weatherBasic;
+                        voice_weather= Utility.handleWeatherResponse(weatherBasicInfo2);
+                        break;
+                }
+
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                switch (way) {
+                    case UNVOICE:
+                        Log.d(TAG, "onDataNotAvailable: 加载网络天气数据");
+                        mWeatherPresenter.getWeather(mCurrentCity);
+                        break;
+                    case VOICE:
+                        Log.d(TAG, "onDataNotAvailable: 语音加载网络天气数据");
+                        voice_weather = WeatherUtil.loadWeather(cityName);
+                        break;
+                }
+            }
+        });
+    }
+
+    //优先加载本地空气质量数据
+    private void getWeatherAqi(final int way, final String cityName){
+        mWeatherAqiRepository= WeatherAqiInjection.getInstance(getActivity());
+        mWeatherAqiRepository.getWeatherAqi(cityName+"%%", new WeatherAqiDataSource.LoadWeatherAqisCallback() {
+            @Override
+            public void onWeatherAqisLoaded(WeatherAqi weatherAqi) {
+                switch (way) {
+                    case UNVOICE:
+                        Log.d(TAG, "onWeatherAqisLoaded: 加载数据库空气质量信息");
+                        String weatherAqiInfo = weatherAqi.weatherAqi;
+                        Weather weather = Utility.handleWeatherResponse(weatherAqiInfo);
+                        setWeatherAqi(weather);
+                        break;
+                    case VOICE:
+                        Log.d(TAG, "onWeatherAqisLoaded: 语音加载数据库空气质量信息");
+                        String weatherAqiInfo2 = weatherAqi.weatherAqi;
+                        voice_weather = Utility.handleWeatherResponse(weatherAqiInfo2);
+                        break;
+                }
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                switch (way) {
+                    case UNVOICE:
+                        Log.d(TAG, "onDataNotAvailable: 加载网络空气质量信息");
+                        mWeatherPresenter.getWeatherAqi(cityName);
+                        break;
+                    case VOICE:
+                        Log.d(TAG, "onDataNotAvailable: 语音加载网络空气质量信息");
+                        voice_weather = WeatherUtil.loadWeatherAqi(cityName);
+                        break;
+                }
+            }
+        });
     }
 }
