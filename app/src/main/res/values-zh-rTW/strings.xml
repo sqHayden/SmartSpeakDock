@@ -21,4 +21,8 @@
 
     //network error
     <string name="network_not_connected">網頁未連接，無法顯示，聯網後，往下拖動頁面刷新</string>
+
+    //setting
+    <string name="voice_switch_on_off">語音開啓設置</string>
+    <string name="about">關於</string>
 </resources>

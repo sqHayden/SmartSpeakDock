@@ -213,7 +213,9 @@ public class VoiceActionAdapter implements IVoiceActionListener {
     private void refreshWeatherInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word);
-        if (mWeatherListener != null) mWeatherListener.onWeatherInfo(reconginize_city_word);
+        if (mWeatherListener != null) {
+            mWeatherListener.onWeatherInfo(reconginize_city_word);
+        }
     }
 
     private void rangeTempInfo() {
@@ -222,7 +224,9 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word+",reconginize_time_word = "+reconginize_time_word);
         if(mWeatherListener != null){
             voice_answer = mWeatherListener.onRangeTempInfo(reconginize_city_word,reconginize_time_word);
-            if(checkVoiceAnswer(voice_answer)) TTSManager.getInstance().speak(voice_answer);
+            if(checkVoiceAnswer(voice_answer)) {
+                TTSManager.getInstance().speak(voice_answer);
+            }
         }
     }
 
@@ -232,7 +236,9 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word);
         if(mWeatherListener != null){
             voice_answer = mWeatherListener.onAirQualityInfo(reconginize_city_word);
-            if(checkVoiceAnswer(voice_answer)) TTSManager.getInstance().speak(voice_answer);
+            if(checkVoiceAnswer(voice_answer)) {
+                TTSManager.getInstance().speak(voice_answer);
+            }
         }
     }
 
@@ -241,7 +247,9 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word);
         if(mWeatherListener != null){
             voice_answer = mWeatherListener.onCurrentTempInfo(reconginize_city_word);
-            if(checkVoiceAnswer(voice_answer)) TTSManager.getInstance().speak(voice_answer);
+            if(checkVoiceAnswer(voice_answer)) {
+                TTSManager.getInstance().speak(voice_answer);
+            }
         }
     }
 
@@ -251,7 +259,9 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word+",reconginize_time_word = "+reconginize_time_word);
         if(mWeatherListener != null){
             voice_answer = mWeatherListener.onWeatherStatus(reconginize_city_word,reconginize_time_word);
-            if(checkVoiceAnswer(voice_answer)) TTSManager.getInstance().speak(voice_answer);
+            if(checkVoiceAnswer(voice_answer)) {
+                TTSManager.getInstance().speak(voice_answer);
+            }
         }
     }
 
@@ -260,7 +270,9 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word);
         if(mWeatherListener != null){
             voice_answer = mWeatherListener.onDressInfo(reconginize_city_word);
-            if(checkVoiceAnswer(voice_answer)) TTSManager.getInstance().speak(voice_answer);
+            if(checkVoiceAnswer(voice_answer)) {
+                TTSManager.getInstance().speak(voice_answer);
+            }
         }
     }
 
@@ -269,7 +281,9 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word);
         if(mWeatherListener != null){
             voice_answer = mWeatherListener.onUitravioletLevelInfo(reconginize_city_word);
-            if(checkVoiceAnswer(voice_answer)) TTSManager.getInstance().speak(voice_answer);
+            if(checkVoiceAnswer(voice_answer)) {
+                TTSManager.getInstance().speak(voice_answer);
+            }
         }
     }
 
@@ -279,12 +293,13 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word);
         if(mWeatherListener != null){
             voice_answer = mWeatherListener.onSmogInfo(reconginize_city_word,reconginize_time_word);
-            if(checkVoiceAnswer(voice_answer)) TTSManager.getInstance().speak(voice_answer);
+            if(checkVoiceAnswer(voice_answer)) {
+                TTSManager.getInstance().speak(voice_answer);
+            }
         }
     }
 
     private void jude_word(String recoginize_shopping_word) {
-        web_sites_url = "";
         Logger.info(TAG, "jude_word: recoginize_shopping_word = "+recoginize_shopping_word);
         if (!TextUtils.isEmpty(recoginize_shopping_word)) {
             switch (recoginize_shopping_word) {
@@ -316,7 +331,9 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                     ToastUtils.showError(mContext, mContext.getResources().getString(R.string.web_sites_not_exists));
                     break;
             }
-            if (web_sites_url != "") mShoppingListener.openSpecifyWebsites(web_sites_url);
+            if (web_sites_url != "") {
+                mShoppingListener.openSpecifyWebsites(web_sites_url);
+            }
         } else {}
     }
 
@@ -324,11 +341,16 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         reconginize_city_word = "";
         reconginize_city_word = "";
         voice_answer = "";
+        web_sites_url = "";
     }
 
     private boolean checkVoiceAnswer(String check_voice_answer){
-        if(TextUtils.isEmpty(check_voice_answer)) return false;
-        if(check_voice_answer.equals("")) return false;
+        if(TextUtils.isEmpty(check_voice_answer)) {
+            return false;
+        }
+        if(check_voice_answer.equals("")) {
+            return false;
+        }
         return true;
     }
 
@@ -371,7 +393,9 @@ public class VoiceActionAdapter implements IVoiceActionListener {
             case GlobalUtils.BUSSIESE_GROUP:
             case GlobalUtils.LOGIN_PAGE:
                 Logger.info(TAG, "openModule: name = "+name);
-                if(mShoppingListener != null) jude_word(name);
+                if(mShoppingListener != null) {
+                    jude_word(name);
+                }
                 break;
         }
     }

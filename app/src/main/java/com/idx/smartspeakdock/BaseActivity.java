@@ -13,13 +13,15 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.idx.smartspeakdock.utils.GlobalUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
 // 只用于继承
 public abstract class BaseActivity extends AppCompatActivity {
     public  boolean isActivityTop = false;
-
+    public String fragment_show_activity = GlobalUtils.IS_SWIPE_ACTIVITY_TOP_NAME;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,5 +81,5 @@ public abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
-    public abstract boolean isTopActivity();
+    public  abstract boolean isTopActivity();
 }

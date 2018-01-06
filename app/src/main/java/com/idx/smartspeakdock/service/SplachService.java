@@ -43,7 +43,6 @@ public class SplachService extends Service {
                 if (message.what == 0x100){
                     lockWindow();
                 }
-
             }
         };
 

@@ -259,7 +259,7 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
                 if (voice_weather != null && voice_weather.status.equals("ok")){
                     voice_answer = cityName + "紫外线强度" + voice_weather.lifestyleList.get(5).brf;
                 } else {
-                    voice_answer = "查询紫外线强度失败";
+                    voice_answer = "查询"+cityName+"紫外线强度失败";
                 }
                 return voice_answer;
             }
@@ -276,7 +276,7 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
                         voice_answer = time+cityName+"没有雾霾";
                     }
                 } else {
-                    voice_answer = "查询雾霾信息失败";
+                    voice_answer = "查询"+cityName+"雾霾信息失败";
                 }
                 return voice_answer;
             }

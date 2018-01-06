@@ -37,10 +37,10 @@ public class DrawerActivity extends BaseActivity {
     private DrawerLayout mDrawerLayout;
     private Intent mIntent;
     private StandByFragment standByFragment;
-    Toolbar toolbar;
+    private Toolbar toolbar;
     private CoordinatorLayout right;
     private NavigationView left;
-    private boolean isDrawer=false;
+    private boolean isDrawer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,7 +68,7 @@ public class DrawerActivity extends BaseActivity {
         ActivityManager am = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
         Logger.info(TAG, "isTopActivity = " + cn.getClassName());
-        if (cn.getClassName().contains(TAG))
+        if (cn.getClassName().contains(fragment_show_activity))
         {
             isActivityTop = true;
         }
@@ -125,6 +125,7 @@ public class DrawerActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setTitle("");
         ab.setDisplayHomeAsUpEnabled(true);
     }
 
@@ -147,37 +148,33 @@ public class DrawerActivity extends BaseActivity {
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.list_navigation_weather:
-                                // TODO: 17-12-16  Do nothing, we're already on that screen
+                                // TODO: 17-12-16  WeatherFragment
                                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.WEATHER_FRAGMENT_INTENT_ID);
-                                startActivity(mIntent);
                                 break;
                             case R.id.list_navigation_calendar:
-                                // TODO: 17-12-16 start CalendarActivity
+                                // TODO: 17-12-16 CalendarFragment
                                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID);
-                                startActivity(mIntent);
                                 break;
                             case R.id.list_navigation_music:
-                                // TODO: 17-12-16 start MusicActivity
+                                // TODO: 17-12-16 MusicFragment
                                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
-                                startActivity(mIntent);
                                 break;
                             case R.id.list_navigation_shopping:
-                                // TODO: 17-12-16 start ShoppingActivty
+                                // TODO: 17-12-16 ShoppingFragment
                                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
-                               startActivity(mIntent);
                                 break;
                             case R.id.list_navigation_map:
-                                // TODO: 17-12-16 start MapActivity
+                                // TODO: 17-12-16 MapFragemnt
                                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MAP_FRAGMENT_INTENT_ID);
-                                startActivity(mIntent);
                                 break;
                             case R.id.list_navigation_setting:
-                                // TODO: 17-12-16 start SettingActivity
+                                // TODO: 17-12-16 SettingFargment
+                                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.SETTING_FRAGMENT_INTENT_ID);
                                 break;
                             default:
                                 break;
                         }
-
+                        startActivity(mIntent);
                         menuItem.setChecked(true);
                         mDrawerLayout.closeDrawers();
                         return true;
@@ -188,6 +185,10 @@ public class DrawerActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(standByFragment != null) {
+            standByFragment = null;
+        }
+        isDrawer = false;
     }
 
     @Override

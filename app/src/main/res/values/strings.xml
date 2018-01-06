@@ -27,4 +27,8 @@
 
     //network error
     <string name="network_not_connected">Not any network connected,please set it，and drag out to refresh the interface</string>
+
+    //setting
+    <string name="voice_switch_on_off">voice switch on or off</string>
+    <string name="about">about</string>
 </resources>

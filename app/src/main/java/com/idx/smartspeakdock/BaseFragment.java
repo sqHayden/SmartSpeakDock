@@ -19,9 +19,10 @@ public class BaseFragment extends Fragment {
     }
 
     public boolean checkNetworkStatus(){
-        if(NetStatusUtils.isMobileConnected(getActivity()) || NetStatusUtils.isWifiConnected(getActivity()))
+        if(NetStatusUtils.isMobileConnected(getActivity()) || NetStatusUtils.isWifiConnected(getActivity())) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 }
