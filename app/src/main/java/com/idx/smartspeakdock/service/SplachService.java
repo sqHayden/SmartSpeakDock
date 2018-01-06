@@ -66,7 +66,7 @@ public class SplachService extends Service {
                 mTimerTask.cancel();  //将原任务从队列中移除
             }
             mTimerTask = new MyTimerTask();  // 新建一个任务
-            mTimer.schedule(mTimerTask, 100000);
+            mTimer.schedule(mTimerTask, 600000);
         }
     }
 
