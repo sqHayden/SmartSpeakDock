@@ -78,12 +78,8 @@ public class VoiceActionAdapter implements IVoiceActionListener {
      * @return boolean 会话是否结束，true为结束，不再监听语音输入
      */
     private boolean handleAction(CommunicateResponse.Action action, CommunicateResponse.Schema schema) {
-
-        Log.d("handleAction", ": " + action.actionId);
-        String musicIndex = null;
-        String musicName = null;
-        initData();
         Log.d("handleAction name", ": " + action.actionId);
+        initData();
         mSlots.clear();
         for (int i = 0; i < schema.botMergedSlots.size(); i++) {
             String type = ((CommunicateResponse.Schema.MergedSlots) schema.botMergedSlots.get(i)).type;
@@ -92,9 +88,8 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         }
 
         switch (action.actionId) {
-
             /**开启指令*/
-            case Actions.OPEN_MODULE:
+            case Actions.OPEN_MODULE_NAME:
                 return false;
             case Actions.OPEN_NOW:
                 openModule();
@@ -123,6 +118,9 @@ public class VoiceActionAdapter implements IVoiceActionListener {
             /**日历指令*/
             case Actions.Calender.CALENDER_WEEK_INFO:
                 queryWeekInfo();
+                return true;
+            case Actions.Calender.CALENDER_TIME_INFO:
+                queryTimeInfo();
                 return true;
             case Actions.Calender.CALENDER_FESTIVAL_INFO:
                 queryFestivalInfo();
@@ -154,10 +152,8 @@ public class VoiceActionAdapter implements IVoiceActionListener {
             case Actions.Map.MAP_SEARCH_ADDRESS:
                 searchAddressInfo();
                 return true;
-            //只支持地区到地区的路线
             case Actions.Map.MAP_PATH_FROM_NAME:
                 return false;
-            //只支持地区到地区的路线
             case Actions.Map.MAP_PATH_WAY:
                 return false;
             //只支持地区到地区的路线
@@ -439,56 +435,56 @@ public class VoiceActionAdapter implements IVoiceActionListener {
     }
 
     private void queryWeekInfo() {
+        String day = mSlots.get(SlotsTypes.USER_DATE_DAY);
         if (mCalenderListener != null) {
-            String weekInfo = mCalenderListener.onWeekInfo();
-            if (weekInfo != null && !weekInfo.equals("")) {
-                TTSManager.getInstance().speak(weekInfo);
-            }
+            String weekInfo = mCalenderListener.onWeekInfo(day);
+            TTSManager.getInstance().speak(weekInfo);
+        }
+    }
+
+    private void queryTimeInfo() {
+        if (mCalenderListener != null) {
+            String timeInfo = mCalenderListener.onTimeInfo();
+            TTSManager.getInstance().speak(timeInfo);
         }
     }
 
     private void queryFestivalInfo() {
+        String day = mSlots.get(SlotsTypes.USER_DATE_DAY);
         if (mCalenderListener != null) {
-            String festivalInfo = mCalenderListener.onFestivalInfo();
-            if (festivalInfo != null && !festivalInfo.equals("")) {
-                TTSManager.getInstance().speak(festivalInfo);
-            }
+            String festivalInfo = mCalenderListener.onFestivalInfo(day);
+            TTSManager.getInstance().speak(festivalInfo);
         }
     }
 
     private void queryActInfo() {
+        String day = mSlots.get(SlotsTypes.USER_DATE_DAY);
         if (mCalenderListener != null) {
-            String actInfo = mCalenderListener.onActInfo();
-            if (actInfo != null && !actInfo.equals("")) {
-                TTSManager.getInstance().speak(actInfo);
-            }
+            String actInfo = mCalenderListener.onActInfo(day);
+            TTSManager.getInstance().speak(actInfo);
         }
     }
 
     private void queryDateInfo() {
+        String day = mSlots.get(SlotsTypes.USER_DATE_DAY);
         if (mCalenderListener != null) {
-            String dateInfo = mCalenderListener.onDateInfo();
-            if (dateInfo != null && !dateInfo.equals("")) {
-                TTSManager.getInstance().speak(dateInfo);
-            }
+            String dateInfo = mCalenderListener.onDateInfo(day);
+            TTSManager.getInstance().speak(dateInfo);
         }
     }
 
     private void queryLunarInfo() {
+        String day = mSlots.get(SlotsTypes.USER_DATE_DAY);
         if (mCalenderListener != null) {
-            String lunarDateInfo = mCalenderListener.onLunarDateInfo();
-            if (lunarDateInfo != null && !lunarDateInfo.equals("")) {
-                TTSManager.getInstance().speak(lunarDateInfo);
-            }
+            String lunarInfo = mCalenderListener.onLunarDateInfo(day);
+            TTSManager.getInstance().speak(lunarInfo);
         }
     }
 
     private void queryLocationInfo() {
         if (mMapListener != null) {
             String locationInfo = mMapListener.onLocationInfo();
-            if (locationInfo != null && !locationInfo.equals("")) {
-                TTSManager.getInstance().speak(locationInfo);
-            }
+            TTSManager.getInstance().speak(locationInfo);
         }
     }
 
@@ -497,7 +493,8 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         String searchName = mSlots.get(SlotsTypes.USER_MAP_SEARCH_NAME);
         Log.d(TAG, "area: " + area + ", name:" + searchName);
         if (mMapListener != null) {
-            mMapListener.onSearchInfo(searchName, convertArea(area));
+            String searchInfo = mMapListener.onSearchInfo(searchName, convertArea(area));
+            TTSManager.getInstance().speak(searchInfo);
         }
     }
 
@@ -505,7 +502,8 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         String address = mSlots.get(SlotsTypes.USER_SEARCH_ADDRESS);
         Log.d(TAG, "address: " + address);
         if (mMapListener != null) {
-            mMapListener.onSearchAddress(address);
+            String searchAddressInfo = mMapListener.onSearchAddress(address);
+            TTSManager.getInstance().speak(searchAddressInfo);
         }
     }
 
@@ -518,7 +516,8 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         String way = mSlots.get(SlotsTypes.USER_MAP_PATH_WAY);
         Log.d(TAG, "toName:" + toName + ", fromName:" + fromName + ", way:" + way);
         if (mMapListener != null) {
-            mMapListener.onPathInfo(fromName, toName, convertWay(way));
+            String pathInfo = mMapListener.onPathInfo(fromName, toName, convertWay(way));
+            TTSManager.getInstance().speak(pathInfo);
         }
     }
 

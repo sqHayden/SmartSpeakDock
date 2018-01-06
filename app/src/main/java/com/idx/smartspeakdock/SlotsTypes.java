@@ -5,6 +5,7 @@ package com.idx.smartspeakdock;
  */
 
 public interface SlotsTypes {
+    String USER_DATE_DAY = "user_date_day";
     String USER_MUSIC_INDEX = "user_music_index";
     String USER_MUSIC_NAME = "user_music_name";
     String USER_MODULE_NAME = "user_module_name";
