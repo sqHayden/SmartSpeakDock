@@ -19,6 +19,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.UnitManager;
 import com.idx.smartspeakdock.baidu.unit.listener.IMusicVoiceListener;
 import com.idx.smartspeakdock.music.adapter.LocalListAdapter;
@@ -40,6 +42,7 @@ import com.idx.smartspeakdock.music.service.LocalPlayService;
 import com.idx.smartspeakdock.music.util.LocalMusicList;
 import com.idx.smartspeakdock.music.util.LocalToLocalItem;
 import com.idx.smartspeakdock.music.util.MediaUtils;
+import com.idx.smartspeakdock.service.SplachService;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
 
@@ -80,7 +83,7 @@ public class ListFragment extends BaseFragment implements View.OnClickListener{
     private Context mContext;
     private View mView;
     private View barView;
-
+    private SwipeActivity.MyOnTouchListener onTouchListener;
 
     public static ListFragment newInstance(){return new ListFragment();}
 
@@ -93,6 +96,7 @@ public class ListFragment extends BaseFragment implements View.OnClickListener{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
     }
 
     @Nullable
@@ -100,6 +104,28 @@ public class ListFragment extends BaseFragment implements View.OnClickListener{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.music_activity_list,container,false);
         initView(mView);
+        onTouchListener = new SwipeActivity.MyOnTouchListener() {
+            @Override
+            public boolean onTouch(MotionEvent ev) {
+                switch (ev.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Log.d(TAG, "onTouch: down");
+                        mContext.stopService(new Intent(mContext.getApplicationContext(), SplachService.class));
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        Log.d(TAG, "onTouch: move");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        Log.d(TAG, "onTouch: up");
+                        mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
+                        break;
+                }
+                return false;
+            }
+        };
+
+        ((SwipeActivity) getActivity()).registerMyOnTouchListener(onTouchListener);
+
         return mView;
     }
 
@@ -453,6 +479,14 @@ public class ListFragment extends BaseFragment implements View.OnClickListener{
         super.onDestroy();
         getActivity().stopService(new Intent(getActivity(), LocalPlayService.class));
         LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mEventReceiver);
+        mContext.stopService(new Intent(mContext.getApplicationContext(), SplachService.class));
+        ((SwipeActivity) getActivity()).unregisterMyOnTouchListener(onTouchListener);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
+        Log.d(TAG, "onResume: ");
     }
 
     @Override

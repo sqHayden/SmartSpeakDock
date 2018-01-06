@@ -1,6 +1,9 @@
 package com.idx.smartspeakdock.calendar;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -25,12 +29,14 @@ import com.idx.calendarview.LunarCalendar;
 import com.idx.calendarview.MessageEvent;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.UnitManager;
 import com.idx.smartspeakdock.baidu.unit.listener.ICalenderVoiceListener;
 import com.idx.smartspeakdock.calendar.adapter.MyRecyclerView;
 import com.idx.smartspeakdock.calendar.bean.Schedule;
 import com.idx.smartspeakdock.calendar.model.Model;
 import com.idx.smartspeakdock.calendar.presenter.Presenter;
+import com.idx.smartspeakdock.service.SplachService;
 import com.idx.smartspeakdock.utils.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -73,6 +79,7 @@ public class CalendarFragment extends BaseFragment implements
     String answer1;
     String[] timeDate = {"大前天","前天","昨天","今天","明天","后天","大后天"};
     public static CalendarFragment newInstance(){return new CalendarFragment();}
+    private SwipeActivity.MyOnTouchListener onTouchListener;
 
     @Override
     public void onAttach(Context context) {
@@ -87,6 +94,7 @@ public class CalendarFragment extends BaseFragment implements
         Logger.setEnable(true);
         Log.v("1218","oncreate");
         EventBus.getDefault().register(this);
+        mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
     }
 
     @Nullable
@@ -95,6 +103,27 @@ public class CalendarFragment extends BaseFragment implements
         mView = inflater.inflate(R.layout.activity_calendar,container,false);
         initView();
         Log.v("1218","oncreateview");
+        onTouchListener = new SwipeActivity.MyOnTouchListener() {
+            @Override
+            public boolean onTouch(MotionEvent ev) {
+                switch (ev.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+
+                        Log.d(TAG, "onTouch: down");
+                        mContext.stopService(new Intent(mContext.getApplicationContext(), SplachService.class));
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        Log.d(TAG, "onTouch: move");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        Log.d(TAG, "onTouch: up");
+                        mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
+                        break;
+                }
+                return false;
+            }
+        };
+        ((SwipeActivity) getActivity()).registerMyOnTouchListener(onTouchListener);
         return mView;
     }
 
@@ -243,6 +272,14 @@ public class CalendarFragment extends BaseFragment implements
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        mContext.stopService(new Intent(mContext.getApplicationContext(), SplachService.class));
+        ((SwipeActivity) getActivity()).unregisterMyOnTouchListener(onTouchListener);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
+        Log.d(TAG, "onResume: ");
     }
 
     @Override
@@ -265,6 +302,7 @@ public class CalendarFragment extends BaseFragment implements
                 break;
         }
     }
+
 
     @Override
     public void showyear(int year) {

@@ -19,6 +19,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -88,6 +89,7 @@ import com.baidu.navisdk.adapter.BaiduNaviManager;
 import com.baidu.vi.VDeviceAPI;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.UnitManager;
 import com.idx.smartspeakdock.baidu.unit.listener.IMapVoiceListener;
 import com.idx.smartspeakdock.map.overlayutil.BikingRouteOverlay;
@@ -101,6 +103,7 @@ import com.idx.smartspeakdock.map.tools.BNEventHandler;
 import com.idx.smartspeakdock.map.tools.MyOrientationListener;
 import com.idx.smartspeakdock.map.tools.MyPoiOverlay;
 import com.idx.smartspeakdock.map.tools.RouteLineAdapter;
+import com.idx.smartspeakdock.service.SplachService;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -235,6 +238,7 @@ public class MapFragment extends BaseFragment implements DialogInterface.OnClick
 
     //路线相关信息
     private TextView spend_time,distance_count,traffic_count;
+    private SwipeActivity.MyOnTouchListener onTouchListener;
 
     //语音交互模块参数
     String my_address = "未查询到地址";
@@ -263,6 +267,7 @@ public class MapFragment extends BaseFragment implements DialogInterface.OnClick
         if (initDirs()) {
             initNavi();
         }
+        getContext().startService(new Intent(getContext().getApplicationContext(), SplachService.class));
 
         UnitManager.getInstance().setMapVoiceListener(new IMapVoiceListener() {
             //语句：打開地图/我在哪兒/這是哪裡/這是哪兒/我現在在哪裡  测试完成 可以实现
@@ -557,6 +562,23 @@ public class MapFragment extends BaseFragment implements DialogInterface.OnClick
                 get_point(route_end);
             }
         });
+        onTouchListener = new SwipeActivity.MyOnTouchListener() {
+            @Override
+            public boolean onTouch(MotionEvent ev) {
+                switch (ev.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        getContext().stopService(new Intent(getContext().getApplicationContext(), SplachService.class));
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        getContext().startService(new Intent(getContext().getApplicationContext(), SplachService.class));
+                        break;
+                }
+                return false;
+            }
+        };
+        ((SwipeActivity) getActivity()).registerMyOnTouchListener(onTouchListener);
         return view;
     }
 
@@ -798,6 +820,8 @@ public class MapFragment extends BaseFragment implements DialogInterface.OnClick
         super.onResume();
         //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
         mMapView.onResume();
+        getContext().startService(new Intent(getContext().getApplicationContext(), SplachService.class));
+
     }
 
     @Override
@@ -843,6 +867,8 @@ public class MapFragment extends BaseFragment implements DialogInterface.OnClick
             mSearch.destroy();
         }
         VDeviceAPI.unsetNetworkChangedCallback();
+        getContext().stopService(new Intent(getContext().getApplicationContext(), SplachService.class));
+        ((SwipeActivity) getActivity()).unregisterMyOnTouchListener(onTouchListener);
     }
 
 
