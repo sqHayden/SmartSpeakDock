@@ -200,10 +200,33 @@ public class CalendarView extends FrameLayout {
     }
     /*
     *
-    * 获取当天星期几
+    * 获取星期几
     * */
-    public int getWeek(){
-        return mDelegate.getCurrentDay().getWeek();
+    public int getWeek(String date){
+        int weekNumber = mDelegate.getCurrentDay().getWeek();
+        switch (date){
+            case Week.Time.YESTERDAY:
+                if (mDelegate.getCurrentDay().getWeek() < 2 ){
+                    weekNumber = mDelegate.getCurrentDay().getWeek() + 6;
+                } else {
+                    weekNumber = mDelegate.getCurrentDay().getWeek() - 1;
+                }
+                break;
+            case Week.Time.TODAY:
+                weekNumber = mDelegate.getCurrentDay().getWeek();
+                break;
+            case Week.Time.TOMORROW:
+                if (mDelegate.getCurrentDay().getWeek() > 6 ){
+                    weekNumber = mDelegate.getCurrentDay().getWeek() - 6;
+                } else {
+                    weekNumber = mDelegate.getCurrentDay().getWeek() + 1;
+                }
+                break;
+            default:
+                break;
+
+        }
+        return weekNumber;
     }
     /**
      * 获取本月

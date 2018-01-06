@@ -97,7 +97,7 @@
                 android:gravity="center"
                 android:text="年"
                 android:textColor="#FFFFFF"
-                android:textSize="12sp" />
+                android:textSize="26sp" />
         </FrameLayout>
         <FrameLayout
             android:id="@+id/selectmonth"
@@ -123,7 +123,7 @@
                 android:gravity="center"
                 android:text="月"
                 android:textColor="#FFFFFF"
-                android:textSize="12sp" />
+                android:textSize="26sp" />
         </FrameLayout>
 
 

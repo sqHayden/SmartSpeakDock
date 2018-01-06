@@ -69,7 +69,6 @@ public class Presenter implements Ipresenter{
 
     @Override
     public void deletedate(String date, Integer day, String event, String time) {
-        Log.v("1218","删除"+ date + day + event + time);
      model.deletedate(date,day,event,time);
     }
 

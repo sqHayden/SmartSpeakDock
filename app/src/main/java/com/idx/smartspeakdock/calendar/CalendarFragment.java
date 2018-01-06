@@ -74,11 +74,13 @@ public class CalendarFragment extends BaseFragment implements
     String lunar;
     int week;
     String answer1;
+    String[] timeDate = {"大前天","前天","昨天","今天","明天","后天","大后天"};
     public static CalendarFragment newInstance(){return new CalendarFragment();}
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Log.v("1218","onattach");
         mContext = context;
     }
 
@@ -86,6 +88,7 @@ public class CalendarFragment extends BaseFragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logger.setEnable(true);
+        Log.v("1218","oncreate");
         EventBus.getDefault().register(this);
     }
 
@@ -94,12 +97,14 @@ public class CalendarFragment extends BaseFragment implements
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_calendar,container,false);
         initView();
+        Log.v("1218","oncreateview");
         return mView;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.v("1218","onactivitycrated");
         presenter = new Presenter(this,mContext,mCalendarView);
         initData();
         List<Schedule> listSchedule = DataSupport.where("date = ?",date).where("day = ?",day.toString()).find(Schedule.class);
@@ -113,8 +118,86 @@ public class CalendarFragment extends BaseFragment implements
             answer = "今天没有安排事情";
         }
         Log.v("1218","event" + answer);
-
         UnitManager.getInstance().setCalenderVoiceListener(new ICalenderVoiceListener() {
+            @Override
+            public String onWeekInfo(String time) {
+                answer="";
+                answer = time+"星期"+ mCalendarView.getWeek(time);
+                return answer;
+            }
+
+            @Override
+            public String onTimeInfo() {
+                answer = "";
+                answer = "现在"+ mCurrentTime.getText().toString();
+                return answer;
+            }
+
+            @Override
+            public String onFestivalInfo(String time) {
+                switch (time){
+                    case TimeData.YESTERDAY:
+                        break;
+                    case TimeData.TODAY:
+                        break;
+                    case TimeData.TOMORROW:
+                        break;
+                    default:
+                        break;
+
+                }
+                return null;
+            }
+
+            @Override
+            public String onActInfo(String time) {
+                switch (time){
+                    case TimeData.YESTERDAY:
+                        break;
+                    case TimeData.TODAY:
+                        break;
+                    case TimeData.TOMORROW:
+                        break;
+                    default:
+                        break;
+
+                }
+                return null;
+            }
+
+            @Override
+            public String onDateInfo(String time) {
+                switch (time){
+                    case TimeData.YESTERDAY:
+                        break;
+                    case TimeData.TODAY:
+                        break;
+                    case TimeData.TOMORROW:
+                        break;
+                    default:
+                        break;
+
+                }
+                return null;
+            }
+
+            @Override
+            public String onLunarDateInfo(String time) {
+                switch (time){
+                    case TimeData.YESTERDAY:
+                        break;
+                    case TimeData.TODAY:
+                        break;
+                    case TimeData.TOMORROW:
+                        break;
+                    default:
+                        break;
+
+                }
+                return null;
+            }
+        });
+       /* UnitManager.getInstance().setCalenderVoiceListener(new ICalenderVoiceListener() {
             @Override
             public String onWeekInfo() {
                 answer="";
@@ -167,7 +250,7 @@ public class CalendarFragment extends BaseFragment implements
                 answer = "今天农历" +mCalendarView.getLunar();
                 return answer;
             }
-        });
+        });*/
     }
 
     private void initData() {
@@ -320,7 +403,20 @@ public class CalendarFragment extends BaseFragment implements
         });
         customdialog.show();
     }
-
+public String getFestival(String time,Integer day){
+      //  if ((mCalendarView.getCurDay() + day)>)
+    String aa =  LunarCalendar.getSolarCalendar(mCalendarView.getCurMonth(),mCalendarView.getCurDay());
+    if (!aa.isEmpty()){
+        answer = "今天是" + aa;
+    }else {
+        if (mCalendarView.getWeek(time) == 6||mCalendarView.getWeek(time) == 7){
+            answer = "今天是周末";
+        }else {
+            answer = "今天是平常日";
+        }
+    }
+      return answer;
+}
     class TimeListener implements TimePicker.OnTimeChangedListener {
 
         @Override
