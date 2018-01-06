@@ -12,6 +12,9 @@ import android.widget.TextClock;
  */
 
 public class TimeView extends TextClock{
+    public TimeView(Context context){
+        super(context);
+    }
 
     public TimeView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -20,6 +23,10 @@ public class TimeView extends TextClock{
         setFormat24Hour("HH:mm");
         setTypeface(FontCustom.setAvenir(context));
         setGravity(Gravity.CENTER_VERTICAL);
+    }
+
+    public TimeView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context,attrs,defStyleAttr);
     }
 
 }

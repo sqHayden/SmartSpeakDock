@@ -1,5 +1,7 @@
 package com.idx.smartspeakdock.weather.model.weather;
 
+import android.arch.persistence.room.Entity;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -7,7 +9,7 @@ import java.util.List;
 /**
  * Created by danny on 17-11-14.
  */
-
+@Entity
 public class Weather {
     public String status;
     public Basic basic;
