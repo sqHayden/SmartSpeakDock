@@ -32,6 +32,11 @@ import android.widget.FrameLayout;
 import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 日历布局
@@ -227,6 +232,115 @@ public class CalendarView extends FrameLayout {
 
         }
         return weekNumber;
+    }
+    /*
+    * 获取明天的日期
+    *
+    * */
+    public Map<String,Integer> getTomoData(){
+
+        // 添加大小月月份并将其转换为list,方便之后的判断
+        String[] months_big = { "1", "3", "5", "7", "8", "10", "12" };
+        String[] months_little = { "4", "6", "9", "11" };
+
+        List<String> list_big = Arrays.asList(months_big);
+        List<String> list_little = Arrays.asList(months_little);
+
+        int year = this.getCurYear();
+        int month = this.getCurMonth();
+        int day = this.getCurDay();
+        if(day==30){
+            if (list_big.contains(String.valueOf(month))){
+                day=31;
+            }
+            if (list_little.contains(String.valueOf(month))){
+                day=1;
+                if(month==12){
+                    year++;
+                    month=1;
+                }else{
+                    month++;
+                }
+
+            }
+        }else if(day==31){
+            day=1;
+            if(month==12){
+                year++;
+                month=1;
+            }else{
+                month++;
+            }
+
+        }else if (month == 2){
+            if (Util.isLeapYear(year)){
+               if (day == 29){
+                   month++;
+                   day = 1;
+               }
+            }else {
+                if (day == 28){
+                    month++;
+                    day = 1;
+                }
+            }
+
+        } else {
+            day++;
+        }
+       Map<String,Integer> map = new HashMap<>();
+       map.put("year",year);
+       map.put("month",month);
+       map.put("day",day);
+        return map;
+    }
+    /*
+   * 获取昨天的日期
+   *
+   * */
+    public Map<String,Integer> getYesData(){
+
+        // 添加大小月月份并将其转换为list,方便之后的判断
+        String[] months_big = { "1", "3", "5", "7", "8", "10", "12" };
+        String[] months_little = { "4", "6", "9", "11" };
+
+        List<String> list_big = Arrays.asList(months_big);
+        List<String> list_little = Arrays.asList(months_little);
+
+        int year = this.getCurYear();
+        int month = this.getCurMonth();
+        int day = this.getCurDay();
+        if (day == 1){
+            if (list_big.contains(String.valueOf(month))){
+                if (month == 8 || month == 1){
+                    day = 31;
+                }else if (month == 3){
+                    if (Util.isLeapYear(year)){
+                        day = 29;
+                    }else {
+                        day = 28;
+                    }
+                }else {
+                    day = 30;
+                }
+            }
+            if (list_little.contains(String.valueOf(month))) {
+                  day = 31;
+            }
+            if (month == 1){
+                month = 12;
+                year--;
+            }else {
+                month--;
+            }
+        }else {
+            day--;
+        }
+        Map<String,Integer> map = new HashMap<>();
+        map.put("year",year);
+        map.put("month",month);
+        map.put("day",day);
+        return map;
     }
     /**
      * 获取本月

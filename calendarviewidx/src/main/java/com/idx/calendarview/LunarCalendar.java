@@ -18,8 +18,13 @@ package com.idx.calendarview;
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.idx.calendarview.CustomCalendarViewDelegate.MAX_YEAR;
+import static com.idx.calendarview.CustomCalendarViewDelegate.MIN_YEAR;
 
 public class LunarCalendar {
 
@@ -56,6 +61,7 @@ public class LunarCalendar {
      */
     @SuppressLint("UseSparseArrays")
     private static final Map<Integer, String[]> SOLAR_TERMS = new HashMap<>();
+    private Date baseDate;
 
     /**
      * 返回传统农历节日
@@ -156,7 +162,7 @@ public class LunarCalendar {
      * @return 传回农历 year年month月的总天数
      */
     private static int daysInLunarMonth(int year, int month) {
-        if ((LUNAR_INFO[year - CustomCalendarViewDelegate.MIN_YEAR] & (0x100000 >> month)) == 0)
+        if ((LUNAR_INFO[year - MIN_YEAR] & (0x100000 >> month)) == 0)
             return 29;
         else
             return 30;
@@ -242,5 +248,89 @@ public class LunarCalendar {
      */
    public static String getLunarText(Calendar calendar) {
         return getLunarText(calendar.getYear(), calendar.getMonth(), calendar.getDay());
+    }
+
+    /**
+     * 将公历日期转换为农历日期，且标识是否是闰月
+     * @param year
+     * @param month
+     * @param monthDay
+     * @return 返回公历日期对应的农历日期，year0，month1，day2，leap3
+     */
+    public static final Integer solarToLunar(int year, int month, int monthDay) {
+        int[] lunarDate = new int[4];
+        Date baseDate = new GregorianCalendar(1900, 0, 31).getTime();
+        Date objDate = new GregorianCalendar(year, month - 1, monthDay).getTime();
+        int offset = (int) ((objDate.getTime() - baseDate.getTime()) / 86400000L);
+
+        // 用offset减去每农历年的天数计算当天是农历第几天
+        // iYear最终结果是农历的年份, offset是当年的第几天
+        int iYear, daysOfYear = 0;
+        for (iYear = MIN_YEAR; iYear <= MAX_YEAR && offset > 0; iYear++) {
+            daysOfYear = daysInLunarYear(iYear);
+            offset -= daysOfYear;
+        }
+        if (offset < 0) {
+            offset += daysOfYear;
+            iYear--;
+        }
+
+        // 农历年份
+        lunarDate[0] = iYear;
+
+        int leapMonth = leapMonth(iYear); // 闰哪个月,1-12
+        boolean isLeap = false;
+        // 用当年的天数offset,逐个减去每月（农历）的天数，求出当天是本月的第几天
+        int iMonth, daysOfMonth = 0;
+        for (iMonth = 1; iMonth <= 13 && offset > 0; iMonth++) {
+            daysOfMonth = daysInLunarMonth(iYear, iMonth);
+            offset -= daysOfMonth;
+        }
+        // 当前月超过闰月，要校正
+        if (leapMonth != 0 && iMonth > leapMonth) {
+            --iMonth;
+
+            if (iMonth == leapMonth) {
+                isLeap = true;
+            }
+        }
+        // offset小于0时，也要校正
+        if (offset < 0) {
+            offset += daysOfMonth;
+            --iMonth;
+        }
+
+        lunarDate[1] = iMonth;
+        lunarDate[2] = offset + 1;
+        lunarDate[3] = isLeap ? 1 : 0;
+
+        return offset + 1;
+    }
+    /**
+     * 传回农历 year年的总天数
+     *
+     * @param year 将要计算的年份
+     * @return 返回传入年份的总天数
+     */
+    private static int daysInLunarYear(int year) {
+        int i, sum = 348;
+        if (leapMonth(year) != 0) {
+            sum = 377;
+        }
+        int monthInfo = LUNAR_INFO[year - MIN_YEAR] & 0x0FFF80;
+        for (i = 0x80000; i > 0x7; i >>= 1) {
+            if ((monthInfo & i) != 0)
+                sum += 1;
+        }
+        return sum;
+    }
+    /**
+            * 传回农历 year年闰哪个月 1-12 , 没闰传回 0
+            *
+            * @param year 将要计算的年份
+         * @return 传回农历 year年闰哪个月1-12, 没闰传回 0
+            */
+    private static int leapMonth(int year) {
+        return (int) ((LUNAR_INFO[year - MIN_YEAR] & 0xF00000)) >> 20;
     }
 }

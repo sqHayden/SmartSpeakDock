@@ -2,54 +2,52 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linearlayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="3dp"
-    android:layout_marginLeft="3dp"
-    android:layout_marginRight="3dp"
+    android:layout_height="60dp"
+    android:layout_marginBottom="1dp"
     android:gravity="center_vertical"
     android:orientation="horizontal">
     <LinearLayout
         android:id="@+id/lin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#4c6fe3"
+        android:background="#FFFFFF"
         android:gravity="center_vertical"
         android:orientation="horizontal">
-        <View
-            android:id="@+id/vScheduleHintBlock"
-            android:layout_width="10dp"
-            android:layout_height="50dp"
-            android:background="@drawable/schedule_left"/>
-        <TextView
-            android:id="@+id/thing"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:lines="1"
-            android:textColor="#272E3E"
-            android:textSize="16sp"/>
-
         <TextView
             android:id="@+id/time"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="12dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="22dp"
             android:ellipsize="end"
-            android:textColor="#272E3E"
-            android:textSize="16sp"/>
+            android:textColor="#0F73BA"
+            android:textSize="27sp"/>
+        <View
+            android:id="@+id/vScheduleHintBlock"
+            android:layout_width="3dp"
+            android:layout_height="match_parent"
+            android:background="#0F73BA"/>
+        <TextView
+            android:id="@+id/thing"
+            android:layout_width="2dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textColor="#666666"
+            android:textSize="27sp"/>
+
     </LinearLayout>
 
 
     <TextView
         android:id="@+id/item_delete"
-        android:layout_width="100dp"
+        android:layout_width="112dp"
         android:layout_height="match_parent"
         android:background="#88ff0000"
         android:gravity="center"
         android:text="删除"
         android:textColor="#ffffff"
-        android:textSize="20sp" />
+        android:textSize="27sp" />
 </LinearLayout>

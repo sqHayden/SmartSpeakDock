@@ -9,7 +9,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,6 +40,7 @@ import com.idx.smartspeakdock.calendar.model.Model;
 import com.idx.smartspeakdock.calendar.presenter.Presenter;
 import com.idx.smartspeakdock.service.SplachService;
 import com.idx.smartspeakdock.utils.Logger;
+import com.idx.smartspeakdock.utils.Util;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -77,7 +80,6 @@ public class CalendarFragment extends BaseFragment implements
     String lunar;
     int week;
     String answer1;
-    String[] timeDate = {"大前天","前天","昨天","今天","明天","后天","大后天"};
     public static CalendarFragment newInstance(){return new CalendarFragment();}
     private SwipeActivity.MyOnTouchListener onTouchListener;
 
@@ -86,6 +88,12 @@ public class CalendarFragment extends BaseFragment implements
         super.onAttach(context);
         Log.v("1218","onattach");
         mContext = context;
+        DisplayMetrics metrics = new DisplayMetrics();
+
+        Display display = this.getActivity().getWindowManager().getDefaultDisplay();
+
+        display.getMetrics(metrics);
+        Log.e("1218", "高："+display.getHeight()+"宽："+display.getWidth()+"屏幕密度比："+metrics.density);
     }
 
     @Override
@@ -133,17 +141,6 @@ public class CalendarFragment extends BaseFragment implements
         Log.v("1218","onactivitycrated");
         presenter = new Presenter(this,mContext,mCalendarView);
         initData();
-        List<Schedule> listSchedule = DataSupport.where("date = ?",date).where("day = ?",day.toString()).find(Schedule.class);
-        if (listSchedule.size() != 0){
-            for(int i = 0;i<listSchedule.size();i++) {
-                answer1 = "今天"+listSchedule.get(i).getTime() + listSchedule.get(i).getEvent();
-                answer = answer + answer1;
-            }
-
-        }else {
-            answer = "今天没有安排事情";
-        }
-        Log.v("1218","event" + answer);
         UnitManager.getInstance().setCalenderVoiceListener(new ICalenderVoiceListener() {
             @Override
             public String onWeekInfo(String time) {
@@ -161,66 +158,83 @@ public class CalendarFragment extends BaseFragment implements
 
             @Override
             public String onFestivalInfo(String time) {
+                answer= "";
                 switch (time){
                     case TimeData.YESTERDAY:
+                        answer =  com.idx.smartspeakdock.calendar.Util.getFestivalInfogetActInfo(time,mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
                         break;
                     case TimeData.TODAY:
+                        answer =  com.idx.smartspeakdock.calendar.Util.getFestivalInfogetActInfo(time,mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
                         break;
                     case TimeData.TOMORROW:
+                        answer =  com.idx.smartspeakdock.calendar.Util.getFestivalInfogetActInfo(time,mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
                         break;
                     default:
                         break;
 
                 }
-                return null;
+                return answer;
             }
 
             @Override
             public String onActInfo(String time) {
+                Log.v("1218","answer11"+time);
+                answer= "";
                 switch (time){
                     case TimeData.YESTERDAY:
+                       answer =  com.idx.smartspeakdock.calendar.Util.getActInfo(time,mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
                         break;
                     case TimeData.TODAY:
+                        answer =  com.idx.smartspeakdock.calendar.Util.getActInfo(time,mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
+                        Log.v("1218","answer"+answer);
                         break;
                     case TimeData.TOMORROW:
+                        answer =  com.idx.smartspeakdock.calendar.Util.getActInfo(time,mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
                         break;
                     default:
                         break;
 
                 }
-                return null;
+                return answer;
             }
 
             @Override
             public String onDateInfo(String time) {
+                answer="";
                 switch (time){
                     case TimeData.YESTERDAY:
+                        answer = time + mCalendarView.getYesData().get("month") + "月" + mCalendarView.getYesData().get("day") + "号";
                         break;
                     case TimeData.TODAY:
+                        answer = time + mCalendarView.getCurMonth() + "月" + mCalendarView.getCurDay() + "号";
                         break;
                     case TimeData.TOMORROW:
+                        answer = time + mCalendarView.getTomoData().get("month") + "月" + mCalendarView.getTomoData().get("day") + "号";
                         break;
                     default:
                         break;
 
                 }
-                return null;
+                return answer;
             }
 
             @Override
             public String onLunarDateInfo(String time) {
                 switch (time){
                     case TimeData.YESTERDAY:
+                        answer = time + "农历"+LunarCalendar.solarToLunar(mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
                         break;
                     case TimeData.TODAY:
+                        answer = time+"农历" +mCalendarView.getLunar();
                         break;
                     case TimeData.TOMORROW:
+                        answer = time + "农历"+LunarCalendar.solarToLunar(mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
                         break;
                     default:
                         break;
 
                 }
-                return null;
+                return answer;
             }
         });
     }
@@ -384,20 +398,6 @@ public class CalendarFragment extends BaseFragment implements
         });
         customdialog.show();
     }
-public String getFestival(String time,Integer day){
-      //  if ((mCalendarView.getCurDay() + day)>)
-    String aa =  LunarCalendar.getSolarCalendar(mCalendarView.getCurMonth(),mCalendarView.getCurDay());
-    if (!aa.isEmpty()){
-        answer = "今天是" + aa;
-    }else {
-        if (mCalendarView.getWeek(time) == 6||mCalendarView.getWeek(time) == 7){
-            answer = "今天是周末";
-        }else {
-            answer = "今天是平常日";
-        }
-    }
-      return answer;
-}
     class TimeListener implements TimePicker.OnTimeChangedListener {
 
         @Override

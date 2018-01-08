@@ -36,7 +36,7 @@ class CustomCalendarViewDelegate {
     /**
      * 支持转换的最大农历年份
      */
-    private static final int MAX_YEAR = 2099;
+     static final int MAX_YEAR = 2099;
 
     /**
      * 各种字体颜色，看名字知道对应的地方
