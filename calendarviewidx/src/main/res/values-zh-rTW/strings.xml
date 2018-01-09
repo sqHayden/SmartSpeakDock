@@ -1,0 +1,72 @@
+<resources>
+    <string-array name="each_month">
+        <item>春節</item>
+        <item>二月</item>
+        <item>三月</item>
+        <item>四月</item>
+        <item>五月</item>
+        <item>六月</item>
+        <item>七月</item>
+        <item>八月</item>
+        <item>九月</item>
+        <item>十月</item>
+        <item>十一月</item>
+        <item>臘月</item>
+    </string-array>
+    <string-array name="tradition_festival_str">
+        <item>除夕</item>
+        <item>0101春節</item>
+        <item>0115元宵</item>
+        <item>0505端午</item>
+        <item>0707七夕</item>
+        <item>0815中秋</item>
+        <item>0909重陽</item>
+    </string-array>
+    <string-array name="day_str">
+        <item>初一</item>
+        <item>初二</item>
+        <item>初三</item>
+        <item>初四</item>
+        <item>初五</item>
+        <item>初六</item>
+        <item>初七</item>
+        <item>初八</item>
+        <item>初九</item>
+        <item>初十</item>
+        <item>十一</item>
+        <item>十二</item>
+        <item>十三</item>
+        <item>十四</item>
+        <item>十五</item>
+        <item>十六</item>
+        <item>十七</item>
+        <item>十八</item>
+        <item>十九</item>
+        <item>二十</item>
+        <item>廿一</item>
+        <item>廿二</item>
+        <item>廿三</item>
+        <item>廿四</item>
+        <item>廿五</item>
+        <item>廿六</item>
+        <item>廿七</item>
+        <item>廿八</item>
+        <item>廿九</item>
+        <item>三十</item>
+    </string-array>
+    <string-array name="solar_calendar">
+        <item>0101元旦</item>
+        <item>0214情人節</item>
+        <item>0315消權日</item>
+        <item>0401愚人節</item>
+        <item>0501勞動節</item>
+        <item>0504青年節</item>
+        <item>0601兒童節</item>
+        <item>0701建黨節</item>
+        <item>0801建軍節</item>
+        <item>0910教師節</item>
+        <item>1001國慶節</item>
+        <item>1224平安夜</item>
+        <item>1225聖誕節</item>
+    </string-array>
+</resources>

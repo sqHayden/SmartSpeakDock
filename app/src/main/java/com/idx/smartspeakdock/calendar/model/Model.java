@@ -24,7 +24,7 @@ public class Model implements Imodel {
         EventBus.getDefault().register(this);
     }
     @Override
-    public void setdata(String date,Integer day,int hour, int minute, String event) {
+    public void setdata(String date,Integer day,String hour, String minute, String event) {
         Connector.getDatabase();
         schedule = new Schedule();
         schedule.setDate(date);

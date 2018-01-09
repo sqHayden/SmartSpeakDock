@@ -63,7 +63,7 @@ public class Presenter implements Ipresenter{
       iview.showmonth(mYear,mMonth,mDay);
     }
     @Override
-    public void setdate(String date,Integer day,int hours, int minutes, String event) {
+    public void setdate(String date,Integer day,String hours, String minutes, String event) {
         model.setdata(date,day,hours,minutes,event);
     }
 

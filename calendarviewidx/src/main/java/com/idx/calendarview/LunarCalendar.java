@@ -16,7 +16,9 @@
 package com.idx.calendarview;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -30,38 +32,15 @@ public class LunarCalendar {
 
 
     /**
-     * 农历月份第一天转写
-     */
-    private static final String[] MONTH_STR = {"春节", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "冬月", "腊月"};
-
-    /**
-     * 传统农历节日
-     */
-    private static final String[] TRADITION_FESTIVAL_STR = {"除夕", "0101春节", "0115元宵", "0505端午", "0707七夕", "0815中秋", "0909重阳"};
-
-    /**
-     * 农历大写
-     */
-    private static final String DAY_STR[] = {"初一", "初二", "初三", "初四", "初五", "初六",
-            "初七", "初八", "初九", "初十", "十一", "十二", "十三", "十四", "十五", "十六", "十七",
-            "十八", "十九", "二十", "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八",
-            "廿九", "三十"};
-
-    /**
-     * 公历节日
-     */
-    private static final String[] SOLAR_CALENDAR = {
-            "0101元旦", "0214情人节", "0315消权日", "0401愚人节", "0501劳动节", "0504青年节",
-            "0601儿童节", "0701建党节", "0801建军节", "0910教师节", "1001国庆节", "1224平安夜",
-            "1225圣诞节"
-    };
-
-    /**
      * 保存每年24节气
      */
     @SuppressLint("UseSparseArrays")
     private static final Map<Integer, String[]> SOLAR_TERMS = new HashMap<>();
     private Date baseDate;
+    static Context context;
+    public LunarCalendar(Context context) {
+        this.context = context;
+    }
 
     /**
      * 返回传统农历节日
@@ -75,12 +54,12 @@ public class LunarCalendar {
         if (month == 12) {
             int count = daysInLunarMonth(year, month);
             if (day == count) {
-                return TRADITION_FESTIVAL_STR[0];//除夕
+                return context.getResources().getStringArray(R.array.tradition_festival_str)[0];//除夕
             }
         }
         String text = getString(month, day);
         String festivalStr = "";
-        for (String festival : TRADITION_FESTIVAL_STR) {
+        for (String festival : context.getResources().getStringArray(R.array.tradition_festival_str)) {
             if (festival.contains(text)) {
                 festivalStr = festival.replace(text, "");
                 break;
@@ -99,9 +78,9 @@ public class LunarCalendar {
      */
     private static String numToChineseMonth(int month, int leap) {
         if (leap == 1) {
-            return String.format("闰%s", MONTH_STR[month - 1]);
+            return String.format("闰%s", context.getResources().getStringArray(R.array.each_month)[month - 1]);
         }
-        return MONTH_STR[month - 1];
+        return context.getResources().getStringArray(R.array.each_month)[month - 1];
     }
 
     /**
@@ -116,7 +95,7 @@ public class LunarCalendar {
         if (day == 1) {
             return numToChineseMonth(month, leap);
         }
-        return DAY_STR[day - 1];
+        return context.getResources().getStringArray(R.array.day_str)[day - 1];
     }
 
     /**
@@ -178,7 +157,7 @@ public class LunarCalendar {
     public static String getSolarCalendar(int month, int day) {
         String text = getString(month, day);
         String solar = "";
-        for (String aMSolarCalendar : SOLAR_CALENDAR) {
+        for (String aMSolarCalendar : context.getResources().getStringArray(R.array.solar_calendar)) {
             if (aMSolarCalendar.contains(text)) {
                 solar = aMSolarCalendar.replace(text, "");
                 break;

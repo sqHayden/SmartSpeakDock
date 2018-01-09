@@ -132,13 +132,14 @@ class CustomCalendarViewDelegate {
      * 快速年份切换
      */
     CalendarView.OnYearChangeListener mYearChangeListener;
-
+    LunarCalendar lunarCalendar;
     /**
      * 保存选中的日期
      */
     Calendar mSelectedCalendar;
 
     CustomCalendarViewDelegate(Context context, @Nullable AttributeSet attrs) {
+        lunarCalendar = new LunarCalendar(context);
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.CalendarView);
         mCurDayTextColor = array.getColor(R.styleable.CalendarView_current_day_text_color, Color.RED);
         mSchemeTextColor = array.getColor(R.styleable.CalendarView_scheme_text_color, 0xFFFFFFFF);
@@ -181,7 +182,7 @@ class CustomCalendarViewDelegate {
         mCurrentDate.setDay(Util.getDate("dd", d));
         mCurrentDate.setWeekend(Util.isWeekend(mCurrentDate));
         mCurrentDate.setWeek(Util.getWeekFormCalendar(mCurrentDate));
-        mCurrentDate.setLunar(LunarCalendar.getLunarText(mCurrentDate));
+        mCurrentDate.setLunar(lunarCalendar.getLunarText(mCurrentDate));
         mCurrentDate.setCurrentDay(true);
         mCurrentWeekViewItem = Util.getWeekFromCalendarBetweenYearAndYear(mCurrentDate, mMinYear, mMinYearMonth);
     }

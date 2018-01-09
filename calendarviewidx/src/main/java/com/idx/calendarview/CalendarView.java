@@ -74,6 +74,7 @@ public class CalendarView extends FrameLayout {
      * 日历外部收缩布局
      */
     CalendarLayout mParentLayout;
+    LunarCalendar lunarCalendar;
     private View view;
 
 
@@ -84,6 +85,7 @@ public class CalendarView extends FrameLayout {
     public CalendarView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mDelegate = new CustomCalendarViewDelegate(context, attrs);
+        lunarCalendar = new LunarCalendar(context);
         init(context);
     }
 
@@ -485,7 +487,7 @@ public class CalendarView extends FrameLayout {
             calendar.setYear((position + mDelegate.getMinYearMonth() - 1) / 12 + mDelegate.getMinYear());
             calendar.setMonth((position + mDelegate.getMinYearMonth() - 1) % 12 + 1);
             calendar.setDay(1);
-            calendar.setLunar(LunarCalendar.getLunarText(calendar));
+            calendar.setLunar(lunarCalendar.getLunarText(calendar));
             mDelegate.mSelectedCalendar = calendar;
             if (mDelegate.mDateChangeListener != null) {
                 Log.v("1218","guandaoyiyue11");
@@ -542,7 +544,7 @@ public class CalendarView extends FrameLayout {
         calendar.setYear(getCurYear());
         calendar.setMonth(getCurMonth());
         calendar.setDay(getCurDay());
-        calendar.setLunar(LunarCalendar.getLunarText(calendar));
+        calendar.setLunar(lunarCalendar.getLunarText(calendar));
         mDelegate.mSelectedCalendar = calendar;
         if (mDelegate.mDateChangeListener != null) {
             mDelegate.mDateChangeListener.onDateChange(calendar);

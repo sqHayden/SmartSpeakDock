@@ -19,6 +19,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="60dp"
             android:layout_marginRight="22dp"
+            android:gravity="center_vertical"
             android:ellipsize="end"
             android:textColor="#0F73BA"
             android:textSize="27sp"/>
@@ -32,6 +33,7 @@
             android:layout_width="2dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
+            android:gravity="center_vertical"
             android:layout_weight="1"
             android:ellipsize="end"
             android:lines="1"
@@ -47,7 +49,7 @@
         android:layout_height="match_parent"
         android:background="#88ff0000"
         android:gravity="center"
-        android:text="删除"
+        android:text="@string/delete"
         android:textColor="#ffffff"
         android:textSize="27sp" />
 </LinearLayout>

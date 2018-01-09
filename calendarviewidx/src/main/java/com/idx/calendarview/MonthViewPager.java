@@ -34,13 +34,17 @@ public class MonthViewPager extends ViewPager {
     private CustomCalendarViewDelegate mDelegate;
     CalendarLayout mParentLayout;
     WeekViewPager mWeekPager;
-
+    Context context;
+    LunarCalendar lunarCalendar;
     public MonthViewPager(Context context) {
         this(context, null);
     }
 
     public MonthViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
+        lunarCalendar = new LunarCalendar(context);
+
     }
 
     /**
@@ -70,7 +74,7 @@ public class MonthViewPager extends ViewPager {
                 calendar.setDay(32);
                 calendar.setCurrentMonth(calendar.getYear() == mDelegate.getCurrentDay().getYear() &&
                         calendar.getMonth() == mDelegate.getCurrentDay().getMonth());
-                calendar.setLunar(LunarCalendar.getLunarText(calendar));
+                calendar.setLunar(lunarCalendar.getLunarText(calendar));
 
 
                 if (mParentLayout == null || getVisibility() == INVISIBLE || mWeekPager.getVisibility() == VISIBLE) {

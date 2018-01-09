@@ -8,7 +8,7 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="添加事件"
+        android:text="@string/add_event"
         android:textSize="56px"
         android:textColor="#0E73BA"
         android:gravity="center"
@@ -37,7 +37,7 @@
            android:layout_height="wrap_content"
            android:layout_weight="1"
            android:layout_margin="3dp"
-           android:text="取消"
+           android:text="@string/cancel"
            android:textColor="#FFFFFF"
            android:textSize="40px"
            android:background="#0E73BA"/>
@@ -47,7 +47,7 @@
            android:layout_height="wrap_content"
            android:layout_margin="3dp"
            android:layout_weight="1"
-           android:text="确认"
+           android:text="@string/sure"
            android:textColor="#FFFFFF"
            android:textSize="40px"
            android:background="#0E73BA"/>

@@ -1,6 +1,9 @@
 package com.idx.smartspeakdock.calendar;
 
+import android.content.Context;
+
 import com.idx.calendarview.LunarCalendar;
+import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.calendar.bean.Schedule;
 
 import org.litepal.crud.DataSupport;
@@ -15,31 +18,40 @@ import java.util.List;
  */
 
 public  class Util {
-  static   String answer1 = "";
-  static   String answer = "";
+    static   Context context;
+    static   String answer1 = "";
+    static   String answer = "";
+
+    public Util(Context context) {
+        this.context = context;
+    }
+
     public static String getActInfo(String time, Integer year, Integer month, Integer day) {
+        answer1 = "";
+        answer = "";
         String date = String.valueOf(year) + String.valueOf(month);
         List<Schedule> listSchedule = DataSupport.where("date = ? and day = ?", date, day.toString()).find(Schedule.class);
         if (listSchedule.size() != 0) {
             for (int i = 0; i < listSchedule.size(); i++) {
-                answer1 = listSchedule.get(i).getTime() + listSchedule.get(i).getEvent();
+                answer1 = time +listSchedule.get(i).getTime() + listSchedule.get(i).getEvent();
                 answer = answer + answer1;
             }
 
         } else {
-            answer = time + "没有安排事情";
+            answer = context.getString(R.string.no_arrangement);
         }
-        return answer;
+        return time + answer;
     }
     public static String getFestivalInfogetActInfo(String time,Integer year,Integer month, Integer day) {
+        answer = "";
         String aa =  LunarCalendar.getSolarCalendar(month,day);
         if (!aa.isEmpty()){
-            answer = time+"是" + aa;
+            answer = time+context.getString(R.string.yes) + aa;
         }else {
             if (getWeek(year,month,day) == 6||getWeek(year,month,day) == 7){
-                answer = time+"是周末";
+                answer = time+context.getString(R.string.is_the_weekend);
             }else {
-                answer = time+"是平常日";
+                answer = time+context.getString(R.string.is_usual_day);
             }
         }
 

@@ -3,6 +3,7 @@ package com.idx.smartspeakdock.calendar;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -70,16 +71,14 @@ public class CalendarFragment extends BaseFragment implements
 
     ItemRemoveRecyclerView recyclerView;
     private Presenter presenter;
+    private com.idx.smartspeakdock.calendar.Util util;
     private Context context;
     private List<Schedule> list;
     private String date ="";
     private Integer day;
     public MyRecyclerView myRecyclerView;
-    int hour,minutes;
+    String hour,minutes;
     String answer;
-    String lunar;
-    int week;
-    String answer1;
     public static CalendarFragment newInstance(){return new CalendarFragment();}
     private SwipeActivity.MyOnTouchListener onTouchListener;
 
@@ -88,12 +87,6 @@ public class CalendarFragment extends BaseFragment implements
         super.onAttach(context);
         Log.v("1218","onattach");
         mContext = context;
-        DisplayMetrics metrics = new DisplayMetrics();
-
-        Display display = this.getActivity().getWindowManager().getDefaultDisplay();
-
-        display.getMetrics(metrics);
-        Log.e("1218", "高："+display.getHeight()+"宽："+display.getWidth()+"屏幕密度比："+metrics.density);
     }
 
     @Override
@@ -140,34 +133,34 @@ public class CalendarFragment extends BaseFragment implements
         super.onActivityCreated(savedInstanceState);
         Log.v("1218","onactivitycrated");
         presenter = new Presenter(this,mContext,mCalendarView);
+        util = new com.idx.smartspeakdock.calendar.Util(mContext);
         initData();
         UnitManager.getInstance().setCalenderVoiceListener(new ICalenderVoiceListener() {
             @Override
             public String onWeekInfo(String time) {
                 answer="";
-                answer = time+"星期"+ mCalendarView.getWeek(time);
+                answer = time+getString(R.string.week)+ mCalendarView.getWeek(time);
                 return answer;
             }
 
             @Override
             public String onTimeInfo() {
                 answer = "";
-                answer = "现在"+ mCurrentTime.getText().toString();
+                answer = getString(R.string.now)+ mCurrentTime.getText().toString();
                 return answer;
             }
 
             @Override
             public String onFestivalInfo(String time) {
-                answer= "";
                 switch (time){
                     case TimeData.YESTERDAY:
-                        answer =  com.idx.smartspeakdock.calendar.Util.getFestivalInfogetActInfo(time,mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
+                        answer = util.getFestivalInfogetActInfo(time,mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
                         break;
                     case TimeData.TODAY:
-                        answer =  com.idx.smartspeakdock.calendar.Util.getFestivalInfogetActInfo(time,mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
+                        answer =  util.getFestivalInfogetActInfo(time,mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
                         break;
                     case TimeData.TOMORROW:
-                        answer =  com.idx.smartspeakdock.calendar.Util.getFestivalInfogetActInfo(time,mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
+                        answer =  util.getFestivalInfogetActInfo(time,mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
                         break;
                     default:
                         break;
@@ -179,17 +172,16 @@ public class CalendarFragment extends BaseFragment implements
             @Override
             public String onActInfo(String time) {
                 Log.v("1218","answer11"+time);
-                answer= "";
                 switch (time){
                     case TimeData.YESTERDAY:
-                       answer =  com.idx.smartspeakdock.calendar.Util.getActInfo(time,mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
+                       answer =  util.getActInfo(time,mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
                         break;
                     case TimeData.TODAY:
-                        answer =  com.idx.smartspeakdock.calendar.Util.getActInfo(time,mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
+                        answer =  util.getActInfo(time,mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
                         Log.v("1218","answer"+answer);
                         break;
                     case TimeData.TOMORROW:
-                        answer =  com.idx.smartspeakdock.calendar.Util.getActInfo(time,mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
+                        answer =  util.getActInfo(time,mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
                         break;
                     default:
                         break;
@@ -203,13 +195,13 @@ public class CalendarFragment extends BaseFragment implements
                 answer="";
                 switch (time){
                     case TimeData.YESTERDAY:
-                        answer = time + mCalendarView.getYesData().get("month") + "月" + mCalendarView.getYesData().get("day") + "号";
+                        answer = time + mCalendarView.getYesData().get("month") + getString(R.string.month) + mCalendarView.getYesData().get("day") + getString(R.string.day);
                         break;
                     case TimeData.TODAY:
-                        answer = time + mCalendarView.getCurMonth() + "月" + mCalendarView.getCurDay() + "号";
+                        answer = time + mCalendarView.getCurMonth() + getString(R.string.month) + mCalendarView.getCurDay() + getString(R.string.day);
                         break;
                     case TimeData.TOMORROW:
-                        answer = time + mCalendarView.getTomoData().get("month") + "月" + mCalendarView.getTomoData().get("day") + "号";
+                        answer = time + mCalendarView.getTomoData().get("month") + getString(R.string.month) + mCalendarView.getTomoData().get("day") + getString(R.string.day);
                         break;
                     default:
                         break;
@@ -222,13 +214,13 @@ public class CalendarFragment extends BaseFragment implements
             public String onLunarDateInfo(String time) {
                 switch (time){
                     case TimeData.YESTERDAY:
-                        answer = time + "农历"+LunarCalendar.solarToLunar(mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
+                        answer = time + getString(R.string.lunar_calendar)+LunarCalendar.solarToLunar(mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
                         break;
                     case TimeData.TODAY:
-                        answer = time+"农历" +mCalendarView.getLunar();
+                        answer = time+getString(R.string.lunar_calendar) +mCalendarView.getLunar();
                         break;
                     case TimeData.TOMORROW:
-                        answer = time + "农历"+LunarCalendar.solarToLunar(mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
+                        answer = time + getString(R.string.lunar_calendar)+LunarCalendar.solarToLunar(mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
                         break;
                     default:
                         break;
@@ -246,8 +238,8 @@ public class CalendarFragment extends BaseFragment implements
         mCalendarView.setOnYearChangeListener(this);
         mCalendarView.setOnDateSelectedListener(this);
         presenter.getcurrenttime();
-        mTextYear.setText(String.valueOf(mCalendarView.getCurYear()+ "年"));
-        mTextMonthDay.setText(mCalendarView.getCurMonth() + "月");
+        mTextYear.setText(String.valueOf(mCalendarView.getCurYear()+ getString(R.string.year)));
+        mTextMonthDay.setText(mCalendarView.getCurMonth() +getString(R.string.month));
         date = String.valueOf(mCalendarView.getCurYear()) + String.valueOf(mCalendarView.getCurMonth());
         day = mCalendarView.getCurDay();
         list = new Model().getdata();
@@ -281,7 +273,12 @@ public class CalendarFragment extends BaseFragment implements
         mCalendarLayout = mView.findViewById(R.id.calendarLayout);
         recyclerView = mView.findViewById(R.id.recycler);
     }
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
+        Log.d(TAG, "onResume: ");
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -290,18 +287,11 @@ public class CalendarFragment extends BaseFragment implements
         ((SwipeActivity) getActivity()).unregisterMyOnTouchListener(onTouchListener);
     }
     @Override
-    public void onResume() {
-        super.onResume();
-        mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
-        Log.d(TAG, "onResume: ");
-    }
-
-    @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.event:
                 if (date.isEmpty() || day.equals(0)){
-                    Toast.makeText(mContext,"请选择日期",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext,getString(R.string.please_select_date),Toast.LENGTH_SHORT).show();
                 }else {
                     setCustomDialog();
                 }
@@ -323,7 +313,7 @@ public class CalendarFragment extends BaseFragment implements
         mCalendarView.showSelectLayout(year);
         mTextMonthDay.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
-        mTextYear.setText(String.valueOf(year+ "年"));
+        mTextYear.setText(String.valueOf(year+ getString(R.string.year)));
     }
 
     @Override
@@ -341,15 +331,14 @@ public class CalendarFragment extends BaseFragment implements
 
     @Override
     public void onDateSelected(Calendar calendar) {
-        Logger.info(TAG,"dataselected");
         mTextYear.setVisibility(View.VISIBLE);
         mTextMonthDay.setVisibility(View.VISIBLE);
-        mTextMonthDay.setText(calendar.getMonth() + "月");
-        mTextYear.setText(String.valueOf(calendar.getYear()+ "年"));
+        mTextMonthDay.setText(calendar.getMonth() + getString(R.string.month));
+        mTextYear.setText(String.valueOf(calendar.getYear()+ getString(R.string.year)));
     }
 
     @Override
-    public void onYearChange(int year) {mTextYear.setText(String.valueOf(year+ "年"));}
+    public void onYearChange(int year) {mTextYear.setText(String.valueOf(year+ getString(R.string.year)));}
 
     @Subscribe
     public void onEvent(MessageEvent messageEvent){
@@ -382,7 +371,7 @@ public class CalendarFragment extends BaseFragment implements
             @Override
             public void onClick(View view) {
                 if (editText.getText().toString().isEmpty()){
-                    Toast.makeText(mContext,"请添加事件",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext,getString(R.string.please_add_event),Toast.LENGTH_SHORT).show();
                 }else {
                     presenter.setdate(date,day,hour,minutes,editText.getText().toString());
                     Schedule schedule = new Schedule();
@@ -403,8 +392,8 @@ public class CalendarFragment extends BaseFragment implements
         @Override
         public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
             // TODO Auto-generated method stub
-            hour = hourOfDay;
-            minutes = minute;
+            hour = hourOfDay < 10 ? "0" + hourOfDay : "" + hourOfDay;
+            minutes = minute < 10 ? "0" + minute : ""+minute;
         }
     }
 }

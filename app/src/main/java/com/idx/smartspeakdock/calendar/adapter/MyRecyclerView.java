@@ -60,7 +60,6 @@ public class MyRecyclerView extends RecyclerView.Adapter{
     public int getItemCount() {
         mlist.clear();
         int count = list.size();
-        Log.v("1218","listsize" + list.size());
         if (list.size() != 0){
             for(int i = 0;i<list.size();i++){
                 if (list.get(i).getDate().equals(date)&&list.get(i).getDay().equals(day)) {

@@ -25,4 +25,21 @@
     //setting
     <string name="voice_switch_on_off">語音開啓設置</string>
     <string name="about">關於</string>
+    //calendar
+    <string name="year">年</string>
+    <string name="month">月</string>
+    <string name="day">號</string>
+    <string name="add_event">添加事件</string>
+    <string name="sure">確定</string>
+    <string name="cancel">取消</string>
+    <string name="now">現在</string>
+    <string name="week">星期</string>
+    <string name="lunar_calendar">農曆</string>
+    <string name="yes">是</string>
+    <string name="is_the_weekend">是週末</string>
+    <string name="is_usual_day">是平常日</string>
+    <string name="no_arrangement">沒有安排事情</string>
+    <string name="please_select_date">請選擇日期</string>
+    <string name="please_add_event">請添加事件</string>
+    <string name="delete">刪除</string>
 </resources>
