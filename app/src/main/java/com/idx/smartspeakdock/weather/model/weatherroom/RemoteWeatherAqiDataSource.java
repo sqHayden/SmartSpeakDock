@@ -5,7 +5,7 @@ import com.idx.smartspeakdock.utils.AppExecutors;
 import java.util.List;
 
 /**
- * Created by steve on 1/5/18.
+ * Created by danny on 1/5/18.
  */
 
 public class RemoteWeatherAqiDataSource implements WeatherAqiDataSource {
@@ -91,6 +91,16 @@ public class RemoteWeatherAqiDataSource implements WeatherAqiDataSource {
             @Override
             public void run() {
                 mWeatherAqiDao.deleteWeatherAqis();
+            }
+        });
+    }
+
+    @Override
+    public void deleteWeatherAqi(final String cityName) {
+        mAppExecutors.getDiskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mWeatherAqiDao.deleteWeatherAqi(cityName);
             }
         });
     }

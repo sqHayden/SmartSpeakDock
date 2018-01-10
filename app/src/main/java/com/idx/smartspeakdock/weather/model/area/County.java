@@ -1,45 +1,20 @@
 package com.idx.smartspeakdock.weather.model.area;
 
-import org.litepal.crud.DataSupport;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
 /**
- * Created by danny on 12/14/17.
+ * Created by steve on 12/14/17.
  */
 
-public class County extends DataSupport{
-    private int id;
-    private String countyName;
-    private String weatherId;
-    private int cityId;
+@Entity(tableName = "county")
+public class County {
+    @PrimaryKey(autoGenerate = true)
+    public int id;
 
-    public int getId(){
-        return id;
-    }
-    public void  setId(int id){
-        this.id = id;
-    }
+    public String countyName;
 
+    public String weatherId;
 
-    public String getCountyName(){
-        return countyName;
-    }
-    public void  setCountyName(String countyName){
-        this.countyName = countyName;
-    }
-
-
-    public String getWeatherId(){
-        return weatherId;
-    }
-    public void  setWeatherId(String weatherId){
-        this.weatherId = weatherId;
-    }
-
-
-    public int getCityId(){
-        return cityId;
-    }
-    public void  setCityId(int cityId){
-        this.cityId = cityId;
-    }
+    public int cityId;
 }

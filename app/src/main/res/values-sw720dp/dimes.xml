@@ -9,6 +9,8 @@
     <dimen name="setting_about_margin_top">10dp</dimen>
     <dimen name="setting_left">6dp</dimen>
 
+    //weather
+    <dimen name="weather_basic_textsize">16dp</dimen>
 
     //splash
     <dimen name="splash_timeView_margin_top">264dp</dimen>

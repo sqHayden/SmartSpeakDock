@@ -3,7 +3,7 @@ package com.idx.smartspeakdock.weather.model.weatherroom;
 import java.util.List;
 
 /**
- * Created by steve on 1/5/18.
+ * Created by danny on 1/5/18.
  */
 
 public interface WeatherBasicDataSource {
@@ -26,4 +26,6 @@ public interface WeatherBasicDataSource {
     void getWeatherBasic(String cityName,LoadWeatherBasicsCallback callback);
 
     void deleteWeatherBasics();
+
+    void deleteWeatherBasic(String cityName);
 }

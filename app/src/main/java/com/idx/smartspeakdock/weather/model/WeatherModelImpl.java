@@ -15,6 +15,7 @@ import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicRepository;
 import com.idx.smartspeakdock.weather.presenter.OnWeatherListener;
 
 import java.io.IOException;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -39,6 +40,7 @@ public class WeatherModelImpl implements WeatherModel {
     @Override
     public void loadWeather(final String name, final OnWeatherListener listener) {
         mWeatherBasicRepository= WeatherBasicInjection.getNoteRepository(SpeakerApplication.getContext());
+        mWeatherBasicRepository.deleteWeatherBasic(name+"%");
         String address = "https://free-api.heweather.com/s6/weather?location=" + name + "&key="+key;
         Log.d(TAG, "loadWeather: 加载城市天气");
         HttpUtil.sendOkHttpRequest(address, new Callback() {
@@ -52,13 +54,14 @@ public class WeatherModelImpl implements WeatherModel {
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 String responseText = response.body().string();
-                WeatherBasic basic=new WeatherBasic();
-                basic.cityName=name;
-                basic.weatherBasic=responseText;
-                mWeatherBasicRepository.addWeatherBasic(basic);
                 Weather weather=Utility.handleWeatherResponse(responseText);
                 if (weather != null && "ok".equals(weather.status)) {
                     Log.d(TAG, "onResponse: 成功");
+                    WeatherBasic basic=new WeatherBasic();
+                    basic.cityName=name;
+                    basic.weatherBasic=responseText;
+                    basic.date=new Date().toString();
+                    mWeatherBasicRepository.addWeatherBasic(basic);
                     if (listener!=null) {
                         listener.onSuccess(weather);
                     }
@@ -81,6 +84,7 @@ public class WeatherModelImpl implements WeatherModel {
     @Override
     public void loadWeatherAqi(final String cityName, final OnWeatherListener listener) {
         mWeatherAqiRepository= WeatherAqiInjection.getInstance(SpeakerApplication.getContext());
+        mWeatherAqiRepository.deleteWeatherAqi(cityName+"%");
         String address = "https://free-api.heweather.com/s6/air/now?location=" + cityName + "&key="+key;
         Log.d(TAG, "loadWeatherAqi: 加载城市空气质量");
         HttpUtil.sendOkHttpRequest(address, new Callback() {
@@ -94,13 +98,14 @@ public class WeatherModelImpl implements WeatherModel {
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 String responseText = response.body().string();
-                WeatherAqi aqi=new WeatherAqi();
-                aqi.cityName=cityName;
-                aqi.weatherAqi=responseText;
-                mWeatherAqiRepository.addWeatherAqi(aqi);
                 Weather weather=Utility.handleWeatherResponse(responseText);
                 if (weather != null && "ok".equals(weather.status)) {
                     Log.d(TAG, "onResponse: 成功");
+                    WeatherAqi aqi=new WeatherAqi();
+                    aqi.cityName=cityName;
+                    aqi.date=new Date().toString();
+                    aqi.weatherAqi=responseText;
+                    mWeatherAqiRepository.addWeatherAqi(aqi);
                     if (listener!=null) {
                         listener.onSuccessAqi(weather);
                     }

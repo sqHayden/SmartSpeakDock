@@ -4,12 +4,17 @@ import android.content.Context;
 import android.util.Log;
 
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.SpeakerApplication;
 import com.idx.smartspeakdock.standby.HttpUtil;
 import com.idx.smartspeakdock.standby.Utility;
 import com.idx.smartspeakdock.standby.presenter.OnQueryWeatherListener;
 import com.idx.smartspeakdock.weather.model.weather.Weather;
+import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasic;
+import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicInjection;
+import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicRepository;
 
 import java.io.IOException;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -22,12 +27,15 @@ import okhttp3.Callback;
 public class StandByMode implements IStandByMode {
     private static final String TAG = StandByMode.class.getSimpleName();
     private Context mContext;
+    private WeatherBasicRepository mWeatherBasicRepository;
     public StandByMode(Context context){
         mContext = context;
     }
 //    bc0418b57b2d4918819d3974ac1285d9   537664b7e2124b3c845bc0b51278d4af
     @Override
-    public void requestWeather(String cityName, final OnQueryWeatherListener onQueryWeatherListener) {
+    public void requestWeather(final String cityName, final OnQueryWeatherListener onQueryWeatherListener) {
+        mWeatherBasicRepository= WeatherBasicInjection.getNoteRepository(SpeakerApplication.getContext());
+        mWeatherBasicRepository.deleteWeatherBasic(cityName+"%");
         String weatherUrl = "https://free-api.heweather.com/s6/weather?location="+cityName+"&key=537664b7e2124b3c845bc0b51278d4af";
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
             @Override
@@ -36,6 +44,11 @@ public class StandByMode implements IStandByMode {
                 final Weather weather = Utility.handleWeatherResponse(responseText);
                 Log.i(TAG, "onResponse: weather.status = "+weather.status);
                         if (weather != null &&"ok".equals(weather.status)) {
+                            WeatherBasic basic=new WeatherBasic();
+                            basic.cityName=cityName;
+                            basic.weatherBasic=responseText;
+                            basic.date=new Date().toString();
+                            mWeatherBasicRepository.addWeatherBasic(basic);
                             if(onQueryWeatherListener != null) {
                                 onQueryWeatherListener.onSuccess(weather);
                             }

@@ -3,6 +3,8 @@ package com.idx.smartspeakdock.weather.model.weatherroom;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.util.Date;
+
 /**
  * Created by danny on 17-11-14.
  */
@@ -10,6 +12,17 @@ import android.arch.persistence.room.PrimaryKey;
 public class WeatherBasic {
     @PrimaryKey(autoGenerate = true)
     public int id;
+    public String date;
     public String cityName;
     public String weatherBasic;
+
+    @Override
+    public String toString() {
+        return "WeatherBasic{" +
+                "id=" + id +
+                ", date='" + date + '\'' +
+                ", cityName='" + cityName + '\'' +
+                ", weatherBasic='" + weatherBasic + '\'' +
+                '}';
+    }
 }

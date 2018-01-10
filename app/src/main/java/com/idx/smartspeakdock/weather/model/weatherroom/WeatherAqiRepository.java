@@ -1,7 +1,7 @@
 package com.idx.smartspeakdock.weather.model.weatherroom;
 
 /**
- * Created by steve on 1/5/18.
+ * Created by danny on 1/5/18.
  */
 
 public class WeatherAqiRepository implements WeatherAqiDataSource {
@@ -37,5 +37,10 @@ public class WeatherAqiRepository implements WeatherAqiDataSource {
     @Override
     public void deleteWeatherAqis() {
         mRemoteWeatherAqiDataSource.deleteWeatherAqis();
+    }
+
+    @Override
+    public void deleteWeatherAqi(String cityName) {
+        mRemoteWeatherAqiDataSource.deleteWeatherAqi(cityName);
     }
 }

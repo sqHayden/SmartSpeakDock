@@ -21,4 +21,17 @@ public class Weather {
     public List<Lifestyle> lifestyleList;
     @SerializedName("air_now_city")
     public Air air;
+
+    @Override
+    public String toString() {
+        return "Weather{" +
+                "status='" + status + '\'' +
+                ", basic=" + basic +
+                ", now=" + now +
+                ", update=" + update +
+                ", forecastList=" + forecastList +
+                ", lifestyleList=" + lifestyleList +
+                ", air=" + air +
+                '}';
+    }
 }

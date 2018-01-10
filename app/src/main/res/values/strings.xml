@@ -24,6 +24,9 @@
     //weather loading
     <string name="get_weather_info_error">get weather info error</string>
     <string name="weather_loading_dialog">Loading Weather...</string>
+    <string name="weather">Weather</string>
+    <string name="weather_tomorrow">Tom：</string>
+    <string name="weather_after">Aft：</string>
 
     //network error
     <string name="network_not_connected">Not any network connected,please set it，and drag out to refresh the interface</string>

@@ -91,4 +91,16 @@ public class HandlerWeatherUtil {
         }
         return result;
     }
+    /*public static String parseDate(String date){
+        String result="";
+        DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat format2 = new SimpleDateFormat("MM/dd");
+        try {
+            Date date1=format1.parse(date);
+            result=format2.format(date1);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }*/
 }

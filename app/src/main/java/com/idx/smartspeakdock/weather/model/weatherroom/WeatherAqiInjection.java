@@ -6,7 +6,7 @@ import com.idx.smartspeakdock.data.local.SmartDatabase;
 import com.idx.smartspeakdock.utils.AppExecutors;
 
 /**
- * Created by steve on 1/6/18.
+ * Created by danny on 1/6/18.
  */
 
 public class WeatherAqiInjection {

@@ -1,7 +1,7 @@
 package com.idx.smartspeakdock.weather.model.weatherroom;
 
 /**
- * Created by steve on 1/5/18.
+ * Created by danny on 1/5/18.
  */
 
 public class WeatherBasicRepository implements WeatherBasicDataSource {
@@ -37,5 +37,10 @@ public class WeatherBasicRepository implements WeatherBasicDataSource {
     @Override
     public void deleteWeatherBasics() {
         mRemoteWeatherBasicDataSource.deleteWeatherBasics();
+    }
+
+    @Override
+    public void deleteWeatherBasic(String cityName) {
+        mRemoteWeatherBasicDataSource.deleteWeatherBasic(cityName);
     }
 }

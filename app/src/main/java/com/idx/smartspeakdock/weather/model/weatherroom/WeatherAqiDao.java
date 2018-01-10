@@ -8,7 +8,7 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 /**
- * Created by steve on 1/5/18.
+ * Created by danny on 1/5/18.
  */
 @Dao
 public interface WeatherAqiDao {
@@ -23,4 +23,7 @@ public interface WeatherAqiDao {
 
     @Query("delete from weather_aqi")
     void deleteWeatherAqis();
+
+    @Query("delete from weather_aqi where cityName like :cityName")
+    void deleteWeatherAqi(String cityName);
 }
