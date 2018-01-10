@@ -33,6 +33,7 @@ public class StandByActivity extends BaseActivity {
             ActivityUtils.replaceFragmentInActivity(
                     getSupportFragmentManager(), standByFragment, R.id.contentFrame);
         }
+        
     }
 
     @Override

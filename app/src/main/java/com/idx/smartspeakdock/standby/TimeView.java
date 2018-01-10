@@ -21,6 +21,7 @@ public class TimeView extends TextClock{
         Resources res = getResources();
         setFormat12Hour("HH:mm");
         setFormat24Hour("HH:mm");
+        setIncludeFontPadding(false);
         setTypeface(FontCustom.setAvenir(context));
         setGravity(Gravity.CENTER_VERTICAL);
     }

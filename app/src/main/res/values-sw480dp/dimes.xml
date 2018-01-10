@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="textSize">36sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="list_item_padding">8dp</dimen>
+
+    //setting
+    <dimen name="setting_voice_textsize">30sp</dimen>
+    <dimen name="setting_switch_textsize">16sp</dimen>
+    <dimen name="setting_about_textsize">30sp</dimen>
+    <dimen name="setting_voice_margin_top">10dp</dimen>
+    <dimen name="setting_divider_margin_top">6dp</dimen>
+    <dimen name="setting_about_margin_top">10dp</dimen>
+    <dimen name="setting_left">6dp</dimen>
+
+    //splash
+    <dimen name="splash_timeView_margin_top">220dp</dimen>
+    <dimen name="splash_dateView_margin_top">22dp</dimen>
+    <dimen name="splash_clothes_margin_top">53dp</dimen>
+    <dimen name="splash_car_margin_top">18dp</dimen>
+    <dimen name="splash_air_margin_top">18dp</dimen>
+    <dimen name="splash_timeView_textsize">130sp</dimen>
+    <dimen name="splash_dateView_textsize">30sp</dimen>
+    <dimen name="splash_weather_textsize">24sp</dimen>
+    <dimen name="splash_weather_image_width_size">60dp</dimen>
+    <dimen name="splash_weather_image_height_size">60dp</dimen>
+    <dimen name="splash_weather_margin_left">20dp</dimen>
+    <dimen name="splash_weather_tmp_width">150dp</dimen>
+    <dimen name="splash_weather_width">240dp</dimen>
+
+</resources>

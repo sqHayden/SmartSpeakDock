@@ -69,7 +69,7 @@
 
         <activity
             android:name=".Swipe.DrawerActivity"
-            android:configChanges="orientation|screenSize"
+
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

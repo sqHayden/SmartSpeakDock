@@ -6,21 +6,16 @@
     android:id="@+id/line6"
     android:background="@drawable/bg_vertical">
 
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
 
     <RelativeLayout
+        android:layout_marginTop="@dimen/splash_timeView_margin_top"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5">
-
+        android:layout_height="wrap_content">
         <com.idx.smartspeakdock.standby.TimeView
             android:id="@+id/time_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="260px"
+            android:textSize="@dimen/splash_timeView_textsize"
             android:textColor="#FFFFFF"
             android:layout_centerHorizontal="true" />
 
@@ -37,85 +32,85 @@
                 android:layout_height="match_parent"
                 android:text="深圳市"
                 android:textColor="#FFFFFF"
-                android:textSize="60px" />
+                android:textSize="@dimen/splash_dateView_textsize" />
             <com.idx.smartspeakdock.standby.DataView
                 android:id="@+id/data_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="@dimen/splash_weather_margin_left"
                 android:textColor="#FFFFFF"
-                android:textSize="60px"/>
+                android:textSize="@dimen/splash_dateView_textsize"/>
         </LinearLayout>
 
 
         <LinearLayout
             android:id="@+id/linter_2"
-            android:layout_marginTop="20dp"
-            android:layout_width="230dp"
+            android:layout_marginTop="@dimen/splash_clothes_margin_top"
+            android:layout_width="@dimen/splash_weather_width"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/linter_1">
             <ImageView
                 android:id="@+id/weatherIcon"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="@dimen/splash_weather_image_width_size"
+                android:layout_height="@dimen/splash_weather_image_height_size"
                 android:src="@drawable/weather_cloudy"/>
             <TextView
                 android:id="@+id/standby_weather_tmp"
-                android:layout_width="150dp"
+                android:layout_width="@dimen/splash_weather_tmp_width"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="@dimen/splash_weather_margin_left"
                 android:layout_gravity="center_vertical"
-                android:textSize="48px"
+                android:textSize="@dimen/splash_weather_textsize"
                 android:textColor="#FFFFFF"
                 android:text="17°C/19°C"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linter_3"
-            android:layout_marginTop="5dp"
-            android:layout_width="230dp"
+            android:layout_marginTop="@dimen/splash_car_margin_top"
+            android:layout_width="@dimen/splash_weather_width"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/linter_2">
             <ImageView
                 android:id="@+id/image_car"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="@dimen/splash_weather_image_width_size"
+                android:layout_height="@dimen/splash_weather_image_height_size"
                 android:src="@drawable/weather_life_car_wash" />
             <TextView
                 android:id="@+id/standby_life_car"
-                android:layout_width="150dp"
+                android:layout_width="@dimen/splash_weather_tmp_width"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="@dimen/splash_weather_margin_left"
                 android:layout_gravity="center_vertical"
-                android:textSize="48px"
+                android:textSize="@dimen/splash_weather_textsize"
                 android:textColor="#FFFFFF"
                 android:text="洗车：较适宜"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linter_4"
-            android:layout_marginTop="5dp"
-            android:layout_width="230dp"
+            android:layout_marginTop="@dimen/splash_air_margin_top"
+            android:layout_width="@dimen/splash_weather_width"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/linter_3">
             <ImageView
                 android:id="@+id/image_clothes"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="@dimen/splash_weather_image_width_size"
+                android:layout_height="@dimen/splash_weather_image_height_size"
                 android:src="@drawable/weather_life_clothes" />
             <TextView
                 android:id="@+id/standby_life_clothes"
-                android:layout_width="150dp"
+                android:layout_width="@dimen/splash_weather_tmp_width"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="@dimen/splash_weather_margin_left"
                 android:layout_gravity="center_vertical"
-                android:textSize="48px"
+                android:textSize="@dimen/splash_weather_textsize"
                 android:textColor="#FFFFFF"
                 android:text="穿衣：较冷"/>
         </LinearLayout>

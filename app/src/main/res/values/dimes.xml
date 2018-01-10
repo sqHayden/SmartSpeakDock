@@ -15,4 +15,19 @@
     <dimen name="setting_divider_margin_top">6dp</dimen>
     <dimen name="setting_about_margin_top">10dp</dimen>
     <dimen name="setting_left">6dp</dimen>
+
+    //splash
+    <dimen name="splash_timeView_margin_top">132dp</dimen>
+    <dimen name="splash_dateView_margin_top">14dp</dimen>
+    <dimen name="splash_clothes_margin_top">32dp</dimen>
+    <dimen name="splash_car_margin_top">11dp</dimen>
+    <dimen name="splash_air_margin_top">11dp</dimen>
+    <dimen name="splash_timeView_textsize">78sp</dimen>
+    <dimen name="splash_dateView_textsize">18sp</dimen>
+    <dimen name="splash_weather_textsize">14sp</dimen>
+    <dimen name="splash_weather_image_width_size">36dp</dimen>
+    <dimen name="splash_weather_image_height_size">36dp</dimen>
+    <dimen name="splash_weather_margin_left">12dp</dimen>
+    <dimen name="splash_weather_tmp_width">90dp</dimen>
+    <dimen name="splash_weather_width">144dp</dimen>
 </resources>
