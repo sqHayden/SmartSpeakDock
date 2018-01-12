@@ -12,18 +12,18 @@
     <RelativeLayout
         android:id="@+id/rl_tool"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/calendar_rl_tool_height"
-        android:layout_marginTop="@dimen/calendar_rl_tool_margintop"
-        android:layout_marginLeft="@dimen/calendar_rl_tool_marginleft"
-        android:layout_marginBottom="@dimen/calendar_rl_tool_marginbottom"
+        android:layout_height="52dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginBottom="10dp"
        >
         <TextView
             android:id="@+id/tv_year"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
+            android:paddingLeft="20dp"
             android:textColor="#FFFFFF"
-            android:textSize="@dimen/calendar_textsize_two_six"
+            android:textSize="26sp"
             android:textStyle="bold"
             tools:ignore="RtlSymmetry" />
         <TextView
@@ -33,7 +33,7 @@
             android:layout_toRightOf="@+id/tv_year"
             android:gravity="center_vertical"
             android:textColor="#FFFFFF"
-            android:textSize="@dimen/calendar_textsize_two_six"
+            android:textSize="26sp"
             android:textStyle="bold"
             tools:ignore="RtlSymmetry" />
         <TextView
@@ -43,13 +43,13 @@
             android:layout_toLeftOf="@+id/selectyear"
             android:gravity="center_vertical"
             android:textColor="#FFFFFF"
-            android:textSize="@dimen/calendar_textsize_two_six"/>
+            android:textSize="26sp"/>
         <FrameLayout
             android:id="@+id/selectyear"
-            android:layout_width="@dimen/calendar_selectyear_width"
-            android:layout_height="match_parent"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_toLeftOf="@+id/selectmonth"
-            android:layout_marginLeft="@dimen/calendar_selectyear_marginleft"
+            android:layout_marginLeft="10dp"
             android:layout_centerVertical="true"
             android:background="@drawable/bg_ripple">
 
@@ -64,15 +64,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="2dp"
                 android:gravity="center"
-                android:text="@string/year"
+                android:text="年"
                 android:textColor="#FFFFFF"
-                android:textSize="@dimen/calendar_textsize_two_six" />
+                android:textSize="26sp" />
         </FrameLayout>
         <FrameLayout
             android:id="@+id/selectmonth"
-            android:layout_width="@dimen/calendar_selectmonth_width"
-            android:layout_height="match_parent"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_toLeftOf="@+id/event"
             android:layout_centerVertical="true"
             android:background="@drawable/bg_ripple">
@@ -89,21 +90,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="2dp"
                 android:gravity="center"
-                android:text="@string/month"
+                android:text="月"
                 android:textColor="#FFFFFF"
-                android:textSize="@dimen/calendar_textsize_two_six" />
+                android:textSize="26sp" />
         </FrameLayout>
 
 
         <ImageView
             android:id="@+id/event"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/calendar_event_marginleft"
-            android:layout_marginRight="@dimen/calendar_event_marginright"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="20dp"
             android:contentDescription="@string/app_name"
             android:scaleType="centerInside"
             android:src="@drawable/event"
@@ -113,8 +115,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginLeft="@dimen/calendar_view_marginleft"
-        android:layout_marginRight="@dimen/calendar_view_marginright"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:background="#CFCFCF"
         />
     <com.idx.calendarview.CalendarLayout
@@ -131,7 +133,7 @@
             android:layout_height="wrap_content"
             app:current_month_lunar_text_color="#FFFFFF"
             app:current_month_text_color="#FFFFFF"
-            app:lunar_text_size="@dimen/calendar_lunar_textsize"
+            app:lunar_text_size="10sp"
             app:other_month_text_color="#B3B3B3"
             app:scheme_lunar_text_color="#B3B3B3"
             app:scheme_text="假"

@@ -8,7 +8,7 @@ public interface Ipresenter {
     void selectyear();
     void selectmonth();
     void getdata();
-    void setdate(String date,Integer day,String hours,String minutes,String event);
+    void setdate(String date,Integer day,String time,String event);
     void deletedate(String date,Integer day,String event,String time);
     void getcurrenttime();
 }

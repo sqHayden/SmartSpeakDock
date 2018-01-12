@@ -166,7 +166,7 @@ class CustomCalendarViewDelegate {
 
         mDayTextSize = array.getDimensionPixelSize(R.styleable.CalendarView_day_text_size, Util.dipToPx(context, 16));
         mLunarTextSize = array.getDimensionPixelSize(R.styleable.CalendarView_lunar_text_size, Util.dipToPx(context, 10));
-        mCalendarItemHeight = (int) array.getDimension(R.styleable.CalendarView_calendar_height, Util.dipToPx(context, 56));
+        mCalendarItemHeight = (int) array.getDimension(R.styleable.CalendarView_calendar_height, Util.dipToPx(context, 40));
 
         if (mMinYear <= MIN_YEAR) mMaxYear = 1971;
         if (mMaxYear >= MAX_YEAR) mMaxYear = 2055;

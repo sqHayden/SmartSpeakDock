@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/add_event"
-        android:textSize="56px"
+        android:textSize="@dimen/calendar_dialog_title_textsize"
         android:textColor="#0E73BA"
         android:gravity="center"
         android:background="@drawable/add_title_background"/>
@@ -26,7 +26,7 @@
         android:lines="1"
         android:maxLength="20"
         android:textColor="#000000"
-        android:textSize="40px"/>
+        android:textSize="@dimen/calendar_dialog_edit_textsize"/>
    <LinearLayout
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
@@ -36,20 +36,20 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_weight="1"
-           android:layout_margin="3dp"
+           android:layout_margin="@dimen/calendar_dialog_margin"
            android:text="@string/cancel"
            android:textColor="#FFFFFF"
-           android:textSize="40px"
+           android:textSize="@dimen/calendar_dialog_button_textsize"
            android:background="#0E73BA"/>
        <Button
            android:id="@+id/yes"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:layout_margin="3dp"
+           android:layout_margin="@dimen/calendar_dialog_margin"
            android:layout_weight="1"
            android:text="@string/sure"
            android:textColor="#FFFFFF"
-           android:textSize="40px"
+           android:textSize="@dimen/calendar_dialog_button_textsize"
            android:background="#0E73BA"/>
    </LinearLayout>
 </LinearLayout>

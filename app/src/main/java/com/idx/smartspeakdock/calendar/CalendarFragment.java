@@ -1,18 +1,14 @@
 package com.idx.smartspeakdock.calendar;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -41,12 +37,8 @@ import com.idx.smartspeakdock.calendar.model.Model;
 import com.idx.smartspeakdock.calendar.presenter.Presenter;
 import com.idx.smartspeakdock.service.SplachService;
 import com.idx.smartspeakdock.utils.Logger;
-import com.idx.smartspeakdock.utils.Util;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.litepal.crud.DataSupport;
-
 import java.util.List;
 
 /**
@@ -72,13 +64,16 @@ public class CalendarFragment extends BaseFragment implements
     ItemRemoveRecyclerView recyclerView;
     private Presenter presenter;
     private com.idx.smartspeakdock.calendar.Util util;
-    private Context context;
     private List<Schedule> list;
     private String date ="";
     private Integer day;
     public MyRecyclerView myRecyclerView;
+    private Context context;
     String hour,minutes;
     String answer;
+    String time;
+    Boolean yearopen = false;
+    int year;
     public static CalendarFragment newInstance(){return new CalendarFragment();}
     private SwipeActivity.MyOnTouchListener onTouchListener;
 
@@ -86,6 +81,9 @@ public class CalendarFragment extends BaseFragment implements
     public void onAttach(Context context) {
         super.onAttach(context);
         Log.v("1218","onattach");
+        Configuration config = getResources().getConfiguration();
+        int smallestScreenWidth = config.smallestScreenWidthDp;
+        Log.v("1218","smllestcscreenwidth" + smallestScreenWidth);
         mContext = context;
     }
 
@@ -110,14 +108,11 @@ public class CalendarFragment extends BaseFragment implements
                 switch (ev.getAction()) {
                     case MotionEvent.ACTION_DOWN:
 
-                        Log.d(TAG, "onTouch: down");
                         mContext.stopService(new Intent(mContext.getApplicationContext(), SplachService.class));
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        Log.d(TAG, "onTouch: move");
                         break;
                     case MotionEvent.ACTION_UP:
-                        Log.d(TAG, "onTouch: up");
                         mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
                         break;
                 }
@@ -131,7 +126,14 @@ public class CalendarFragment extends BaseFragment implements
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.v("1218","onactivitycrated");
+        Log.v("1218","onactivitycrated" + savedInstanceState);
+        if (savedInstanceState != null && savedInstanceState.getBoolean("year")){
+            mCalendarView.showSelectLayout(year);
+            mTextMonthDay.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+            mTextYear.setText(String.valueOf(year+ getString(R.string.year)));
+            yearopen = true;
+        }
         presenter = new Presenter(this,mContext,mCalendarView);
         util = new com.idx.smartspeakdock.calendar.Util(mContext);
         initData();
@@ -277,11 +279,32 @@ public class CalendarFragment extends BaseFragment implements
     public void onResume() {
         super.onResume();
         mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
-        Log.d(TAG, "onResume: ");
+        Log.d("1218", "onResume: ");
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("1218", "onpause: ");
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.v("1218","onsaveintantcestate" + yearopen);
+        outState.putBoolean("year",yearopen);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("1218", "onstop: ");
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d("1218", "onResume: ");
         EventBus.getDefault().unregister(this);
         mContext.stopService(new Intent(mContext.getApplicationContext(), SplachService.class));
         ((SwipeActivity) getActivity()).unregisterMyOnTouchListener(onTouchListener);
@@ -307,25 +330,33 @@ public class CalendarFragment extends BaseFragment implements
         }
     }
 
-
+   /*
+   * 点击年按钮
+   * */
     @Override
     public void showyear(int year) {
+        this.year = year;
         mCalendarView.showSelectLayout(year);
         mTextMonthDay.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
         mTextYear.setText(String.valueOf(year+ getString(R.string.year)));
+        yearopen = true;
     }
-
+    /*
+    * 点击月按钮
+    * */
     @Override
     public void showmonth(int year, int month, int day) {
         mCalendarView.selectCurrentMonth();
         mCalendarView.scrollToCalendar(year,month,day);
+        yearopen = false;
     }
-/*
-* 显示时间
- */
+    /*
+    * 显示时间
+    * */
     @Override
     public void showtime(String time) {
+        this.time = time;
         mCurrentTime.setText(time);
     }
 
@@ -349,7 +380,9 @@ public class CalendarFragment extends BaseFragment implements
         day = messageEvent.getday();
         myRecyclerView.notifyDataSetChanged();
     }
-
+    /*
+    * 添加事件对话框
+    * */
     private void setCustomDialog(){
         final AlertDialog customdialog = new AlertDialog.Builder(mContext).create();
         final View dialogView = LayoutInflater.from(mContext).inflate(R.layout.custom_dialog,null);
@@ -361,6 +394,7 @@ public class CalendarFragment extends BaseFragment implements
         customdialog.setView(dialogView);
         timePicker.setIs24HourView(true);
         timePicker.setOnTimeChangedListener(new CalendarFragment.TimeListener());
+
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -373,11 +407,14 @@ public class CalendarFragment extends BaseFragment implements
                 if (editText.getText().toString().isEmpty()){
                     Toast.makeText(mContext,getString(R.string.please_add_event),Toast.LENGTH_SHORT).show();
                 }else {
-                    presenter.setdate(date,day,hour,minutes,editText.getText().toString());
+                    if (hour != null||minutes != null){
+                       time = hour + ":" + minutes;
+                    }
+                    presenter.setdate(date,day,time,editText.getText().toString());
                     Schedule schedule = new Schedule();
                     schedule.setDate(date);
                     schedule.setDay(day);
-                    schedule.setTime(hour + ":" + minutes);
+                    schedule.setTime(time);
                     schedule.setEvent(editText.getText().toString());
                     list.add(schedule);
                     myRecyclerView.notifyItemInserted(list.size() - 1);

@@ -9,7 +9,7 @@ import java.util.List;
  */
 
 public interface Imodel {
-    void setdata(String date,Integer day,String hour,String minute,String event);
+    void setdata(String date,Integer day,String time,String event);
     List<Schedule> getdata();
     void deletedate(String date,Integer day,String event,String time);
 }
