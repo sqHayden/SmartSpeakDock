@@ -36,8 +36,8 @@ import com.idx.smartspeakdock.utils.Logger;
  * Email: Ryan_chan01212@yeah.net
  */
 
-public class DrawerActivity extends BaseActivity {
-    private static final String TAG = DrawerActivity.class.getSimpleName();
+public class MainActivity extends BaseActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
     private DrawerLayout mDrawerLayout;
     private Intent mIntent;
     private StandByFragment standByFragment;
@@ -73,6 +73,7 @@ public class DrawerActivity extends BaseActivity {
         Logger.setEnable(true);
         initToolBar();
         initDrawer();
+        mIntent = new Intent(MainActivity.this,SwipeActivity.class);
         standByFragment =
                 (StandByFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (standByFragment == null) {
@@ -94,20 +95,6 @@ public class DrawerActivity extends BaseActivity {
 //            Intent bindIntent = new Intent(this, GetCityService.class);
 //            bindService(bindIntent, connection, BIND_AUTO_CREATE);
 //        }
-    }
-
-    @Override
-    public boolean isTopActivity() {
-        isActivityTop = false;
-        ActivityManager am = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
-        ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
-        Logger.info(TAG, "isTopActivity = " + cn.getClassName());
-        if (cn.getClassName().contains(fragment_show_activity))
-        {
-            isActivityTop = true;
-        }
-        Logger.info(TAG, "isTop = " + isActivityTop);
-        return isActivityTop;
     }
 
     private void initDrawer() {
@@ -174,8 +161,6 @@ public class DrawerActivity extends BaseActivity {
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
-        if(mIntent != null) mIntent = null;
-        mIntent = new Intent(DrawerActivity.this,SwipeActivity.class);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override

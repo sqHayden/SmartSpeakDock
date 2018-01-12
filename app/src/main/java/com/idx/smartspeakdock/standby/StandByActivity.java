@@ -37,14 +37,17 @@ public class StandByActivity extends BaseActivity {
     }
 
     @Override
-    public boolean isTopActivity() {
-        return false;
-    }
-
-    @Override
     public boolean onTouchEvent(MotionEvent event) {
         Log.d(TAG, "onTouchEvent: ");
         finish();
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(standByFragment != null){
+            standByFragment = null;
+        }
     }
 }

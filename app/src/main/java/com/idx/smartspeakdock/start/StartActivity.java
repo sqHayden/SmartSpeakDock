@@ -35,11 +35,6 @@ public class StartActivity extends BaseActivity implements StartFragment.OnFragm
     }
 
     @Override
-    public boolean isTopActivity() {
-        return false;
-    }
-
-    @Override
     public void onFragmentInteraction(Uri uri) {
         Log.d(TAG, "onFragmentInteraction: " + uri);
     }

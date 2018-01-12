@@ -23,6 +23,7 @@ public interface Actions {
         String AIR_QUALITY_INFO = "weather_air_quality_info_satisfy";
         String CURRENT_TEMP_INFO = "weather_current_temp_info_satisfy";
         String WEATHER_STATUS = "weather_status_info_satisfy";
+        String RAIN_INFO = "weather_rain_info_satisfy";
         String DRESS_INFO = "weather_dress_info_satisfy";
         String UITRAVIOLET_LEVEL_INFO = "weather_uitraviolet_level_info_satisfy";
         String SMOG_INFO = "weather_smog_info_satisfy";

@@ -12,6 +12,7 @@ public interface IWeatherVoiceListener {
     String onCurrentTempInfo(String cityName);
 
     String onWeatherStatus(String cityName,String time);
+    String onRainInfo(String cityName,String time);
     String onDressInfo(String cityName);
     String onUitravioletLevelInfo(String cityName);
     String onSmogInfo(String cityName,String time);

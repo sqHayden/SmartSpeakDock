@@ -63,6 +63,8 @@ public class ShoppingFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logger.setEnable(true);
+        progDailog = ProgressDialog.show(getActivity(), getActivity().getResources().getString(R.string.web_title_loading),
+                getActivity().getResources().getString(R.string.web_message_loading), true);
 //        web_url = "http://m.flnet.com";
 //        web_url = "https://mall.flnet.com";
     }
@@ -135,8 +137,6 @@ public class ShoppingFragment extends BaseFragment {
     private void loadWebUrl(String webUrl) {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
-        progDailog = ProgressDialog.show(getActivity(), getActivity().getResources().getString(R.string.web_title_loading),
-                getActivity().getResources().getString(R.string.web_message_loading), true);
         progDailog.setCancelable(false);
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient(){

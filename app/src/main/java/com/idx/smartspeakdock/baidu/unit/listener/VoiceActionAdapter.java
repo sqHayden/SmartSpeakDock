@@ -44,6 +44,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
 
     public VoiceActionAdapter(Context context) {
         Logger.setEnable(true);
+        mIntent = new Intent(context, SwipeActivity.class);
         mContext = context;
     }
 
@@ -191,6 +192,9 @@ public class VoiceActionAdapter implements IVoiceActionListener {
             case Actions.Weather.WEATHER_STATUS:
                 weatherStatus();
                 return true;
+            case Actions.Weather.RAIN_INFO:
+                rainInfo();
+                return true;
             case Actions.Weather.DRESS_INFO:
                 derssInfo();
                 return true;
@@ -255,6 +259,17 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word+",reconginize_time_word = "+reconginize_time_word);
         if(mWeatherListener != null){
             voice_answer = mWeatherListener.onWeatherStatus(reconginize_city_word,reconginize_time_word);
+            if(checkVoiceAnswer(voice_answer)) {
+                TTSManager.getInstance().speak(voice_answer);
+            }
+        }
+    }
+
+    private void rainInfo() {
+        reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
+        reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
+        if(mWeatherListener != null){
+            voice_answer = mWeatherListener.onRainInfo(reconginize_city_word,reconginize_time_word);
             if(checkVoiceAnswer(voice_answer)) {
                 TTSManager.getInstance().speak(voice_answer);
             }
@@ -352,7 +367,6 @@ public class VoiceActionAdapter implements IVoiceActionListener {
 
     private void openModule() {
         String name = mSlots.get(SlotsTypes.USER_MODULE_NAME);
-        mIntent = new Intent(mContext, SwipeActivity.class);
         switch (name) {
             case Modules.CALENDER:
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -68,7 +68,7 @@
 
 
         <activity
-            android:name=".Swipe.DrawerActivity"
+            android:name=".Swipe.MainActivity"
 
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

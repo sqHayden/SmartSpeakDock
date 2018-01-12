@@ -18,7 +18,7 @@ public class GlobalUtils {
     public static final String SETTING_FRAGMENT_INTENT_ID = "setting.fragment.intent.id";
 
     //top activity
-    public static final String IS_DRAWER_ACTIVITY_TOP_NAME = "DrawerActivity";
+    public static final String IS_DRAWER_ACTIVITY_TOP_NAME = "MainActivity";
     public static final String IS_SWIPE_ACTIVITY_TOP_NAME = "SwipeActivity";
 
     //shopping website id

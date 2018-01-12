@@ -1,10 +1,9 @@
-package com.idx.smartspeakdock.Swipe;
+package com.idx.smartspeakdock.weather.ui;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,6 +25,7 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.UnitManager;
 import com.idx.smartspeakdock.baidu.unit.listener.IWeatherVoiceListener;
 import com.idx.smartspeakdock.service.SplachService;
@@ -45,8 +45,6 @@ import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicInjection;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicRepository;
 import com.idx.smartspeakdock.weather.presenter.WeatherPresenter;
 import com.idx.smartspeakdock.weather.presenter.WeatherPresenterImpl;
-import com.idx.smartspeakdock.weather.ui.ChooseCityDialogFragment;
-import com.idx.smartspeakdock.weather.ui.WeatherUi;
 import com.idx.smartspeakdock.weather.utils.HandlerWeatherUtil;
 import com.idx.smartspeakdock.weather.utils.WeatherUtil;
 
@@ -59,8 +57,8 @@ import java.util.List;
  * Email: Ryan_chan01212@yeah.net
  */
 
-public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCityDialogFragment.OnChooseCityCompleted {
-    private static final String TAG = SwipeFragment.class.getSimpleName();
+public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCityDialogFragment.OnChooseCityCompleted {
+    private static final String TAG = WeatherFragment.class.getSimpleName();
     private static final int VOICE=0;
     private static final int UNVOICE=1;
     private static final int ONWEATHERINFO=3;
@@ -96,8 +94,8 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
     private WeatherBasicRepository mWeatherBasicRepository;
     private WeatherAqiRepository mWeatherAqiRepository;
 
-    public static SwipeFragment newInstance() {
-        return new SwipeFragment();
+    public static WeatherFragment newInstance() {
+        return new WeatherFragment();
     }
 
     @Override
@@ -200,7 +198,7 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
 //                    ((OnSelectCityListener)getActivity()).onSelectCity(mWeatherView);
 //                }
                 ChooseCityDialogFragment cityDialogFragment = new ChooseCityDialogFragment();
-                cityDialogFragment.setOnChooseCityCompleted(SwipeFragment.this);
+                cityDialogFragment.setOnChooseCityCompleted(WeatherFragment.this);
                 cityDialogFragment.show(getActivity().getFragmentManager(), "ChooseCityDialog");
             }
         });
@@ -281,6 +279,11 @@ public class SwipeFragment extends BaseFragment implements WeatherUi, ChooseCity
                     voice_answer = "查询" + time + cityName + "天气状况失败";
                 }
                 return voice_answer;
+            }
+
+            @Override
+            public String onRainInfo(String cityName, String time) {
+                return null;
             }
 
             @Override

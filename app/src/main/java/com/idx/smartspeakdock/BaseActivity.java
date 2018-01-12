@@ -2,6 +2,7 @@ package com.idx.smartspeakdock;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,13 +15,15 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.idx.smartspeakdock.utils.GlobalUtils;
+import com.idx.smartspeakdock.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 // 只用于继承
 public abstract class BaseActivity extends AppCompatActivity {
-    public  boolean isActivityTop = false;
+    private static final String TAG = BaseActivity.class.getSimpleName();
+    public  boolean isActivityTop;
     public String fragment_show_activity = GlobalUtils.IS_SWIPE_ACTIVITY_TOP_NAME;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,5 +84,22 @@ public abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
-    public  abstract boolean isTopActivity();
+    public boolean isTopActivity(){
+        isActivityTop = false;
+        ActivityManager am = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
+        ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+        Logger.info(TAG, "isTopActivity = " + cn.getClassName());
+        if (cn.getClassName().contains(fragment_show_activity))
+        {
+            isActivityTop = true;
+        }
+        Logger.info(TAG, "isTop = " + isActivityTop);
+        return isActivityTop;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isActivityTop = false;
+    }
 }

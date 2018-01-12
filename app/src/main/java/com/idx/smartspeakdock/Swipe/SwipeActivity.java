@@ -1,7 +1,5 @@
 package com.idx.smartspeakdock.Swipe;
 
-import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,6 +32,7 @@ import com.idx.smartspeakdock.shopping.ShoppingFragment;
 import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
+import com.idx.smartspeakdock.weather.ui.WeatherFragment;
 
 import java.util.ArrayList;
 
@@ -49,7 +48,7 @@ public class SwipeActivity extends BaseActivity {
     Resources mResources;
     private DrawerLayout mDrawerLayout;
     private Intent intent;
-    private SwipeFragment swipeFragment;
+    private WeatherFragment weatherFragment;
     private CalendarFragment calendarFragment;
     private ListFragment musicFragment;
     private ShoppingFragment shoppingFragment;
@@ -96,30 +95,17 @@ public class SwipeActivity extends BaseActivity {
         onTouchListeners.remove(myOnTouchListener);
     }
 
-    @Override
-    public boolean isTopActivity() {
-        isActivityTop = false;
-        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
-        Logger.info(TAG, "isTopActivity = " + cn.getClassName());
-        if (cn.getClassName().contains(fragment_show_activity)) {
-            isActivityTop = true;
-        }
-        Logger.info(TAG, "isTop = " + isActivityTop);
-        return isActivityTop;
-    }
-
     private void changeFragment(String extraIntentId) {
         Logger.info(TAG, extraIntentId);
         switch (extraIntentId) {
             case GlobalUtils.WEATHER_FRAGMENT_INTENT_ID:
                 if (mCurrentFragment == null) {
-                    swipeFragment = SwipeFragment.newInstance();
+                    weatherFragment = WeatherFragment.newInstance();
                 } else {
-                    if (mCurrentFragment instanceof SwipeFragment)
-                        swipeFragment = (SwipeFragment) mCurrentFragment;
+                    if (mCurrentFragment instanceof WeatherFragment)
+                        weatherFragment = (WeatherFragment) mCurrentFragment;
                 }
-                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), swipeFragment, R.id.contentFrame);
+                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), weatherFragment, R.id.contentFrame);
                 break;
             case GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID:
                 if (mCurrentFragment == null) {
@@ -276,10 +262,10 @@ public class SwipeActivity extends BaseActivity {
                             case R.id.list_navigation_weather:
                                 // TODO: 17-12-16  WEATHER
                                 actionBar_title = mResources.getString(R.string.weather_title);
-                                if (swipeFragment == null) {
-                                    swipeFragment = SwipeFragment.newInstance();
+                                if (weatherFragment == null) {
+                                    weatherFragment = WeatherFragment.newInstance();
                                 }
-                                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), swipeFragment, R.id.contentFrame);
+                                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), weatherFragment, R.id.contentFrame);
                                 break;
                             case R.id.list_navigation_calendar:
                                 // TODO: 17-12-16 CALENDAR
@@ -371,8 +357,8 @@ public class SwipeActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (swipeFragment != null) {
-            swipeFragment = null;
+        if (weatherFragment != null) {
+            weatherFragment = null;
         }
         if (calendarFragment != null) {
             calendarFragment = null;
