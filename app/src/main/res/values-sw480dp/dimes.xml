@@ -17,19 +17,19 @@
     <dimen name="setting_left">6dp</dimen>
 
     //splash
-    <dimen name="splash_timeView_margin_top">220dp</dimen>
-    <dimen name="splash_dateView_margin_top">22dp</dimen>
-    <dimen name="splash_clothes_margin_top">53dp</dimen>
-    <dimen name="splash_car_margin_top">18dp</dimen>
-    <dimen name="splash_air_margin_top">18dp</dimen>
-    <dimen name="splash_timeView_textsize">130sp</dimen>
-    <dimen name="splash_dateView_textsize">30sp</dimen>
-    <dimen name="splash_weather_textsize">24sp</dimen>
-    <dimen name="splash_weather_image_width_size">60dp</dimen>
-    <dimen name="splash_weather_image_height_size">60dp</dimen>
-    <dimen name="splash_weather_margin_left">20dp</dimen>
-    <dimen name="splash_weather_tmp_width">150dp</dimen>
-    <dimen name="splash_weather_width">240dp</dimen>
+    <dimen name="splash_timeView_margin_top">176dp</dimen>
+    <dimen name="splash_dateView_margin_top">18dp</dimen>
+    <dimen name="splash_clothes_margin_top">42dp</dimen>
+    <dimen name="splash_car_margin_top">14dp</dimen>
+    <dimen name="splash_air_margin_top">14dp</dimen>
+    <dimen name="splash_timeView_textsize">104sp</dimen>
+    <dimen name="splash_dateView_textsize">24sp</dimen>
+    <dimen name="splash_weather_textsize">19sp</dimen>
+    <dimen name="splash_weather_image_width_size">48dp</dimen>
+    <dimen name="splash_weather_image_height_size">48dp</dimen>
+    <dimen name="splash_weather_margin_left">16dp</dimen>
+    <dimen name="splash_weather_tmp_width">120dp</dimen>
+    <dimen name="splash_weather_width">192dp</dimen>
     //calendar
     <dimen name="calendar_rl_tool_height">40dp</dimen>
     <dimen name="calendar_rl_tool_margintop">16dp</dimen>
