@@ -3,11 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ll_week"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="@dimen/calendar_week_height"
     android:minHeight="40dp"
     android:orientation="horizontal"
-    android:paddingBottom="8dp"
-    android:paddingTop="8dp"
+    android:paddingBottom="@dimen/calendar_week_padding"
+    android:paddingTop="@dimen/calendar_week_padding"
     tools:ignore="HardcodedText">
 
     <TextView
@@ -16,7 +16,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="日"
-        android:textSize="12sp" />
+        android:textSize="@dimen/calendar_week_textsize" />
 
     <TextView
         android:layout_width="0dp"
@@ -24,7 +24,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="一"
-        android:textSize="12sp" />
+        android:textSize="@dimen/calendar_week_textsize" />
 
     <TextView
         android:layout_width="0dp"
@@ -32,7 +32,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="二"
-        android:textSize="12sp" />
+        android:textSize="@dimen/calendar_week_textsize" />
 
     <TextView
         android:layout_width="0dp"
@@ -40,7 +40,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="三"
-        android:textSize="12sp" />
+        android:textSize="@dimen/calendar_week_textsize" />
 
     <TextView
         android:layout_width="0dp"
@@ -48,7 +48,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="四"
-        android:textSize="12sp" />
+        android:textSize="@dimen/calendar_week_textsize" />
 
     <TextView
         android:layout_width="0dp"
@@ -56,7 +56,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="五"
-        android:textSize="12sp" />
+        android:textSize="@dimen/calendar_week_textsize" />
 
     <TextView
         android:layout_width="0dp"
@@ -64,5 +64,5 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="六"
-        android:textSize="12sp" />
+        android:textSize="@dimen/calendar_week_textsize" />
 </LinearLayout>

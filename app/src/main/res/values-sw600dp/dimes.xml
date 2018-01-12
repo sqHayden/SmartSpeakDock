@@ -11,5 +11,28 @@
 
     //weather
     <dimen name="weather_basic_textsize">16sp</dimen>
+    //calendar
+    <dimen name="calendar_rl_tool_height">50dp</dimen>
+    <dimen name="calendar_rl_tool_margintop">20dp</dimen>
+    <dimen name="calendar_rl_tool_marginleft">20dp</dimen>
+    <dimen name="calendar_rl_tool_marginbottom">10dp</dimen>
+    <dimen name="calendar_selectyear_width">50dp</dimen>
+    <dimen name="calendar_selectyear_marginleft">10dp</dimen>
+    <dimen name="calendar_selectmonth_width">50dp</dimen>
+    <dimen name="calendar_event_marginleft">10dp</dimen>
+    <dimen name="calendar_event_marginright">20dp</dimen>
+    <dimen name="calendar_view_height">0.5dp</dimen>
+    <dimen name="calendar_view_marginleft">15dp</dimen>
+    <dimen name="calendar_view_marginright">15dp</dimen>
+    <dimen name="calendar_dialog_margin">3dp</dimen>
+    <dimen name="calendar_recycler_item_height">50dp</dimen>
+    <dimen name="calendar_recycler_time_marright">20dp</dimen>
+    <dimen name="calendar_recycler_time_marleft">50dp</dimen>
+    <dimen name="calendar_recycler_thing_marleft">30dp</dimen>
+    <dimen name="calendar_recycler_delete_width">112dp</dimen>
 
+    <dimen name="calendar_textsize_two_six">26sp</dimen>
+    <dimen name="calendar_lunar_textsize">8sp</dimen>
+    <dimen name="calendar_dialog_title_textsize">40sp</dimen>
+    <dimen name="calendar_recycler_textsize">12sp</dimen>
 </resources>

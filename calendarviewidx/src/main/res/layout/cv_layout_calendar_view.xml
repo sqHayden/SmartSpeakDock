@@ -16,22 +16,22 @@
             android:id="@+id/vp_calendar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="41dp" />
+            android:layout_marginTop="@dimen/calendar_vp_calendar_margintop" />
 
         <com.idx.calendarview.WeekViewPager
             android:id="@+id/vp_week"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="41dp"
+            android:layout_height="@dimen/calendar_vp_week_height"
+            android:layout_marginTop="@dimen/calendar_vp_week_margintop"
             android:visibility="gone" />
 
         <View
             android:id="@+id/line"
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginLeft="@dimen/calendar_line_margin"
+            android:layout_marginRight="@dimen/calendar_line_margin"
+            android:layout_marginTop="@dimen/calendar_line_margintop"
             android:background="#cfcfcf" />
 
     </FrameLayout>
@@ -40,7 +40,7 @@
         android:id="@+id/selectLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
+        android:paddingLeft="@dimen/calendar_selectLayout_padding"
+        android:paddingRight="@dimen/calendar_selectLayout_padding"
         android:visibility="gone" />
 </FrameLayout>

@@ -81,7 +81,7 @@ class MonthAdapter extends BaseRecyclerAdapter<Month> {
                 lp.height = (mheight-200)/4;
             } else {
                 //横屏
-                lp.height = (mwith-1000)/3;
+                lp.height = (mwith-200)/3;
             }
             linearLayout.setLayoutParams(lp);
         }
