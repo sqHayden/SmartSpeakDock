@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/music_main"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/music_list"
+        android:layout_weight="11"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+    <include
+        android:id="@+id/bar"
+        layout="@layout/music_include_play_bar"/>
+    </LinearLayout>
+</LinearLayout>

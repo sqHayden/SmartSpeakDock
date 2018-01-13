@@ -25,6 +25,7 @@ import android.view.WindowManager;
 import com.baidu.location.BDLocation;
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.music.service.MusicService;
 import com.idx.smartspeakdock.service.GetCityService;
 import com.idx.smartspeakdock.service.SpeakerService;
 import com.idx.smartspeakdock.standby.StandByFragment;
@@ -149,6 +150,7 @@ public class MainActivity extends BaseActivity {
                                 break;
                             case R.id.list_navigation_music:
                                 // TODO: 17-12-16 MusicFragment
+                                startService(new Intent(MainActivity.this, MusicService.class));
                                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
                                 break;
                             case R.id.list_navigation_shopping:

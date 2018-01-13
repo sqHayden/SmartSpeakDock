@@ -27,7 +27,7 @@ import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.Setting.SettingFragment;
 import com.idx.smartspeakdock.calendar.CalendarFragment;
 import com.idx.smartspeakdock.map.MapFragment;
-import com.idx.smartspeakdock.music.activity.ListFragment;
+import com.idx.smartspeakdock.music.activity.MusicListFragment;
 import com.idx.smartspeakdock.shopping.ShoppingFragment;
 import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.GlobalUtils;
@@ -50,7 +50,7 @@ public class SwipeActivity extends BaseActivity {
     private Intent intent;
     private WeatherFragment weatherFragment;
     private CalendarFragment calendarFragment;
-    private ListFragment musicFragment;
+    private MusicListFragment musicFragment;
     private ShoppingFragment shoppingFragment;
     private MapFragment mapFragment;
     private SettingFragment settingFragment;
@@ -118,10 +118,10 @@ public class SwipeActivity extends BaseActivity {
                 break;
             case GlobalUtils.MUSIC_FRAGMENT_INTENT_ID:
                 if (mCurrentFragment == null) {
-                    musicFragment = ListFragment.newInstance();
+                    musicFragment = MusicListFragment.newInstance();
                 } else {
-                    if (mCurrentFragment instanceof ListFragment)
-                        musicFragment = (ListFragment) mCurrentFragment;
+                    if (mCurrentFragment instanceof MusicListFragment)
+                        musicFragment = (MusicListFragment) mCurrentFragment;
                 }
                 ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), musicFragment, R.id.contentFrame);
                 break;
@@ -279,7 +279,7 @@ public class SwipeActivity extends BaseActivity {
                                 // TODO: 17-12-16 MUSIC
                                 actionBar_title = mResources.getString(R.string.music_title);
                                 if (musicFragment == null) {
-                                    musicFragment = ListFragment.newInstance();
+                                    musicFragment = MusicListFragment.newInstance();
                                 }
                                 ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), musicFragment, R.id.contentFrame);
                                 break;
@@ -323,7 +323,7 @@ public class SwipeActivity extends BaseActivity {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 if (musicFragment != null) {
-                    if (musicFragment.mIsPlaying) {
+                    if (musicFragment.isPlaying) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(this);
                         AlertDialog dialog = builder.setTitle("音乐正在播放")
                                 .setPositiveButton("后台播放", new DialogInterface.OnClickListener() {

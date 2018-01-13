@@ -79,11 +79,6 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".music.service.LocalPlayService"
-            android:enabled="true"/>
-        <activity android:name=".music.activity.PlayerActivity"
-            android:launchMode="singleTask"/>
-
 
         <activity
             android:name=".Swipe.SwipeActivity"
@@ -120,6 +115,10 @@
         <service android:name=".service.GetCityService"/>
 
         <service android:name=".service.AutoUpdateService"/>
+
+        <service android:name=".music.service.MusicService"
+                android:enabled="true"
+                android:exported="true"/>
     </application>
 
 </manifest>
