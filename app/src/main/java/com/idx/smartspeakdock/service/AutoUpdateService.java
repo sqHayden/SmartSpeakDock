@@ -32,7 +32,7 @@ public class AutoUpdateService extends Service {
         Log.d(TAG, "onStartCommand: ");
         UpdateWeatherUtil.updateWeather();
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        int anHour = 60*  30 * 1000; // 这是8小时的毫秒数
+        int anHour =   60 * 30 * 1000; // 这是30min的毫秒数
         long triggerAtTime = SystemClock.elapsedRealtime() + anHour;
         Intent i = new Intent(this, AutoUpdateService.class);
         PendingIntent pi = PendingIntent.getService(this, 0, i, 0);

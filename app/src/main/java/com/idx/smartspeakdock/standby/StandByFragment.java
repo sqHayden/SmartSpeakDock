@@ -33,6 +33,9 @@ import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasic;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicDataSource;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicInjection;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicRepository;
+import com.idx.smartspeakdock.weather.presenter.WeatherPresenter;
+import com.idx.smartspeakdock.weather.presenter.WeatherPresenterImpl;
+import com.idx.smartspeakdock.weather.ui.WeatherUi;
 import com.idx.smartspeakdock.weather.utils.HandlerWeatherUtil;
 
 import static android.content.Context.BIND_AUTO_CREATE;
@@ -44,19 +47,13 @@ import static android.content.Context.BIND_AUTO_CREATE;
 
 public class StandByFragment extends BaseFragment implements IStandByView{
     private static final String TAG = StandByFragment.class.getSimpleName();
-    private LinearLayout layout;
     private TextView location_textView;
     private TextView standby_life_clothes;
     private TextView standby_life_car;
     private TextView standby_weather_tmp;
-    private LocationClient mLocationClient;
     private ImageView weatherIcon;
     private StandByPresenter mStandByPresenter;
-    private String cityname = "深圳";
-    private int weather_icon;
-    private String life_clothes = "";
-    private String life_car = "";
-    private String weather_tmp = "";
+    private String cityname = "深圳市";
     private Context mContext;
     private View view;
     private GetCityService.MyBinder myBinder;
@@ -96,15 +93,13 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     public void onSaveInstanceState(@NonNull Bundle outState) {
 
         outState.putString("cityName",location_textView.getText().toString());
-     //   outState.putString("life_clothes",standby_life_clothes.getText().toString());
-      //  outState.putString("life_car",standby_life_car.getText().toString());
-      //  outState.putString("weather_tmp",standby_weather_tmp.getText().toString());
     }
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         BaseActivity baseActivity = (BaseActivity) getActivity();
         if(!BaseActivity.isServiceRunning(baseActivity.getApplicationContext(),"com.idx.smartspeakdock.start.GetCityService")) {
             Log.d("启动服务", "startService");
@@ -114,8 +109,6 @@ public class StandByFragment extends BaseFragment implements IStandByView{
             //绑定
             baseActivity.getApplicationContext().bindService(intent, connection, BIND_AUTO_CREATE);
         }
-//        mLocationClient = new LocationClient(mContext);
-//        mLocationClient.registerLocationListener(new StandByFragment.StandbyLocationListener());
         Logger.setEnable(true);
         if (savedInstanceState != null) {
             if (!cityname.isEmpty()){
@@ -152,7 +145,6 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     }
 
     public void init(){
-        layout = view.findViewById(R.id.line6);
         weatherIcon = view.findViewById(R.id.weatherIcon);
         location_textView = view.findViewById(R.id.location_textView);
         standby_life_clothes = view.findViewById(R.id.standby_life_clothes);
@@ -193,17 +185,10 @@ public class StandByFragment extends BaseFragment implements IStandByView{
         }
     }
 
-//    private class StandbyLocationListener  implements BDLocationListener {
-//
-//        @Override
-//        public void onReceiveLocation(BDLocation bdLocation) {
-//            Logger.info(TAG, "onReceiveLocation: "+ bdLocation.getCity());
-//            location_textView.setText(bdLocation.getCity());
-//        }
-//    }
-
     @Override
     public void onDestroy() {
+        getActivity().stopService(new Intent(getContext(),AutoUpdateService.class));
+        broadcastManager.unregisterReceiver(mReceiver);
         super.onDestroy();
     }
 
@@ -217,9 +202,10 @@ public class StandByFragment extends BaseFragment implements IStandByView{
         standby_weather_tmp.setText(weather.forecastList.get(0).max + " / " + weather.forecastList.get(0).min + "℃");
         standby_life_clothes.setText("穿衣：" + weather.lifestyleList.get(1).brf);
         standby_life_car.setText("洗车：" + weather.lifestyleList.get(6).brf);
+        Log.d(TAG, "showWeatherInfo: show11111111");
     }
 
-    public void getWeatherBasic(String cityName) {
+    public void getWeatherBasic(final String cityName) {
         Log.d(TAG, "getWeatherBasic: " + cityName);
         mWeatherBasicRepository = WeatherBasicInjection.getNoteRepository(getActivity());
         mWeatherBasicRepository.getWeatherBasic(cityName + "%", new WeatherBasicDataSource.LoadWeatherBasicsCallback() {
@@ -233,9 +219,9 @@ public class StandByFragment extends BaseFragment implements IStandByView{
 
             @Override
             public void onDataNotAvailable() {
-
+                Log.d(TAG, "onDataNotAvailable: ");
+                mStandByPresenter.requestWeather(cityName);
             }
-
         });
     }
 }
