@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.idx.smartspeakdock.Actions;
+import com.idx.smartspeakdock.Intents;
 import com.idx.smartspeakdock.Modules;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.SlotsTypes;
@@ -94,6 +95,10 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                 return false;
             case Actions.OPEN_NOW:
                 openModule();
+                return true;
+
+            case Actions.EXIT_VOICE:
+                mContext.sendBroadcast(new Intent(Intents.ACTION_SESSION_END));
                 return true;
 
             /**音乐指令*/

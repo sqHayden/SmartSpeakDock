@@ -30,13 +30,18 @@ public class SpeakerService extends Service {
         Log.d(TAG, "onCreate: ");
         super.onCreate();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Intents.ACTION_WAKE_UP);
-        intentFilter.addAction(Intents.ACTION_RECOGNIZE);
-        intentFilter.addAction(Intents.ACTION_WAKE_UP_START);
-        intentFilter.addAction(Intents.ACTION_WAKE_UP_STOP);
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
         intentFilter.addAction(Intent.ACTION_SCREEN_ON);
         intentFilter.addAction(Intent.ACTION_USER_PRESENT);
+
+        intentFilter.addAction(Intents.ACTION_WAKE_UP);
+        intentFilter.addAction(Intents.ACTION_WAKE_UP_START);
+        intentFilter.addAction(Intents.ACTION_WAKE_UP_STOP);
+        intentFilter.addAction(Intents.ACTION_RECOGNIZE_START);
+        intentFilter.addAction(Intents.ACTION_RECOGNIZE_END);
+        intentFilter.addAction(Intents.ACTION_SESSION_START);
+        intentFilter.addAction(Intents.ACTION_SESSION_END);
+
         registerReceiver(mReceiver, intentFilter);
 
     }

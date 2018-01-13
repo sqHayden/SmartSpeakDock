@@ -27,6 +27,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
         android:name=".SpeakerApplication"
@@ -87,7 +88,6 @@
         <activity
             android:name=".Swipe.SwipeActivity"
             android:label="@string/app_name"
-            android:configChanges="orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar"
             />
         <!--android:configChanges="orientation|screenSize|keyboardHidden"-->
@@ -101,18 +101,7 @@
 
 
         <!--地图相关的文件-->
-
-        <activity
-            android:name=".map.tools.RouteGuideDemo"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
-            android:label="route_guide_demo" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.BAIDUNAVISDK_DEMO" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".standby.StandByActivity"
-            android:configChanges="orientation|screenSize"/>
+        <activity android:name=".standby.StandByActivity"/>
         <activity
             android:name=".map.tools.BNDemoGuideActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"

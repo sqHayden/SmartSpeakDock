@@ -1,9 +1,11 @@
 package com.idx.smartspeakdock.baidu.recognise;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Message;
 import android.util.Log;
 
+import com.idx.smartspeakdock.Intents;
 import com.idx.smartspeakdock.baidu.control.UnitManager;
 
 import java.util.Date;
@@ -63,6 +65,7 @@ public class MessageStatusRecogListener extends StatusRecogListener {
         int length = results[0].length() - 1;
         String msg = results[0].substring(0, length);
         UnitManager.getInstance().sendMessage(mContext, msg);
+        mContext.sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE_END));
 
         //调试使用
         String message = "识别结束，结果是“" + msg + "”";
@@ -136,6 +139,7 @@ public class MessageStatusRecogListener extends StatusRecogListener {
     public void onAsrExit() {
         super.onAsrExit();
         sendStatusMessage("识别引擎结束并空闲中");
+        mContext.sendBroadcast(new Intent(Intents.ACTION_SESSION_END));
     }
 
     private void sendMessage(String message) {

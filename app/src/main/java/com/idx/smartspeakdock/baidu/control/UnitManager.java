@@ -20,7 +20,6 @@ import com.idx.smartspeakdock.baidu.unit.model.AccessToken;
 import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
 import com.idx.smartspeakdock.utils.AppExecutors;
 import com.idx.smartspeakdock.utils.AuthInfo;
-import com.idx.smartspeakdock.utils.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -200,7 +199,7 @@ public class UnitManager {
                     isSessionOver = mVoiceAdapter.onAction(action, schema);
                     //会话未结束，继续开始语音识别
                     if (!isSessionOver) {
-                        context.sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE));
+                        context.sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE_START));
                     }
                 }
 

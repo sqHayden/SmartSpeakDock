@@ -35,22 +35,39 @@ import java.util.TimerTask;
 public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStatus {
 
     private static final String TAG = SpeakerBroadcastReceiver.class.getName();
+    /**
+     * 屏锁释放等待时长
+     */
     private static final int RELEASE_LOCK_DELAY = 5000; //ms
+    /**
+     * 屏幕解锁超时时长
+     */
     private static final int WAKE_LOCK_TIMEOUT = 8000; //ms
-    //识别回溯时长
+    /**
+     * 唤醒后，识别回溯时长
+     */
     private static final int BACK_TRACK = 1500; //ms
-
+    /**
+     * 唤醒管理器
+     */
     private WakeUpManager mWakeUpManager = null;
-    private RecognizerManager mRecognizerManager = null;
+    /**
+     * 唤醒参数
+     */
     private WakeupParams mWakeupParams = null;
+    /**
+     * 识别管理器
+     */
+    private RecognizerManager mRecognizerManager = null;
 
     private PowerManager.WakeLock mWL = null;
     private KeyguardManager.KeyguardLock mKL = null;
 
     private boolean isLocked = false;
     private int wakeUpStatus = STATUS_NONE;
-    private Handler handler = new Handler();
+    boolean isSessionOver = false;
 
+    private Handler handler = new Handler();
     private Runnable mRecogRunnable = new Runnable() {
         @Override
         public void run() {
@@ -73,16 +90,27 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
                 case Intent.ACTION_USER_PRESENT:
                     releaseWLKL();
                     break;
+                //唤醒后，即表示开始会话
                 case Intents.ACTION_WAKE_UP:
+                case Intents.ACTION_SESSION_START:
                     //开启会话
-                    UnitManager.getInstance().setSessionOver(false);
+                    isSessionOver = false;
+                    UnitManager.getInstance().setSessionOver(isSessionOver);
                     if (isLocked) {
                         unlock(context);
                     }
-                case Intents.ACTION_RECOGNIZE:
+                case Intents.ACTION_RECOGNIZE_START:
+
                     if (!UnitManager.getInstance().isSessionOver()) {
                         handler.postDelayed(mRecogRunnable, BACK_TRACK);
                     }
+                    break;
+                case Intents.ACTION_RECOGNIZE_END:
+                    break;
+                case Intents.ACTION_SESSION_END:
+                    //会话结束
+                    isSessionOver = true;
+                    UnitManager.getInstance().setSessionOver(isSessionOver);
                     break;
                 case Intents.ACTION_WAKE_UP_START:
                     startWakeUp(context);

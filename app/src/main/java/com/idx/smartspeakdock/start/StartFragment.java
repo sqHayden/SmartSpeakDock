@@ -128,7 +128,7 @@ public class StartFragment extends Fragment implements StartContract.View {
     @Override
     public void showContent(String str) {
         mTextView.setText(str);
-        getActivity().sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE));
+        getActivity().sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE_START));
     }
 
     /**
