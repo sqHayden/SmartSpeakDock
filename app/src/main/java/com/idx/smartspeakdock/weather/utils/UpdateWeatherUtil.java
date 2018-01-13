@@ -44,7 +44,7 @@ public class UpdateWeatherUtil {
             public void onWeatherBasicsLoaded(List<WeatherBasic> weatherBasic) {
                 for (WeatherBasic basic : weatherBasic) {
                     Log.d(TAG, "onWeatherBasicsLoaded: ");
-                    if (new Date().getTime() - new Date(basic.date).getTime() >= 1000 * 30 ) {
+                    if (new Date().getTime() - new Date(basic.date).getTime() >= 1000 * 30 * 60 ) {
                         final String name = basic.cityName;
                         mWeatherBasicRepository.deleteWeatherBasic(name);
                         String weatherUrl = "https://free-api.heweather.com/s6/weather?location=" + name + "&key=537664b7e2124b3c845bc0b51278d4af";
