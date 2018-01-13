@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.baidu.location.BDLocation;
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.service.GetCityService;
@@ -45,24 +46,6 @@ public class MainActivity extends BaseActivity {
     private CoordinatorLayout right;
     private NavigationView left;
     private GetCityService.MyBinder myBinder;
-
-    private ServiceConnection connection = new ServiceConnection() {
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            myBinder = (GetCityService.MyBinder) service;
-            String city_name = myBinder.getCity();
-            if(city_name!=null) {
-                Log.d("Test Demo", city_name);
-            }else{
-                Log.d("拿到的地名是空的","123456");
-            }
-        }
-    };
     private boolean isDrawer;
 
 
@@ -77,7 +60,7 @@ public class MainActivity extends BaseActivity {
         standByFragment =
                 (StandByFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (standByFragment == null) {
-            standByFragment = standByFragment.newInstance();
+            standByFragment = new StandByFragment();
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), standByFragment, R.id.contentFrame);
         }
@@ -85,16 +68,6 @@ public class MainActivity extends BaseActivity {
         if (!isServiceRunning(this, "com.idx.smartspeakdock.start.SpeakerService")) {
             startService(new Intent(this, SpeakerService.class));
         }
-
-
-//        if(!isServiceRunning(this,"com.idx.smartspeakdock.start.GetCityService")){
-//            Log.d("start my service","123456");
-//            //启动
-//            startService(new Intent(this, GetCityService.class));
-//            //绑定
-//            Intent bindIntent = new Intent(this, GetCityService.class);
-//            bindService(bindIntent, connection, BIND_AUTO_CREATE);
-//        }
     }
 
     private void initDrawer() {

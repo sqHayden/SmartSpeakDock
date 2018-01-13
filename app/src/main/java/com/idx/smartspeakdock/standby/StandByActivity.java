@@ -29,7 +29,7 @@ public class StandByActivity extends BaseActivity {
         standByFragment =
                 (StandByFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (standByFragment == null) {
-            standByFragment = standByFragment.newInstance();
+            standByFragment = new StandByFragment();
             ActivityUtils.replaceFragmentInActivity(
                     getSupportFragmentManager(), standByFragment, R.id.contentFrame);
         }

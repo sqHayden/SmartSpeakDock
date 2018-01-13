@@ -1,27 +1,33 @@
 package com.idx.smartspeakdock.standby;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
+import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.service.GetCityService;
 import com.idx.smartspeakdock.standby.presenter.StandByPresenter;
 import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.ToastUtils;
 import com.idx.smartspeakdock.weather.model.weather.Weather;
 import com.idx.smartspeakdock.weather.utils.HandlerWeatherUtil;
+
+import static android.content.Context.BIND_AUTO_CREATE;
 
 /**
  * Created by ryan on 17-12-27.
@@ -43,8 +49,26 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     private ImageView image_clothes;
     private Context mContext;
     private View view;
+    private GetCityService.MyBinder myBinder;
+    private ServiceConnection connection = new ServiceConnection() {
 
-    public static StandByFragment newInstance(){return new StandByFragment();}
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.d("binder连接已经执行","123456");
+            myBinder = (GetCityService.MyBinder) service;
+            //连接调用
+            myBinder.getCity(new GetCityService.CallBack(){
+                @Override
+                public void call(BDLocation bdLocation) {
+                    mStandByPresenter.requestWeather(bdLocation.getCity());
+                }
+            });
+        }
+    };
 
     @Override
     public void onAttach(Context context) {
@@ -55,8 +79,17 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLocationClient = new LocationClient(mContext);
-        mLocationClient.registerLocationListener(new StandByFragment.StandbyLocationListener());
+        BaseActivity baseActivity = (BaseActivity) getActivity();
+        if(!BaseActivity.isServiceRunning(baseActivity.getApplicationContext(),"com.idx.smartspeakdock.start.GetCityService")) {
+            Log.d("启动服务", "startService");
+            Intent intent = new Intent(baseActivity.getApplicationContext(), GetCityService.class);
+            //启动
+            baseActivity.getApplicationContext().startService(intent);
+            //绑定
+            baseActivity.getApplicationContext().bindService(intent, connection, BIND_AUTO_CREATE);
+        }
+//        mLocationClient = new LocationClient(mContext);
+//        mLocationClient.registerLocationListener(new StandByFragment.StandbyLocationListener());
         Logger.setEnable(true);
     }
 
@@ -71,7 +104,6 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         init();
-        requestLocation();
     }
 
     public void init(){
@@ -90,54 +122,47 @@ public class StandByFragment extends BaseFragment implements IStandByView{
         mStandByPresenter = new StandByPresenter(this,mContext);
     }
 
-    public void requestLocation(){
-        initLocation();
-        mLocationClient.start();
-    }
-
-
-    private void initLocation(){
-        LocationClientOption option = new LocationClientOption();
-        option.setIsNeedAddress(true);
-        option.setScanSpan(10 * 60 * 1000);
-        mLocationClient.setLocOption(option);
-    }
-
-
     @Override
     public void setCurrentCityWeatherInfo(final Weather weather) {
+        try {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     showWeatherInfo(weather);
                 }
             });
-    }
-
-    @Override
-    public void onError(final String errorMsg) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ToastUtils.showError(mContext,errorMsg);
-            }
-        });
-    }
-
-    private class StandbyLocationListener  implements BDLocationListener {
-
-        @Override
-        public void onReceiveLocation(BDLocation bdLocation) {
-            Logger.info(TAG, "onReceiveLocation: "+ bdLocation.getCity());
-            location_textView.setText(bdLocation.getCity());
-            mStandByPresenter.requestWeather(bdLocation.getCity());
+        }catch (NullPointerException e){
+            e.printStackTrace();
         }
     }
 
     @Override
+    public void onError(final String errorMsg) {
+        try {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ToastUtils.showError(mContext, errorMsg);
+                }
+            });
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
+    }
+
+//    private class StandbyLocationListener  implements BDLocationListener {
+//
+//        @Override
+//        public void onReceiveLocation(BDLocation bdLocation) {
+//            Logger.info(TAG, "onReceiveLocation: "+ bdLocation.getCity());
+//            location_textView.setText(bdLocation.getCity());
+//        }
+//    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        mLocationClient.stop();
+//        mLocationClient.stop();
     }
 
     private void showWeatherInfo(Weather weather) {

@@ -127,7 +127,7 @@ public class SwipeActivity extends BaseActivity {
                 break;
             case GlobalUtils.MAP_FRAGMENT_INTENT_ID:
                 if (mCurrentFragment == null) {
-                    mapFragment = MapFragment.newInstance();
+                    mapFragment = new MapFragment();
                 } else {
                     if (mCurrentFragment instanceof MapFragment)
                         mapFragment = (MapFragment) mCurrentFragment;
@@ -295,7 +295,7 @@ public class SwipeActivity extends BaseActivity {
                                 // TODO: 17-12-16 MAP
                                 actionBar_title = mResources.getString(R.string.map_title);
                                 if (mapFragment == null) {
-                                    mapFragment = MapFragment.newInstance();
+                                    mapFragment = new MapFragment();
                                 }
                                 ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), mapFragment, R.id.contentFrame);
                                 break;
