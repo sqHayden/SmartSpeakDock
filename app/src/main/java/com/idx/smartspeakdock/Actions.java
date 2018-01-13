@@ -54,5 +54,21 @@ public interface Actions {
 
     interface Shopping {
         String SHOPPING_SWITCH = "shopping_switch_satisfy";
+        String SHOPPING_ME_CLASSIFY = "shopping_me_classify_satisfy";
+        String SHOPPING_DIGITAL_PHONE = "shopping_digital_phone_satisfy";
+        String SHOPPING_DIGITAL_PHONEACCESS = "shopping_digital_phoneaccess_satisfy";
+        String SHOPPING_DIGITAL_SMARTDEVICE = "shopping_digital_smartdevice_satisfy";
+        String SHOPPING_DIGITAL_CARVEHIELEC = "shopping_digital_carvehielec_satisfy";
+        String SHOPPING_DIGITAL_IPHONEACCESSI = "shopping_digital_iphoneaccessi_satisfy";
+        String SHOPPING_COMPUTER_DESKTOP = "shopping_computer_desktop_satisfy";
+        String SHOPPING_COMPUTERS = "SHOPPING_COMPUTERS";
+        String SHOPPING_COM_PERIPHERALS = "shopping_com_peripherals_satisfy";
+        String SHOPPING_SMART_SHARPTV = "shopping_smart_sharptv_satisfy";
+        String SHOPPING_LIFE_ELECTRICAL = "shopping_life_electrical_satisfy";
+        String SHOPPING_SMART_CARE_HEALTH = "shopping_smart_care_health_satisfy";
+        String SHOPPING_SMART_KITCHENSMALL = "shopping_smart_kitchensmall_satisfy";
+        String SHOPPING_SMART_FAMILYAUDIO = "shopping_smart_familyaudio_satisfy";
+        String SHOPPING_SMART_ICEBOX = "shopping_smart_icebox_satisfy";
+        String SHOPPING_SMART_WASHMACHINE = "shopping_smart_washmachine_satisfy";
     }
 }

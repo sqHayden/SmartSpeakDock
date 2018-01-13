@@ -8,7 +8,6 @@ import android.util.Log;
 import com.idx.smartspeakdock.Actions;
 import com.idx.smartspeakdock.Intents;
 import com.idx.smartspeakdock.Modules;
-import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.SlotsTypes;
 import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.TTSManager;
@@ -17,7 +16,8 @@ import com.idx.smartspeakdock.map.PathWay;
 import com.idx.smartspeakdock.map.SearchArea;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
-import com.idx.smartspeakdock.utils.ToastUtils;
+import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
+
 import java.util.HashMap;
 
 
@@ -37,15 +37,17 @@ public class VoiceActionAdapter implements IVoiceActionListener {
     private IShoppingVoiceListener mShoppingListener;
 
     private String web_sites_url;
-//    private String recoginize_shopping_word;
+    private String recoginize_shopping_word;
     private String reconginize_city_word;
     private String reconginize_time_word;
     private String voice_answer;
+    private SharePrefrenceUtils mSharePrefrenceUtils;
     private HashMap<String, String> mSlots = new HashMap<>();
 
     public VoiceActionAdapter(Context context) {
         Logger.setEnable(true);
         mIntent = new Intent(context, SwipeActivity.class);
+        mSharePrefrenceUtils = new SharePrefrenceUtils(context);
         mContext = context;
     }
 
@@ -168,13 +170,57 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                 return true;
 
             /**购物指令*/
-           /* case Actions.Shopping.SHOPPING_SWITCH:
-                recoginize_shopping_word = ((CommunicateResponse.Schema.MergedSlots) schema.botMergedSlots.get(1)).original_word;
-                Log.i(TAG, "handleAction: recoginize_shopping_word = "+recoginize_shopping_word);
-                if (mShoppingListener != null) {
-                    jude_word(recoginize_shopping_word);
-                }
-                return true;*/
+            case Actions.Shopping.SHOPPING_SWITCH:
+                shoppingSwitch();
+                return true;
+            case Actions.Shopping.SHOPPING_ME_CLASSIFY:
+                shoppingMeClassify();
+                return true;
+            case Actions.Shopping.SHOPPING_DIGITAL_PHONE:
+                digitalPhone();
+                return true;
+            case Actions.Shopping.SHOPPING_DIGITAL_PHONEACCESS:
+                digitalPhoneAccess();
+                return true;
+            case Actions.Shopping.SHOPPING_DIGITAL_SMARTDEVICE:
+                digitalSmartDevice();
+                return true;
+            case Actions.Shopping.SHOPPING_DIGITAL_CARVEHIELEC:
+                digitalCarvehiElec();
+                return true;
+            case Actions.Shopping.SHOPPING_DIGITAL_IPHONEACCESSI:
+                digitalIphoneAccessi();
+                return true;
+            case Actions.Shopping.SHOPPING_COMPUTER_DESKTOP:
+                computerDesktop();
+                return true;
+            case Actions.Shopping.SHOPPING_COMPUTERS:
+                computers();
+                return true;
+            case Actions.Shopping.SHOPPING_COM_PERIPHERALS:
+                comPeripherals();
+                return true;
+            case Actions.Shopping.SHOPPING_SMART_SHARPTV:
+                smartSharpTV();
+                return true;
+            case Actions.Shopping.SHOPPING_LIFE_ELECTRICAL:
+                lifeElectrical();
+                return true;
+            case Actions.Shopping.SHOPPING_SMART_CARE_HEALTH:
+                smartCarehealth();
+                return true;
+            case Actions.Shopping.SHOPPING_SMART_KITCHENSMALL:
+                smartKitchensmall();
+                return true;
+            case Actions.Shopping.SHOPPING_SMART_FAMILYAUDIO:
+                smartFamilyaudio();
+                return true;
+            case Actions.Shopping.SHOPPING_SMART_ICEBOX:
+                smartIcebox();
+                return true;
+            case Actions.Shopping.SHOPPING_SMART_WASHMACHINE:
+                smartWashmachine();
+                return true;
 
             /**天气指令*/
             /*case Actions.Weather.WEATHER_CHECK_INFO:
@@ -184,7 +230,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                 return true;*/
             case Actions.Weather.WEATHER_INFO:
                 refreshWeatherInfo();
-                return  true;
+                return true;
             case Actions.Weather.RANGE_TEMP_INFO:
                 rangeTempInfo();
                 return true;
@@ -215,9 +261,128 @@ public class VoiceActionAdapter implements IVoiceActionListener {
 
     }
 
+    private void shoppingMeClassify() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_ME_CLASSIFY);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void shoppingSwitch() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_SWITCH);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void digitalPhone() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_DIGITAL_PHONE);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void digitalPhoneAccess() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_DIGITAL_PHONEACCESS);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void digitalSmartDevice() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_DIGITAL_SMARTDEVICE);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void digitalCarvehiElec() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_DIGITAL_CARVEHIELEC);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void digitalIphoneAccessi() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_DIGITAL_IPHONEACCESSI);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void computerDesktop() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_COMPUTER_DESKTOP);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void computers() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_COMPUTERS);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void comPeripherals() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_COM_PERIPHERALS);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void smartSharpTV() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_SMART_SHARPTV);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void lifeElectrical() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_LIFE_ELECTRICAL);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void smartCarehealth() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_SMART_CARE_HEALTH);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void smartKitchensmall() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_SMART_KITCHENSMALL);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void smartFamilyaudio() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_SMART_FAMILYAUDIO);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void smartIcebox() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_SMART_ICEBOX);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
+    private void smartWashmachine() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_SMART_WASHMACHINE);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+    }
+
     private void refreshWeatherInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
-        Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word);
+        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
         if (mWeatherListener != null) {
             mWeatherListener.onWeatherInfo(reconginize_city_word);
         }
@@ -226,10 +391,10 @@ public class VoiceActionAdapter implements IVoiceActionListener {
     private void rangeTempInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
-        Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word+",reconginize_time_word = "+reconginize_time_word);
-        if(mWeatherListener != null){
-            voice_answer = mWeatherListener.onRangeTempInfo(reconginize_city_word,reconginize_time_word);
-            if(checkVoiceAnswer(voice_answer)) {
+        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word + ",reconginize_time_word = " + reconginize_time_word);
+        if (mWeatherListener != null) {
+            voice_answer = mWeatherListener.onRangeTempInfo(reconginize_city_word, reconginize_time_word);
+            if (checkVoiceAnswer(voice_answer)) {
                 TTSManager.getInstance().speak(voice_answer);
             }
         }
@@ -238,10 +403,10 @@ public class VoiceActionAdapter implements IVoiceActionListener {
     private void airQualityInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
-        Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word);
-        if(mWeatherListener != null){
+        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
+        if (mWeatherListener != null) {
             voice_answer = mWeatherListener.onAirQualityInfo(reconginize_city_word);
-            if(checkVoiceAnswer(voice_answer)) {
+            if (checkVoiceAnswer(voice_answer)) {
                 TTSManager.getInstance().speak(voice_answer);
             }
         }
@@ -249,10 +414,10 @@ public class VoiceActionAdapter implements IVoiceActionListener {
 
     private void currentTempInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
-        Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word);
-        if(mWeatherListener != null){
+        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
+        if (mWeatherListener != null) {
             voice_answer = mWeatherListener.onCurrentTempInfo(reconginize_city_word);
-            if(checkVoiceAnswer(voice_answer)) {
+            if (checkVoiceAnswer(voice_answer)) {
                 TTSManager.getInstance().speak(voice_answer);
             }
         }
@@ -261,10 +426,10 @@ public class VoiceActionAdapter implements IVoiceActionListener {
     private void weatherStatus() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
-        Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word+",reconginize_time_word = "+reconginize_time_word);
-        if(mWeatherListener != null){
-            voice_answer = mWeatherListener.onWeatherStatus(reconginize_city_word,reconginize_time_word);
-            if(checkVoiceAnswer(voice_answer)) {
+        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word + ",reconginize_time_word = " + reconginize_time_word);
+        if (mWeatherListener != null) {
+            voice_answer = mWeatherListener.onWeatherStatus(reconginize_city_word, reconginize_time_word);
+            if (checkVoiceAnswer(voice_answer)) {
                 TTSManager.getInstance().speak(voice_answer);
             }
         }
@@ -273,9 +438,9 @@ public class VoiceActionAdapter implements IVoiceActionListener {
     private void rainInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
-        if(mWeatherListener != null){
-            voice_answer = mWeatherListener.onRainInfo(reconginize_city_word,reconginize_time_word);
-            if(checkVoiceAnswer(voice_answer)) {
+        if (mWeatherListener != null) {
+            voice_answer = mWeatherListener.onRainInfo(reconginize_city_word, reconginize_time_word);
+            if (checkVoiceAnswer(voice_answer)) {
                 TTSManager.getInstance().speak(voice_answer);
             }
         }
@@ -283,10 +448,10 @@ public class VoiceActionAdapter implements IVoiceActionListener {
 
     private void derssInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
-        Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word);
-        if(mWeatherListener != null){
+        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
+        if (mWeatherListener != null) {
             voice_answer = mWeatherListener.onDressInfo(reconginize_city_word);
-            if(checkVoiceAnswer(voice_answer)) {
+            if (checkVoiceAnswer(voice_answer)) {
                 TTSManager.getInstance().speak(voice_answer);
             }
         }
@@ -294,10 +459,10 @@ public class VoiceActionAdapter implements IVoiceActionListener {
 
     private void uitravioletLevelInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
-        Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word);
-        if(mWeatherListener != null){
+        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
+        if (mWeatherListener != null) {
             voice_answer = mWeatherListener.onUitravioletLevelInfo(reconginize_city_word);
-            if(checkVoiceAnswer(voice_answer)) {
+            if (checkVoiceAnswer(voice_answer)) {
                 TTSManager.getInstance().speak(voice_answer);
             }
         }
@@ -306,65 +471,39 @@ public class VoiceActionAdapter implements IVoiceActionListener {
     private void smogInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
-        Logger.info(TAG, "handleAction: reconginize_city_word = "+reconginize_city_word);
-        if(mWeatherListener != null){
-            voice_answer = mWeatherListener.onSmogInfo(reconginize_city_word,reconginize_time_word);
-            if(checkVoiceAnswer(voice_answer)) {
+        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
+        if (mWeatherListener != null) {
+            voice_answer = mWeatherListener.onSmogInfo(reconginize_city_word, reconginize_time_word);
+            if (checkVoiceAnswer(voice_answer)) {
                 TTSManager.getInstance().speak(voice_answer);
             }
         }
     }
 
     private void jude_word(String recoginize_shopping_word) {
-        Logger.info(TAG, "jude_word: recoginize_shopping_word = "+recoginize_shopping_word);
+        Logger.info(TAG, "jude_word: recoginize_shopping_word = " + recoginize_shopping_word);
         if (!TextUtils.isEmpty(recoginize_shopping_word)) {
-            switch (recoginize_shopping_word) {
-                case GlobalUtils.PHONE_DIGITAI:
-                    web_sites_url = "https://mall.flnet.com/gallery-6.html";
-                    break;
-                case GlobalUtils.COMPUTER_OFFICE:
-                    web_sites_url = "https://mall.flnet.com/gallery-7.html";
-                    break;
-                case GlobalUtils.SMART_HOME:
-                    web_sites_url = "https://mall.flnet.com/gallery-1.html";
-                    break;
-                case GlobalUtils.IPHONE:
-                    web_sites_url = "https://mall.flnet.com/gallery.html?scontent=n,%E8%8B%B9%E6%9E%9C";
-                    break;
-                case GlobalUtils.SHARPE:
-                    web_sites_url = "https://mall.flnet.com/gallery.html?scontent=n,%E5%A4%8F%E6%99%AE";
-                    break;
-                case GlobalUtils.FIND:
-                    web_sites_url = "http://bbs.flnet.com/forum.php";
-                    break;
-                case GlobalUtils.BUSSIESE_GROUP:
-                    web_sites_url = "https://mall.flnet.com/enterpriseGroup.html";
-                    break;
-                case GlobalUtils.LOGIN_PAGE:
-                    web_sites_url = "https://account.flnet.com/sso/login";
-                    break;
-                default:
-                    ToastUtils.showError(mContext, mContext.getResources().getString(R.string.web_sites_not_exists));
-                    break;
-            }
-            if (web_sites_url != "") {
+            web_sites_url = mSharePrefrenceUtils.getWebUrl(recoginize_shopping_word);
+            Log.i(TAG, "jude_word: recoginize_shopping_word = " + recoginize_shopping_word + ",web_sites_url = " + web_sites_url);
+            if (checkVoiceAnswer(web_sites_url)) {
                 mShoppingListener.openSpecifyWebsites(web_sites_url);
             }
-        } else {}
+        } else {
+        }
     }
 
-    private void initData(){
+    private void initData() {
         reconginize_city_word = "";
         reconginize_city_word = "";
         voice_answer = "";
         web_sites_url = "";
     }
 
-    private boolean checkVoiceAnswer(String check_voice_answer){
-        if(TextUtils.isEmpty(check_voice_answer)) {
+    private boolean checkVoiceAnswer(String check_voice_answer) {
+        if (TextUtils.isEmpty(check_voice_answer)) {
             return false;
         }
-        if(check_voice_answer.equals("")) {
+        if (check_voice_answer.equals("")) {
             return false;
         }
         return true;
@@ -385,7 +524,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                 break;
             case Modules.MAP:
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MAP_FRAGMENT_INTENT_ID);
+                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.MAP_FRAGMENT_INTENT_ID);
                 mContext.startActivity(mIntent);
                 break;
             case Modules.MUSIC:
@@ -399,16 +538,16 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                 mContext.startActivity(mIntent);
                 break;
             /**购物指令*/
-            case GlobalUtils.PHONE_DIGITAI:
-            case GlobalUtils.COMPUTER_OFFICE:
-            case GlobalUtils.SMART_HOME:
             case GlobalUtils.IPHONE:
             case GlobalUtils.SHARPE:
             case GlobalUtils.FIND:
             case GlobalUtils.BUSSIESE_GROUP:
             case GlobalUtils.LOGIN_PAGE:
-                Logger.info(TAG, "openModule: name = "+name);
-                if(mShoppingListener != null) {
+            case GlobalUtils.FLNET:
+            case GlobalUtils.register_page:
+            case GlobalUtils.SHOPPING_CART:
+                Logger.info(TAG, "openModule: name = " + name);
+                if (mShoppingListener != null) {
                     jude_word(name);
                 }
                 break;

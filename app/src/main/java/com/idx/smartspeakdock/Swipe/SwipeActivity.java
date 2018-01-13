@@ -70,10 +70,13 @@ public class SwipeActivity extends BaseActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.drawer_main);
         Logger.setEnable(true);
+        //对应fragment的id
         extraIntentId = getIntent().getStringExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT);
         initToolBar();
+        //侧滑设置
         initDrawer();
         mCurrentFragment = getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        //fragment切换
         changeFragment(extraIntentId);
     }
 
@@ -216,7 +219,7 @@ public class SwipeActivity extends BaseActivity {
         mActionBar.setDisplayHomeAsUpEnabled(true);
         websites_url = "https://mall.flnet.com";
     }
-
+    //切换ActionBar的Title
     private void setActionBarTitle() {
         switch (extraIntentId) {
             case GlobalUtils.WEATHER_FRAGMENT_INTENT_ID:

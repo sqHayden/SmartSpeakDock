@@ -62,8 +62,4 @@ public class AboutActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean isTopActivity() {
-        return false;
-    }
 }

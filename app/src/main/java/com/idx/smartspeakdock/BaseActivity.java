@@ -36,6 +36,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         int flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
         window.setFlags(flag, flag);
         initPermission();
+        //当前Activity是否是SwipeActivity
+        isTopActivity();
     }
 
     // 6.0以上权限获取
@@ -84,7 +86,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
-    public boolean isTopActivity(){
+    public void isTopActivity(){
         isActivityTop = false;
         ActivityManager am = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
@@ -94,7 +96,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             isActivityTop = true;
         }
         Logger.info(TAG, "isTop = " + isActivityTop);
-        return isActivityTop;
     }
 
     @Override

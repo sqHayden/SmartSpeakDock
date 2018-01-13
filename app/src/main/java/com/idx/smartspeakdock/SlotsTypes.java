@@ -17,6 +17,22 @@ public interface SlotsTypes {
     String USER_SEARCH_ADDRESS = "user_search_address";
     //shoping
     String USER_SHOPPING_SWITCH = "user_shopping";
+    String USER_SHOPPING_ME_CLASSIFY = "user_shop_me_classif";
+    String USER_SHOPPING_DIGITAL_PHONE = "user_phone_classify";
+    String USER_SHOPPING_DIGITAL_PHONEACCESS = "user_shop_phoneacces";
+    String USER_SHOPPING_DIGITAL_SMARTDEVICE = "user_sp_smartdevice";
+    String USER_SHOPPING_DIGITAL_CARVEHIELEC = "user_sp_carverhiele";
+    String USER_SHOPPING_DIGITAL_IPHONEACCESSI = "user_sp_iphoneaccess";
+    String USER_SHOPPING_COMPUTER_DESKTOP = "user_com_desktop";
+    String USER_SHOPPING_COMPUTERS = "user_com_computers";
+    String USER_SHOPPING_COM_PERIPHERALS = "user_com_peripherals";
+    String USER_SHOPPING_SMART_SHARPTV = "user_smart_sharptv";
+    String USER_SHOPPING_LIFE_ELECTRICAL = "user_smart_lifeelect";
+    String USER_SHOPPING_SMART_CARE_HEALTH = "user_smart_carehealt";
+    String USER_SHOPPING_SMART_KITCHENSMALL = "user_smart_kitchen";
+    String USER_SHOPPING_SMART_FAMILYAUDIO = "user_smart_familyaud";
+    String USER_SHOPPING_SMART_ICEBOX = "user_smart_icebox";
+    String USER_SHOPPING_SMART_WASHMACHINE = "user_smart_washmachi";
     //wether
     String USER_WEATHER_CITY = "user_weather_city";
     String USER_WEATHER_TIME = "user_weather_time";

@@ -82,8 +82,15 @@ public class ShoppingFragment extends BaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
+        progDailog.setCancelable(false);
+        webView.setWebChromeClient(new WebChromeClient());
+        //判断是否网络
         initWebsites();
-        refreshWebsites();
+        //网络刷新
+       // refreshWebsites();
+        //注册语音监听器
         voiceResult();
     }
 
@@ -135,10 +142,6 @@ public class ShoppingFragment extends BaseFragment {
     }
 
     private void loadWebUrl(String webUrl) {
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setDomStorageEnabled(true);
-        progDailog.setCancelable(false);
-        webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -160,7 +163,11 @@ public class ShoppingFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mNetworkRefresh != null) mNetworkRefresh = null;
-        if(progDailog != null) progDailog = null;
+        if(mNetworkRefresh != null) {
+            mNetworkRefresh = null;
+        }
+        if(progDailog != null) {
+            progDailog = null;
+        }
     }
 }
