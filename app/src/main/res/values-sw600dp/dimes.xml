@@ -35,4 +35,19 @@
     <dimen name="calendar_lunar_textsize">8sp</dimen>
     <dimen name="calendar_dialog_title_textsize">40sp</dimen>
     <dimen name="calendar_recycler_textsize">12sp</dimen>
+
+    //splash
+    <dimen name="splash_timeView_margin_top">220dp</dimen>
+    <dimen name="splash_dateView_margin_top">22dp</dimen>
+    <dimen name="splash_clothes_margin_top">53dp</dimen>
+    <dimen name="splash_car_margin_top">18dp</dimen>
+    <dimen name="splash_air_margin_top">18dp</dimen>
+    <dimen name="splash_timeView_textsize">130sp</dimen>
+    <dimen name="splash_dateView_textsize">30sp</dimen>
+    <dimen name="splash_weather_textsize">24sp</dimen>
+    <dimen name="splash_weather_image_width_size">60dp</dimen>
+    <dimen name="splash_weather_image_height_size">60dp</dimen>
+    <dimen name="splash_weather_margin_left">20dp</dimen>
+    <dimen name="splash_weather_tmp_width">150dp</dimen>
+    <dimen name="splash_weather_width">240dp</dimen>
 </resources>

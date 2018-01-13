@@ -112,7 +112,7 @@ public class GetCityService extends Service implements BDLocationListener{
             callBack.call(bdLocation);
         }
         if(mLocationClient.isStarted()){
-            Log.d("client","对象关闭");
+            Log.d("client","定位对象关闭");
             mLocationClient.stop();
         }
     }

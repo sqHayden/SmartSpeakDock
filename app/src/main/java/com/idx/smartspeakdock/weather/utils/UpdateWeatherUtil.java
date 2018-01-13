@@ -1,5 +1,9 @@
 package com.idx.smartspeakdock.weather.utils;
 
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+
 import com.idx.smartspeakdock.SpeakerApplication;
 import com.idx.smartspeakdock.standby.HttpUtil;
 import com.idx.smartspeakdock.standby.Utility;
@@ -39,10 +43,32 @@ public class UpdateWeatherUtil {
             @Override
             public void onWeatherBasicsLoaded(List<WeatherBasic> weatherBasic) {
                 for (WeatherBasic basic : weatherBasic) {
-                    if (new Date().getTime() - new Date(basic.date).getTime() >= 1000 * 60 * 30) {
-                        String name = basic.cityName;
+                    Log.d(TAG, "onWeatherBasicsLoaded: ");
+                    if (new Date().getTime() - new Date(basic.date).getTime() >= 1000 * 30 * 60) {
+                        final String name = basic.cityName;
                         mWeatherBasicRepository.deleteWeatherBasic(name);
-                        saveBasic(name);
+                        String weatherUrl = "https://free-api.heweather.com/s6/weather?location=" + name + "&key=537664b7e2124b3c845bc0b51278d4af";
+                        HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
+                            @Override
+                            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                                final String responseText = response.body().string();
+                                Weather weather= Utility.handleWeatherResponse(responseText);
+                                if (weather != null && "ok".equals(weather.status)) {
+                                    WeatherBasic basic = new WeatherBasic();
+                                    basic.cityName = name;
+                                    basic.date = new Date().toString();
+                                    basic.weatherBasic = responseText;
+                                    mWeatherBasicRepository.addWeatherBasic(basic);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        Intent intent1 = new Intent("android.intent.action.CART_BROADCAST");
+                        LocalBroadcastManager.getInstance(SpeakerApplication.getContext()).sendBroadcast(intent1);
                     }
                 }
             }
