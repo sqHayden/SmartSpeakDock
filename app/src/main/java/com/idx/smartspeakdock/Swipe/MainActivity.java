@@ -28,7 +28,6 @@ import com.idx.smartspeakdock.standby.StandByFragment;
 import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.AppExecutors;
 import com.idx.smartspeakdock.utils.GlobalUtils;
-import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -42,7 +41,7 @@ import java.util.List;
  */
 
 public class MainActivity extends BaseActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private final String TAG = "MainActivity";
     private DrawerLayout mDrawerLayout;
     private Intent mIntent;
     private StandByFragment standByFragment;
@@ -60,7 +59,6 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_main);
-        Logger.setEnable(true);
         initToolBar();
         //侧滑栏配置
         initDrawer();
@@ -115,8 +113,7 @@ public class MainActivity extends BaseActivity {
             }
 
             @Override
-            public void onDrawerOpened(View drawerView) {
-            }
+            public void onDrawerOpened(View drawerView) {}
 
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -124,8 +121,7 @@ public class MainActivity extends BaseActivity {
             }
 
             @Override
-            public void onDrawerStateChanged(int newState) {
-            }
+            public void onDrawerStateChanged(int newState) {}
         });
 
         //实例化SharePreferencesUtls
@@ -171,6 +167,7 @@ public class MainActivity extends BaseActivity {
                                 // TODO: 17-12-16 MusicFragment
                                 startService(new Intent(MainActivity.this, MusicService.class));
                                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
+
                                 break;
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 ShoppingFragment
@@ -266,11 +263,12 @@ public class MainActivity extends BaseActivity {
         }
         isDrawer = false;
         if(mSharedPreferencesUtils != null) { mSharedPreferencesUtils = null;}
-//        if(mAppExecutors != null) { mAppExecutors = null;}
+        if(mAppExecutors != null) { mAppExecutors = null;}
         if(mShoppings != null){
             mShoppings.clear();
             mShoppings = null;
         }
+        if (mIntent != null) { mIntent = null;}
     }
 
     @Override

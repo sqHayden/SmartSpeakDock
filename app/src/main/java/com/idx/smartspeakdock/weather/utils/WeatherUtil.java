@@ -12,6 +12,7 @@ import com.idx.smartspeakdock.weather.model.weatherroom.WeatherAqiRepository;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasic;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicInjection;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicRepository;
+import com.idx.smartspeakdock.weather.presenter.ReturnWeather;
 
 import java.io.IOException;
 import java.util.Date;
@@ -28,11 +29,10 @@ public class WeatherUtil {
     private static final String TAG = WeatherUtil.class.getSimpleName();
     private static Weather mWeather;
     private static Weather mWeatherAqi;
-
     private static WeatherBasicRepository mWeatherBasicRepository;
     private static WeatherAqiRepository mWeatherAqiRepository;
 
-    public static Weather loadWeather(final String name) {
+    public static void loadWeather(final String name, final ReturnWeather returnWeather) {
 //        mWeather = null;
         mWeatherBasicRepository= WeatherBasicInjection.getNoteRepository(SpeakerApplication.getContext());
         String weatherUrl = "https://free-api.heweather.com/s6/weather?location=" + name + "&key=537664b7e2124b3c845bc0b51278d4af";
@@ -41,6 +41,9 @@ public class WeatherUtil {
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 final String responseText = response.body().string();
                 mWeather = Utility.handleWeatherResponse(responseText);
+                if(returnWeather != null) {
+                    returnWeather.onReturnWeather(mWeather);
+                }
                 Log.i(TAG, "onResponse: weather.status = " + mWeather.status);
                 //天气获取成功，则保存
                 if (mWeather != null && "ok".equals(mWeather.status)) {
@@ -63,14 +66,16 @@ public class WeatherUtil {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                mWeather = null;
+                if(returnWeather != null){
+                    returnWeather.onReturnWeather(null);
+                }
+//                mWeather = null;
             }
         });
-        return mWeather;
+//        return mWeather;
     }
 
-    public static Weather loadWeatherAqi(final String cityName) {
-//        mWeatherAqi = null;
+    public static void loadWeatherAqi(final String cityName,final ReturnWeather returnWeather) {
         mWeatherAqiRepository= WeatherAqiInjection.getInstance(SpeakerApplication.getContext());
         String weatherUrl = "https://free-api.heweather.com/s6/air/now?location=" + cityName + "&key=537664b7e2124b3c845bc0b51278d4af";
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
@@ -78,6 +83,9 @@ public class WeatherUtil {
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 final String responseText = response.body().string();
                 mWeatherAqi = Utility.handleWeatherResponse(responseText);
+                if (returnWeather != null){
+                    returnWeather.onReturnWeather(mWeatherAqi);
+                }
                 Log.i(TAG, "onResponse: weather.status = " + mWeatherAqi.status);
                 //天气获取成功，则保存
                 if (mWeatherAqi != null && "ok".equals(mWeatherAqi.status)) {
@@ -90,19 +98,17 @@ public class WeatherUtil {
                 } else {
                     Log.d(TAG, "onResponse: 失败");
                 }
-                /*if (weather != null && "ok".equals(weather.status)) {
-                    mWeatherAqi = weather;
-                } else {
-                    mWeatherAqi = null;
-                }*/
             }
 
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                mWeatherAqi = null;
+                if (returnWeather != null){
+                    returnWeather.onReturnWeather(null);
+                }
             }
         });
-        return mWeatherAqi;
     }
+
+
 }
