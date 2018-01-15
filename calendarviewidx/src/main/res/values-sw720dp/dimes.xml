@@ -11,9 +11,11 @@
     <dimen name="calendar_line_margin">19dp</dimen>
     <dimen name="calendar_line_margintop">48dp</dimen>
     <dimen name="calendar_selectLayout_padding">14dp</dimen>
+    <dimen name="month_textsize">180dp</dimen>
+    <dimen name="month2_textsize">432dp</dimen>
 
 
-    <dimen name="calendar_selectView_textsize">10sp</dimen>
+    <dimen name="calendar_selectView_textsize">16sp</dimen>
     <dimen name="calendar_tv_month_textsize">22sp</dimen>
     <dimen name="calendar_week_textsize">14sp</dimen>
 </resources>

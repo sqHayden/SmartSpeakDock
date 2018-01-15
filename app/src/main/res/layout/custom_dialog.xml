@@ -17,6 +17,7 @@
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:timePickerMode="spinner"
         android:layout_gravity="center"></TimePicker>
     <EditText
         android:id="@+id/editevent"

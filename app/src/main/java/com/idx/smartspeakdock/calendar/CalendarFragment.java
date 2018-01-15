@@ -81,9 +81,6 @@ public class CalendarFragment extends BaseFragment implements
     public void onAttach(Context context) {
         super.onAttach(context);
         Log.v("1218","onattach");
-        Configuration config = getResources().getConfiguration();
-        int smallestScreenWidth = config.smallestScreenWidthDp;
-        Log.v("1218","smllestcscreenwidth" + smallestScreenWidth);
         mContext = context;
     }
 
@@ -131,6 +128,7 @@ public class CalendarFragment extends BaseFragment implements
             mCalendarView.showSelectLayout(year);
             mTextMonthDay.setVisibility(View.GONE);
             recyclerView.setVisibility(View.GONE);
+            addButton.setVisibility(View.INVISIBLE);
             mTextYear.setText(String.valueOf(year+ getString(R.string.year)));
             yearopen = true;
         }
@@ -141,7 +139,11 @@ public class CalendarFragment extends BaseFragment implements
             @Override
             public String onWeekInfo(String time) {
                 answer="";
-                answer = time+getString(R.string.week)+ mCalendarView.getWeek(time);
+                if (mCalendarView.getWeek(time) == 7){
+                    answer = time+getString(R.string.week)+ getString(R.string.sunday);
+                }else {
+                    answer = time+getString(R.string.week)+ mCalendarView.getWeek(time);
+                }
                 return answer;
             }
 
@@ -238,7 +240,9 @@ public class CalendarFragment extends BaseFragment implements
         yearSelect.setOnClickListener(this);
         monthSelect.setOnClickListener(this);
         mCalendarView.setOnYearChangeListener(this);
-        mCalendarView.setOnDateSelectedListener(this);
+        if (mTextMonthDay.getVisibility() != View.GONE) {
+            mCalendarView.setOnDateSelectedListener(this);
+        }
         presenter.getcurrenttime();
         mTextYear.setText(String.valueOf(mCalendarView.getCurYear()+ getString(R.string.year)));
         mTextMonthDay.setText(mCalendarView.getCurMonth() +getString(R.string.month));
@@ -339,6 +343,7 @@ public class CalendarFragment extends BaseFragment implements
         mCalendarView.showSelectLayout(year);
         mTextMonthDay.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
+        addButton.setVisibility(View.INVISIBLE);
         mTextYear.setText(String.valueOf(year+ getString(R.string.year)));
         yearopen = true;
     }
@@ -349,6 +354,7 @@ public class CalendarFragment extends BaseFragment implements
     public void showmonth(int year, int month, int day) {
         mCalendarView.selectCurrentMonth();
         mCalendarView.scrollToCalendar(year,month,day);
+        addButton.setVisibility(View.VISIBLE);
         yearopen = false;
     }
     /*
@@ -369,7 +375,8 @@ public class CalendarFragment extends BaseFragment implements
     }
 
     @Override
-    public void onYearChange(int year) {mTextYear.setText(String.valueOf(year+ getString(R.string.year)));}
+    public void onYearChange(int year) {
+        mTextYear.setText(String.valueOf(year+ getString(R.string.year)));}
 
     @Subscribe
     public void onEvent(MessageEvent messageEvent){

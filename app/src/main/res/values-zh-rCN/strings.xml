@@ -37,6 +37,7 @@
     <string name="cancel">取消</string>
     <string name="now">现在</string>
     <string name="week">星期</string>
+    <string name="sunday">日</string>
     <string name="lunar_calendar">农历</string>
     <string name="yes">是</string>
     <string name="is_the_weekend">是周末</string>
