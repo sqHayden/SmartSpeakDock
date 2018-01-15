@@ -11,8 +11,11 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.idx.smartspeakdock.baidu.control.UnitManager;
+import com.idx.smartspeakdock.baidu.unit.listener.IMusicVoiceListener;
 import com.idx.smartspeakdock.music.entity.Music;
 import com.idx.smartspeakdock.music.util.AppCache;
+import com.idx.smartspeakdock.music.util.MusicUtil;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -41,6 +44,40 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         Log.d(TAG, "onCreate: ");
         mediaPlayer=getMediaPlayer(getApplicationContext());
         mediaPlayer.setOnCompletionListener(this);
+
+        UnitManager.getInstance().setMusicVoiceListener(new IMusicVoiceListener() {
+            @Override
+            public void onPlay(int index) {
+
+            }
+
+            @Override
+            public void onPlay(String name) {
+                Log.d(TAG, "onPlay: name, " + name);
+                play(name);
+            }
+
+            @Override
+            public void onPause() {
+                pause();
+            }
+
+            @Override
+            public void onContinue() {
+
+            }
+
+            @Override
+            public void onNext() {
+                next();
+            }
+
+            @Override
+            public void onPrevious() {
+                pre();
+
+            }
+        });
     }
 
     @Override
@@ -120,6 +157,14 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     }
 
 
+
+    public void play(String name) {
+        Music music = MusicUtil.getMusic().get(name);
+        mPlayingMusic=music;
+
+        Log.d(TAG, "play: 进入musicService,当前音乐位置："+mPlayingPosition);
+        play(music);
+    }
 
     public void play(int position) {
         AppCache.get().initData();

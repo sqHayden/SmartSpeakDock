@@ -11,6 +11,7 @@ import com.idx.smartspeakdock.Modules;
 import com.idx.smartspeakdock.SlotsTypes;
 import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.TTSManager;
+import com.idx.smartspeakdock.baidu.control.UnitManager;
 import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
 import com.idx.smartspeakdock.map.PathWay;
 import com.idx.smartspeakdock.map.SearchArea;
@@ -100,7 +101,8 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                 return true;
 
             case Actions.EXIT_VOICE:
-                mContext.sendBroadcast(new Intent(Intents.ACTION_SESSION_END));
+                UnitManager.getInstance().setSessionOver(true);
+                Log.d(TAG, "handleAction: end");
                 return true;
 
             /**音乐指令*/

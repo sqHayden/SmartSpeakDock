@@ -110,6 +110,22 @@ public class TTSManager {
     }
 
     /**
+     * 播放单个语音时，暂时取消回调
+     *
+     * @param text 要播放的文本
+     */
+    public void speak(String text, SpeakCallback callback) {
+        if (text == null || text.equals("")) {
+            return;
+        }
+        if (mCallback != null) {
+            mCallback = null;
+        }
+        mCallback = callback;
+        mSpeechSynthesizer.speak(text);
+    }
+
+    /**
      * 播放多条语音
      *
      * @param list 语音文本包

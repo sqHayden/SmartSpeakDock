@@ -6,6 +6,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.idx.smartspeakdock.Intents;
+import com.idx.smartspeakdock.baidu.control.TTSManager;
 import com.idx.smartspeakdock.baidu.control.UnitManager;
 
 import java.util.Date;
@@ -15,7 +16,6 @@ import java.util.Date;
  */
 
 public class MessageStatusRecogListener extends StatusRecogListener {
-//    private Handler handler;
 
     private long speechEndTime;
 
@@ -25,10 +25,6 @@ public class MessageStatusRecogListener extends StatusRecogListener {
     public MessageStatusRecogListener(Context context) {
         mContext = context;
     }
-
-//    public MessageStatusRecogListener(Handler handler) {
-//        this.handler = handler;
-//    }
 
 
     @Override
@@ -62,10 +58,10 @@ public class MessageStatusRecogListener extends StatusRecogListener {
         super.onAsrFinalResult(results, recogResult);
         Log.d("onAsrFinalResult", "onAsrFinalResult: ");
         //将识别后的语句交由Unit处理
+        mContext.sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE_END));
         int length = results[0].length() - 1;
         String msg = results[0].substring(0, length);
         UnitManager.getInstance().sendMessage(mContext, msg);
-        mContext.sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE_END));
 
         //调试使用
         String message = "识别结束，结果是“" + msg + "”";
@@ -82,6 +78,8 @@ public class MessageStatusRecogListener extends StatusRecogListener {
     @Override
     public void onAsrFinishError(int errorCode, int subErrorCode, String errorMessage, String descMessage, RecogResult recogResult) {
         super.onAsrFinishError(errorCode, subErrorCode, errorMessage, descMessage, recogResult);
+        TTSManager.getInstance().speak("没事的话，“再见！”");
+        mContext.sendBroadcast(new Intent(Intents.ACTION_SESSION_END));
         String message = "识别错误, 错误码：" + errorCode + "," + subErrorCode;
         sendStatusMessage(message + "；错误消息:" + errorMessage + "；描述信息：" + descMessage);
         if (speechEndTime > 0) {
@@ -139,7 +137,7 @@ public class MessageStatusRecogListener extends StatusRecogListener {
     public void onAsrExit() {
         super.onAsrExit();
         sendStatusMessage("识别引擎结束并空闲中");
-        mContext.sendBroadcast(new Intent(Intents.ACTION_SESSION_END));
+
     }
 
     private void sendMessage(String message) {

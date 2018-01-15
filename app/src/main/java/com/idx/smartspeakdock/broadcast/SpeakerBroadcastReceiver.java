@@ -20,6 +20,7 @@ import com.idx.smartspeakdock.baidu.recognise.MessageStatusRecogListener;
 import com.idx.smartspeakdock.baidu.recognise.PidBuilder;
 import com.idx.smartspeakdock.baidu.recognise.StatusRecogListener;
 import com.idx.smartspeakdock.baidu.recognise.WakeupParams;
+import com.idx.smartspeakdock.baidu.unit.SpeakDialog;
 import com.idx.smartspeakdock.baidu.wakeup.SimpleWakeupListener;
 import com.idx.smartspeakdock.utils.Logger;
 
@@ -60,12 +61,11 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
      */
     private RecognizerManager mRecognizerManager = null;
 
-    private PowerManager.WakeLock mWL = null;
-    private KeyguardManager.KeyguardLock mKL = null;
+//    private PowerManager.WakeLock mWL = null;
+//    private KeyguardManager.KeyguardLock mKL = null;
+//    private boolean isLocked = false;
 
-    private boolean isLocked = false;
     private int wakeUpStatus = STATUS_NONE;
-    boolean isSessionOver = false;
 
     private Handler handler = new Handler();
     private Runnable mRecogRunnable = new Runnable() {
@@ -74,6 +74,7 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
             startRecognize();
         }
     };
+    private SpeakDialog speakDialog;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -81,36 +82,46 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
         if (action != null) {
             Logger.info(TAG, "onReceive: " + action);
             switch (intent.getAction()) {
-                case Intent.ACTION_SCREEN_OFF:
-                    isLocked = true;
-                    break;
-                case Intent.ACTION_SCREEN_ON:
-                    isLocked = false;
-                    break;
-                case Intent.ACTION_USER_PRESENT:
-                    releaseWLKL();
-                    break;
+//                case Intent.ACTION_SCREEN_OFF:
+//                    isLocked = true;
+//                    break;
+//                case Intent.ACTION_SCREEN_ON:
+//                    isLocked = false;
+//                    break;
+//                case Intent.ACTION_USER_PRESENT:
+//                    releaseWLKL();
+//                    break;
                 //唤醒后，即表示开始会话
                 case Intents.ACTION_WAKE_UP:
                 case Intents.ACTION_SESSION_START:
                     //开启会话
-                    isSessionOver = false;
-                    UnitManager.getInstance().setSessionOver(isSessionOver);
-                    if (isLocked) {
-                        unlock(context);
+                    UnitManager.getInstance().setSessionOver(false);
+//                    if (isLocked) {
+//                        unlock(context);
+//                    }
+                    if (speakDialog == null) {
+                        speakDialog = new SpeakDialog(context);
                     }
                 case Intents.ACTION_RECOGNIZE_START:
-
                     if (!UnitManager.getInstance().isSessionOver()) {
+                        if (speakDialog != null) {
+                            speakDialog.showSpeaking();
+                        }
                         handler.postDelayed(mRecogRunnable, BACK_TRACK);
                     }
                     break;
                 case Intents.ACTION_RECOGNIZE_END:
+                    if (speakDialog != null) {
+                        speakDialog.showReady();
+                    }
                     break;
                 case Intents.ACTION_SESSION_END:
                     //会话结束
-                    isSessionOver = true;
-                    UnitManager.getInstance().setSessionOver(isSessionOver);
+                    UnitManager.getInstance().setSessionOver(true);
+                    if (speakDialog != null) {
+                        speakDialog.dismiss();
+                        speakDialog = null;
+                    }
                     break;
                 case Intents.ACTION_WAKE_UP_START:
                     startWakeUp(context);
@@ -190,38 +201,38 @@ public class SpeakerBroadcastReceiver extends BroadcastReceiver implements IStat
 
     }
 
-    private void unlock(Context context) {
-        Log.d(TAG, "unlock: ");
-        //屏幕唤醒
-        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        //最后的参数是LogCat里用的Tag
-        mWL = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP
-                | PowerManager.SCREEN_DIM_WAKE_LOCK, "StartupReceiver");
-        mWL.acquire(WAKE_LOCK_TIMEOUT);
+//    private void unlock(Context context) {
+//        Log.d(TAG, "unlock: ");
+//        //屏幕唤醒
+//        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+//        //最后的参数是LogCat里用的Tag
+//        mWL = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP
+//                | PowerManager.SCREEN_DIM_WAKE_LOCK, "StartupReceiver");
+//        mWL.acquire(WAKE_LOCK_TIMEOUT);
+//
+//        //屏幕解锁
+//        KeyguardManager km = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+//        //参数是LogCat里用的Tag
+//        mKL = km.newKeyguardLock("StartupReceiver");
+//        mKL.disableKeyguard();
+//    }
 
-        //屏幕解锁
-        KeyguardManager km = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-        //参数是LogCat里用的Tag
-        mKL = km.newKeyguardLock("StartupReceiver");
-        mKL.disableKeyguard();
-    }
-
-    private void releaseWLKL() {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (mWL != null) {
-                    mWL.release();
-                    mWL = null;
-                }
-
-                if (mKL != null) {
-                    mKL = null;
-                }
-            }
-        }, RELEASE_LOCK_DELAY);
-
-    }
+//    private void releaseWLKL() {
+//        new Timer().schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                if (mWL != null) {
+//                    mWL.release();
+//                    mWL = null;
+//                }
+//
+//                if (mKL != null) {
+//                    mKL = null;
+//                }
+//            }
+//        }, RELEASE_LOCK_DELAY);
+//
+//    }
 
     public void destroy() {
         if (mWakeUpManager != null) {

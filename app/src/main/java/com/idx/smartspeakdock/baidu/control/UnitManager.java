@@ -40,6 +40,9 @@ public class UnitManager {
     private String accessToken;
     //会话标识
     private boolean isSessionOver = false;
+    //退出voice标识
+    private boolean isOver = false;
+
     private TTSManager ttsManager;
     private APIService mApiService;
     //语音响应处理适配
@@ -170,6 +173,7 @@ public class UnitManager {
                         public void onSpeakFinish() {
                             //执行自己的业务逻辑，回调执行，即语音播放结束后回调
                             executeTask(context, action, schema);
+
                         }
                     });
 
@@ -195,11 +199,32 @@ public class UnitManager {
             @Override
             public void run() {
                 if (mVoiceAdapter != null) {
-                    Log.i(TAG, "run: action.id = "+action.actionId);
-                    isSessionOver = mVoiceAdapter.onAction(action, schema);
-                    //会话未结束，继续开始语音识别
-                    if (!isSessionOver) {
+                    Log.i(TAG, "run: action.id = " + action.actionId);
+                    isOver = mVoiceAdapter.onAction(action, schema);
+
+                    if (!isOver) {
+                        //如未结束，继续识别
                         context.sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE_START));
+                    } else {
+                        //询问是否关闭会话
+                        if (!isSessionOver) {
+                            Log.d(TAG, "run: 您还有什么吩咐，没有请说“再见");
+                            TTSManager.getInstance().speak("您还有什么吩咐，没有请说“再见！”", new TTSManager.SpeakCallback() {
+                                @Override
+                                public void onSpeakStart() {
+
+                                }
+
+                                @Override
+                                public void onSpeakFinish() {
+                                    if (!isSessionOver) {
+                                        context.sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE_START));
+                                    }
+                                }
+                            });
+                        } else {
+                            context.sendBroadcast(new Intent(Intents.ACTION_SESSION_END));
+                        }
                     }
                 }
 
@@ -252,8 +277,9 @@ public class UnitManager {
         return isSessionOver;
     }
 
-    public void setSessionOver(boolean sessionOver) {
+    public UnitManager setSessionOver(boolean sessionOver) {
         isSessionOver = sessionOver;
+        return this;
     }
 
     public void release() {
