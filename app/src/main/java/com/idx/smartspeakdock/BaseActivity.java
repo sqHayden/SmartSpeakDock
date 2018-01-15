@@ -8,12 +8,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
 
@@ -96,6 +99,17 @@ public abstract class BaseActivity extends AppCompatActivity {
             isActivityTop = true;
         }
         Logger.info(TAG, "isTop = " + isActivityTop);
+    }
+
+    public Fragment isTopFragment(){
+        FragmentManager fragmentManager = BaseActivity.this.getSupportFragmentManager();
+        List<Fragment> fragments = fragmentManager.getFragments();
+        for(Fragment fragment : fragments){
+            if(fragment != null && fragment.isVisible())
+                Log.i(TAG, "isTopFragment: "+fragment.getClass().getSimpleName());
+                return fragment;
+        }
+        return null;
     }
 
     @Override

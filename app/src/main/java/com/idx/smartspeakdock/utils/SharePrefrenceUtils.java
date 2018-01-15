@@ -2,6 +2,7 @@ package com.idx.smartspeakdock.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 /**
  * Created by ryan on 18-1-13.
@@ -37,4 +38,13 @@ public class SharePrefrenceUtils {
         return mSharedPreferences.getString(webname,null);
     }
 
+    public void saveCurrentFragment(String curr_frag_id,String curr_frag_v){
+        Log.i("ryan", "saveCurrentFragment: curr_frag_v = "+curr_frag_v);
+        mEditor.putString(curr_frag_id,curr_frag_v);
+        mEditor.commit();
+    }
+
+    public String getCurrentFragment(String curr_frag_id){
+        return mSharedPreferences.getString(curr_frag_id,"");
+    }
 }

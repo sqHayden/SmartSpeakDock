@@ -95,7 +95,7 @@ public class ShoppingFragment extends BaseFragment {
     }
 
     private void initWebsites() {
-        if(NetStatusUtils.isMobileConnected(getActivity()) || NetStatusUtils.isWifiConnected(getActivity())){
+        if(checkNetworkStatus()){
             mNetwork_error.setVisibility(View.GONE);
             if(web_url != null) loadWebUrl(web_url);
             else
@@ -124,7 +124,7 @@ public class ShoppingFragment extends BaseFragment {
         mNetworkRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(NetStatusUtils.isWifiConnected(getActivity()) || NetStatusUtils.isMobileConnected(getActivity())){
+                if(checkNetworkStatus()){
                     mNetwork_error.setVisibility(View.GONE);
                     webView.setVisibility(View.VISIBLE);
                     mNetworkRefresh.setRefreshing(false);
