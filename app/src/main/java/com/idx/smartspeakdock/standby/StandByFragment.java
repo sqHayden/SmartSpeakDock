@@ -6,6 +6,10 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -81,6 +85,8 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     BroadcastReceiver mReceiver;
 
     private WeatherBasicRepository mWeatherBasicRepository;
+    private LinearLayout line6;
+
     public static StandByFragment newInstance(){return new StandByFragment();}
 
     @Override
@@ -115,7 +121,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
                 getWeatherBasic(cityname);
             }
         }else {
-            getActivity().startService(new Intent(getActivity(), AutoUpdateService.class));
+            getActivity().startService(new Intent(getActivity(), GetCityService.class));
         }
     }
 
@@ -123,7 +129,12 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_standby,container,false);
+//        Resources resources = getContext().getResources();
+//        Drawable imageDrawable = resources.getDrawable(R.drawable.bg_vertical); //图片在drawable目录下
+
         init();
+//        line6.setBackground(imageDrawable);
+
         return view;
     }
 
@@ -145,6 +156,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     }
 
     public void init(){
+        line6 = view.findViewById(R.id.line6);
         weatherIcon = view.findViewById(R.id.weatherIcon);
         location_textView = view.findViewById(R.id.location_textView);
         standby_life_clothes = view.findViewById(R.id.standby_life_clothes);
@@ -187,14 +199,13 @@ public class StandByFragment extends BaseFragment implements IStandByView{
 
     @Override
     public void onDestroy() {
-        getActivity().stopService(new Intent(getContext(),AutoUpdateService.class));
+        getActivity().stopService(new Intent(getContext(),GetCityService.class));
         broadcastManager.unregisterReceiver(mReceiver);
         super.onDestroy();
     }
 
     private void showWeatherInfo(Weather weather) {
         if(weather.now.code != null) {
-            Logger.info(TAG, "onResponse: weather.now.code = " + weather.now.code);
             weatherIcon.setImageResource(HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(weather.now.code)));
         }else {
             weatherIcon.setImageResource(R.drawable.weather_unknown);

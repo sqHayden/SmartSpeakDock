@@ -12,6 +12,7 @@
     <color name="item_color">#FfFfFf</color>
     <color name="colorSelfBlack">#3C3F41</color>
     <color name="colorActionBar">#2B2B2B</color>
+    <color name="Splash_background">#29B6E4</color>
 
     <drawable name="completedTaskBackground">#CCCCCC</drawable>
     <drawable name="touchFeedback">#CFD8DC</drawable>
