@@ -6,8 +6,8 @@ import com.baidu.speech.EventListener;
 import com.baidu.speech.EventManager;
 import com.baidu.speech.EventManagerFactory;
 import com.baidu.speech.asr.SpeechConstant;
-import com.idx.smartspeakdock.baidu.recognise.IWakeupListener;
-import com.idx.smartspeakdock.baidu.recognise.WakeupEventAdapter;
+import com.idx.smartspeakdock.baidu.wakeup.IWakeupListener;
+import com.idx.smartspeakdock.baidu.wakeup.WakeupEventAdapter;
 import com.idx.smartspeakdock.utils.Logger;
 
 import org.json.JSONObject;

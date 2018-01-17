@@ -1,24 +1,23 @@
 package com.idx.smartspeakdock.baidu.control;
 
 import android.content.Context;
-import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.baidu.tts.client.SpeechSynthesizeBag;
-import com.idx.smartspeakdock.Intents;
 import com.idx.smartspeakdock.baidu.unit.APIService;
 import com.idx.smartspeakdock.baidu.unit.exception.UnitError;
 import com.idx.smartspeakdock.baidu.unit.listener.ICalenderVoiceListener;
 import com.idx.smartspeakdock.baidu.unit.listener.IMapVoiceListener;
 import com.idx.smartspeakdock.baidu.unit.listener.IMusicVoiceListener;
+import com.idx.smartspeakdock.baidu.unit.listener.ISessionListener;
 import com.idx.smartspeakdock.baidu.unit.listener.IShoppingVoiceListener;
+import com.idx.smartspeakdock.baidu.unit.listener.IVoiceActionListener;
 import com.idx.smartspeakdock.baidu.unit.listener.IWeatherVoiceListener;
 import com.idx.smartspeakdock.baidu.unit.listener.OnResultListener;
 import com.idx.smartspeakdock.baidu.unit.listener.VoiceActionAdapter;
 import com.idx.smartspeakdock.baidu.unit.model.AccessToken;
 import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
-import com.idx.smartspeakdock.utils.AppExecutors;
 import com.idx.smartspeakdock.utils.AuthInfo;
 
 import java.util.ArrayList;
@@ -39,7 +38,7 @@ public class UnitManager {
     private int sceneId = 15213;
     private String accessToken;
     //会话标识
-    private boolean isSessionOver = false;
+    private boolean enableSession = false;
     //退出voice标识
     private boolean isOver = false;
 
@@ -47,7 +46,7 @@ public class UnitManager {
     private APIService mApiService;
     //语音响应处理适配
     private VoiceActionAdapter mVoiceAdapter;
-    private AppExecutors mAppExecutors;
+    private ISessionListener mSessionListener;
 
     private UnitManager() {
     }
@@ -68,7 +67,7 @@ public class UnitManager {
      *
      * @param context 上下文
      **/
-    public void init(Context context) {
+    public void init(Context context, ISessionListener sessionListener) {
         Map<String, Object> authParams = AuthInfo.getAuthParams(context);
         mApiService = APIService.getInstance();
         mApiService.init(context);
@@ -84,18 +83,17 @@ public class UnitManager {
                 Log.d(TAG, "onError: ");
             }
         }, (String) authParams.get(AuthInfo.META_APP_KEY), (String) authParams.get(AuthInfo.META_APP_SECRET));
-        mVoiceAdapter = new VoiceActionAdapter(context);
+        mVoiceAdapter = new VoiceActionAdapter(context, sessionListener);
         ttsManager = TTSManager.getInstance();
-        mAppExecutors = new AppExecutors();
+        mSessionListener = sessionListener;
     }
 
     /**
      * 发送数据至语音云端处理接口
      *
-     * @param context 上下文
-     * @param message 语音转化后的文本信息
+     * @param message  语音转化后的文本信息
      */
-    public void sendMessage(final Context context, String message) {
+    public void sendMessage(String message) {
         if (TextUtils.isEmpty(accessToken)) {
             return;
         }
@@ -104,12 +102,15 @@ public class UnitManager {
         mApiService.communicate(new OnResultListener<CommunicateResponse>() {
             @Override
             public void onResult(CommunicateResponse result) {
-                handleResponse(context, result);
+                handleResponse(result);
 
             }
 
             @Override
             public void onError(UnitError error) {
+                if (mSessionListener != null) {
+                    mSessionListener.onSessionError();
+                }
 
             }
         }, sceneId, message, sessionId);
@@ -119,10 +120,9 @@ public class UnitManager {
     /**
      * 处理数据，播放语音，调用动作执行函数
      *
-     * @param context 上下文
-     * @param result  解析后的数据
+     * @param result   解析后的数据
      **/
-    private void handleResponse(final Context context, CommunicateResponse result) {
+    private void handleResponse(CommunicateResponse result) {
         if (result != null) {
             sessionId = result.sessionId;
             //  如果有对于的动作action，请执行相应的逻辑
@@ -163,6 +163,8 @@ public class UnitManager {
                         hint.setText(hintText);
                         bags.add(hint);
                     }
+
+                    //播放Unit返回的语音包
                     ttsManager.batSpeak(bags, new TTSManager.SpeakCallback() {
                         @Override
                         public void onSpeakStart() {
@@ -172,7 +174,12 @@ public class UnitManager {
                         @Override
                         public void onSpeakFinish() {
                             //执行自己的业务逻辑，回调执行，即语音播放结束后回调
-                            executeTask(context, action, schema);
+                            Log.d(TAG, "onSpeakFinish: " + Thread.currentThread().getId());
+                            executeTask(action, schema);
+                        }
+
+                        @Override
+                        public void onSpeakError() {
 
                         }
                     });
@@ -181,7 +188,7 @@ public class UnitManager {
                     //没有语音信息返回
                     Log.d(TAG, "handleResponse: mainExe, " + action.mainExe);
                     //执行自己的业务逻辑
-                    executeTask(context, action, schema);
+                    executeTask(action, schema);
                 }
 
             }
@@ -189,47 +196,58 @@ public class UnitManager {
     }
 
     /**
-     * @param context 上下文
-     * @param action  执行的动作信息
-     * @param schema  对应的词槽
+     * @param action   执行的动作信息
+     * @param schema   对应的词槽
      */
-    private void executeTask(final Context context, final CommunicateResponse.Action action,
-                             final CommunicateResponse.Schema schema) {
-        mAppExecutors.getMainThread().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (mVoiceAdapter != null) {
-                    Log.i(TAG, "run: action.id = " + action.actionId);
-                    isOver = mVoiceAdapter.onAction(action, schema);
-
-                    if (!isOver) {
-                        //如未结束，继续识别
-                        context.sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE_START));
-                    } else {
-                        //询问是否关闭会话
-                        if (!isSessionOver) {
-                            Log.d(TAG, "run: 您还有什么吩咐，没有请说“再见");
-                            TTSManager.getInstance().speak("您还有什么吩咐，没有请说“再见！”", new TTSManager.SpeakCallback() {
+    private void executeTask(final CommunicateResponse.Action action, final CommunicateResponse.Schema schema) {
+        if (mVoiceAdapter != null) {
+            Log.i(TAG, "run: action.id = " + action.actionId);
+            isOver = mVoiceAdapter.action(action, schema, new IVoiceActionListener.IActionCallback() {
+                @Override
+                public void onResult(boolean sayBye) {
+                    if (enableSession) {
+                        if (sayBye){
+                            //询问是否关闭会话
+                            TTSManager.getInstance().speak("您还有什么吩咐吗，没有请说“再见!”", new TTSManager.SpeakCallback() {
                                 @Override
                                 public void onSpeakStart() {
-
                                 }
 
                                 @Override
                                 public void onSpeakFinish() {
-                                    if (!isSessionOver) {
-                                        context.sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE_START));
+                                    if (mSessionListener != null) {
+                                        if (enableSession) {
+                                            mSessionListener.onRegContinue();
+                                        }
                                     }
+                                }
+
+                                @Override
+                                public void onSpeakError() {
+
                                 }
                             });
                         } else {
-                            context.sendBroadcast(new Intent(Intents.ACTION_SESSION_END));
+                            if (mSessionListener != null) {
+                                mSessionListener.onSessionFinish();
+                            }
+                        }
+
+                    } else {
+                        if (mSessionListener != null) {
+                            mSessionListener.onSessionFinish();
                         }
                     }
                 }
+            });
 
+            if (!isOver) {
+                //如未结束，继续识别
+                if (mSessionListener != null) {
+                    mSessionListener.onRegContinue();
+                }
             }
-        });
+        }
     }
 
     /**
@@ -270,16 +288,8 @@ public class UnitManager {
         mVoiceAdapter.setShoppingListener(listener);
     }
 
-    /**
-     * 判断当前会话是否结束，是否继续监听语音输入
-     */
-    public boolean isSessionOver() {
-        return isSessionOver;
-    }
-
-    public UnitManager setSessionOver(boolean sessionOver) {
-        isSessionOver = sessionOver;
-        return this;
+    public void enableSession(boolean sessionOver) {
+        enableSession = sessionOver;
     }
 
     public void release() {
@@ -293,10 +303,6 @@ public class UnitManager {
 
         if (mApiService != null) {
             mApiService = null;
-        }
-
-        if (mAppExecutors != null) {
-            mAppExecutors = null;
         }
 
     }

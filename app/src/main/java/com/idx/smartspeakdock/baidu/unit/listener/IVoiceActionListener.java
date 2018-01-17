@@ -7,5 +7,9 @@ import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
  */
 
 public interface IVoiceActionListener {
-    boolean onAction(CommunicateResponse.Action action, CommunicateResponse.Schema schema);
+
+    interface IActionCallback {
+        void onResult(boolean sayBye);
+    }
+    boolean onAction(CommunicateResponse.Action action, CommunicateResponse.Schema schema, IActionCallback actionCallback);
 }

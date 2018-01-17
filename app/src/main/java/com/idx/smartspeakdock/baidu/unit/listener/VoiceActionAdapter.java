@@ -2,16 +2,15 @@ package com.idx.smartspeakdock.baidu.unit.listener;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.idx.smartspeakdock.Actions;
-import com.idx.smartspeakdock.Intents;
 import com.idx.smartspeakdock.Modules;
 import com.idx.smartspeakdock.SlotsTypes;
 import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.TTSManager;
-import com.idx.smartspeakdock.baidu.control.UnitManager;
 import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
 import com.idx.smartspeakdock.map.PathWay;
 import com.idx.smartspeakdock.map.SearchArea;
@@ -26,7 +25,7 @@ import java.util.HashMap;
  * Created by derik on 17-12-22.
  */
 
-public class VoiceActionAdapter implements IVoiceActionListener {
+public class VoiceActionAdapter {
     private static final String TAG = VoiceActionAdapter.class.getSimpleName();
     private Context mContext;
     private Intent mIntent;
@@ -44,16 +43,44 @@ public class VoiceActionAdapter implements IVoiceActionListener {
     private String voice_answer;
     private SharePrefrenceUtils mSharePrefrenceUtils;
     private HashMap<String, String> mSlots = new HashMap<>();
+    private IVoiceActionListener.IActionCallback mActionCallback;
+    private ISessionListener mSessionListener;
+    private Handler mHandler = new Handler();
 
-    public VoiceActionAdapter(Context context) {
+    private TTSManager.SpeakCallback mSpeakCallback = new TTSManager.SpeakCallback() {
+        @Override
+        public void onSpeakStart() {
+
+        }
+
+        @Override
+        public void onSpeakFinish() {
+            if (mHandler != null) {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        result(true);
+                    }
+                }, 1000);
+            }
+        }
+
+        @Override
+        public void onSpeakError() {
+
+        }
+    };
+
+    public VoiceActionAdapter(Context context, ISessionListener listener) {
         Logger.setEnable(true);
         mIntent = new Intent(context, SwipeActivity.class);
         mSharePrefrenceUtils = new SharePrefrenceUtils(context);
         mContext = context;
+        mSessionListener = listener;
     }
 
-    @Override
-    public boolean onAction(CommunicateResponse.Action action, CommunicateResponse.Schema schema) {
+    public boolean action(CommunicateResponse.Action action, CommunicateResponse.Schema schema, IVoiceActionListener.IActionCallback actionCallback) {
+        mActionCallback = actionCallback;
         return handleAction(action, schema);
     }
 
@@ -101,8 +128,11 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                 return true;
 
             case Actions.EXIT_VOICE:
-                UnitManager.getInstance().setSessionOver(true);
-                Log.d(TAG, "handleAction: end");
+                //语音退出指令，结束会话
+                if (mSessionListener != null) {
+                    mSessionListener.onSessionFinish();
+                }
+                Log.d(TAG, "voice session: end");
                 return true;
 
             /**音乐指令*/
@@ -150,25 +180,33 @@ public class VoiceActionAdapter implements IVoiceActionListener {
              */
             case Actions.Map.MAP_LOCATION_INFO:
                 queryLocationInfo();
+                Log.d(TAG, "handleAction: MAP_LOCATION_INFO");
                 return true;
             case Actions.Map.MAP_SEARCH_AREA:
+                Log.d(TAG, "handleAction: MAP_SEARCH_AREA");
                 return false;
             case Actions.Map.MAP_SEARCH_NAME:
+                Log.d(TAG, "handleAction: MAP_SEARCH_NAME");
                 return false;
             case Actions.Map.MAP_SEARCH_INFO:
                 searchInfo();
+                Log.d(TAG, "handleAction: MAP_SEARCH_INFO");
                 return true;
             //只支持地区搜索
             case Actions.Map.MAP_SEARCH_ADDRESS:
                 searchAddressInfo();
+                Log.d(TAG, "handleAction: MAP_SEARCH_ADDRESS");
                 return true;
             case Actions.Map.MAP_PATH_FROM_NAME:
+                Log.d(TAG, "handleAction: MAP_PATH_FROM_NAME");
                 return false;
             case Actions.Map.MAP_PATH_WAY:
+                Log.d(TAG, "handleAction: MAP_PATH_WAY");
                 return false;
             //只支持地区到地区的路线
             case Actions.Map.MAP_PATH_INFO:
                 searchPathInfo();
+                Log.d(TAG, "handleAction: MAP_PATH_INFO");
                 return true;
 
             /**购物指令*/
@@ -268,6 +306,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void shoppingSwitch() {
@@ -275,6 +314,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void digitalPhone() {
@@ -282,6 +322,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void digitalPhoneAccess() {
@@ -289,6 +330,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void digitalSmartDevice() {
@@ -296,6 +338,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void digitalCarvehiElec() {
@@ -303,6 +346,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void digitalIphoneAccessi() {
@@ -310,6 +354,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void computerDesktop() {
@@ -317,6 +362,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void computers() {
@@ -324,6 +370,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void comPeripherals() {
@@ -331,6 +378,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void smartSharpTV() {
@@ -338,6 +386,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void lifeElectrical() {
@@ -345,6 +394,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void smartCarehealth() {
@@ -352,6 +402,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void smartKitchensmall() {
@@ -359,6 +410,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void smartFamilyaudio() {
@@ -366,6 +418,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void smartIcebox() {
@@ -373,6 +426,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void smartWashmachine() {
@@ -380,6 +434,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
+        result(true);
     }
 
     private void refreshWeatherInfo() {
@@ -388,6 +443,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mWeatherListener != null) {
             mWeatherListener.onWeatherInfo(reconginize_city_word);
         }
+        result(true);
     }
 
     private void rangeTempInfo() {
@@ -397,7 +453,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mWeatherListener != null) {
             voice_answer = mWeatherListener.onRangeTempInfo(reconginize_city_word, reconginize_time_word);
             if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer);
+                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
             }
         }
     }
@@ -409,7 +465,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mWeatherListener != null) {
             voice_answer = mWeatherListener.onAirQualityInfo(reconginize_city_word);
             if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer);
+                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
             }
         }
     }
@@ -420,7 +476,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mWeatherListener != null) {
             voice_answer = mWeatherListener.onCurrentTempInfo(reconginize_city_word);
             if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer);
+                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
             }
         }
     }
@@ -432,7 +488,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mWeatherListener != null) {
             voice_answer = mWeatherListener.onWeatherStatus(reconginize_city_word, reconginize_time_word);
             if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer);
+                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
             }
         }
     }
@@ -443,7 +499,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mWeatherListener != null) {
             voice_answer = mWeatherListener.onRainInfo(reconginize_city_word, reconginize_time_word);
             if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer);
+                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
             }
         }
     }
@@ -454,7 +510,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mWeatherListener != null) {
             voice_answer = mWeatherListener.onDressInfo(reconginize_city_word);
             if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer);
+                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
             }
         }
     }
@@ -465,7 +521,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mWeatherListener != null) {
             voice_answer = mWeatherListener.onUitravioletLevelInfo(reconginize_city_word);
             if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer);
+                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
             }
         }
     }
@@ -477,7 +533,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         if (mWeatherListener != null) {
             voice_answer = mWeatherListener.onSmogInfo(reconginize_city_word, reconginize_time_word);
             if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer);
+                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
             }
         }
     }
@@ -554,6 +610,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                 }
                 break;
         }
+        result(true);
     }
 
     private void musicPlay() {
@@ -568,44 +625,49 @@ public class VoiceActionAdapter implements IVoiceActionListener {
                 mMusicListener.onPlay(0);
             }
         }
+        result(false);
     }
 
     private void musicPause() {
         if (mMusicListener != null) {
             mMusicListener.onPause();
         }
+        result(true);
     }
 
     private void musicContinue() {
         if (mMusicListener != null) {
             mMusicListener.onContinue();
         }
+        result(false);
     }
 
     private void musicNext() {
         if (mMusicListener != null) {
             mMusicListener.onNext();
         }
+        result(false);
     }
 
     private void musicPrevious() {
         if (mMusicListener != null) {
             mMusicListener.onPrevious();
         }
+        result(false);
     }
 
     private void queryWeekInfo() {
         String day = mSlots.get(SlotsTypes.USER_DATE_DAY);
         if (mCalenderListener != null) {
             String weekInfo = mCalenderListener.onWeekInfo(day);
-            TTSManager.getInstance().speak(weekInfo);
+            TTSManager.getInstance().speak(weekInfo, mSpeakCallback);
         }
     }
 
     private void queryTimeInfo() {
         if (mCalenderListener != null) {
             String timeInfo = mCalenderListener.onTimeInfo();
-            TTSManager.getInstance().speak(timeInfo);
+            TTSManager.getInstance().speak(timeInfo, mSpeakCallback);
         }
     }
 
@@ -613,7 +675,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         String day = mSlots.get(SlotsTypes.USER_DATE_DAY);
         if (mCalenderListener != null) {
             String festivalInfo = mCalenderListener.onFestivalInfo(day);
-            TTSManager.getInstance().speak(festivalInfo);
+            TTSManager.getInstance().speak(festivalInfo, mSpeakCallback);
         }
     }
 
@@ -621,7 +683,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         String day = mSlots.get(SlotsTypes.USER_DATE_DAY);
         if (mCalenderListener != null) {
             String actInfo = mCalenderListener.onActInfo(day);
-            TTSManager.getInstance().speak(actInfo);
+            TTSManager.getInstance().speak(actInfo, mSpeakCallback);
         }
     }
 
@@ -629,7 +691,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         String day = mSlots.get(SlotsTypes.USER_DATE_DAY);
         if (mCalenderListener != null) {
             String dateInfo = mCalenderListener.onDateInfo(day);
-            TTSManager.getInstance().speak(dateInfo);
+            TTSManager.getInstance().speak(dateInfo, mSpeakCallback);
         }
     }
 
@@ -637,14 +699,16 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         String day = mSlots.get(SlotsTypes.USER_DATE_DAY);
         if (mCalenderListener != null) {
             String lunarInfo = mCalenderListener.onLunarDateInfo(day);
-            TTSManager.getInstance().speak(lunarInfo);
+            TTSManager.getInstance().speak(lunarInfo, mSpeakCallback);
         }
     }
 
     private void queryLocationInfo() {
         if (mMapListener != null) {
             String locationInfo = mMapListener.onLocationInfo();
-            TTSManager.getInstance().speak(locationInfo);
+            Log.d(TAG, "queryLocationInfo: " + locationInfo);
+            TTSManager.getInstance().speak(locationInfo, mSpeakCallback);
+            Log.d(TAG, "queryLocationInfo: 123");
         }
     }
 
@@ -654,7 +718,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         Log.d(TAG, "area: " + area + ", name:" + searchName);
         if (mMapListener != null) {
             String searchInfo = mMapListener.onSearchInfo(searchName, convertArea(area));
-            TTSManager.getInstance().speak(searchInfo);
+            TTSManager.getInstance().speak(searchInfo, mSpeakCallback);
         }
     }
 
@@ -663,7 +727,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         Log.d(TAG, "address: " + address);
         if (mMapListener != null) {
             String searchAddressInfo = mMapListener.onSearchAddress(address);
-            TTSManager.getInstance().speak(searchAddressInfo);
+            TTSManager.getInstance().speak(searchAddressInfo, mSpeakCallback);
         }
     }
 
@@ -677,7 +741,7 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         Log.d(TAG, "toName:" + toName + ", fromName:" + fromName + ", way:" + way);
         if (mMapListener != null) {
             String pathInfo = mMapListener.onPathInfo(fromName, toName, convertWay(way));
-            TTSManager.getInstance().speak(pathInfo);
+            TTSManager.getInstance().speak(pathInfo, mSpeakCallback);
         }
     }
 
@@ -704,6 +768,17 @@ public class VoiceActionAdapter implements IVoiceActionListener {
         }
 
         return pathWay;
+    }
+
+    /**
+     * 执行成功后，回调
+     *
+     * @param sayBye 是否开启结束询问
+     */
+    private void result(boolean sayBye) {
+        if (mActionCallback != null) {
+            mActionCallback.onResult(sayBye);
+        }
     }
 
 }

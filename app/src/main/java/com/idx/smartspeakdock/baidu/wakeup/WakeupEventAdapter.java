@@ -1,4 +1,4 @@
-package com.idx.smartspeakdock.baidu.recognise;
+package com.idx.smartspeakdock.baidu.wakeup;
 
 import com.baidu.speech.EventListener;
 import com.baidu.speech.asr.SpeechConstant;
@@ -40,9 +40,10 @@ public class WakeupEventAdapter implements EventListener {
             }
         } else if (SpeechConstant.CALLBACK_EVENT_WAKEUP_STOPED.equals(name)) { //关闭唤醒词
             listener.onStop();
-        } else if (SpeechConstant.CALLBACK_EVENT_WAKEUP_AUDIO.equals(name)) { // 音频回调
-            listener.onASrAudio(data, offset, length);
         }
+//        else if (SpeechConstant.CALLBACK_EVENT_WAKEUP_AUDIO.equals(name)) { // 音频回调
+//            listener.onASrAudio(data, offset, length);
+//        }
     }
 
 

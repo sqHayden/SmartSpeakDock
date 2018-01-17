@@ -1,4 +1,4 @@
-package com.idx.smartspeakdock.baidu.recognise;
+package com.idx.smartspeakdock.baidu.wakeup;
 
 import android.util.Log;
 

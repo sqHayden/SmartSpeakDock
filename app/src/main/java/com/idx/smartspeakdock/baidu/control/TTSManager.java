@@ -9,6 +9,7 @@ import com.baidu.tts.client.SpeechSynthesizeBag;
 import com.baidu.tts.client.SpeechSynthesizer;
 import com.baidu.tts.client.SpeechSynthesizerListener;
 import com.baidu.tts.client.TtsMode;
+import com.idx.smartspeakdock.utils.AppExecutors;
 import com.idx.smartspeakdock.utils.AuthInfo;
 
 import java.util.List;
@@ -24,11 +25,14 @@ public class TTSManager {
     private static TTSManager INSTANCE = null;
     private SpeechSynthesizer mSpeechSynthesizer;
     private SpeakCallback mCallback;
+    private AppExecutors mAppExecutors;
 
     public interface SpeakCallback {
         void onSpeakStart();
 
         void onSpeakFinish();
+
+        void onSpeakError();
     }
 
     private TTSManager() {
@@ -52,6 +56,7 @@ public class TTSManager {
      * @param ttsMode Tts模式
      */
     public void init(Context context, TtsMode ttsMode) {
+        mAppExecutors = new AppExecutors();
         Map<String, Object> authParams = AuthInfo.getAuthParams(context);
         mSpeechSynthesizer = SpeechSynthesizer.getInstance();
         mSpeechSynthesizer.setContext(context);
@@ -174,6 +179,12 @@ public class TTSManager {
             mSpeechSynthesizer.release();
             mSpeechSynthesizer = null;
         }
+        if (mAppExecutors != null) {
+            mAppExecutors = null;
+        }
+        if (mCallback != null) {
+            mCallback = null;
+        }
         if (INSTANCE != null) {
             INSTANCE = null;
         }
@@ -200,9 +211,14 @@ public class TTSManager {
 
         @Override
         public void onSpeechStart(String s) {
-            if (mCallback != null) {
-                mCallback.onSpeakStart();
-            }
+            mAppExecutors.getMainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (mCallback != null) {
+                        mCallback.onSpeakStart();
+                    }
+                }
+            });
         }
 
         @Override
@@ -212,15 +228,26 @@ public class TTSManager {
 
         @Override
         public void onSpeechFinish(String s) {
-            if (mCallback != null) {
-                mCallback.onSpeakFinish();
-            }
-
+            mAppExecutors.getMainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (mCallback != null) {
+                        mCallback.onSpeakFinish();
+                    }
+                }
+            });
         }
 
         @Override
         public void onError(String s, SpeechError speechError) {
-
+            mAppExecutors.getMainThread().execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (mCallback != null) {
+                        mCallback.onSpeakError();
+                    }
+                }
+            });
         }
     }
 }
