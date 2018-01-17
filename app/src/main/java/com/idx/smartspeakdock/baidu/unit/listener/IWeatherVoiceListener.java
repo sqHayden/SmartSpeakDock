@@ -1,5 +1,7 @@
 package com.idx.smartspeakdock.baidu.unit.listener;
 
+import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
+
 /**
  * Created by derik on 17-12-25.
  */
@@ -7,13 +9,12 @@ package com.idx.smartspeakdock.baidu.unit.listener;
 public interface IWeatherVoiceListener {
     void onWeatherInfo(String cityName);
 
-    String onRangeTempInfo(String cityName,String time);
-    String onAirQualityInfo(String cityName);
-    String onCurrentTempInfo(String cityName);
-
-    String onWeatherStatus(String cityName,String time);
-    String onRainInfo(String cityName,String time);
-    String onDressInfo(String cityName);
-    String onUitravioletLevelInfo(String cityName);
-    String onSmogInfo(String cityName,String time);
+    void onRangeTempInfo(String cityName,String time,ReturnVoice returnVoice);
+    void onAirQualityInfo(String cityName,ReturnVoice returnVoice);
+    void onCurrentTempInfo(String cityName,ReturnVoice returnVoice);
+    void onWeatherStatus(String cityName,String time,ReturnVoice returnVoice );
+    void onRainInfo(String cityName,String time,ReturnVoice returnVoice);
+    void onDressInfo(String cityName,ReturnVoice returnVoice);
+    void onUitravioletLevelInfo(String cityName,ReturnVoice returnVoice);
+    void onSmogInfo(String cityName,String time,ReturnVoice returnVoice);
 }

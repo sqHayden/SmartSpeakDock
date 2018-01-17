@@ -17,6 +17,7 @@ import com.idx.smartspeakdock.map.SearchArea;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
+import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
 
 import java.util.HashMap;
 
@@ -40,7 +41,6 @@ public class VoiceActionAdapter {
     private String recoginize_shopping_word;
     private String reconginize_city_word;
     private String reconginize_time_word;
-    private String voice_answer;
     private SharePrefrenceUtils mSharePrefrenceUtils;
     private HashMap<String, String> mSlots = new HashMap<>();
     private IVoiceActionListener.IActionCallback mActionCallback;
@@ -111,7 +111,6 @@ public class VoiceActionAdapter {
      */
     private boolean handleAction(CommunicateResponse.Action action, CommunicateResponse.Schema schema) {
         Log.d("handleAction name", ": " + action.actionId);
-        initData();
         mSlots.clear();
         for (int i = 0; i < schema.botMergedSlots.size(); i++) {
             String type = ((CommunicateResponse.Schema.MergedSlots) schema.botMergedSlots.get(i)).type;
@@ -126,7 +125,6 @@ public class VoiceActionAdapter {
             case Actions.OPEN_NOW:
                 openModule();
                 return true;
-
             case Actions.EXIT_VOICE:
                 //语音退出指令，结束会话
                 if (mSessionListener != null) {
@@ -451,10 +449,14 @@ public class VoiceActionAdapter {
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
         Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word + ",reconginize_time_word = " + reconginize_time_word);
         if (mWeatherListener != null) {
-            voice_answer = mWeatherListener.onRangeTempInfo(reconginize_city_word, reconginize_time_word);
-            if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
-            }
+            mWeatherListener.onRangeTempInfo(reconginize_city_word, reconginize_time_word, new ReturnVoice() {
+                @Override
+                public void onReturnVoice(String voice_answer) {
+                    if (checkVoiceAnswer(voice_answer)) {
+                        TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
+                    }
+                }
+            });
         }
     }
 
@@ -463,10 +465,14 @@ public class VoiceActionAdapter {
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
         Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
         if (mWeatherListener != null) {
-            voice_answer = mWeatherListener.onAirQualityInfo(reconginize_city_word);
-            if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
-            }
+            mWeatherListener.onAirQualityInfo(reconginize_city_word, new ReturnVoice() {
+                @Override
+                public void onReturnVoice(String voice_answer) {
+                    if (checkVoiceAnswer(voice_answer)) {
+                        TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
+                    }
+                }
+            });
         }
     }
 
@@ -474,10 +480,14 @@ public class VoiceActionAdapter {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
         if (mWeatherListener != null) {
-            voice_answer = mWeatherListener.onCurrentTempInfo(reconginize_city_word);
-            if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
-            }
+            mWeatherListener.onCurrentTempInfo(reconginize_city_word, new ReturnVoice() {
+                @Override
+                public void onReturnVoice(String voice_answer) {
+                    if (checkVoiceAnswer(voice_answer)) {
+                        TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
+                    }
+                }
+            });
         }
     }
 
@@ -486,10 +496,14 @@ public class VoiceActionAdapter {
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
         Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word + ",reconginize_time_word = " + reconginize_time_word);
         if (mWeatherListener != null) {
-            voice_answer = mWeatherListener.onWeatherStatus(reconginize_city_word, reconginize_time_word);
-            if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
-            }
+            mWeatherListener.onWeatherStatus(reconginize_city_word, reconginize_time_word, new ReturnVoice() {
+                @Override
+                public void onReturnVoice(String voice_answer) {
+                    if (checkVoiceAnswer(voice_answer)) {
+                        TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
+                    }
+                }
+            });
         }
     }
 
@@ -497,10 +511,14 @@ public class VoiceActionAdapter {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
         if (mWeatherListener != null) {
-            voice_answer = mWeatherListener.onRainInfo(reconginize_city_word, reconginize_time_word);
-            if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
-            }
+            mWeatherListener.onRainInfo(reconginize_city_word, reconginize_time_word, new ReturnVoice() {
+                @Override
+                public void onReturnVoice(String voice_answer) {
+                    if (checkVoiceAnswer(voice_answer)) {
+                        TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
+                    }
+                }
+            });
         }
     }
 
@@ -508,10 +526,14 @@ public class VoiceActionAdapter {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
         if (mWeatherListener != null) {
-            voice_answer = mWeatherListener.onDressInfo(reconginize_city_word);
-            if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
-            }
+            mWeatherListener.onDressInfo(reconginize_city_word, new ReturnVoice() {
+                @Override
+                public void onReturnVoice(String voice_answer) {
+                    if (checkVoiceAnswer(voice_answer)) {
+                        TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
+                    }
+                }
+            });
         }
     }
 
@@ -519,10 +541,14 @@ public class VoiceActionAdapter {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
         if (mWeatherListener != null) {
-            voice_answer = mWeatherListener.onUitravioletLevelInfo(reconginize_city_word);
-            if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
-            }
+            mWeatherListener.onUitravioletLevelInfo(reconginize_city_word, new ReturnVoice() {
+                @Override
+                public void onReturnVoice(String voice_answer) {
+                    if (checkVoiceAnswer(voice_answer)) {
+                        TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
+                    }
+                }
+            });
         }
     }
 
@@ -531,10 +557,14 @@ public class VoiceActionAdapter {
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
         Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
         if (mWeatherListener != null) {
-            voice_answer = mWeatherListener.onSmogInfo(reconginize_city_word, reconginize_time_word);
-            if (checkVoiceAnswer(voice_answer)) {
-                TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
-            }
+            mWeatherListener.onSmogInfo(reconginize_city_word, reconginize_time_word, new ReturnVoice() {
+                @Override
+                public void onReturnVoice(String voice_answer) {
+                    if (checkVoiceAnswer(voice_answer)) {
+                        TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
+                    }
+                }
+            });
         }
     }
 
@@ -548,13 +578,6 @@ public class VoiceActionAdapter {
             }
         } else {
         }
-    }
-
-    private void initData() {
-        reconginize_city_word = "";
-        reconginize_city_word = "";
-        voice_answer = "";
-        web_sites_url = "";
     }
 
     private boolean checkVoiceAnswer(String check_voice_answer) {

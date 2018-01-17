@@ -4,8 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:id="@+id/line6"
-    android:background="@drawable/bg_vertical">
-
+    android:background="@color/Splash_background"
+   >
+    <!--android:background="@drawable/bg_vertical"-->
 
     <RelativeLayout
         android:layout_marginTop="@dimen/splash_timeView_margin_top"

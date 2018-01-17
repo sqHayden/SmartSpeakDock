@@ -78,10 +78,11 @@ class MonthAdapter extends BaseRecyclerAdapter<Month> {
             // 判断Android当前的屏幕是横屏还是竖屏。横竖屏判断
             if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 //竖屏
-                lp.height = (mheight-200)/4;
+
+                lp.height = (mheight-context.getResources().getDimensionPixelSize(R.dimen.month_textsize))/4;
             } else {
                 //横屏
-                lp.height = (mwith-200)/3;
+                lp.height = (mwith-context.getResources().getDimensionPixelSize(R.dimen.month2_textsize))/3;
             }
             linearLayout.setLayoutParams(lp);
         }

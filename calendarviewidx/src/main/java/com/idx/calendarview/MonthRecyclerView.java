@@ -44,7 +44,7 @@ public class MonthRecyclerView extends RecyclerView {
             setLayoutManager(new GridLayoutManager(context, 3));
         } else {
             //横屏
-            setLayoutManager(new GridLayoutManager(context, 4));
+            setLayoutManager(new GridLayoutManager(context, 6));
         }
 
         setAdapter(mAdapter);

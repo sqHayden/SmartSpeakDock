@@ -10,7 +10,6 @@ import android.net.NetworkInfo;
  */
 
 public class NetStatusUtils {
-    private static final String TAG = NetStatusUtils.class.getSimpleName();
 
      //判断当前手机是否连上Wifi.
     static public boolean isWifiConnected(Context context) {

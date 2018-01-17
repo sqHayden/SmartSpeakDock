@@ -10,7 +10,6 @@
         android:id="@+id/tv_month"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/calendar_tv_month_margin"
         android:layout_marginTop="@dimen/calendar_tv_month_margin"
         android:paddingLeft="@dimen/calendar_tv_month_padding"
         android:paddingRight="@dimen/calendar_tv_month_padding"
