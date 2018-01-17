@@ -19,12 +19,10 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 
 import java.util.List;
 
@@ -57,7 +55,7 @@ class MonthAdapter extends BaseRecyclerAdapter<Month> {
         view.setSchemes(mSchemes);
         view.setSchemeColor(mSchemeColor);
         view.init(item.getDiff(), item.getCount(), item.getYear(), item.getMonth());
-        h.mTextMonth.setText(String.format("%s月", item.getMonth()));
+        h.mTextMonth.setText(item.getMonth() + context.getResources().getString(R.string.months));
     }
 
     private static class MonthViewHolder extends RecyclerView.ViewHolder {

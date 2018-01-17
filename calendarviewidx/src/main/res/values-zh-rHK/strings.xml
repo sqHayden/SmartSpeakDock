@@ -1,4 +1,5 @@
 <resources>
+    <string name="months">月</string>
     <string-array name="each_month">
         <item>春節</item>
         <item>二月</item>

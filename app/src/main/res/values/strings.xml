@@ -34,4 +34,27 @@
     //setting
     <string name="voice_switch_on_off">voice switch on or off</string>
     <string name="about">about</string>
+    //calendar
+    <string name="year">year</string>
+    <string name="month">month</string>
+    <string name="day">day</string>
+    <string name="add_event">Add event</string>
+    <string name="sure">confirm</string>
+    <string name="cancel">cancel</string>
+    <string name="now">now</string>
+    <string name="monday">monday</string>
+    <string name="tuesday">tuesday</string>
+    <string name="wednesday">wednesday</string>
+    <string name="thursday">thursday</string>
+    <string name="friday">friday</string>
+    <string name="saturday">saturday</string>
+    <string name="sunday">sunday</string>
+    <string name="lunar_calendar">lunar calendar</string>
+    <string name="yes">is</string>
+    <string name="is_the_weekend">is the weekend</string>
+    <string name="is_usual_day">is usual day</string>
+    <string name="no_arrangement">no arrangement</string>
+    <string name="please_select_date">please select date</string>
+    <string name="please_add_event">please add event</string>
+    <string name="delete">delete</string>
 </resources>

@@ -165,7 +165,11 @@ class CustomCalendarViewDelegate {
         mMaxYearMonth = array.getInt(R.styleable.CalendarView_max_year_month, 12);
 
         mDayTextSize = array.getDimensionPixelSize(R.styleable.CalendarView_day_text_size, Util.dipToPx(context, 16));
-        mLunarTextSize = array.getDimensionPixelSize(R.styleable.CalendarView_lunar_text_size, Util.dipToPx(context, 10));
+        if ( context.getResources().getConfiguration().locale.getCountry().equals("UK") || context.getResources().getConfiguration().locale.getCountry().equals("US")) {
+            mLunarTextSize = array.getDimensionPixelSize(R.styleable.CalendarView_lunar_text_size, Util.dipToPx(context, 0));
+        }else {
+            mLunarTextSize = array.getDimensionPixelSize(R.styleable.CalendarView_lunar_text_size, Util.dipToPx(context, 10));
+        }
         mCalendarItemHeight = (int) array.getDimension(R.styleable.CalendarView_calendar_height, Util.dipToPx(context, 40));
 
         if (mMinYear <= MIN_YEAR) mMaxYear = 1971;

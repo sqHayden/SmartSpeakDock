@@ -61,6 +61,7 @@
                 android:src="@drawable/select" />
 
             <TextView
+                android:id="@+id/selectyeartext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -86,6 +87,7 @@
                 android:tint="#FFFFFF" />
 
             <TextView
+                android:id="@+id/selectmonthtext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -131,7 +133,6 @@
             android:layout_height="wrap_content"
             app:current_month_lunar_text_color="#FFFFFF"
             app:current_month_text_color="#FFFFFF"
-            app:lunar_text_size="@dimen/calendar_lunar_textsize"
             app:other_month_text_color="#B3B3B3"
             app:scheme_lunar_text_color="#B3B3B3"
             app:scheme_text="假"

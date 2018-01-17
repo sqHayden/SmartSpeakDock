@@ -39,6 +39,7 @@
            android:layout_weight="1"
            android:layout_margin="@dimen/calendar_dialog_margin"
            android:text="@string/cancel"
+           android:textAllCaps="false"
            android:textColor="#FFFFFF"
            android:textSize="@dimen/calendar_dialog_button_textsize"
            android:background="#0E73BA"/>
@@ -49,6 +50,7 @@
            android:layout_margin="@dimen/calendar_dialog_margin"
            android:layout_weight="1"
            android:text="@string/sure"
+           android:textAllCaps="false"
            android:textColor="#FFFFFF"
            android:textSize="@dimen/calendar_dialog_button_textsize"
            android:background="#0E73BA"/>

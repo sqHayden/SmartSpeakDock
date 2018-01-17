@@ -2,13 +2,11 @@ package com.idx.smartspeakdock.calendar;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,8 +35,10 @@ import com.idx.smartspeakdock.calendar.model.Model;
 import com.idx.smartspeakdock.calendar.presenter.Presenter;
 import com.idx.smartspeakdock.service.SplachService;
 import com.idx.smartspeakdock.utils.Logger;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
 import java.util.List;
 
 /**
@@ -74,13 +74,14 @@ public class CalendarFragment extends BaseFragment implements
     String time;
     Boolean yearopen = false;
     int year;
+    private TextView selectyeartext;
+
     public static CalendarFragment newInstance(){return new CalendarFragment();}
     private SwipeActivity.MyOnTouchListener onTouchListener;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.v("1218","onattach");
         mContext = context;
     }
 
@@ -88,7 +89,6 @@ public class CalendarFragment extends BaseFragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logger.setEnable(true);
-        Log.v("1218","oncreate");
         EventBus.getDefault().register(this);
         mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
     }
@@ -98,7 +98,6 @@ public class CalendarFragment extends BaseFragment implements
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_calendar,container,false);
         initView();
-        Log.v("1218","oncreateview");
         onTouchListener = new SwipeActivity.MyOnTouchListener() {
             @Override
             public boolean onTouch(MotionEvent ev) {
@@ -123,7 +122,6 @@ public class CalendarFragment extends BaseFragment implements
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.v("1218","onactivitycrated" + savedInstanceState);
         if (savedInstanceState != null && savedInstanceState.getBoolean("year")){
             mCalendarView.showSelectLayout(year);
             mTextMonthDay.setVisibility(View.GONE);
@@ -139,10 +137,30 @@ public class CalendarFragment extends BaseFragment implements
             @Override
             public String onWeekInfo(String time) {
                 answer="";
-                if (mCalendarView.getWeek(time) == 7){
-                    answer = time+getString(R.string.week)+ getString(R.string.sunday);
-                }else {
-                    answer = time+getString(R.string.week)+ mCalendarView.getWeek(time);
+                switch (mCalendarView.getWeek(time)){
+                    case 1:
+                        answer = time+ getString(R.string.monday);
+                        break;
+                    case 2:
+                        answer = time+ getString(R.string.tuesday);
+                        break;
+                    case 3:
+                        answer = time+ getString(R.string.wednesday);
+                        break;
+                    case 4:
+                        answer = time+ getString(R.string.thursday);
+                        break;
+                    case 5:
+                        answer = time+ getString(R.string.friday);
+                        break;
+                    case 6:
+                        answer = time+ getString(R.string.saturday);
+                        break;
+                    case 7:
+                        answer = time+ getString(R.string.sunday);
+                        break;
+                        default:
+                            break;
                 }
                 return answer;
             }
@@ -175,14 +193,12 @@ public class CalendarFragment extends BaseFragment implements
 
             @Override
             public String onActInfo(String time) {
-                Log.v("1218","answer11"+time);
                 switch (time){
                     case TimeData.YESTERDAY:
                        answer =  util.getActInfo(time,mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
                         break;
                     case TimeData.TODAY:
                         answer =  util.getActInfo(time,mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
-                        Log.v("1218","answer"+answer);
                         break;
                     case TimeData.TOMORROW:
                         answer =  util.getActInfo(time,mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
@@ -269,6 +285,12 @@ public class CalendarFragment extends BaseFragment implements
     }
 
     public void initView(){
+        if ( getResources().getConfiguration().locale.getCountry().equals("UK") || getResources().getConfiguration().locale.getCountry().equals("US")){
+            selectyeartext = mView.findViewById(R.id.selectyeartext);
+            TextView selectmonthtext = mView.findViewById(R.id.selectmonthtext);
+            selectyeartext.setTextSize(getResources().getDimension(R.dimen.calendar_textsize_select));
+            selectmonthtext.setTextSize(getResources().getDimension(R.dimen.calendar_textsize_select));
+        }
         mTextMonthDay = mView.findViewById(R.id.tv_month_day);
         mTextYear = mView.findViewById(R.id.tv_year);
         mCurrentTime = mView.findViewById(R.id.currenttime);
@@ -283,32 +305,27 @@ public class CalendarFragment extends BaseFragment implements
     public void onResume() {
         super.onResume();
         mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
-        Log.d("1218", "onResume: ");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("1218", "onpause: ");
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.v("1218","onsaveintantcestate" + yearopen);
         outState.putBoolean("year",yearopen);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d("1218", "onstop: ");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("1218", "onResume: ");
         EventBus.getDefault().unregister(this);
         mContext.stopService(new Intent(mContext.getApplicationContext(), SplachService.class));
         ((SwipeActivity) getActivity()).unregisterMyOnTouchListener(onTouchListener);
