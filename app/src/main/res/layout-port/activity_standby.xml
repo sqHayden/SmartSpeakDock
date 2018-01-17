@@ -79,8 +79,7 @@
             <ImageView
                 android:id="@+id/image_car"
                 android:layout_width="@dimen/splash_weather_image_width_size"
-                android:layout_height="@dimen/splash_weather_image_height_size"
-                android:src="@drawable/weather_life_car_wash" />
+                android:layout_height="@dimen/splash_weather_image_height_size" />
             <TextView
                 android:id="@+id/standby_life_car"
                 android:layout_width="@dimen/splash_weather_tmp_width"
@@ -103,8 +102,7 @@
             <ImageView
                 android:id="@+id/image_clothes"
                 android:layout_width="@dimen/splash_weather_image_width_size"
-                android:layout_height="@dimen/splash_weather_image_height_size"
-                android:src="@drawable/weather_life_clothes" />
+                android:layout_height="@dimen/splash_weather_image_height_size" />
             <TextView
                 android:id="@+id/standby_life_clothes"
                 android:layout_width="@dimen/splash_weather_tmp_width"

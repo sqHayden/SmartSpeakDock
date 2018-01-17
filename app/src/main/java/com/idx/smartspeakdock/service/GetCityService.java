@@ -28,6 +28,9 @@ public class GetCityService extends Service implements BDLocationListener{
     private LocationClient mLocationClient;
     @Override
     public void onCreate() {
+        Log.d("服务已启动，已连接","123456");
+        mLocationClient = new LocationClient(getApplicationContext());
+        init();
         super.onCreate();
     }
 
@@ -72,16 +75,12 @@ public class GetCityService extends Service implements BDLocationListener{
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("服务已启动，已连接","123456");
-        mLocationClient = new LocationClient(getApplicationContext());
-        init();
-
         Log.d(TAG, "onStartCommand: ");
         UpdateWeatherUtil.updateWeather();
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        int anHour =   60 * 30 * 1000; // 这是30min的毫秒数
+        int anHour =  30 * 60 * 1000; // 这是30min的毫秒数
         long triggerAtTime = SystemClock.elapsedRealtime() + anHour;
-        Intent i = new Intent(this, AutoUpdateService.class);
+        Intent i = new Intent(this, GetCityService.class);
         PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
         manager.cancel(pi);
         manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
