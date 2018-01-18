@@ -544,6 +544,8 @@ public class SwipeActivity extends BaseActivity {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             mControllerBinder = (ControllerService.MyBinder) iBinder;
+
+            //shopping语音处理
             mControllerBinder.onReturnWeburl(new ShoppingCallBack() {
                 @Override
                 public void onShoppingCallback(String web_url) {

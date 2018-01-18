@@ -1,5 +1,6 @@
 package com.idx.smartspeakdock;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,8 +26,8 @@ public class BaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    public boolean checkNetworkStatus(){
-        if(NetStatusUtils.isMobileConnected(getActivity()) || NetStatusUtils.isWifiConnected(getActivity())) {
+    public boolean checkNetworkStatus() {
+        if (NetStatusUtils.isMobileConnected(getActivity()) || NetStatusUtils.isWifiConnected(getActivity())) {
             return true;
         } else {
             return false;
