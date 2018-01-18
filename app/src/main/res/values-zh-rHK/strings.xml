@@ -10,6 +10,11 @@
     <string name="map_title">地圖</string>
     <string name="baiduAI_title">語音設置</string>
     <string name="setting_title">設置</string>
+
+    //drawer
+    <string name="navigation_drawer_open">開啓側滑欄</string>
+    <string name="navigation_drawer_close">關閉側滑欄</string>
+
     //shopping web loading
     <string name="web_title_loading">網頁加載中</string>
     <string name="web_message_loading">請等待...</string>

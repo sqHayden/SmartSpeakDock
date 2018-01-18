@@ -48,6 +48,15 @@ public class SpeakerService extends Service implements IStatus {
     private static final int CONSTANT_SESSION_FINISH = 0x202;
     private static final int CONSTANT_SESSION_ERROR = 0x203;
 
+    //超时计数器
+    private static final int CONSTANT_TIME_STEP = 15000; //15s
+    private static final int CONSTANT_TIME_TICK = 0x301;
+
+    //相邻两次唤醒间隔
+    private static final int CONSTANT_WAKE_UP_SPACE = 5000; //5s
+    //唤醒到识别的间隔
+    private static final int CONSTANT_WAKE_UP_RECOGNIZE_SPACE = 2000; //2s
+
     /**
      * 唤醒后，识别回溯时长
      */
@@ -70,9 +79,24 @@ public class SpeakerService extends Service implements IStatus {
     private Handler mHandler = null;
     private SpeakDialog speakDialog = null;
     private boolean isWaked = false;
+    private boolean isReceived = false;
+
+    private Runnable timerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mHandler != null) {
+                mHandler.postDelayed(timerRunnable, CONSTANT_TIME_STEP);
+                if (!isReceived) {
+                    mHandler.sendEmptyMessage(CONSTANT_TIME_TICK);
+                }
+                isReceived = false;
+            }
+        }
+    };
 
     private static class VoiceHandler extends Handler {
         WeakReference<SpeakerService> weakReference;
+        private long startTime;
 
         private VoiceHandler(SpeakerService service) {
             weakReference = new WeakReference<>(service);
@@ -81,17 +105,23 @@ public class SpeakerService extends Service implements IStatus {
         @Override
         public void handleMessage(Message msg) {
             final SpeakerService service = weakReference.get();
-
             if (service == null) {
                 return;
             }
-
+            service.isReceived = true;
             switch (msg.what) {
                 case CONSTANT_WAKE_UP:
                     if (service.isWaked) {
-                        return;
+                        long timeNow = System.currentTimeMillis();
+                        if (timeNow - startTime < CONSTANT_WAKE_UP_SPACE) {
+                            return;
+                        }
                     } else {
                         service.isWaked = true;
+                        startTime = System.currentTimeMillis();
+                        //开始超时计时
+                        service.mHandler.post(service.timerRunnable);
+                        TTSManager.getInstance().speak("啥事儿？");
                     }
                 case CONSTANT_SESSION_START:
                     //语音唤醒后，开启会话，创建会话窗口
@@ -99,6 +129,9 @@ public class SpeakerService extends Service implements IStatus {
                     if (service.speakDialog == null) {
                         service.speakDialog = new SpeakDialog(service.getBaseContext());
                     }
+                    service.speakDialog.showReady();
+                    service.mHandler.sendEmptyMessageDelayed(CONSTANT_RECOGNIZE_START, CONSTANT_WAKE_UP_RECOGNIZE_SPACE);
+                    break;
                 case CONSTANT_RECOGNIZE_START:
                     //显示会话窗口，并开始识别，需回溯
                     if (service.speakDialog != null) {
@@ -111,18 +144,22 @@ public class SpeakerService extends Service implements IStatus {
                         service.speakDialog.showReady();
                     }
                     break;
+                case CONSTANT_TIME_TICK:
+                    TTSManager.getInstance().speak("对不起，我糊涂了");
+                    //出错结束会话
                 case CONSTANT_RECOGNIZE_ERROR:
                     //出错结束会话
                 case CONSTANT_SESSION_ERROR:
-                    //出错结束会话
+                    //超时结束会话标识
+                    //结束会话
                 case CONSTANT_SESSION_FINISH:
-                    //口令结束会话
                     UnitManager.getInstance(service.getBaseContext()).enableSession(false);
                     if (service.speakDialog != null) {
                         service.speakDialog.dismiss();
                         service.speakDialog = null;
                     }
                     service.isWaked = false;
+                    service.mHandler.removeCallbacks(service.timerRunnable);
                     break;
                 case CONSTANT_WAKE_UP_START:
                     service.startWakeUp();
@@ -334,7 +371,7 @@ public class SpeakerService extends Service implements IStatus {
         @Override
         public void onAsrFinishError(int errorCode, int subErrorCode, String errorMessage, String descMessage, RecogResult recogResult) {
             super.onAsrFinishError(errorCode, subErrorCode, errorMessage, descMessage, recogResult);
-            TTSManager.getInstance().speak("您好像没有什么事，下次再见！");
+            TTSManager.getInstance().speak("好像没有什么事儿，下次再见！");
             //超时交互，自动结束会话
             if (mHandler != null) {
                 mHandler.sendEmptyMessage(CONSTANT_RECOGNIZE_ERROR);
