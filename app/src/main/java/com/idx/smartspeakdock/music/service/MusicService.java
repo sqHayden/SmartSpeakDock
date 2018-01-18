@@ -25,19 +25,23 @@ import java.lang.reflect.Method;
 
 public class MusicService extends Service implements MediaPlayer.OnCompletionListener{
     private static final String TAG = MusicService.class.getName();
-    //通知绑定着music的状态
+
+    //通知绑定者music的状态
     public static final String  ACTION_MEDIA_PLAY= "com.idx.ACTION_MEDIA_PLAY";
     public static final String ACTION_MEDIA_PAUSE="com.idx.ACTION_MEDIA_PAUSE";
     public static final String ACTION_MEDIA_NEXT = "com.idx.ACTION_MEDIA_NEXT";
     public static  final String ACTION_MEDIA_COMPLETE="com.idx.ACTION_MEDIA_COMPLETE";
     public static final String ACTION_MEDIA_PREVIOUS = "com.idx.music.ACTION_MEDIA_PREVIOUS";
 
-    // 正在播放的歌曲的序号
+    // 正在播放的音乐的序号
     private int mPlayingPosition = -1;
+    //媒体播放器
     private MediaPlayer mediaPlayer ;
+    //正在播放的音乐
     private Music mPlayingMusic;
 
     private boolean isPlaying = false;
+    private Music music;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -53,27 +57,35 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
             @Override
             public void onPlay(String name) {
+
                 Log.d(TAG, "onPlay: name, " + name);
                 play(name);
+
             }
 
             @Override
             public void onPause() {
-                pause();
+
+                   pause();
             }
 
             @Override
             public void onContinue() {
 
+                  continuePlay();
+
             }
 
             @Override
             public void onNext() {
+
                 next();
+
             }
 
             @Override
             public void onPrevious() {
+
                 pre();
 
             }
@@ -85,6 +97,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         return super.onStartCommand(intent, flags, startId);
     }
 
+    //播放准备
     private MediaPlayer.OnPreparedListener mPreparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
@@ -94,26 +107,40 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         }
     };
 
+    // 播放完成
     @Override
     public void onCompletion(MediaPlayer mp) {
-        Log.d(TAG, "onCompletion: MusicService");
           next();
           notifyMusicState(ACTION_MEDIA_COMPLETE, true);
     }
 
-    // 获取正在播放的歌曲的序号
+    // 播放完成
+    private MediaPlayer.OnCompletionListener onCompletionListener=new MediaPlayer.OnCompletionListener() {
+        @Override
+        public void onCompletion(MediaPlayer mediaPlayer) {
+            Log.d(TAG, "onCompletion: ");
+              next();
+              notifyMusicState(ACTION_MEDIA_COMPLETE,true);
+        }
+    };
+
+    // 获取正在播放的音乐的序号
     public int getPlayingPosition() {
         return mPlayingPosition;
     }
 
-    // 获取正在播放的歌曲
+    // 获取正在播放的音乐
     public Music getPlayingMusic() {
         return mPlayingMusic;
     }
 
-
+    //获取正在播放音乐的长度
     public long getCurrentPosition() {
-        return mediaPlayer.getCurrentPosition();
+        if (getPlayingMusic()!=null) {
+            return mediaPlayer.getCurrentPosition();
+        }else {
+            return 0;
+        }
     }
 
     public void playPause() {
@@ -121,28 +148,43 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             pause();
             notifyMusicState(ACTION_MEDIA_PAUSE,false);
         }
-         else {
+         else if (getCurrentPosition()>0){
+            Log.d(TAG, "playPause: "+getCurrentPosition());
+            continuePlay();
+            notifyMusicState(ACTION_MEDIA_PLAY,true);
+        }
+        else {
             play(getPlayingPosition());
             notifyMusicState(ACTION_MEDIA_PLAY,true);
         }
     }
 
+    //暂停后继续播放
+    void continuePlay() {
+        if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+            notifyMusicState(ACTION_MEDIA_PLAY, true);
+        }
+    }
+
+    //停止播放
     public void stop() {
         pause();
         mediaPlayer.reset();
     }
+    //下一首
     public void next() {
         Log.d(TAG, "next: ");
         play(mPlayingPosition + 1);
         notifyMusicState(ACTION_MEDIA_NEXT,true);
     }
-
+    //上一首
     public void pre(){
         Log.d(TAG, "pre: ");
         play(mPlayingPosition - 1);
         notifyMusicState(ACTION_MEDIA_PREVIOUS,true);
     }
-
+    //暂停播放
     void pause() {
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
@@ -150,14 +192,19 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         }
     }
 
-    //跳转到指定的时间位置
+    // 指定播放的位置
     public void seekTo(int position) {
-        Log.d(TAG, "seekTo: ");
+         Log.d(TAG, "seekTo: ");
          mediaPlayer.seekTo(position);
+    }
+    //音乐是否播放的标识
+    public boolean isPlaying() {
+        return isPlaying;
     }
 
 
 
+    //按音乐名称播放
     public void play(String name) {
         Music music = MusicUtil.getMusic().get(name);
         mPlayingMusic=music;
@@ -167,44 +214,57 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     }
 
     public void play(int position) {
-        AppCache.get().initData();
-        if (AppCache.get().getMusicList().size()==0) {
-            return;
-        }
-        if (position<0){
-            position = AppCache.get().getMusicList().size()- 1;
-        }else if (position>= AppCache.get().getMusicList().size()){
-            position=0;
-        }
-        mPlayingPosition = position;
-        Music music= AppCache.get().getMusicList().get(mPlayingPosition);
-        mPlayingMusic=music;
-        Log.d(TAG, "play: 进入musicService,当前音乐位置："+mPlayingPosition);
-        play(music);
+            //音乐列表初始化
+            AppCache.get().initData();
+            if (AppCache.get().getMusicList().size() == 0) {
+                return;
+            }
+            if (position < 0) {
+                position = AppCache.get().getMusicList().size() - 1;
+            } else if (position >= AppCache.get().getMusicList().size()) {
+                position = 0;
+            }
+            mPlayingPosition = position;
+            music = AppCache.get().getMusicList().get(mPlayingPosition);
+            mPlayingMusic = music;
+            Log.d(TAG, "play: 进入musicService,当前音乐位置：" + mPlayingPosition);
+            play(music);
+
     }
 
+
+
+    //播放音乐
     public void play(Music music) {
         mPlayingMusic = music;
+
+        // 切换音乐时,如果已经在播放,先停止
         try {
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
             Log.d(TAG, "play: 进入musicService，获取当前音乐:"+music.getUrl());
-            mediaPlayer=getMediaPlayer(getApplicationContext());
-            mediaPlayer.reset();
+            mediaPlayer = getMediaPlayer(getApplicationContext());
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mediaPlayer.setDataSource(music.getUrl());
             mediaPlayer.prepareAsync();
             mediaPlayer.setOnPreparedListener(mPreparedListener);
-
+            mediaPlayer.setOnCompletionListener(onCompletionListener);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    //
     public class PlayBinder extends Binder {
         public MusicService getService() {
             return MusicService.this;
         }
     }
 
+    //fragment与service通信,返回PlayBinder实例
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -212,10 +272,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         return new PlayBinder();
     }
 
-    public boolean isPlaying() {
-        return isPlaying;
-    }
-
+    //通知绑定者音乐状态
     private void notifyMusicState(String action, boolean isPlaying){
         Intent intent = new Intent();
         intent.setAction(action);
@@ -223,10 +280,11 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         this.isPlaying = isPlaying;
     }
 
+    //对MediaPlayer进行实例化
     private MediaPlayer getMediaPlayer(Context context) {
         MediaPlayer mediaplayer = new MediaPlayer();
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.KITKAT) {
-            return mediaplayer;
+             return mediaplayer;
         }
         try {
             Class<?> cMediaTimeProvider = Class.forName("android.media.MediaTimeProvider");

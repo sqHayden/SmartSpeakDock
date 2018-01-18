@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clickable="true"
-    android:id="@+id/fl_play_bar"
-    android:background="@color/bar_main">
+    android:layout_height="wrap_content"
+    android:background="@color/Splash_background"
+    android:id="@+id/fl_play_bar">
 
     <RelativeLayout
         android:layout_marginStart="5dp"
@@ -12,11 +11,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/relativeLayout">
+        android:layout_alignParentStart="true">
         <ImageView
             android:id="@+id/bar_album"
-            android:src="@drawable/no_album"
+            android:src="@mipmap/music_frame_shadow_music"
             android:layout_width="63dp"
             android:layout_height="63dp"
             android:scaleType="fitCenter" />
@@ -33,45 +31,33 @@
             android:textColor="@color/white"/>
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="90dp"
+    <ImageButton
+        android:id="@+id/bar_play"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/relativeLayout"
-        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/bar_next"
+        android:background="#00000000"
+        android:layout_marginEnd="15dp"
+        android:src="@mipmap/music_pause" />
+
+
+    <ImageButton
+        android:id="@+id/bar_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/bar_play"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="6dp">
-
-        <RelativeLayout
-            android:id="@+id/homebar_background"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="center"
-            android:background="@drawable/shadowed_circle_red"
-            android:clickable="false">
-
-            <ImageButton
-                android:id="@+id/bar_play"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_centerInParent="true"
-                android:adjustViewBounds="true"
-                android:background="#00000000"
-                android:scaleType="centerInside"
-                android:src="@drawable/play_light"
-                android:visibility="visible" />
-        </RelativeLayout>
-
-        <ImageButton
-            android:id="@+id/bar_next"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:alpha="0.9"
-            android:background="?android:selectableItemBackground"
-            android:src="@drawable/skip_next"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/homebar_background" />
-    </RelativeLayout>
-
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="13dp"
+        android:background="?android:selectableItemBackground"
+        android:src="@mipmap/music_next" />
+    <!--</RelativeLayout>-->
+    <ProgressBar
+        android:id="@+id/play_bar"
+        android:layout_below="@id/home_titlebar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_gravity="bottom" />
 </RelativeLayout>

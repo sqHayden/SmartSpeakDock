@@ -9,6 +9,7 @@ import java.util.List;
  * Created by sunny on 18-1-10.
  */
 
+//初始化音乐数据
 public class AppCache {
 
     //歌曲列表
@@ -26,14 +27,13 @@ public class AppCache {
         return SingletonHolder.instance;
     }
 
+    //得到音乐列表的大小
     public List<Music> getMusicList() {
 
-        for (String key : MusicUtil.getMusic().keySet()) {
-            mMusicList.add(MusicUtil.getMusic().get(key));
-        }
+        initData();
         return mMusicList;
     }
-
+    //初始化音乐列表
     public void initData(){
 
         for (String key : MusicUtil.getMusic().keySet()) {

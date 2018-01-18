@@ -117,7 +117,8 @@
 
         <service android:name=".music.service.MusicService"
                 android:enabled="true"
-                android:exported="true"/>
+                android:exported="false"/>
+        <activity android:name=".music.activity.MusicPlayActivity"/>
     </application>
 
 </manifest>

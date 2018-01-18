@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_gravity="center">
     <View
         android:id="@+id/v_playing"
@@ -15,9 +15,10 @@
         android:id="@+id/iv_cover"
         android:layout_width="50dp"
         android:layout_height="45dp"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
         android:scaleType="fitXY"
-        android:src="@drawable/no_album" />
+        android:src="@mipmap/music_frame_shadow_music" />
 
 
             <RelativeLayout
