@@ -23,7 +23,7 @@ public interface WeatherBasicDataSource {
 
     void getWeatherBasics(LoadWeatherBasicsListCallback callback);
 
-    void getWeatherBasic(String cityName,LoadWeatherBasicsCallback callback);
+    void getWeatherBasic(String cityName, LoadWeatherBasicsCallback callback);
 
     void deleteWeatherBasics();
 

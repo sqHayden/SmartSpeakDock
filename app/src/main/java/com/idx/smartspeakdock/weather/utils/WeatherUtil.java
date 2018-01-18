@@ -29,38 +29,34 @@ public class WeatherUtil {
     private static final String TAG = WeatherUtil.class.getSimpleName();
     private static Weather mWeather;
     private static Weather mWeatherAqi;
+    //537664b7e2124b3c845bc0b51278d4af
+    //bc0418b57b2d4918198d3974ac1285d9  测试
+    private static String key="537664b7e2124b3c845bc0b51278d4af";
     private static WeatherBasicRepository mWeatherBasicRepository;
     private static WeatherAqiRepository mWeatherAqiRepository;
 
     public static void loadWeather(final String name, final ReturnWeather returnWeather) {
 //        mWeather = null;
         mWeatherBasicRepository= WeatherBasicInjection.getNoteRepository(SpeakerApplication.getContext());
-        String weatherUrl = "https://free-api.heweather.com/s6/weather?location=" + name + "&key=537664b7e2124b3c845bc0b51278d4af";
+        String weatherUrl = "https://free-api.heweather.com/s6/weather?location=" + name + "&key="+key;
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 final String responseText = response.body().string();
                 mWeather = Utility.handleWeatherResponse(responseText);
-                if(returnWeather != null) {
-                    returnWeather.onReturnWeather(mWeather);
-                }
                 Log.i(TAG, "onResponse: weather.status = " + mWeather.status);
                 //天气获取成功，则保存
                 if (mWeather != null && "ok".equals(mWeather.status)) {
+                    if(returnWeather != null) {
+                        returnWeather.onReturnWeather(mWeather);
+                    }
                     Log.d(TAG, "onResponse: 成功");
                     WeatherBasic basic=new WeatherBasic();
                     basic.cityName=name;
                     basic.date=new Date().toString();
                     basic.weatherBasic=responseText;
                     mWeatherBasicRepository.addWeatherBasic(basic);
-                }else {
-                    Log.d(TAG, "onResponse: 失败");
                 }
-                /*if (mWeather != null && "ok".equals(mWeather.status)) {
-                    Log.i(TAG, "onResponse: mWeather.toString() = "+mWeather.toString());
-                } else {
-                    mWeather = null;
-                }*/
             }
 
             @Override
@@ -69,34 +65,32 @@ public class WeatherUtil {
                 if(returnWeather != null){
                     returnWeather.onReturnWeather(null);
                 }
-//                mWeather = null;
             }
         });
 //        return mWeather;
     }
 
+
     public static void loadWeatherAqi(final String cityName,final ReturnWeather returnWeather) {
         mWeatherAqiRepository= WeatherAqiInjection.getInstance(SpeakerApplication.getContext());
-        String weatherUrl = "https://free-api.heweather.com/s6/air/now?location=" + cityName + "&key=537664b7e2124b3c845bc0b51278d4af";
+        String weatherUrl = "https://free-api.heweather.com/s6/air/now?location=" + cityName + "&key="+key;
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 final String responseText = response.body().string();
                 mWeatherAqi = Utility.handleWeatherResponse(responseText);
-                if (returnWeather != null){
-                    returnWeather.onReturnWeather(mWeatherAqi);
-                }
                 Log.i(TAG, "onResponse: weather.status = " + mWeatherAqi.status);
                 //天气获取成功，则保存
                 if (mWeatherAqi != null && "ok".equals(mWeatherAqi.status)) {
+                    if (returnWeather != null){
+                        returnWeather.onReturnWeather(mWeatherAqi);
+                    }
                     Log.d(TAG, "onResponse: 成功");
                     WeatherAqi aqi=new WeatherAqi();
                     aqi.cityName=cityName;
                     aqi.date=new Date().toString();
                     aqi.weatherAqi=responseText;
                     mWeatherAqiRepository.addWeatherAqi(aqi);
-                } else {
-                    Log.d(TAG, "onResponse: 失败");
                 }
             }
 

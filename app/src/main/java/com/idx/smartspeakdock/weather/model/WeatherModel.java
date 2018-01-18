@@ -8,5 +8,5 @@ import com.idx.smartspeakdock.weather.presenter.OnWeatherListener;
 
 public interface WeatherModel {
     void loadWeather(String name, OnWeatherListener listener);
-    void loadWeatherAqi(String cityName,OnWeatherListener listener);
+    void loadWeatherAqi(String cityName, OnWeatherListener listener);
 }

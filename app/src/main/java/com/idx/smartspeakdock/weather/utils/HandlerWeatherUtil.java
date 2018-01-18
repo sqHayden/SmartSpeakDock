@@ -65,7 +65,7 @@ public class HandlerWeatherUtil {
     }
 
     /**
-     * 解析日期，返回指定格式
+     * 解析日期竖屏，返回指定格式
      *
      * @param date 日期××××-××-××
      * @return ××月××日星期几
@@ -74,7 +74,7 @@ public class HandlerWeatherUtil {
         String result="";
         DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
         DateFormat format2 = new SimpleDateFormat("MM月dd日");
-        String[] weekOfDays = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+        String[] weekOfDays = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
         try {
             Date date1=format1.parse(date);
             result=format2.format(date1);
@@ -84,14 +84,21 @@ public class HandlerWeatherUtil {
             if (date.equals(format1.format(new Date()))){
                 result+="今天";
             }else {
-                result+=weekOfDays[w];
+                result=weekOfDays[w]+" "+result;
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return result;
     }
-    /*public static String parseDate(String date){
+
+    /**
+     * 解析日期横屏，返回指定格式
+     *
+     * @param date 日期××××-××-××
+     * @return ××月××日星期几
+     */
+    public static String parseDateLand(String date){
         String result="";
         DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
         DateFormat format2 = new SimpleDateFormat("MM/dd");
@@ -102,5 +109,5 @@ public class HandlerWeatherUtil {
             e.printStackTrace();
         }
         return result;
-    }*/
+    }
 }

@@ -54,9 +54,21 @@ public class RemoteWeatherBasicDataSource implements WeatherBasicDataSource {
                     @Override
                     public void run() {
                         if (mWeatherBasics.isEmpty()){
-                            callback.onDataNotAvailable();
+                            if (callback!=null) {
+                                try {
+                                    callback.onDataNotAvailable();
+                                }catch (NullPointerException e){
+                                    e.printStackTrace();
+                                }
+                            }
                         }else {
-                            callback.onWeatherBasicsLoaded(mWeatherBasics);
+                            if (callback!=null) {
+                                try {
+                                    callback.onWeatherBasicsLoaded(mWeatherBasics);
+                                }catch (NullPointerException e){
+                                    e.printStackTrace();
+                                }
+                            }
                         }
                     }
                 });
@@ -75,9 +87,21 @@ public class RemoteWeatherBasicDataSource implements WeatherBasicDataSource {
                     @Override
                     public void run() {
                         if (mWeatherBasic!=null){
-                            callback.onWeatherBasicsLoaded(mWeatherBasic);
+                            if (callback!=null) {
+                                try {
+                                    callback.onWeatherBasicsLoaded(mWeatherBasic);
+                                }catch (NullPointerException e){
+                                    e.printStackTrace();
+                                }
+                            }
                         }else {
-                            callback.onDataNotAvailable();
+                            if (callback!=null) {
+                                try {
+                                    callback.onDataNotAvailable();
+                                }catch (NullPointerException e){
+                                    e.printStackTrace();
+                                }
+                            }
                         }
                     }
                 });
