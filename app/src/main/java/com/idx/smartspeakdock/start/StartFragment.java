@@ -1,7 +1,6 @@
 package com.idx.smartspeakdock.start;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.idx.smartspeakdock.Intents;
 import com.idx.smartspeakdock.R;
 
 
@@ -128,7 +126,7 @@ public class StartFragment extends Fragment implements StartContract.View {
     @Override
     public void showContent(String str) {
         mTextView.setText(str);
-        getActivity().sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE_START));
+//        getActivity().sendBroadcast(new Intent(Intents.ACTION_RECOGNIZE_START));
     }
 
     /**

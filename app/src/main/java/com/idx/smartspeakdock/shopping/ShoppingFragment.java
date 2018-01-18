@@ -108,7 +108,7 @@ public class ShoppingFragment extends BaseFragment {
     }
 
     private void voiceResult() {
-        UnitManager.getInstance().setShoppingVoiceListener(new IShoppingVoiceListener() {
+        UnitManager.getInstance(getContext()).setShoppingVoiceListener(new IShoppingVoiceListener() {
             @Override
             public void openSpecifyWebsites(String web_sites_url) {
                 Logger.info(TAG,web_sites_url);

@@ -49,7 +49,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         mediaPlayer=getMediaPlayer(getApplicationContext());
         mediaPlayer.setOnCompletionListener(this);
 
-        UnitManager.getInstance().setMusicVoiceListener(new IMusicVoiceListener() {
+        UnitManager.getInstance(getBaseContext()).setMusicVoiceListener(new IMusicVoiceListener() {
             @Override
             public void onPlay(int index) {
 

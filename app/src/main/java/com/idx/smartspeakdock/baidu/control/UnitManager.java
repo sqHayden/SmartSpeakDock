@@ -48,14 +48,15 @@ public class UnitManager {
     private VoiceActionAdapter mVoiceAdapter;
     private ISessionListener mSessionListener;
 
-    private UnitManager() {
+    private UnitManager(Context context) {
+        init(context);
     }
 
-    public static UnitManager getInstance() {
+    public static UnitManager getInstance(Context context) {
         if (INSTANCE == null) {
             synchronized (UnitManager.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new UnitManager();
+                    INSTANCE = new UnitManager(context);
                 }
             }
         }
@@ -67,7 +68,7 @@ public class UnitManager {
      *
      * @param context 上下文
      **/
-    public void init(Context context, ISessionListener sessionListener) {
+    public void init(Context context) {
         Map<String, Object> authParams = AuthInfo.getAuthParams(context);
         mApiService = APIService.getInstance();
         mApiService.init(context);
@@ -83,9 +84,8 @@ public class UnitManager {
                 Log.d(TAG, "onError: ");
             }
         }, (String) authParams.get(AuthInfo.META_APP_KEY), (String) authParams.get(AuthInfo.META_APP_SECRET));
-        mVoiceAdapter = new VoiceActionAdapter(context, sessionListener);
+        mVoiceAdapter = new VoiceActionAdapter(context);
         ttsManager = TTSManager.getInstance();
-        mSessionListener = sessionListener;
     }
 
     /**
@@ -286,6 +286,11 @@ public class UnitManager {
     public void setShoppingVoiceListener(IShoppingVoiceListener listener) {
         Log.i(TAG, "setShoppingVoiceListener: ");
         mVoiceAdapter.setShoppingListener(listener);
+    }
+
+    public void setSessionListener(ISessionListener sessionListener){
+        mSessionListener = sessionListener;
+        mVoiceAdapter.setSessionListener(sessionListener);
     }
 
     public void enableSession(boolean sessionOver) {

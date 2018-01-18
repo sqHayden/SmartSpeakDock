@@ -133,7 +133,7 @@ public class CalendarFragment extends BaseFragment implements
         presenter = new Presenter(this,mContext,mCalendarView);
         util = new com.idx.smartspeakdock.calendar.Util(mContext);
         initData();
-        UnitManager.getInstance().setCalenderVoiceListener(new ICalenderVoiceListener() {
+        UnitManager.getInstance(getContext()).setCalenderVoiceListener(new ICalenderVoiceListener() {
             @Override
             public String onWeekInfo(String time) {
                 answer="";
