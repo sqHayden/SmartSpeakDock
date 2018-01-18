@@ -3,7 +3,6 @@ package com.idx.smartspeakdock.weather.model.area;
 import android.support.annotation.NonNull;
 
 import com.idx.smartspeakdock.utils.AppExecutors;
-import com.idx.smartspeakdock.weather.model.area.AreaDataSource;
 
 import java.util.List;
 
@@ -65,9 +64,21 @@ public class LocalAreaDataSource implements AreaDataSource {
                     @Override
                     public void run() {
                         if (mProvinces.isEmpty()){
-                            callback.onDataNotAvailable();
+                            if (callback!=null) {
+                                try {
+                                    callback.onDataNotAvailable();
+                                }catch (NullPointerException e){
+                                    e.printStackTrace();
+                                }
+                            }
                         }else {
-                            callback.onProvinceLoaded(mProvinces);
+                            if (callback!=null) {
+                                try {
+                                    callback.onProvinceLoaded(mProvinces);
+                                }catch (NullPointerException e){
+                                    e.printStackTrace();
+                                }
+                            }
                         }
                     }
                 });
@@ -95,9 +106,21 @@ public class LocalAreaDataSource implements AreaDataSource {
                     @Override
                     public void run() {
                         if (mCities.isEmpty()){
-                            callback.onDataNotAvailable();
+                            if (callback!=null) {
+                                try {
+                                    callback.onDataNotAvailable();
+                                }catch (NullPointerException e){
+                                    e.printStackTrace();
+                                }
+                            }
                         }else {
-                            callback.onCityLoaded(mCities);
+                            if (callback!=null) {
+                                try {
+                                    callback.onCityLoaded(mCities);
+                                }catch (NullPointerException e){
+                                    e.printStackTrace();
+                                }
+                            }
                         }
                     }
                 });
@@ -125,9 +148,21 @@ public class LocalAreaDataSource implements AreaDataSource {
                     @Override
                     public void run() {
                         if (mCounties.isEmpty()) {
-                            callback.onDataNotAvailable();
+                            if (callback!=null) {
+                                try {
+                                    callback.onDataNotAvailable();
+                                }catch (NullPointerException e){
+                                    e.printStackTrace();
+                                }
+                            }
                         }else {
-                            callback.onCountyLoaded(mCounties);
+                            if (callback!=null) {
+                                try {
+                                    callback.onCountyLoaded(mCounties);
+                                }catch (NullPointerException e){
+                                    e.printStackTrace();
+                                }
+                            }
                         }
                     }
                 });

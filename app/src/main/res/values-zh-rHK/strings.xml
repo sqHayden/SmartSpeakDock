@@ -19,8 +19,8 @@
     <string name="get_weather_info_error">獲取天氣信息失敗</string>
     <string name="weather_loading_dialog">加載天氣中...</string>
     <string name="weather">天氣</string>
-    <string name="weather_tomorrow">天氣：</string>
-    <string name="weather_after">後天：</string>
+    <string name="weather_tomorrow">天氣:</string>
+    <string name="weather_after">後天:</string>
 
     //network error
     <string name="network_not_connected">網頁未連接，無法顯示，聯網後，往下拖動頁面刷新</string>

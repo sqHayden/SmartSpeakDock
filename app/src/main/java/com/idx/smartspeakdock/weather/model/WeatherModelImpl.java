@@ -28,7 +28,7 @@ public class WeatherModelImpl implements WeatherModel {
     // bc0418b57b2d4918819d3974ac1285d9     3000次 7天预报
     // 537664b7e2124b3c845bc0b51278d4af     1000次 3天预报
     public static final String TAG=WeatherModelImpl.class.getSimpleName();
-    private static String key="537664b7e2124b3c845bc0b51278d4af";
+    private static String key="bc0418b57b2d4918819d3974ac1285d9";
     private WeatherBasicRepository mWeatherBasicRepository;
     private WeatherAqiRepository mWeatherAqiRepository;
     /**
@@ -47,7 +47,11 @@ public class WeatherModelImpl implements WeatherModel {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (listener!=null) {
-                    listener.onError();
+                    try {
+                        listener.onError();
+                    }catch (NullPointerException e1){
+                        e1.printStackTrace();
+                    }
                 }
             }
 
@@ -63,12 +67,20 @@ public class WeatherModelImpl implements WeatherModel {
                     basic.date=new Date().toString();
                     mWeatherBasicRepository.addWeatherBasic(basic);
                     if (listener!=null) {
-                        listener.onSuccess(weather);
+                        try {
+                            listener.onSuccess(weather);
+                        }catch (NullPointerException e){
+                            e.printStackTrace();
+                        }
                     }
                 }else {
                     Log.d(TAG, "onResponse: 失败");
                     if (listener!=null) {
-                        listener.onError();
+                        try {
+                            listener.onError();
+                        }catch (NullPointerException e){
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -91,7 +103,11 @@ public class WeatherModelImpl implements WeatherModel {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (listener!=null) {
-                    listener.onError();
+                    try {
+                        listener.onError();
+                    }catch (NullPointerException e1){
+                        e1.printStackTrace();
+                    }
                 }
             }
 
@@ -107,12 +123,20 @@ public class WeatherModelImpl implements WeatherModel {
                     aqi.weatherAqi=responseText;
                     mWeatherAqiRepository.addWeatherAqi(aqi);
                     if (listener!=null) {
-                        listener.onSuccessAqi(weather);
+                        try {
+                            listener.onSuccessAqi(weather);
+                        }catch (NullPointerException e){
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     Log.d(TAG, "onResponse: 失败");
                     if (listener!=null) {
-                        listener.onError();
+                        try {
+                            listener.onError();
+                        }catch (NullPointerException e){
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
