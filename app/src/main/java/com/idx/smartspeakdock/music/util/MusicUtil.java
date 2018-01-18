@@ -10,6 +10,7 @@ import java.util.HashMap;
  * Created by sunny on 18-1-4.
  */
 
+//获取音乐数据，将数据存储在HaspMap中
 public class MusicUtil {
     public static HashMap<String,Music> getMusic(){
         HashMap<String,Music> musicHashMap=new HashMap<String,Music>();
@@ -43,10 +44,6 @@ public class MusicUtil {
                 "https://s3.amazonaws.com/sqa-skills-source-file/Music/xiaotiqin1.mp3",
                 "https://s3.amazonaws.com/sqa-skills-source-file/Music/xiaotiqin2.mp3",
                 "https://s3.amazonaws.com/sqa-skills-source-file/Music/xiaoyu1.mp3"};
-       String[] timeArray={"02:17","05:03","03:24","03:57","02:07","04:39","03:24","04:37",
-                            "02:58","02:45","04:14","05:18","09:23","02:00","02:10","14:04",
-                            "15:52","05:59","13:44","05:35","03:36","10:00","01:30","05:16",
-                            "03:50","18:14"};
        long[] dataArray={137064,303700,204983,237087,127086,279118,204539,277290,
                             178416,165956,254851,318198,563357,120059,130064,
                             854674,952895, 339670,824137, 335177,216607,600085,
@@ -56,10 +53,9 @@ public class MusicUtil {
                 music.setTitle(nameArray[i]);
                 music.setUrl(urlArray[i]);
                 music.setDuration(dataArray[i]);
-//                music.setDuration(timeArray[i]);
                 musicHashMap.put(nameArray[i],music);
             }
             return musicHashMap;
-        }
+    }
 
 }

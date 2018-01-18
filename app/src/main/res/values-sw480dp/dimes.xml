@@ -59,4 +59,28 @@
     <dimen name="calendar_week_textsize">10sp</dimen>
     <dimen name="calendar_textsize_select">7sp</dimen>
 
+    //music
+    <dimen name="music_album_outboard_marginTop">256dp</dimen>
+    <dimen name="music_album_inside_marginTop">266dp</dimen>
+    <dimen name="music_album_outboard_width">229dp</dimen>
+    <dimen name="music_album_outboard_height">229dp</dimen>
+    <dimen name="music_album_inside_width">211dp</dimen>
+    <dimen name="music_album_inside_height">211dp</dimen>
+    <dimen name="music_duration_width">18dp</dimen>
+    <dimen name="music_seekbar_marginLeft">33dp</dimen>
+    <dimen name="music_seekbar_marginRight">30dp</dimen>
+    <dimen name="music_seekbar_marginTop">542dp</dimen>
+    <dimen name="music_seekbar_width">398dp</dimen>
+    <dimen name="music_pre_marginTop">581dp</dimen>
+    <dimen name="music_pre_marginLeft">177dp</dimen>
+    <dimen name="music_pre_marginRight">264dp</dimen>
+    <dimen name="music_play_marginLeft">232dp</dimen>
+    <dimen name="music_play_marginRight">209dp</dimen>
+    <dimen name="music_play_marginTop">573dp</dimen>
+    <dimen name="music_next_marginRight">162dp</dimen>
+    <dimen name="music_next_marginLeft">278dp</dimen>
+    <dimen name="music_next_marginTop">581dp</dimen>
+    <dimen name="music_artist_marginTop">241dp</dimen>
+    <dimen name="music_title_marginTop">229dp</dimen>
+
 </resources>

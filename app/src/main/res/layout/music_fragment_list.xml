@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/music_main"
+    android:background="@color/Splash_background"
     android:orientation="vertical">
 
     <ListView
@@ -14,6 +15,7 @@
     </ListView>
 
     <LinearLayout
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">

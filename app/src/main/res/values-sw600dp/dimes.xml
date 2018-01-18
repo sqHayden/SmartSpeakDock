@@ -51,4 +51,28 @@
     <dimen name="splash_weather_margin_left">20dp</dimen>
     <dimen name="splash_weather_tmp_width">150dp</dimen>
     <dimen name="splash_weather_width">240dp</dimen>
+    //music
+    <dimen name="music_album_outboard_marginTop">321dp</dimen>
+    <dimen name="music_album_inside_marginTop">340dp</dimen>
+    <dimen name="music_album_outboard_width">286dp</dimen>
+    <dimen name="music_album_outboard_height">286dp</dimen>
+    <dimen name="music_album_inside_width">264dp</dimen>
+    <dimen name="music_album_inside_height">264dp</dimen>
+    <dimen name="music_duration_width">23dp</dimen>
+    <dimen name="music_seekbar_marginLeft">42dp</dimen>
+    <dimen name="music_seekbar_marginRight">38dp</dimen>
+    <dimen name="music_seekbar_marginTop">678dp</dimen>
+    <dimen name="music_seekbar_width">497dp</dimen>
+    <dimen name="music_pre_marginTop">726dp</dimen>
+    <dimen name="music_pre_marginLeft">221dp</dimen>
+    <dimen name="music_pre_marginRight">330dp</dimen>
+    <dimen name="music_play_marginLeft">290dp</dimen>
+    <dimen name="music_play_marginRight">261dp</dimen>
+    <dimen name="music_play_marginTop">716dp</dimen>
+    <dimen name="music_next_marginRight">203dp</dimen>
+    <dimen name="music_next_marginLeft">348dp</dimen>
+    <dimen name="music_next_marginTop">726dp</dimen>
+    <dimen name="music_artist_marginTop">301dp</dimen>
+    <dimen name="music_title_marginTop">286dp</dimen>
+
 </resources>
