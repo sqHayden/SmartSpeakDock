@@ -221,7 +221,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
     private void voiceResult() {
         voice_answer = "";
 //        voice_weather = null;
-        UnitManager.getInstance().setWeatherVoiceListener(new IWeatherVoiceListener() {
+        UnitManager.getInstance(getContext()).setWeatherVoiceListener(new IWeatherVoiceListener() {
             @Override
             public void onWeatherInfo(String cityName) {
                 Log.i(TAG, "onWeatherInfo: cityName = " + cityName);

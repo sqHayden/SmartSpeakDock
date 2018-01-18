@@ -71,12 +71,11 @@ public class VoiceActionAdapter {
         }
     };
 
-    public VoiceActionAdapter(Context context, ISessionListener listener) {
+    public VoiceActionAdapter(Context context) {
         Logger.setEnable(true);
         mIntent = new Intent(context, SwipeActivity.class);
         mSharePrefrenceUtils = new SharePrefrenceUtils(context);
         mContext = context;
-        mSessionListener = listener;
     }
 
     public boolean action(CommunicateResponse.Action action, CommunicateResponse.Schema schema, IVoiceActionListener.IActionCallback actionCallback) {
@@ -102,6 +101,10 @@ public class VoiceActionAdapter {
 
     public void setShoppingListener(IShoppingVoiceListener listener) {
         mShoppingListener = listener;
+    }
+
+    public void setSessionListener(ISessionListener sessionListener){
+        mSessionListener = sessionListener;
     }
 
     /**

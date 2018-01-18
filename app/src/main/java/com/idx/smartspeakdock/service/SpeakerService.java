@@ -95,7 +95,7 @@ public class SpeakerService extends Service implements IStatus {
                     }
                 case CONSTANT_SESSION_START:
                     //语音唤醒后，开启会话，创建会话窗口
-                    UnitManager.getInstance().enableSession(true);
+                    UnitManager.getInstance(service.getBaseContext()).enableSession(true);
                     if (service.speakDialog == null) {
                         service.speakDialog = new SpeakDialog(service.getBaseContext());
                     }
@@ -117,7 +117,7 @@ public class SpeakerService extends Service implements IStatus {
                     //出错结束会话
                 case CONSTANT_SESSION_FINISH:
                     //口令结束会话
-                    UnitManager.getInstance().enableSession(false);
+                    UnitManager.getInstance(service.getBaseContext()).enableSession(false);
                     if (service.speakDialog != null) {
                         service.speakDialog.dismiss();
                         service.speakDialog = null;
@@ -197,7 +197,7 @@ public class SpeakerService extends Service implements IStatus {
         TTSManager.getInstance().init(getBaseContext(), TtsMode.ONLINE);
 
         //初始化Unit交互
-        UnitManager.getInstance().init(getBaseContext(), new SessionListener());
+        UnitManager.getInstance(getBaseContext()).setSessionListener(new SessionListener());
 
     }
 
@@ -241,7 +241,7 @@ public class SpeakerService extends Service implements IStatus {
         }
 
         TTSManager.getInstance().release();
-        UnitManager.getInstance().release();
+        UnitManager.getInstance(getBaseContext()).release();
 
     }
 
@@ -317,7 +317,7 @@ public class SpeakerService extends Service implements IStatus {
             int length = results[0].length() - 1;
             String msg = results[0].substring(0, length);
             //将识别后的语句交由Unit处理
-            UnitManager.getInstance().sendMessage(msg);
+            UnitManager.getInstance(getBaseContext()).sendMessage(msg);
 
             //调试使用
             String message = "识别结束，结果是“" + msg + "”";

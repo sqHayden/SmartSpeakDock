@@ -315,7 +315,7 @@ public class MapFragment extends BaseFragment implements DialogInterface.OnClick
             initNavi();
         }
         getContext().startService(new Intent(getContext().getApplicationContext(), SplachService.class));
-        UnitManager.getInstance().setMapVoiceListener(new IMapVoiceListener() {
+        UnitManager.getInstance(getContext()).setMapVoiceListener(new IMapVoiceListener() {
             //语句：打開地图/我在哪兒/這是哪裡/這是哪兒/我現在在哪裡  测试完成 可以实现
             @Override
             public String onLocationInfo() {
