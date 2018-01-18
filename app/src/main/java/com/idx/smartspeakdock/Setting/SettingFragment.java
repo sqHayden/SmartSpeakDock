@@ -26,8 +26,6 @@ public class SettingFragment extends Fragment {
     private Switch mSwitch;
     private TextView mAbout;
 
-    public static SettingFragment newInstance(){return new SettingFragment();}
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

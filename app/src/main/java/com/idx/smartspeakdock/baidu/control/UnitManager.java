@@ -285,7 +285,9 @@ public class UnitManager {
      */
     public void setShoppingVoiceListener(IShoppingVoiceListener listener) {
         Log.i(TAG, "setShoppingVoiceListener: ");
-        mVoiceAdapter.setShoppingListener(listener);
+        if (listener != null) {
+            mVoiceAdapter.setShoppingListener(listener);
+        }
     }
 
     public void setSessionListener(ISessionListener sessionListener){

@@ -48,11 +48,11 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     private TextView standby_weather_tmp;
     private ImageView weatherIcon;
     private StandByPresenter mStandByPresenter;
-    private String cityname ;
+    private String cityname = "深圳市" ;
     private Context mContext;
     private View view;
-    private GetCityService.MyBinder myBinder;
-    private ServiceConnection connection = new ServiceConnection() {
+//    private GetCityService.MyBinder myBinder;
+/*    private ServiceConnection connection = new ServiceConnection() {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -73,7 +73,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
                 }
             });
         }
-    };
+    };*/
     LocalBroadcastManager broadcastManager;
     IntentFilter intentFilter;
     BroadcastReceiver mReceiver;
@@ -81,8 +81,6 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     private WeatherBasicRepository mWeatherBasicRepository;
     private ImageView image_clothes;
     private ImageView image_car;
-
-    public static StandByFragment newInstance(){return new StandByFragment();}
 
     @Override
     public void onAttach(Context context) {
@@ -102,22 +100,23 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
+        BaseActivity baseActivity = (BaseActivity) getActivity();
         Logger.setEnable(true);
         if (savedInstanceState != null) {
-            cityname = savedInstanceState.getString("cityName");
-            getWeatherBasic(cityname);
-            }else {
-            BaseActivity baseActivity = (BaseActivity) getActivity();
-            if(!BaseActivity.isServiceRunning(baseActivity.getApplicationContext(),"com.idx.smartspeakdock.start.GetCityService")) {
-                Log.d("启动服务", "startService");
-                Intent intent = new Intent(baseActivity.getApplicationContext(), GetCityService.class);
-                //启动
-                baseActivity.getApplicationContext().startService(intent);
-                //绑定
-                baseActivity.getApplicationContext().bindService(intent, connection, BIND_AUTO_CREATE);
+            if (!cityname.isEmpty()){
+                getWeatherBasic(cityname);
             }
+        }else {
+            if(!BaseActivity.isServiceRunning(baseActivity.getApplicationContext(),"com.idx.smartspeakdock.start.GetCityService")) {
+            Log.d("启动服务", "startService");
+            Intent intent = new Intent(baseActivity.getApplicationContext(), GetCityService.class);
+            //启动
+            baseActivity.getApplicationContext().startService(intent);
+            //绑定
+//            baseActivity.getApplicationContext().bindService(intent, connection, BIND_AUTO_CREATE);
         }
+        }
+       getWeatherBasic(cityname);
     }
 
     @Nullable
@@ -192,7 +191,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
 
     @Override
     public void onDestroy() {
-        getActivity().stopService(new Intent(getContext(),GetCityService.class));
+//        getActivity().stopService(new Intent(getContext(),GetCityService.class));
         broadcastManager.unregisterReceiver(mReceiver);
         super.onDestroy();
     }

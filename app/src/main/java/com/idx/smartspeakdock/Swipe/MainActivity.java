@@ -1,9 +1,12 @@
 package com.idx.smartspeakdock.Swipe;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -18,19 +21,25 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.music.service.MusicService;
+import com.idx.smartspeakdock.service.ControllerService;
 import com.idx.smartspeakdock.service.GetCityService;
 import com.idx.smartspeakdock.service.SpeakerService;
+import com.idx.smartspeakdock.shopping.ShoppingCallBack;
+import com.idx.smartspeakdock.shopping.ShoppingFragment;
 import com.idx.smartspeakdock.shopping.shoproom.entity.Shopping;
 import com.idx.smartspeakdock.standby.StandByFragment;
 import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.AppExecutors;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,13 +53,16 @@ public class MainActivity extends BaseActivity {
     private final String TAG = "MainActivity";
     private DrawerLayout mDrawerLayout;
     private Intent mIntent;
+    private Intent mControllerintent;
     private StandByFragment standByFragment;
     private Toolbar toolbar;
     private CoordinatorLayout right;
     private NavigationView left;
-    private GetCityService.MyBinder myBinder;
     //侧滑是否已开启
     private boolean isDrawer;
+    //语音注册监听器service
+    private MyServiceConnection myServiceConnection;
+    private ControllerService.MyBinder mControllerBinder;
     private SharePrefrenceUtils mSharedPreferencesUtils;
     private AppExecutors mAppExecutors;
     List<Shopping> mShoppings;
@@ -63,17 +75,20 @@ public class MainActivity extends BaseActivity {
         //侧滑栏配置
         initDrawer();
         mIntent = new Intent(MainActivity.this, SwipeActivity.class);
-        standByFragment =
-                (StandByFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
-        if (standByFragment == null) {
-            standByFragment = new StandByFragment();
-            ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), standByFragment, R.id.contentFrame);
-        }
         //启动语音唤醒识别service
         if (!isServiceRunning(this, "com.idx.smartspeakdock.start.SpeakerService")) {
             startService(new Intent(this, SpeakerService.class));
         }
+        //启动语音注册监听器service
+        if (!isServiceRunning(this,"com.idx.smartspeakdock.service.ControllerService")) {
+            mControllerintent = new Intent(this, ControllerService.class);
+            //启动service
+            startService(mControllerintent);
+            //绑定service
+            myServiceConnection = new MyServiceConnection();
+            bindService(mControllerintent,myServiceConnection,BIND_AUTO_CREATE);
+        }
+
         //程序是否第一次启动
         isAppFirstStart();
     }
@@ -137,6 +152,14 @@ public class MainActivity extends BaseActivity {
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setTitle("");
         ab.setDisplayHomeAsUpEnabled(true);
+        //待机界面
+        standByFragment =
+                (StandByFragment) mFragmentManager.findFragmentById(R.id.contentFrame);
+        if (standByFragment == null) {
+            standByFragment = new StandByFragment();
+            ActivityUtils.addFragmentToActivity(
+                    mFragmentManager, standByFragment, R.id.contentFrame);
+        }
     }
 
     @Override
@@ -204,7 +227,6 @@ public class MainActivity extends BaseActivity {
                         Shopping shopping = mShoppings.get(i);
                         mSharedPreferencesUtils.insertWebUrl(shopping.getWebName(),shopping.getWebUrl());
                     }
-                    Log.i(TAG, "run: current_thread_name = "+Thread.currentThread().getName());
                 }
             });
         }
@@ -269,6 +291,12 @@ public class MainActivity extends BaseActivity {
             mShoppings = null;
         }
         if (mIntent != null) { mIntent = null;}
+        //停止ControllerService
+        unbindService(myServiceConnection);
+//        stopService(mControllerintent);
+        if(mControllerintent != null){
+            mControllerintent = null;
+        }
     }
 
     @Override
@@ -277,6 +305,37 @@ public class MainActivity extends BaseActivity {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    public class MyServiceConnection implements ServiceConnection{
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            mControllerBinder = (ControllerService.MyBinder) iBinder;
+            mControllerBinder.onReturnWeburl(new ShoppingCallBack() {
+                    @Override
+                    public void onShoppingCallback(String web_url) {
+                        Log.i(TAG, "onShoppingCallback: " + web_url);
+                        revokeMainShoppingVoice(web_url);
+                    }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            if(mControllerBinder != null){
+                mControllerBinder = null;
+            }
+        }
+    }
+
+    private void revokeMainShoppingVoice(String web_url) {
+        if (!isActivityTop){
+            Log.i(TAG, "openSpecifyWebsites: 当前Activity不是SwipeActivity");
+            mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
+            mIntent.putExtra("weburl",web_url);
+            startActivity(mIntent);
         }
     }
 }

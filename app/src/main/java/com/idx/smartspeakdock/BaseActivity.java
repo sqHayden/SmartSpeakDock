@@ -25,9 +25,12 @@ import java.util.List;
 
 // 只用于继承
 public abstract class BaseActivity extends AppCompatActivity {
-    private static final String TAG = BaseActivity.class.getSimpleName();
+    private final String TAG = "BaseActivity";
     public  boolean isActivityTop;
-    public String fragment_show_activity = GlobalUtils.IS_SWIPE_ACTIVITY_TOP_NAME;
+    public Fragment isFragmentTop;
+    public FragmentManager mFragmentManager;
+    public String fragment_show_activity = "SwipeActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,8 +42,17 @@ public abstract class BaseActivity extends AppCompatActivity {
         int flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
         window.setFlags(flag, flag);
         initPermission();
+        //FrgamentManager
+        mFragmentManager = getSupportFragmentManager();
         //当前Activity是否是SwipeActivity
         isTopActivity();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //当前正在显示的Fragment
+        isTopFragment();
     }
 
     // 6.0以上权限获取
@@ -93,28 +105,31 @@ public abstract class BaseActivity extends AppCompatActivity {
         isActivityTop = false;
         ActivityManager am = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
-        Logger.info(TAG, "isTopActivity = " + cn.getClassName());
+        Log.i(TAG, "isTopActivity = " + cn.getClassName());
         if (cn.getClassName().contains(fragment_show_activity))
         {
             isActivityTop = true;
         }
-        Logger.info(TAG, "isTop = " + isActivityTop);
+        Log.i(TAG, "isTop = " + isActivityTop);
     }
 
-    public Fragment isTopFragment(){
-        FragmentManager fragmentManager = BaseActivity.this.getSupportFragmentManager();
-        List<Fragment> fragments = fragmentManager.getFragments();
+    public void isTopFragment(){
+        List<Fragment> fragments = mFragmentManager.getFragments();
+        Log.i(TAG, "isTopFragment: size = "+fragments.size());
         for(Fragment fragment : fragments){
-            if(fragment != null && fragment.isVisible())
-                Log.i(TAG, "isTopFragment: "+fragment.getClass().getSimpleName());
-                return fragment;
+//            if(fragment != null && fragment.isVisible()){
+                isFragmentTop = fragment;
+//            }
+            Log.i(TAG, "isTopFragment: "+isFragmentTop.getClass().getSimpleName());
         }
-        return null;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         isActivityTop = false;
+        if (isFragmentTop != null) {
+            isFragmentTop = null;
+        }
     }
 }

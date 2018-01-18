@@ -61,14 +61,6 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
     public boolean isPlaying =false;
     private ProgressBar progressBar;
 
-    public MusicListFragment(){
-
-    }
-
-    public static MusicListFragment newInstance(){
-        return new MusicListFragment();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

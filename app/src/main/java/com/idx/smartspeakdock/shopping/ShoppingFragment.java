@@ -1,7 +1,10 @@
 package com.idx.smartspeakdock.shopping;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,8 +35,7 @@ import com.idx.smartspeakdock.utils.ToastUtils;
  */
 
 public class ShoppingFragment extends BaseFragment {
-    private static final String TAG = ShoppingFragment.class.getSimpleName();
-
+    private final String TAG = "ShoppingFragment";
     View view;
     WebView webView;
     ProgressDialog progDailog;
@@ -41,6 +43,7 @@ public class ShoppingFragment extends BaseFragment {
     SwipeRefreshLayout mNetworkRefresh;
     Context mContext;
     String web_url;
+    ShopBroadcastReceiver mShopBroadcastReceiver;
 
     public static ShoppingFragment newInstance(String web_url){
         ShoppingFragment shoppingFragment = new ShoppingFragment();
@@ -63,10 +66,22 @@ public class ShoppingFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logger.setEnable(true);
-        progDailog = ProgressDialog.show(getActivity(), getActivity().getResources().getString(R.string.web_title_loading),
-                getActivity().getResources().getString(R.string.web_message_loading), true);
+        if (savedInstanceState != null){
+            web_url = savedInstanceState.getString("weburl");
+        }
+        progDailog = new ProgressDialog(mContext);
+        progDailog.setTitle(getActivity().getResources().getString(R.string.web_message_loading));
+        //注册广播
+        registerBroadcast();
 //        web_url = "http://m.flnet.com";
 //        web_url = "https://mall.flnet.com";
+    }
+
+    private void registerBroadcast() {
+        mShopBroadcastReceiver = new ShopBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(GlobalUtils.SHOPPING_BROADCAST_ACTION);
+        mContext.registerReceiver(mShopBroadcastReceiver,intentFilter);
     }
 
     @Nullable
@@ -75,7 +90,7 @@ public class ShoppingFragment extends BaseFragment {
         view = inflater.inflate(R.layout.fragment_shopping,container,false);
         webView = view.findViewById(R.id.shopping_web);
         mNetwork_error = view.findViewById(R.id.network_error);
-        mNetworkRefresh = view.findViewById(R.id.network_swipe_refresh);
+//        mNetworkRefresh = view.findViewById(R.id.network_swipe_refresh);
         return view;
     }
 
@@ -90,8 +105,6 @@ public class ShoppingFragment extends BaseFragment {
         initWebsites();
         //网络刷新
        // refreshWebsites();
-        //注册语音监听器
-        voiceResult();
     }
 
     private void initWebsites() {
@@ -107,24 +120,12 @@ public class ShoppingFragment extends BaseFragment {
         }
     }
 
-    private void voiceResult() {
-        UnitManager.getInstance(getContext()).setShoppingVoiceListener(new IShoppingVoiceListener() {
-            @Override
-            public void openSpecifyWebsites(String web_sites_url) {
-                Logger.info(TAG,web_sites_url);
-                if(web_sites_url != null) loadWebUrl(web_sites_url);
-                else
-                    ToastUtils.showError(mContext,mContext.getResources().getString(R.string.web_sites_not_exists));
-            }
-        });
-    }
-
     private void refreshWebsites() {
         mNetworkRefresh.setColorSchemeResources(R.color.colorPrimary);
         mNetworkRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(checkNetworkStatus()){
+                if(NetStatusUtils.isWifiConnected(getActivity()) || NetStatusUtils.isMobileConnected(getActivity())){
                     mNetwork_error.setVisibility(View.GONE);
                     webView.setVisibility(View.VISIBLE);
                     mNetworkRefresh.setRefreshing(false);
@@ -139,6 +140,12 @@ public class ShoppingFragment extends BaseFragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("weburl",web_url);
     }
 
     private void loadWebUrl(String webUrl) {
@@ -161,13 +168,42 @@ public class ShoppingFragment extends BaseFragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if(mNetworkRefresh != null) {
-            mNetworkRefresh = null;
+    public void onDestroyView() {
+        super.onDestroyView();
+        //webView销毁
+        if(webView != null){
+            webView.destroy();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        //webView销毁
+        /*if(webView != null){
+            webView.destroy();
+        }*/
+        super.onDestroy();
+/*        if(mNetworkRefresh != null) {
+            mNetworkRefresh = null;
+        }*/
         if(progDailog != null) {
             progDailog = null;
+        }
+        mContext.unregisterReceiver(mShopBroadcastReceiver);
+    }
+
+    public class ShopBroadcastReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i(TAG, "onReceive: "+intent.getAction().toString());
+            switch (intent.getAction()){
+                case GlobalUtils.SHOPPING_BROADCAST_ACTION:
+                    web_url = intent.getStringExtra("shoppings");
+                    Log.i(TAG, "onReceive: web_url = "+web_url);
+                    loadWebUrl(web_url);
+                    break;
+            }
         }
     }
 }

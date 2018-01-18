@@ -440,7 +440,6 @@ public class VoiceActionAdapter {
 
     private void refreshWeatherInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
-        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
         if (mWeatherListener != null) {
             mWeatherListener.onWeatherInfo(reconginize_city_word);
         }
@@ -450,7 +449,6 @@ public class VoiceActionAdapter {
     private void rangeTempInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
-        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word + ",reconginize_time_word = " + reconginize_time_word);
         if (mWeatherListener != null) {
             mWeatherListener.onRangeTempInfo(reconginize_city_word, reconginize_time_word, new ReturnVoice() {
                 @Override
@@ -466,7 +464,6 @@ public class VoiceActionAdapter {
     private void airQualityInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
-        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
         if (mWeatherListener != null) {
             mWeatherListener.onAirQualityInfo(reconginize_city_word, new ReturnVoice() {
                 @Override
@@ -481,7 +478,6 @@ public class VoiceActionAdapter {
 
     private void currentTempInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
-        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
         if (mWeatherListener != null) {
             mWeatherListener.onCurrentTempInfo(reconginize_city_word, new ReturnVoice() {
                 @Override
@@ -497,7 +493,6 @@ public class VoiceActionAdapter {
     private void weatherStatus() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
-        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word + ",reconginize_time_word = " + reconginize_time_word);
         if (mWeatherListener != null) {
             mWeatherListener.onWeatherStatus(reconginize_city_word, reconginize_time_word, new ReturnVoice() {
                 @Override
@@ -527,7 +522,6 @@ public class VoiceActionAdapter {
 
     private void derssInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
-        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
         if (mWeatherListener != null) {
             mWeatherListener.onDressInfo(reconginize_city_word, new ReturnVoice() {
                 @Override
@@ -542,7 +536,6 @@ public class VoiceActionAdapter {
 
     private void uitravioletLevelInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
-        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
         if (mWeatherListener != null) {
             mWeatherListener.onUitravioletLevelInfo(reconginize_city_word, new ReturnVoice() {
                 @Override
@@ -558,7 +551,6 @@ public class VoiceActionAdapter {
     private void smogInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
-        Logger.info(TAG, "handleAction: reconginize_city_word = " + reconginize_city_word);
         if (mWeatherListener != null) {
             mWeatherListener.onSmogInfo(reconginize_city_word, reconginize_time_word, new ReturnVoice() {
                 @Override
@@ -572,14 +564,13 @@ public class VoiceActionAdapter {
     }
 
     private void jude_word(String recoginize_shopping_word) {
-        Logger.info(TAG, "jude_word: recoginize_shopping_word = " + recoginize_shopping_word);
+        Log.i(TAG, "jude_word: recoginize_shopping_word = " + recoginize_shopping_word);
         if (!TextUtils.isEmpty(recoginize_shopping_word)) {
             web_sites_url = mSharePrefrenceUtils.getWebUrl(recoginize_shopping_word);
             Log.i(TAG, "jude_word: recoginize_shopping_word = " + recoginize_shopping_word + ",web_sites_url = " + web_sites_url);
             if (checkVoiceAnswer(web_sites_url)) {
                 mShoppingListener.openSpecifyWebsites(web_sites_url);
             }
-        } else {
         }
     }
 
@@ -619,6 +610,7 @@ public class VoiceActionAdapter {
             case Modules.SHOPPING:
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
+                mIntent.putExtra("weburl","https://mall.flnet.com");
                 mContext.startActivity(mIntent);
                 break;
             /**购物指令*/
@@ -630,7 +622,6 @@ public class VoiceActionAdapter {
             case GlobalUtils.FLNET:
             case GlobalUtils.register_page:
             case GlobalUtils.SHOPPING_CART:
-                Logger.info(TAG, "openModule: name = " + name);
                 if (mShoppingListener != null) {
                     jude_word(name);
                 }

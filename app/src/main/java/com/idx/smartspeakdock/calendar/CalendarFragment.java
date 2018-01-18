@@ -75,8 +75,6 @@ public class CalendarFragment extends BaseFragment implements
     Boolean yearopen = false;
     int year;
     private TextView selectyeartext;
-
-    public static CalendarFragment newInstance(){return new CalendarFragment();}
     private SwipeActivity.MyOnTouchListener onTouchListener;
 
     @Override
