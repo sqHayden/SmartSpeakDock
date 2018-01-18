@@ -29,8 +29,8 @@ public class GetCityService extends Service implements BDLocationListener{
     @Override
     public void onCreate() {
         Log.d("服务已启动，已连接","123456");
-        mLocationClient = new LocationClient(getApplicationContext());
-        init();
+//        mLocationClient = new LocationClient(getApplicationContext());
+//        init();
         super.onCreate();
     }
 
@@ -92,13 +92,13 @@ public class GetCityService extends Service implements BDLocationListener{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mLocationClient.unRegisterLocationListener(this);
-        mLocationClient.stop();
+//        mLocationClient.unRegisterLocationListener(this);
+//        mLocationClient.stop();
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return new MyBinder();
+        return null;
     }
 
     public class MyBinder extends Binder {

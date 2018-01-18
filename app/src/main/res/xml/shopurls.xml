@@ -432,4 +432,20 @@
         <webname>七十寸以上</webname>
         <weburl>http://mall.flnet.com/gallery-75.html</weburl>
     </shopping>
+    <shopping>
+        <webname>购物车</webname>
+        <weburl>https://mall.flnet.com/cart.html</weburl>
+    </shopping>
+    <shopping>
+        <webname>富连网</webname>
+        <weburl>https://mall.flnet.com/member.html</weburl>
+    </shopping>
+    <shopping>
+        <webname>订单</webname>
+        <weburl>https://mall.flnet.com/member-orders.html</weburl>
+    </shopping>
+    <shopping>
+        <webname>优惠券</webname>
+        <weburl>https://mall.flnet.com/member-coupon.html</weburl>
+    </shopping>
 </shoppings>

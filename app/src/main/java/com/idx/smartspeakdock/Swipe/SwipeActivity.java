@@ -1,18 +1,22 @@
 package com.idx.smartspeakdock.Swipe;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -27,6 +31,8 @@ import com.idx.smartspeakdock.Setting.SettingFragment;
 import com.idx.smartspeakdock.calendar.CalendarFragment;
 import com.idx.smartspeakdock.map.MapFragment;
 import com.idx.smartspeakdock.music.activity.MusicListFragment;
+import com.idx.smartspeakdock.service.ControllerService;
+import com.idx.smartspeakdock.shopping.ShoppingCallBack;
 import com.idx.smartspeakdock.shopping.ShoppingFragment;
 import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.GlobalUtils;
@@ -53,7 +59,6 @@ public class SwipeActivity extends BaseActivity {
     private ShoppingFragment shoppingFragment;
     private MapFragment mapFragment;
     private SettingFragment settingFragment;
-    private Fragment mCurrentFragment;
     private CoordinatorLayout right;
     private NavigationView left;
     private boolean isDrawer;
@@ -63,24 +68,33 @@ public class SwipeActivity extends BaseActivity {
     private SharePrefrenceUtils mSharePrefrenceUtils;
     private String mCurr_Frag_Name;
     private ArrayList<MyOnTouchListener> onTouchListeners = new ArrayList<MyOnTouchListener>(10);
+    private ControllerServiceConnection mServiceConnection;
+    private ControllerService.MyBinder mControllerBinder;
+    private Intent mShoppingBroadcastIntent;
+
+    public interface MyOnTouchListener {
+        public boolean onTouch(MotionEvent ev);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("SwipeActivity", "onCreate()...");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.drawer_main);
-        Logger.setEnable(true);
         //对应fragment的id
         extraIntentId = getIntent().getStringExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT);
         initToolBar();
         //侧滑设置
         initDrawer();
-        mCurrentFragment = getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         //fragment切换
         changeFragment(extraIntentId);
+        //绑定语音注册监听器service
+        Intent intent = new Intent(SwipeActivity.this, ControllerService.class);
+        mServiceConnection = new ControllerServiceConnection();
+        bindService(intent, mServiceConnection, 0);
     }
 
+    //待机界面Touch
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         for (MyOnTouchListener listener : onTouchListeners) {
@@ -103,69 +117,28 @@ public class SwipeActivity extends BaseActivity {
         Logger.info(TAG, extraIntentId);
         switch (extraIntentId) {
             case GlobalUtils.WEATHER_FRAGMENT_INTENT_ID:
-                if (mCurrentFragment == null) {
-                    weatherFragment = WeatherFragment.newInstance();
-                } else {
-                    if (mCurrentFragment instanceof WeatherFragment) {
-                        weatherFragment = (WeatherFragment) mCurrentFragment;
-                    }
-                }
-                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "weather");
-                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), weatherFragment, R.id.contentFrame);
+                initWeather();
                 break;
             case GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID:
-                if (mCurrentFragment == null) {
-                    calendarFragment = CalendarFragment.newInstance();
-                } else {
-                    if (mCurrentFragment instanceof CalendarFragment)
-                        calendarFragment = (CalendarFragment) mCurrentFragment;
-                }
-                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "calendar");
-                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), calendarFragment, R.id.contentFrame);
+                initCalendar();
                 break;
             case GlobalUtils.MUSIC_FRAGMENT_INTENT_ID:
-                if (mCurrentFragment == null) {
-                    musicFragment = MusicListFragment.newInstance();
-                } else {
-                    if (mCurrentFragment instanceof MusicListFragment)
-                        musicFragment = (MusicListFragment) mCurrentFragment;
-                }
-                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "music");
-                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), musicFragment, R.id.contentFrame);
+                initMusic();
                 break;
             case GlobalUtils.MAP_FRAGMENT_INTENT_ID:
-                if (mCurrentFragment == null) {
-                    mapFragment = new MapFragment();
-                } else {
-                    if (mCurrentFragment instanceof MapFragment)
-                        mapFragment = (MapFragment) mCurrentFragment;
-                }
-                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "map");
-                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), mapFragment, R.id.contentFrame);
+                initMap();
                 break;
             case GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID:
-                if (mCurrentFragment == null) {
-                    shoppingFragment = ShoppingFragment.newInstance(websites_url);
-                } else {
-                    if (mCurrentFragment instanceof ShoppingFragment)
-                        shoppingFragment = (ShoppingFragment) mCurrentFragment;
-                }
-                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "shopping");
-                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), shoppingFragment, R.id.contentFrame);
+                websites_url = getIntent().getStringExtra("weburl");
+                initShopping(websites_url);
                 break;
             case GlobalUtils.SETTING_FRAGMENT_INTENT_ID:
-                if (settingFragment == null) {
-                    settingFragment = SettingFragment.newInstance();
-                } else {
-                    if (mCurrentFragment instanceof SettingFragment)
-                        settingFragment = (SettingFragment) mCurrentFragment;
-                }
-                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "setting");
-                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), settingFragment, R.id.contentFrame);
+                initSetting();
                 break;
             default:
                 break;
         }
+        mActionBar.setTitle(actionBar_title);
     }
 
     private void initDrawer() {
@@ -217,6 +190,7 @@ public class SwipeActivity extends BaseActivity {
         });
 
         mSharePrefrenceUtils = new SharePrefrenceUtils(this);
+        mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "");
     }
 
     private void initToolBar() {
@@ -225,37 +199,7 @@ public class SwipeActivity extends BaseActivity {
         setSupportActionBar(mToolbar);
         mActionBar = getSupportActionBar();
         mActionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
-        //切换ActionBar title
-        setActionBarTitle();
         mActionBar.setDisplayHomeAsUpEnabled(true);
-        websites_url = "https://mall.flnet.com";
-    }
-
-    //切换ActionBar的Title
-    private void setActionBarTitle() {
-        switch (extraIntentId) {
-            case GlobalUtils.WEATHER_FRAGMENT_INTENT_ID:
-                actionBar_title = mResources.getString(R.string.weather_title);
-                break;
-            case GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID:
-                actionBar_title = mResources.getString(R.string.calendar_title);
-                break;
-            case GlobalUtils.MUSIC_FRAGMENT_INTENT_ID:
-                actionBar_title = mResources.getString(R.string.music_title);
-                break;
-            case GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID:
-                actionBar_title = mResources.getString(R.string.shopping_title);
-                break;
-            case GlobalUtils.MAP_FRAGMENT_INTENT_ID:
-                actionBar_title = mResources.getString(R.string.map_title);
-                break;
-            case GlobalUtils.SETTING_FRAGMENT_INTENT_ID:
-                actionBar_title = mResources.getString(R.string.setting_title);
-                break;
-            default:
-                break;
-        }
-        mActionBar.setTitle(actionBar_title);
     }
 
     @Override
@@ -276,69 +220,27 @@ public class SwipeActivity extends BaseActivity {
                         switch (menuItem.getItemId()) {
                             case R.id.list_navigation_weather:
                                 // TODO: 17-12-16  WEATHER
-                                if (!checkFragment("weather")){
-                                    actionBar_title = mResources.getString(R.string.weather_title);
-                                    if (weatherFragment == null) {
-                                        weatherFragment = WeatherFragment.newInstance();
-                                    }
-                                    ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), weatherFragment, R.id.contentFrame);
-                                }
-                                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID,"weather");
+                                initWeather();
                                 break;
                             case R.id.list_navigation_calendar:
                                 // TODO: 17-12-16 CALENDAR
-                                if (!checkFragment("calendar")) {
-                                    actionBar_title = mResources.getString(R.string.calendar_title);
-                                    if (calendarFragment == null) {
-                                        calendarFragment = CalendarFragment.newInstance();
-                                    }
-                                    ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), calendarFragment, R.id.contentFrame);
-                                }
-                                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID,"calendar");
+                                initCalendar();
                                 break;
                             case R.id.list_navigation_music:
                                 // TODO: 17-12-16 MUSIC
-                                if (!checkFragment("music")) {
-                                    actionBar_title = mResources.getString(R.string.music_title);
-                                    if (musicFragment == null) {
-                                        musicFragment = MusicListFragment.newInstance();
-                                    }
-                                    ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), musicFragment, R.id.contentFrame);
-                                }
-                                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID,"music");
+                                initMusic();
                                 break;
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 SHOPPING
-                                if (!checkFragment("shopping")) {
-                                    actionBar_title = mResources.getString(R.string.shopping_title);
-                                    if (shoppingFragment == null) {
-                                        shoppingFragment = ShoppingFragment.newInstance(websites_url);
-                                    }
-                                    ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), shoppingFragment, R.id.contentFrame);
-                                }
-                                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID,"shopping");
+                                initShopping("https://mall.flnet.com");
                                 break;
                             case R.id.list_navigation_map:
                                 // TODO: 17-12-16 MAP
-                                if (!checkFragment("map")) {
-                                    actionBar_title = mResources.getString(R.string.map_title);
-                                    if (mapFragment == null) {
-                                        mapFragment = new MapFragment();
-                                    }
-                                    ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), mapFragment, R.id.contentFrame);
-                                }
-                                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID,"map");
+                                initMap();
                                 break;
                             case R.id.list_navigation_setting:
                                 // TODO: 17-12-16 SETTING
-                                if (!checkFragment("setting")) {
-                                    actionBar_title = mResources.getString(R.string.setting_title);
-                                    if (settingFragment == null) {
-                                        settingFragment = SettingFragment.newInstance();
-                                    }
-                                    ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), settingFragment, R.id.contentFrame);
-                                }
-                                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID,"setting");
+                                initSetting();
                                 break;
                             default:
                                 break;
@@ -349,8 +251,80 @@ public class SwipeActivity extends BaseActivity {
                         return true;
                     }
                 });
+
+        //实例化Shopping广播Intent
+        mShoppingBroadcastIntent = new Intent(GlobalUtils.SHOPPING_BROADCAST_ACTION);
     }
 
+    private void initSetting() {
+        if (!checkFragment("setting")) {
+            actionBar_title = mResources.getString(R.string.setting_title);
+            if (settingFragment == null) {
+                settingFragment = new SettingFragment();
+            }
+            ActivityUtils.replaceFragmentInActivity(mFragmentManager, settingFragment, R.id.contentFrame);
+            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "setting");
+        }
+    }
+
+    private void initMap() {
+        if (!checkFragment("map")) {
+            actionBar_title = mResources.getString(R.string.map_title);
+            if (mapFragment == null) {
+                mapFragment = new MapFragment();
+            }
+            ActivityUtils.replaceFragmentInActivity(mFragmentManager, mapFragment, R.id.contentFrame);
+            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "map");
+        }
+    }
+
+    private void initShopping(String web_url) {
+        if (!checkFragment("shopping")) {
+            actionBar_title = mResources.getString(R.string.shopping_title);
+            if (!(web_url.equals("")) && !TextUtils.isEmpty(web_url)){
+                if (shoppingFragment == null) {
+                    shoppingFragment = ShoppingFragment.newInstance(web_url);
+                }
+                ActivityUtils.replaceFragmentInActivity(mFragmentManager, shoppingFragment, R.id.contentFrame);
+                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "shopping");
+            }
+        }
+    }
+
+    private void initMusic() {
+        if (!checkFragment("music")) {
+            actionBar_title = mResources.getString(R.string.music_title);
+            if (musicFragment == null) {
+                musicFragment = new MusicListFragment();
+            }
+            ActivityUtils.replaceFragmentInActivity(mFragmentManager, musicFragment, R.id.contentFrame);
+            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "music");
+        }
+    }
+
+    private void initCalendar() {
+        if (!checkFragment("calendar")) {
+            actionBar_title = mResources.getString(R.string.calendar_title);
+            if (calendarFragment == null) {
+                calendarFragment = new CalendarFragment();
+            }
+            ActivityUtils.replaceFragmentInActivity(mFragmentManager, calendarFragment, R.id.contentFrame);
+            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "calendar");
+        }
+    }
+
+    private void initWeather() {
+        if (!checkFragment("weather")) {
+            actionBar_title = mResources.getString(R.string.weather_title);
+            if (weatherFragment == null) {
+                weatherFragment = new WeatherFragment();
+            }
+            ActivityUtils.replaceFragmentInActivity(mFragmentManager, weatherFragment, R.id.contentFrame);
+            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "weather");
+        }
+    }
+
+    //Music后台回退
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
@@ -368,7 +342,7 @@ public class SwipeActivity extends BaseActivity {
                                 .setNegativeButton("退出", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        SwipeActivity.super.finish();
+//                                        SwipeActivity.super.finish();
                                     }
                                 }).create();
 
@@ -390,7 +364,7 @@ public class SwipeActivity extends BaseActivity {
     //判断当前哪个fragment
     public boolean checkFragment(String frag_name) {
         mCurr_Frag_Name = mSharePrefrenceUtils.getCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID);
-        Log.i(TAG, "checkFragment: frag_name_curr = " + mCurr_Frag_Name+",frag_name = "+frag_name);
+        Log.i(TAG, "checkFragment: frag_name_curr = " + mCurr_Frag_Name + ",frag_name = " + frag_name);
         switch (frag_name) {
             case "weather":
                 if (mCurr_Frag_Name.equals(frag_name)) {
@@ -434,9 +408,9 @@ public class SwipeActivity extends BaseActivity {
                 } else {
                     switch (mCurr_Frag_Name){
                         case "weather":
-                            calendarFragment = null;break;
+                            weatherFragment = null;break;
                         case "calendar":
-                            musicFragment = null;break;
+                            calendarFragment = null;break;
                         case "shopping":
                             shoppingFragment = null;break;
                         case "map":
@@ -451,12 +425,12 @@ public class SwipeActivity extends BaseActivity {
                     return true;
                 } else {
                     switch (mCurr_Frag_Name){
-                        case "":
-                            calendarFragment = null;break;
+                        case "weather":
+                            weatherFragment = null;break;
                         case "calendar":
-                            musicFragment = null;break;
+                            calendarFragment = null;break;
                         case "music":
-                            shoppingFragment = null;break;
+                            musicFragment = null;break;
                         case "map":
                             mapFragment = null;break;
                         case "setting":
@@ -470,13 +444,13 @@ public class SwipeActivity extends BaseActivity {
                 } else {
                     switch (mCurr_Frag_Name){
                         case "weather":
-                            calendarFragment = null;break;
+                            weatherFragment = null;break;
                         case "calendar":
-                            musicFragment = null;break;
+                            calendarFragment = null;break;
                         case "music":
-                            shoppingFragment = null;break;
+                            musicFragment = null;break;
                         case "shopping":
-                            mapFragment = null;break;
+                            shoppingFragment = null;break;
                         case "setting":
                             settingFragment = null;break;
                     }
@@ -500,32 +474,90 @@ public class SwipeActivity extends BaseActivity {
                     }
                 }
                 break;
+            default:
+                break;
         }
         return false;
+    }
+
+    //购物语音处理
+    private void revokeSwipeShoppingVoice(String web_url) {
+        if (isActivityTop) {
+            if (isFragmentTop != null) {
+                if (isFragmentTop.getClass().getSimpleName().equals("ShoppingFragment")) {
+                    Log.i(TAG, "openSpecifyWebsites: 当前Fragment是ShoppingFragment");
+                    mShoppingBroadcastIntent.putExtra("shoppings", web_url);
+                    sendBroadcast(mShoppingBroadcastIntent);
+                } else {
+                    Log.i(TAG, "openSpecifyWebsites: 当前Fragment不是ShoppingFragment");
+                    initShopping(web_url);
+                    mActionBar.setTitle(actionBar_title);
+                }
+            }
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (weatherFragment != null) { weatherFragment = null;}
-        if (calendarFragment != null) { calendarFragment = null;}
-        if (musicFragment != null) { musicFragment = null;}
-        if (shoppingFragment != null) { shoppingFragment = null;}
-        if (mapFragment != null) { mapFragment = null;}
-        if (settingFragment != null) { settingFragment = null;}
-        if (mCurrentFragment != null) { mCurrentFragment = null;}
-        if (mSharePrefrenceUtils != null) { mSharePrefrenceUtils = null;}
+        if (weatherFragment != null) {
+            weatherFragment = null;
+        }
+        if (calendarFragment != null) {
+            calendarFragment = null;
+        }
+        if (musicFragment != null) {
+            musicFragment = null;
+        }
+        if (shoppingFragment != null) {
+            shoppingFragment = null;
+        }
+        if (mapFragment != null) {
+            mapFragment = null;
+        }
+        if (settingFragment != null) {
+            settingFragment = null;
+        }
+        if (mSharePrefrenceUtils != null) {
+            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "");
+            mSharePrefrenceUtils = null;
+        }
+        if (mShoppingBroadcastIntent != null) {
+            mShoppingBroadcastIntent = null;
+        }
         isDrawer = false;
+        unbindService(mServiceConnection);
     }
 
     @Override
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else super.onBackPressed();
+        } else {
+            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "");
+            super.onBackPressed();
+        }
     }
 
-    public interface MyOnTouchListener {
-        public boolean onTouch(MotionEvent ev);
+    public class ControllerServiceConnection implements ServiceConnection {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            mControllerBinder = (ControllerService.MyBinder) iBinder;
+            mControllerBinder.onReturnWeburl(new ShoppingCallBack() {
+                @Override
+                public void onShoppingCallback(String web_url) {
+                    Log.i("ryan", "onShoppingCallback: " + web_url);
+                    revokeSwipeShoppingVoice(web_url);
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            if (mControllerBinder != null) {
+                mControllerBinder = null;
+            }
+        }
     }
 }

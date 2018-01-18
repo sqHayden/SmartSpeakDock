@@ -18,10 +18,6 @@ public class GlobalUtils {
     public static final String SETTING_FRAGMENT_INTENT_ID = "setting.fragment.intent.id";
     public static final String CURRENT_FRAGMENT_ID = "current.fragment";
 
-    //top activity
-    public static final String IS_DRAWER_ACTIVITY_TOP_NAME = "MainActivity";
-    public static final String IS_SWIPE_ACTIVITY_TOP_NAME = "SwipeActivity";
-
     //shopping website id
     public static final String SHOPPING_WEBSITES_EXTRA_ID = "shopping.websites.extra.id";
 //    public static final String WO_SHOPPING = "购物";
@@ -37,6 +33,8 @@ public class GlobalUtils {
     public static final String register_page = "注册页面";
     public static final String SHOPPING_CART = "购物车";
 
+    //shopping broadcast
+    public static final String SHOPPING_BROADCAST_ACTION = "shopping.broadcast.action";
     //weather part
     public static final String WEATHER_TIME_TODAY = "今天";
     public static final String WEATHER_TIME_TOMM = "明天";

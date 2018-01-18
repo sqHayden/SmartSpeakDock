@@ -96,10 +96,6 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
     private WeatherBasicRepository mWeatherBasicRepository;
     private WeatherAqiRepository mWeatherAqiRepository;
 
-    public static WeatherFragment newInstance() {
-        return new WeatherFragment();
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -231,16 +227,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
 
             @Override
             public void onRangeTempInfo(String cityName, String time,ReturnVoice returnVoice) {
-                Log.i(TAG, "onRangeTempInfo: cityName = "+cityName+",time = "+time);
                 voice_answer = "";
-//                getWeatherBasic(VOICE,cityName);
-                Log.d(TAG, "onRangeTempInfo: 温度信息"+voice_weather.status);
-                if (voice_weather != null && voice_weather.status.equals("ok")){
-                    Log.i(TAG, "onRangeTempInfo: city = "+voice_weather);
-                    judgeRangeTempInfo(cityName,time);
-                } else {
-                    voice_answer = "查询"+time+cityName+"温度信息失败";
-                }
+                Log.i(TAG, "onRangeTempInfo: cityName = "+cityName+",time = "+time);
+                getWeatherBasic(VOICE,cityName,time,returnVoice,"onRangeTempInfo");
             }
 
             @Override
@@ -257,20 +246,16 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
 
             @Override
             public void onCurrentTempInfo(String cityName,ReturnVoice returnVoice) {
+                voice_answer = "";
                 Log.i(TAG, "onCurrentTempInfo: cityName = " + cityName);
                 getWeatherBasic(VOICE,cityName,"",returnVoice,"onCurrentTempInfo");
             }
 
             @Override
             public void onWeatherStatus(String cityName, String time,ReturnVoice returnVoice) {
+                voice_answer = "";
                 Log.i(TAG, "onWeatherStatus: cityName = "+cityName+",time = "+time);
-//                getWeatherBasic(VOICE,cityName);
-                Log.d(TAG, "onWeatherStatus: 天气状况"+voice_weather.status);
-                if (voice_weather != null && voice_weather.status.equals("ok")){
-                    judgeStatusInfo(cityName,time);
-                } else {
-                    voice_answer = "查询" + time + cityName + "天气状况失败";
-                }
+                getWeatherBasic(VOICE,cityName,time,returnVoice,"onWeatherStatus");
             }
 
             @Override
@@ -571,6 +556,12 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
                                         case "onCurrentTempInfo":
                                             currentTempInfo(cityName,returnVoice);
                                             break;
+                                        case "onWeatherStatus":
+                                            weatherStatus(cityName, time,returnVoice);
+                                            break;
+                                        case "":
+                                            rangeTempInfo(cityName, time,returnVoice);
+                                            break;
                                     }
                                 }
                             }
@@ -579,6 +570,17 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
                 }
             }
         });
+    }
+
+    private void rangeTempInfo(String cityName, String time,ReturnVoice returnVoice) {
+        Log.d(TAG, "onRangeTempInfo: 温度信息"+voice_weather.status);
+        if (voice_weather != null && voice_weather.status.equals("ok")){
+            Log.i(TAG, "onRangeTempInfo: city = "+voice_weather);
+            judgeRangeTempInfo(cityName,time);
+        } else {
+            voice_answer = "查询"+time+cityName+"温度信息失败";
+        }
+        returnVoice.onReturnVoice(voice_answer);
     }
 
     //优先加载本地空气质量数据
@@ -647,6 +649,15 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
             voice_answer = cityName+"当前温度为" + voice_weather.now.tmperature + "度";
         } else {
             voice_answer = "查询" + cityName + "当前温度信息失败";
+        }
+        returnVoice.onReturnVoice(voice_answer);
+    }
+
+    private void weatherStatus(String cityName, String time,ReturnVoice returnVoice) {
+        if (voice_weather != null && voice_weather.status.equals("ok")){
+            judgeStatusInfo(cityName,time);
+        } else {
+            voice_answer = "查询" + time + cityName + "天气状况失败";
         }
         returnVoice.onReturnVoice(voice_answer);
     }
