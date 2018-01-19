@@ -2,10 +2,12 @@ package com.idx.smartspeakdock.Setting;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +58,21 @@ public class SettingFragment extends Fragment {
                 startActivity(new Intent(getActivity(),AboutActivity.class));
             }
         });
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        //判断平台版本
+        judgePlatformVersion();
+    }
+
+    private void judgePlatformVersion() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            Log.i(TAG, "judgePlatformVersion: 平台版本小于19");
+            mSwitch.setTextOn(getResources().getString(R.string.voice_switch_on_text));
+            mSwitch.setTextOff(getResources().getString(R.string.voice_switch_off_text));
+        }else{}
     }
 
     @Override

@@ -1,7 +1,6 @@
 <resources>
-    <string name="app_name">SmartSpeakDock</string>
+    <string name="app_smart_name">SmartSpeakDock</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="home_title">Menu</string>
@@ -33,6 +32,8 @@
 
     //setting
     <string name="voice_switch_on_off">voice switch on or off</string>
+    <string name="voice_switch_on_text">on</string>
+    <string name="voice_switch_off_text">off</string>
     <string name="about">about</string>
     //calendar
     <string name="year">year</string>
