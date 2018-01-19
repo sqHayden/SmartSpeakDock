@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.baidu.tts.client.SpeechSynthesizeBag;
+import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.baidu.unit.APIService;
 import com.idx.smartspeakdock.baidu.unit.exception.UnitError;
 import com.idx.smartspeakdock.baidu.unit.listener.ICalenderVoiceListener;
@@ -19,6 +20,7 @@ import com.idx.smartspeakdock.baidu.unit.listener.VoiceActionAdapter;
 import com.idx.smartspeakdock.baidu.unit.model.AccessToken;
 import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
 import com.idx.smartspeakdock.utils.AuthInfo;
+import com.idx.smartspeakdock.utils.MathTool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,21 +34,47 @@ public class UnitManager {
 
     private static final String TAG = UnitManager.class.getName();
     private static UnitManager INSTANCE = null;
-    //每次会话Id
+    /**
+     * unit会话ID
+     */
     private String sessionId;
-    //SmartSpeakDock的场景ID
+    /**
+     * SmartSpeakDock场景ID
+     */
     private int sceneId = 15213;
+    /**
+     * 场景Token
+     */
     private String accessToken;
-    //会话标识
+    /**
+     * 会话管理标识
+     */
     private boolean enableSession = false;
-    //退出voice标识
+    /**
+     * 退出voice标识
+     */
     private boolean isOver = false;
-
+    /**
+     * 文本转语音管理器
+     */
     private TTSManager ttsManager;
+    /**
+     * Unit API
+     */
     private APIService mApiService;
-    //语音响应处理适配
+    /**
+     * 语音响应处理适配
+     */
     private VoiceActionAdapter mVoiceAdapter;
+    /**
+     * 会话状态监听器
+     * 1.Unit Session Error触发，关闭Session（UnitManager中触发）
+     * 2.Unit Session Finish，即再见触发，关闭Session（UnitManager中触发）
+     * 3.识别超时，触发Recognized错误，关闭Session（SpeakService中RecognizerManager监听器触发）
+     * 4.Unit Session未关闭，即以上条件不满足，继续触发识别 onRegContinue
+     */
     private ISessionListener mSessionListener;
+    private String[] mVoiceArrayRepeat;
 
     private UnitManager(Context context) {
         init(context);
@@ -86,6 +114,7 @@ public class UnitManager {
         }, (String) authParams.get(AuthInfo.META_APP_KEY), (String) authParams.get(AuthInfo.META_APP_SECRET));
         mVoiceAdapter = new VoiceActionAdapter(context);
         ttsManager = TTSManager.getInstance();
+        mVoiceArrayRepeat = context.getResources().getStringArray(R.array.voice_repeat);
     }
 
     /**
@@ -208,7 +237,8 @@ public class UnitManager {
                     if (enableSession) {
                         if (sayBye){
                             //询问是否关闭会话
-                            TTSManager.getInstance().speak("您还有什么吩咐吗，没有请说“再见!”", new TTSManager.SpeakCallback() {
+                            String voice = mVoiceArrayRepeat[MathTool.randomIndex(0, mVoiceArrayRepeat.length)];
+                            TTSManager.getInstance().speak(voice, new TTSManager.SpeakCallback() {
                                 @Override
                                 public void onSpeakStart() {
                                 }
