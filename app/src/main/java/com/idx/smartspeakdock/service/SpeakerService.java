@@ -225,6 +225,7 @@ public class SpeakerService extends Service implements IStatus {
         Log.d(TAG, "onCreate: " + Thread.currentThread().getId());
         super.onCreate();
         mHandler = new VoiceHandler(this);
+        initData();
 
     }
     private void initData(){
