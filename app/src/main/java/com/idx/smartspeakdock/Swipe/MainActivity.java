@@ -24,6 +24,7 @@ import android.view.WindowManager;
 
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
 import com.idx.smartspeakdock.music.service.MusicService;
 import com.idx.smartspeakdock.service.ControllerService;
 import com.idx.smartspeakdock.service.GetCityService;
@@ -312,6 +313,7 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.d(TAG, "onServiceConnected: 主acitivy服务绑定");
             mControllerBinder = (ControllerService.MyBinder) iBinder;
 
             //shopping语音处理
@@ -321,6 +323,12 @@ public class MainActivity extends BaseActivity {
                         Log.i(TAG, "onShoppingCallback: " + web_url);
                         revokeMainShoppingVoice(web_url);
                     }
+            });
+            mControllerBinder.setCalendarControllerListener(new CalendarCallBack() {
+                @Override
+                public void onCalendarCallBack() {
+                    revokeMainCalendarVoice();
+                }
             });
         }
 
@@ -333,10 +341,18 @@ public class MainActivity extends BaseActivity {
     }
 
     private void revokeMainShoppingVoice(String web_url) {
+        Log.i(TAG, "revokeMainShoppingVoice: 当前Activity不是SwipeActivity");
         if (!isActivityTop){
             Log.i(TAG, "openSpecifyWebsites: 当前Activity不是SwipeActivity");
             mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
             mIntent.putExtra("weburl",web_url);
+            startActivity(mIntent);
+        }
+    }
+    private void revokeMainCalendarVoice() {
+        if (!isActivityTop){
+            Log.i(TAG, "openSpecifyWebsites: 当前Activity不是SwipeActivity");
+            mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID);
             startActivity(mIntent);
         }
     }

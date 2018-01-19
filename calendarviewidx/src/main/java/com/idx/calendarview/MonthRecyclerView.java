@@ -23,6 +23,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("all")
@@ -30,6 +31,7 @@ public class MonthRecyclerView extends RecyclerView {
     private CustomCalendarViewDelegate mDelegate;
     private MonthAdapter mAdapter;
     private OnMonthSelectedListener mListener;
+    private String[] montList;
 
     public MonthRecyclerView(Context context) {
         this(context, null);
@@ -38,6 +40,7 @@ public class MonthRecyclerView extends RecyclerView {
     public MonthRecyclerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mAdapter = new MonthAdapter(context);
+        montList = context.getResources().getStringArray(R.array.month_list);
         // 判断Android当前的屏幕是横屏还是竖屏。横竖屏判断
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             //竖屏
@@ -77,6 +80,7 @@ public class MonthRecyclerView extends RecyclerView {
             Month month = new Month();
             month.setDiff(firstDayOfWeek);
             month.setCount(mDaysCount);
+            month.setMonths(montList[i-1]);
             month.setMonth(i);
             month.setYear(year);
             mAdapter.addItem(month);

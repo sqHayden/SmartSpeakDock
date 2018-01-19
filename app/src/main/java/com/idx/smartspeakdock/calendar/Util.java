@@ -1,6 +1,8 @@
 package com.idx.smartspeakdock.calendar;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 
 import com.idx.calendarview.LunarCalendar;
 import com.idx.smartspeakdock.R;
@@ -11,6 +13,7 @@ import org.litepal.crud.DataSupport;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,7 +36,7 @@ public  class Util {
         List<Schedule> listSchedule = DataSupport.where("date = ? and day = ?", date, day.toString()).find(Schedule.class);
         if (listSchedule.size() != 0) {
             for (int i = 0; i < listSchedule.size(); i++) {
-                answer1 = time +listSchedule.get(i).getTime() + listSchedule.get(i).getEvent();
+                answer1 = listSchedule.get(i).getTime() + listSchedule.get(i).getEvent();
                 answer = answer + answer1;
             }
 

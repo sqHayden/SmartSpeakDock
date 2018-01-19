@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -95,6 +96,7 @@ public class CalendarFragment extends BaseFragment implements
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_calendar,container,false);
+        Log.d(TAG, "onCreateView: calendarfragment创建试图");
         initView();
         onTouchListener = new SwipeActivity.MyOnTouchListener() {
             @Override

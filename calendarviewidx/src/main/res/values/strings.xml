@@ -1,6 +1,20 @@
 <resources>
-    <string name="app_name">CalendarView</string>
+    <string name="app_name">SmartSpeakDock</string>
     <string name="months">month</string>
+    <string-array name="month_list">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>Augest</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
     <string-array name="each_month">
         <item>春节</item>
         <item>二月</item>

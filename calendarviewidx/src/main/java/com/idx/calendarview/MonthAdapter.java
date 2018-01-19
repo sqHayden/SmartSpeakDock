@@ -55,7 +55,7 @@ class MonthAdapter extends BaseRecyclerAdapter<Month> {
         view.setSchemes(mSchemes);
         view.setSchemeColor(mSchemeColor);
         view.init(item.getDiff(), item.getCount(), item.getYear(), item.getMonth());
-        h.mTextMonth.setText(item.getMonth() + context.getResources().getString(R.string.months));
+        h.mTextMonth.setText(item.getMonths());
     }
 
     private static class MonthViewHolder extends RecyclerView.ViewHolder {

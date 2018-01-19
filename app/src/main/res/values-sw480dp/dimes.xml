@@ -57,7 +57,7 @@
     <dimen name="calendar_dialog_button_textsize">24sp</dimen>
     <dimen name="calendar_recycler_textsize">14sp</dimen>
     <dimen name="calendar_week_textsize">10sp</dimen>
-    <dimen name="calendar_textsize_select">7sp</dimen>
+    <dimen name="calendar_textsize_select">10sp</dimen>
 
     //music
     <dimen name="music_album_outboard_marginTop">256dp</dimen>

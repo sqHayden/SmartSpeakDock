@@ -29,6 +29,7 @@ import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.Setting.SettingFragment;
 import com.idx.smartspeakdock.calendar.CalendarFragment;
+import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
 import com.idx.smartspeakdock.map.MapFragment;
 import com.idx.smartspeakdock.music.activity.MusicListFragment;
 import com.idx.smartspeakdock.service.ControllerService;
@@ -81,6 +82,7 @@ public class SwipeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.drawer_main);
+        Log.d(TAG, "onCreate: swipeActivity创建");
         //对应fragment的id
         extraIntentId = getIntent().getStringExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT);
         initToolBar();
@@ -190,7 +192,7 @@ public class SwipeActivity extends BaseActivity {
         });
 
         mSharePrefrenceUtils = new SharePrefrenceUtils(this);
-        mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "");
+        //mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "");
     }
 
     private void initToolBar() {
@@ -496,7 +498,20 @@ public class SwipeActivity extends BaseActivity {
             }
         }
     }
+//日历模块语音处理
+    private void revokeSwipeCalendarVoice(){
+        Log.d(TAG, "revokeSwipeCalendarVoice: 日历模块语音处理");
+        if (isActivityTop){
+            if (isFragmentTop.getClass().getSimpleName().equals("CalendarFragment")) {
+                Log.i(TAG, "openSpecifyWebsites: 当前Fragment是CalendarFragment");
 
+            } else {
+                Log.i(TAG, "openSpecifyWebsites: 当前Fragment不是CalendarFragment");
+                initCalendar();
+                mActionBar.setTitle(actionBar_title);
+            }
+        }
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -543,6 +558,7 @@ public class SwipeActivity extends BaseActivity {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.d(TAG, "onServiceConnected: 连接到后台服务");
             mControllerBinder = (ControllerService.MyBinder) iBinder;
 
             //shopping语音处理
@@ -551,6 +567,13 @@ public class SwipeActivity extends BaseActivity {
                 public void onShoppingCallback(String web_url) {
                     Log.i("ryan", "onShoppingCallback: " + web_url);
                     revokeSwipeShoppingVoice(web_url);
+                }
+            });
+            //日历
+            mControllerBinder.setCalendarControllerListener(new CalendarCallBack() {
+                @Override
+                public void onCalendarCallBack() {
+                  revokeSwipeCalendarVoice();
                 }
             });
         }

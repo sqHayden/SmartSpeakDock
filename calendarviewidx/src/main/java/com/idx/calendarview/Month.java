@@ -21,8 +21,9 @@ import java.io.Serializable;
 class Month implements Serializable {
     private int diff;//日期偏移
     private int count;
-    private int month;
+    private String months;
     private int year;
+    private int month;
 
     int getDiff() {
         return diff;
@@ -40,14 +41,19 @@ class Month implements Serializable {
         this.count = count;
     }
 
-    int getMonth() {
-        return month;
+    String getMonths() {
+        return months;
     }
 
-    void setMonth(int month) {
+    void setMonths(String month) {
+        this.months = month;
+    }
+    void setMonth(int month){
         this.month = month;
     }
-
+    int getMonth(){
+        return month;
+    }
     int getYear() {
         return year;
     }
