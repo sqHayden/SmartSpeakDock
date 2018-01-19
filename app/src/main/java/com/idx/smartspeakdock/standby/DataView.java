@@ -16,8 +16,7 @@ public class DataView extends TextClock {
     public DataView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        setFormat12Hour("EEEE M月dd日");
-        setFormat24Hour("EEEE M月dd日");
+        setFormat12Hour("EEEE  M/dd");
         setTypeface(FontCustom.setHeiTi(context));
     }
 

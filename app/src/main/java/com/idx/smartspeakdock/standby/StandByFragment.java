@@ -91,7 +91,8 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
 
-        outState.putString("cityName",location_textView.getText().toString());
+       // outState.putString("cityName",location_textView.getText().toString());
+        outState.putString("cityName",cityname);
         Log.d(TAG, "onSaveInstanceState: ");
     }
 
@@ -124,7 +125,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_standby,container,false);
         init();
-
+        location_textView.setText(getActivity().getString(R.string.Shenzhen));
         return view;
     }
 
@@ -207,8 +208,8 @@ public class StandByFragment extends BaseFragment implements IStandByView{
                     R.drawable.weather_unknown));
         }
         standby_weather_tmp.setText(weather.forecastList.get(0).max + " / " + weather.forecastList.get(0).min + "℃");
-        standby_life_clothes.setText("穿衣：" + weather.lifestyleList.get(1).brf);
-        standby_life_car.setText("洗车：" + weather.lifestyleList.get(6).brf);
+        standby_life_clothes.setText(getActivity().getString(R.string.clothes)+": " + weather.lifestyleList.get(1).brf);
+        standby_life_car.setText(getActivity().getString(R.string.wash_car)+": " + weather.lifestyleList.get(6).brf);
         Log.d(TAG, "showWeatherInfo: show11111111");
     }
 

@@ -58,4 +58,10 @@
     <string name="please_select_date">please select date</string>
     <string name="please_add_event">please add event</string>
     <string name="delete">delete</string>
+    //splash
+    <string name="Shenzhen">Shenzhen</string>
+    <string name="life_car">Wash_Car：较适宜</string>
+    <string name="life_clothes">Clothes：较冷</string>
+    <string name="wash_car">Wash_Car</string>
+    <string name="clothes">Clothes</string>
 </resources>

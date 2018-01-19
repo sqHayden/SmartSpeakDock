@@ -28,8 +28,8 @@
     <dimen name="splash_weather_image_width_size">48dp</dimen>
     <dimen name="splash_weather_image_height_size">48dp</dimen>
     <dimen name="splash_weather_margin_left">16dp</dimen>
-    <dimen name="splash_weather_tmp_width">120dp</dimen>
-    <dimen name="splash_weather_width">192dp</dimen>
+    <dimen name="splash_weather_tmp_width">220dp</dimen>
+    <dimen name="splash_weather_width">240dp</dimen>
     //calendar
     <dimen name="calendar_rl_tool_height">40dp</dimen>
     <dimen name="calendar_rl_tool_margintop">16dp</dimen>

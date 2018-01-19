@@ -62,6 +62,11 @@
     <string name="please_add_event">请添加事件</string>
     <string name="delete">删除</string>
 
-
+    //splash
+    <string name="Shenzhen">深圳市</string>
+    <string name="life_car">洗车：较适宜</string>
+    <string name="life_clothes">穿衣：较冷</string>
+    <string name="wash_car">洗车</string>
+    <string name="clothes">穿衣</string>
 
 </resources>

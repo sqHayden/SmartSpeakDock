@@ -14,7 +14,7 @@ public class BitmapUtils {
         Bitmap bitmap = null;
         try {
             BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.RGB_565;
+            options.inPreferredConfig = Bitmap.Config.ALPHA_8 ;
            bitmap = BitmapFactory.decodeResource(context.getResources(),resId,options);
         } catch (OutOfMemoryError e){
             e.printStackTrace();

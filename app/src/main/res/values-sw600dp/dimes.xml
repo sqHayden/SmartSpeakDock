@@ -47,7 +47,7 @@
     <dimen name="splash_weather_image_width_size">60dp</dimen>
     <dimen name="splash_weather_image_height_size">60dp</dimen>
     <dimen name="splash_weather_margin_left">20dp</dimen>
-    <dimen name="splash_weather_tmp_width">150dp</dimen>
+    <dimen name="splash_weather_tmp_width">220dp</dimen>
     <dimen name="splash_weather_width">240dp</dimen>
     //music
     <dimen name="music_album_outboard_marginTop">321dp</dimen>

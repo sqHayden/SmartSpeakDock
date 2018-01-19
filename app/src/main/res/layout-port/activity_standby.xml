@@ -71,7 +71,7 @@
         <LinearLayout
             android:id="@+id/linter_3"
             android:layout_marginTop="@dimen/splash_car_margin_top"
-            android:layout_width="@dimen/splash_weather_width"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_centerHorizontal="true"
@@ -82,19 +82,19 @@
                 android:layout_height="@dimen/splash_weather_image_height_size" />
             <TextView
                 android:id="@+id/standby_life_car"
-                android:layout_width="@dimen/splash_weather_tmp_width"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/splash_weather_margin_left"
                 android:layout_gravity="center_vertical"
                 android:textSize="@dimen/splash_weather_textsize"
                 android:textColor="#FFFFFF"
-                android:text="洗车：较适宜"/>
+                android:text="@string/life_car"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linter_4"
             android:layout_marginTop="@dimen/splash_air_margin_top"
-            android:layout_width="@dimen/splash_weather_width"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_centerHorizontal="true"
@@ -105,13 +105,13 @@
                 android:layout_height="@dimen/splash_weather_image_height_size" />
             <TextView
                 android:id="@+id/standby_life_clothes"
-                android:layout_width="@dimen/splash_weather_tmp_width"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/splash_weather_margin_left"
                 android:layout_gravity="center_vertical"
                 android:textSize="@dimen/splash_weather_textsize"
                 android:textColor="#FFFFFF"
-                android:text="穿衣：较冷"/>
+                android:text="@string/life_clothes"/>
         </LinearLayout>
 
     </RelativeLayout>
