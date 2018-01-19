@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.baidu.speech.asr.SpeechConstant;
 import com.baidu.tts.client.TtsMode;
+import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.baidu.control.RecognizerManager;
 import com.idx.smartspeakdock.baidu.control.TTSManager;
 import com.idx.smartspeakdock.baidu.control.UnitManager;
@@ -23,6 +24,7 @@ import com.idx.smartspeakdock.baidu.wakeup.IWakeupListener;
 import com.idx.smartspeakdock.baidu.wakeup.WakeUpResult;
 import com.idx.smartspeakdock.baidu.wakeup.WakeupParams;
 import com.idx.smartspeakdock.utils.Logger;
+import com.idx.smartspeakdock.utils.MathTool;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedHashMap;
@@ -35,32 +37,58 @@ import java.util.Map;
 public class SpeakerService extends Service implements IStatus {
 
     private static final String TAG = SpeakerService.class.getName();
-    //唤醒常量
+    /**
+     * 每次唤醒常量
+     */
     private static final int CONSTANT_WAKE_UP = 0x001;
+    /**
+     * 唤醒服务开启常量
+     */
     private static final int CONSTANT_WAKE_UP_START = 0x002;
+    /**
+     * 唤醒服务停止常量
+     */
     private static final int CONSTANT_WAKE_UP_STOP = 0x003;
-    //识别常量
+    /**
+     * 开始识别常量
+     */
     private static final int CONSTANT_RECOGNIZE_START = 0x101;
+    /**
+     * 识别结束常量
+     */
     private static final int CONSTANT_RECOGNIZE_FINISH = 0x102;
+    /**
+     * 识别错误常量
+     */
     private static final int CONSTANT_RECOGNIZE_ERROR = 0x103;
-    //会话常量
+    /**
+     * 会话开始常量
+     */
     private static final int CONSTANT_SESSION_START = 0x201;
+    /**
+     * 会话结束常量
+     */
     private static final int CONSTANT_SESSION_FINISH = 0x202;
+    /**
+     * 会话错误常量
+     */
     private static final int CONSTANT_SESSION_ERROR = 0x203;
-
-    //超时计数器
+    /**
+     * 超时时长常量
+     */
     private static final int CONSTANT_TIME_STEP = 15000; //15s
+    /**
+     * 超时消息常量
+     */
     private static final int CONSTANT_TIME_TICK = 0x301;
-
-    //相邻两次唤醒间隔
+    /**
+     * 相邻唤醒间隔时长
+     */
     private static final int CONSTANT_WAKE_UP_SPACE = 5000; //5s
-    //唤醒到识别的间隔
-    private static final int CONSTANT_WAKE_UP_RECOGNIZE_SPACE = 2000; //2s
-
     /**
      * 唤醒后，识别回溯时长
      */
-    private static final int BACK_TRACK = 1500; //ms
+    private static final int BACK_TRACK = 1000; //ms
     /**
      * 唤醒管理器
      */
@@ -73,7 +101,9 @@ public class SpeakerService extends Service implements IStatus {
      * 识别管理器
      */
     private RecognizerManager mRecognizerManager = null;
-
+    /**
+     * 唤醒服务状态标识
+     */
     private int wakeUpStatus = STATUS_NONE;
 
     private Handler mHandler = null;
@@ -93,6 +123,8 @@ public class SpeakerService extends Service implements IStatus {
             }
         }
     };
+    private String[] mVoiceArrayBye;
+    private String[] mVoiceArrayWel;
 
     private static class VoiceHandler extends Handler {
         WeakReference<SpeakerService> weakReference;
@@ -111,47 +143,57 @@ public class SpeakerService extends Service implements IStatus {
             service.isReceived = true;
             switch (msg.what) {
                 case CONSTANT_WAKE_UP:
+                case CONSTANT_SESSION_START:
+                    //语音唤醒后，开启会话，创建会话窗口
                     if (service.isWaked) {
                         long timeNow = System.currentTimeMillis();
                         if (timeNow - startTime < CONSTANT_WAKE_UP_SPACE) {
                             return;
                         }
-                    } else {
-                        service.isWaked = true;
-                        startTime = System.currentTimeMillis();
-                        //开始超时计时
-                        service.mHandler.post(service.timerRunnable);
-                        TTSManager.getInstance().speak("啥事儿？");
                     }
-                case CONSTANT_SESSION_START:
-                    //语音唤醒后，开启会话，创建会话窗口
+                    service.isWaked = true;
+                    startTime = System.currentTimeMillis();
+                    service.mHandler.removeCallbacks(service.timerRunnable);
+                    //开始计时
+                    service.mHandler.post(service.timerRunnable);
+
                     UnitManager.getInstance(service.getBaseContext()).enableSession(true);
                     if (service.speakDialog == null) {
                         service.speakDialog = new SpeakDialog(service.getBaseContext());
                     }
                     service.speakDialog.showReady();
-                    service.mHandler.sendEmptyMessageDelayed(CONSTANT_RECOGNIZE_START, CONSTANT_WAKE_UP_RECOGNIZE_SPACE);
+                    String voice = service.mVoiceArrayWel[MathTool.randomIndex(0, service.mVoiceArrayWel.length)];
+                    Log.d(TAG, "welcome voice: " + voice);
+                    TTSManager.getInstance().speak(voice, new TTSManager.SpeakCallback() {
+                        @Override
+                        public void onSpeakStart() {
+
+                        }
+
+                        @Override
+                        public void onSpeakFinish() {
+                            service.mHandler.sendEmptyMessageDelayed(CONSTANT_RECOGNIZE_START, BACK_TRACK);
+                        }
+
+                        @Override
+                        public void onSpeakError() {
+
+                        }
+                    });
                     break;
                 case CONSTANT_RECOGNIZE_START:
                     //显示会话窗口，并开始识别，需回溯
-                    if (service.speakDialog != null) {
-                        service.speakDialog.showSpeaking();
-                    }
+                    service.speakDialog.showSpeaking();
                     service.startRecognize();
                     break;
                 case CONSTANT_RECOGNIZE_FINISH:
-                    if (service.speakDialog != null) {
-                        service.speakDialog.showReady();
-                    }
+                    service.speakDialog.showReady();
                     break;
                 case CONSTANT_TIME_TICK:
+                    //查询超时了
                     TTSManager.getInstance().speak("对不起，我糊涂了");
-                    //出错结束会话
                 case CONSTANT_RECOGNIZE_ERROR:
-                    //出错结束会话
                 case CONSTANT_SESSION_ERROR:
-                    //超时结束会话标识
-                    //结束会话
                 case CONSTANT_SESSION_FINISH:
                     UnitManager.getInstance(service.getBaseContext()).enableSession(false);
                     if (service.speakDialog != null) {
@@ -183,6 +225,11 @@ public class SpeakerService extends Service implements IStatus {
         Log.d(TAG, "onCreate: " + Thread.currentThread().getId());
         super.onCreate();
         mHandler = new VoiceHandler(this);
+
+    }
+    private void initData(){
+        mVoiceArrayBye = getResources().getStringArray(R.array.voice_bye);
+        mVoiceArrayWel = getResources().getStringArray(R.array.voice_welcome);
     }
 
     @Override
@@ -287,7 +334,7 @@ public class SpeakerService extends Service implements IStatus {
         public void onSuccess(String word, WakeUpResult result) {
             if (mHandler != null) {
                 //通知已经唤醒, 回溯1.5s
-                mHandler.sendEmptyMessageDelayed(CONSTANT_WAKE_UP, BACK_TRACK);
+                mHandler.sendEmptyMessage(CONSTANT_WAKE_UP);
             }
             Logger.info(TAG, "唤醒成功，唤醒词：" + word);
         }
@@ -371,11 +418,27 @@ public class SpeakerService extends Service implements IStatus {
         @Override
         public void onAsrFinishError(int errorCode, int subErrorCode, String errorMessage, String descMessage, RecogResult recogResult) {
             super.onAsrFinishError(errorCode, subErrorCode, errorMessage, descMessage, recogResult);
-            TTSManager.getInstance().speak("好像没有什么事儿，下次再见！");
-            //超时交互，自动结束会话
-            if (mHandler != null) {
-                mHandler.sendEmptyMessage(CONSTANT_RECOGNIZE_ERROR);
-            }
+            String voice = mVoiceArrayBye[MathTool.randomIndex(0, mVoiceArrayBye.length)];
+            TTSManager.getInstance().speak(voice, new TTSManager.SpeakCallback(){
+                @Override
+                public void onSpeakStart() {
+
+                }
+
+                @Override
+                public void onSpeakFinish() {
+                    //超时交互，自动结束会话
+                    if (mHandler != null) {
+                        mHandler.sendEmptyMessage(CONSTANT_RECOGNIZE_ERROR);
+                    }
+                }
+
+                @Override
+                public void onSpeakError() {
+
+                }
+            });
+
             String message = "识别错误, 错误码：" + errorCode + "," + subErrorCode;
             sendStatusMessage(message + "；错误消息:" + errorMessage + "；描述信息：" + descMessage);
             if (speechEndTime > 0) {
