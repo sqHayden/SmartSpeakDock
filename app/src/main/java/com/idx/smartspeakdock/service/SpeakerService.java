@@ -125,6 +125,7 @@ public class SpeakerService extends Service implements IStatus {
     };
     private String[] mVoiceArrayBye;
     private String[] mVoiceArrayWel;
+    private String[] mVoiceArraySorry;
 
     private static class VoiceHandler extends Handler {
         WeakReference<SpeakerService> weakReference;
@@ -162,9 +163,9 @@ public class SpeakerService extends Service implements IStatus {
                         service.speakDialog = new SpeakDialog(service.getBaseContext());
                     }
                     service.speakDialog.showReady();
-                    String voice = service.mVoiceArrayWel[MathTool.randomIndex(0, service.mVoiceArrayWel.length)];
-                    Log.d(TAG, "welcome voice: " + voice);
-                    TTSManager.getInstance().speak(voice, new TTSManager.SpeakCallback() {
+                    String voiceWel = service.mVoiceArrayWel[MathTool.randomIndex(0, service.mVoiceArrayWel.length)];
+                    Log.d(TAG, "welcome voice: " + voiceWel);
+                    TTSManager.getInstance().speak(voiceWel, new TTSManager.SpeakCallback() {
                         @Override
                         public void onSpeakStart() {
 
@@ -191,7 +192,8 @@ public class SpeakerService extends Service implements IStatus {
                     break;
                 case CONSTANT_TIME_TICK:
                     //查询超时了
-                    TTSManager.getInstance().speak("对不起，我糊涂了");
+                    String voiceSorry = service.mVoiceArraySorry[MathTool.randomIndex(0, service.mVoiceArraySorry.length)];
+                    TTSManager.getInstance().speak(voiceSorry);
                 case CONSTANT_RECOGNIZE_ERROR:
                 case CONSTANT_SESSION_ERROR:
                 case CONSTANT_SESSION_FINISH:
@@ -228,9 +230,11 @@ public class SpeakerService extends Service implements IStatus {
         initData();
 
     }
+
     private void initData(){
         mVoiceArrayBye = getResources().getStringArray(R.array.voice_bye);
         mVoiceArrayWel = getResources().getStringArray(R.array.voice_welcome);
+        mVoiceArraySorry = getResources().getStringArray(R.array.voice_sorry);
     }
 
     @Override
@@ -477,7 +481,6 @@ public class SpeakerService extends Service implements IStatus {
             sendStatusMessage("长语音识别结束。");
 
         }
-
 
         /**
          * 使用离线命令词时，有该回调说明离线语法资源加载成功

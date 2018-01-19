@@ -72,7 +72,7 @@ public class TTSManager {
         mSpeechSynthesizer.setSpeechSynthesizerListener(new TtsStatusListener());
 
         //设置合成参数，0女声，1男声
-        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEAKER, "0");
+        mSpeechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEAKER, "4");
 
         mSpeechSynthesizer.setAudioStreamType(AudioManager.MODE_IN_CALL);
 

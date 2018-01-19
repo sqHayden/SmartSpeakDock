@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.idx.smartspeakdock.Actions;
 import com.idx.smartspeakdock.Modules;
+import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.SlotsTypes;
 import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.TTSManager;
@@ -16,6 +17,7 @@ import com.idx.smartspeakdock.map.PathWay;
 import com.idx.smartspeakdock.map.SearchArea;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
+import com.idx.smartspeakdock.utils.MathTool;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
 
@@ -103,7 +105,7 @@ public class VoiceActionAdapter {
         mShoppingListener = listener;
     }
 
-    public void setSessionListener(ISessionListener sessionListener){
+    public void setSessionListener(ISessionListener sessionListener) {
         mSessionListener = sessionListener;
     }
 
@@ -134,6 +136,12 @@ public class VoiceActionAdapter {
                     mSessionListener.onSessionFinish();
                 }
                 Log.d(TAG, "voice session: end");
+                return true;
+
+            case Actions.HELP_MODULE:
+                return false;
+            case Actions.HELP:
+                help();
                 return true;
 
             /**音乐指令*/
@@ -301,6 +309,34 @@ public class VoiceActionAdapter {
         }
 
     }
+
+    private void help() {
+        String name = mSlots.get(SlotsTypes.USER_MODULE_NAME);
+        String[] voiceArray = null;
+
+        switch (name) {
+            case Modules.CALENDER:
+                voiceArray = mContext.getResources().getStringArray(R.array.help_calender);
+                break;
+            case Modules.MAP:
+                voiceArray = mContext.getResources().getStringArray(R.array.help_map);
+                break;
+            case Modules.MUSIC:
+                voiceArray = mContext.getResources().getStringArray(R.array.help_music);
+                break;
+            case Modules.SHOPPING:
+                voiceArray = mContext.getResources().getStringArray(R.array.help_shopping);
+                break;
+            case Modules.WEATHER:
+                voiceArray = mContext.getResources().getStringArray(R.array.help_weather);
+                break;
+            default:
+        }
+        String[] preVoice = mContext.getResources().getStringArray(R.array.help_pre);
+        String voiceHelp = preVoice[MathTool.randomIndex(0, preVoice.length)] + voiceArray[MathTool.randomIndex(0, voiceArray.length)];
+        TTSManager.getInstance().speak(voiceHelp, mSpeakCallback);
+    }
+
 
     private void shoppingMeClassify() {
         recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_ME_CLASSIFY);
@@ -610,7 +646,7 @@ public class VoiceActionAdapter {
             case Modules.SHOPPING:
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
-                mIntent.putExtra("weburl","https://mall.flnet.com");
+                mIntent.putExtra("weburl", "https://mall.flnet.com");
                 mContext.startActivity(mIntent);
                 break;
             /**购物指令*/

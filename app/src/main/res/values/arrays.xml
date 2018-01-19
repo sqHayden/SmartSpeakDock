@@ -17,7 +17,7 @@
     <string-array name="voice_bye">
         <item>好像没有什么事儿，下次再见！</item>
         <item>没什么事，我休息去了！</item>
-        <item>等的我花儿都谢了，再见！</item>
+        <item>等得我花儿（er2）都谢了，再见！</item>
     </string-array>
 
     <string-array name="voice_repeat">
@@ -27,8 +27,90 @@
     </string-array>
 
     <string-array name="voice_sorry">
-        <item>对不起，我糊涂了。</item>
-        <item>对不起，我需要调整下心情，再见。</item>
-        <item>对不起，臣妾做不到，再见</item>
+        <item>对不起，我糊涂了！</item>
+        <item>对不起，我需要调整下心情，再见！</item>
+        <item>对不起，臣妾做不到，再见！</item>
     </string-array>
+
+    <string-array name="help_calender">
+        <item>打开日历。</item>
+        <item>今天周几？</item>
+        <item>今天星期几？</item>
+        <item>今天礼拜几？</item>
+        <item>明天是周几？</item>
+        <item>明天是星期几？</item>
+        <item>明天是礼拜几？</item>
+        <item>今天什么节假日？</item>
+        <item>今天什么节日？</item>
+        <item>今天什么节？</item>
+        <item>明天是什么节假日？</item>
+        <item>明天是什么节日？</item>
+        <item>明天是什么节？</item>
+        <item>今天有什么事要做？</item>
+        <item>今天有什么事情要做？</item>
+        <item>今天有什么事务要做？</item>
+        <item>明天有什么事？</item>
+        <item>明天有什么事情？</item>
+        <item>明天有什么事务？</item>
+        <item>今天几号？</item>
+        <item>今天是几号？</item>
+        <item>今天是农历几号？</item>
+        <item>现在几点？</item>
+        <item>现在几点了？</item>
+        <item>现在什么时间？</item>
+        <item>现在什么时间了？</item>
+        <item>当前几点？</item>
+        <item>当前几点了？</item>
+        <item>此刻几点？</item>
+        <item>此刻几点了？</item>
+    </string-array>
+
+    <string-array name="help_map">
+        <item>打开地图。</item>
+        <item>我在哪儿？</item>
+        <item>这是哪理？</item>
+        <item>我现在在哪里？</item>
+        <item>我当前在哪儿？</item>
+        <item>我此刻在哪里？</item>
+        <item>搜索。</item>
+        <item>搜索小吃街，商场，宾馆，酒店，地铁站，公交站或公园。</item>
+        <item>我想要搜索小吃街，商场，宾馆，酒店，地铁站，公交站或公园。</item>
+        <item>搜索深圳大学。</item>
+        <item>我想搜索深圳大学。</item>
+        <item>我想去龙华人民医院。</item>
+        <item>我想从深圳去广州。</item>
+        <item>我想驾车去深圳。</item>
+        <item>我想坐公交去深圳大学。</item>
+        <item>我想步行去清湖小学。</item>
+        <item>我想从深圳开车去广州。</item>
+        <item>我想开车从深圳去广州。</item>
+    </string-array>
+
+    <string-array name="help_music">
+        <item>打开音乐。</item>
+        <item>播放音乐。</item>
+        <item>播放一剪梅。</item>
+        <item>播放上一首。</item>
+        <item>上一首。</item>
+        <item>播放下一首。</item>
+        <item>下一首。</item>
+        <item>暂停。</item>
+        <item>暂停播放。</item>
+        <item>暂停播放音乐。</item>
+        <item>继续。</item>
+        <item>继续播放。</item>
+        <item>继续播放音乐。</item>
+    </string-array>
+    <string-array name="help_weather">
+        <item>待增加</item>
+    </string-array>
+    <string-array name="help_shopping">
+        <item>待增加</item>
+    </string-array>
+
+    <string-array name="help_pre">
+        <item>您可以这样问，</item>
+        <item>您可以对我说，</item>
+    </string-array>
+
 </resources>
