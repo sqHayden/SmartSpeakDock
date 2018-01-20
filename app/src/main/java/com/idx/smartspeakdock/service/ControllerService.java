@@ -14,9 +14,13 @@ import com.idx.calendarview.CalendarView;
 import com.idx.calendarview.LunarCalendar;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.baidu.unit.listener.ICalenderVoiceListener;
+import com.idx.smartspeakdock.baidu.unit.listener.IMusicVoiceListener;
 import com.idx.smartspeakdock.calendar.TimeData;
 import com.idx.smartspeakdock.calendar.Util;
 import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
+import com.idx.smartspeakdock.music.activity.MusicListFragment;
+import com.idx.smartspeakdock.music.service.MusicCallBack;
+import com.idx.smartspeakdock.music.service.MusicService;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
 import com.idx.smartspeakdock.baidu.control.UnitManager;
 import com.idx.smartspeakdock.baidu.unit.listener.IShoppingVoiceListener;
@@ -33,8 +37,12 @@ public class ControllerService extends Service {
     public final String TAG = "ControllerService";
     ShoppingCallBack mShoppingCallBack;
     CalendarCallBack mCalendarCallBack;
+    MusicCallBack mMusicCallBack;
     CalendarView mCalendarView;
     Util util;
+
+    MusicListFragment musicListFragment;
+
     String answer;
     @Override
     public void onCreate() {
@@ -42,6 +50,9 @@ public class ControllerService extends Service {
         super.onCreate();
         mCalendarView = new CalendarView(getApplicationContext());
         util = new Util(getApplicationContext(),mCalendarView);
+        musicListFragment=new MusicListFragment();
+
+
     }
     @Nullable
     @Override
@@ -65,7 +76,12 @@ public class ControllerService extends Service {
         //日历
         @Override
         public void setCalendarControllerListener(CalendarCallBack calendarCallBack) {
-          mCalendarCallBack = calendarCallBack;
+            mCalendarCallBack = calendarCallBack;
+        }
+
+        @Override
+        public void onGetMusicName(MusicCallBack musicCallBack) {
+            mMusicCallBack=musicCallBack;
         }
 
         @Override
@@ -126,6 +142,45 @@ public class ControllerService extends Service {
             }
         });
     }
+
+    //注册音乐语音模块
+    public void  registerMusicModule(){
+        UnitManager.getInstance(getApplicationContext()).setMusicVoiceListener(new IMusicVoiceListener() {
+            @Override
+            public void onPlay(int index) {
+
+            }
+
+            @Override
+            public void onPlay(String name) {
+                mMusicCallBack.onMusicCallBack(name);
+                musicListFragment.getService().play(name);
+                
+            }
+
+            @Override
+            public void onPause() {
+                   musicListFragment.getService().pause();
+            }
+
+            @Override
+            public void onContinue() {
+                   musicListFragment.getService().continuePlay();
+            }
+
+            @Override
+            public void onNext() {
+                    musicListFragment.getService().next();
+
+            }
+
+            @Override
+            public void onPrevious() {
+                    musicListFragment.getService().pre();
+
+            }
+        });
+    }
     @Override
     public boolean onUnbind(Intent intent) {
         Log.i(TAG, "onUnbind: ");
@@ -139,6 +194,8 @@ public class ControllerService extends Service {
         registerShoppingModule();
         //注册日历语音模块
         registerCalendarModule();
+        //注册音乐语音模块
+        registerMusicModule();
         return super.onStartCommand(intent, flags, startId);
     }
     public void ifmCalendarCallBackNoNull(){
@@ -155,6 +212,9 @@ public class ControllerService extends Service {
         }
         if (mCalendarCallBack != null){
             mCalendarCallBack = null;
+        }
+        if (mMusicCallBack!=null){
+            mMusicCallBack=null;
         }
     }
 }

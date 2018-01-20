@@ -3,7 +3,7 @@ package com.idx.smartspeakdock.music.service;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
+
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Handler;
@@ -79,14 +79,14 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             @Override
             public void onNext() {
 
-                next();
+                  next();
 
             }
 
             @Override
             public void onPrevious() {
 
-                pre();
+                 pre();
 
             }
         });
@@ -160,7 +160,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     }
 
     //暂停后继续播放
-    void continuePlay() {
+    public void continuePlay() {
         if (!mediaPlayer.isPlaying()) {
             mediaPlayer.start();
             notifyMusicState(ACTION_MEDIA_PLAY, true);
@@ -185,7 +185,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         notifyMusicState(ACTION_MEDIA_PREVIOUS,true);
     }
     //暂停播放
-    void pause() {
+    public void pause() {
         if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
             notifyMusicState(ACTION_MEDIA_PAUSE, false);
@@ -238,16 +238,9 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     public void play(Music music) {
         mPlayingMusic = music;
 
-        // 切换音乐时,如果已经在播放,先停止
         try {
-            if (mediaPlayer != null) {
-                mediaPlayer.stop();
-                mediaPlayer.release();
-                mediaPlayer = null;
-            }
             Log.d(TAG, "play: 进入musicService，获取当前音乐:"+music.getUrl());
-            mediaPlayer = getMediaPlayer(getApplicationContext());
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer.reset();
             mediaPlayer.setDataSource(music.getUrl());
             mediaPlayer.prepareAsync();
             mediaPlayer.setOnPreparedListener(mPreparedListener);

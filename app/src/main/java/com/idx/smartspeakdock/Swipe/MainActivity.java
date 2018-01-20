@@ -356,4 +356,11 @@ public class MainActivity extends BaseActivity {
             startActivity(mIntent);
         }
     }
+    private void  revokeMainMusicVoice(String music_name){
+        if (isActivityTop){
+            mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
+            mIntent.putExtra("musicname",music_name);
+            startActivity(mIntent);
+        }
+    }
 }

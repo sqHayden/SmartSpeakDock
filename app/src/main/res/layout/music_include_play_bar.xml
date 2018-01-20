@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/Splash_background"
+    android:background="#96bad2"
     android:id="@+id/fl_play_bar">
 
     <RelativeLayout
@@ -27,7 +27,7 @@
             android:singleLine="true"
             android:layout_marginTop="20dp"
             android:focusable="true"
-            android:textSize="20sp"
+            android:textSize="@dimen/weather_basic_textsize"
             android:textColor="@color/white"/>
     </RelativeLayout>
 
@@ -53,11 +53,5 @@
         android:background="?android:selectableItemBackground"
         android:src="@mipmap/music_next" />
     <!--</RelativeLayout>-->
-    <ProgressBar
-        android:id="@+id/play_bar"
-        android:layout_below="@id/home_titlebar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_gravity="bottom" />
+
 </RelativeLayout>

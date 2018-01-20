@@ -32,6 +32,7 @@ import com.idx.smartspeakdock.calendar.CalendarFragment;
 import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
 import com.idx.smartspeakdock.map.MapFragment;
 import com.idx.smartspeakdock.music.activity.MusicListFragment;
+import com.idx.smartspeakdock.music.service.MusicCallBack;
 import com.idx.smartspeakdock.service.ControllerService;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
 import com.idx.smartspeakdock.shopping.ShoppingFragment;
@@ -65,6 +66,7 @@ public class SwipeActivity extends BaseActivity {
     private boolean isDrawer;
     private String extraIntentId;
     private String websites_url;
+    private String music_name;
     private String actionBar_title;
     private SharePrefrenceUtils mSharePrefrenceUtils;
     private String mCurr_Frag_Name;
@@ -72,7 +74,7 @@ public class SwipeActivity extends BaseActivity {
     private ControllerServiceConnection mServiceConnection;
     private ControllerService.MyBinder mControllerBinder;
     private Intent mShoppingBroadcastIntent;
-
+    private Intent mMusicBroadcastIntent;
     public interface MyOnTouchListener {
         public boolean onTouch(MotionEvent ev);
     }
@@ -125,7 +127,8 @@ public class SwipeActivity extends BaseActivity {
                 initCalendar();
                 break;
             case GlobalUtils.MUSIC_FRAGMENT_INTENT_ID:
-                initMusic();
+                music_name=getIntent().getStringExtra("music_name");
+                initMusic(music_name);
                 break;
             case GlobalUtils.MAP_FRAGMENT_INTENT_ID:
                 initMap();
@@ -230,7 +233,7 @@ public class SwipeActivity extends BaseActivity {
                                 break;
                             case R.id.list_navigation_music:
                                 // TODO: 17-12-16 MUSIC
-                                initMusic();
+                                initMusic("流水");
                                 break;
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 SHOPPING
@@ -256,6 +259,9 @@ public class SwipeActivity extends BaseActivity {
 
         //实例化Shopping广播Intent
         mShoppingBroadcastIntent = new Intent(GlobalUtils.SHOPPING_BROADCAST_ACTION);
+
+        //实例化music广播Intent
+        mMusicBroadcastIntent=new Intent(GlobalUtils.MUSIC_BROADCAST_ACTION);
     }
 
     private void initSetting() {
@@ -293,14 +299,17 @@ public class SwipeActivity extends BaseActivity {
         }
     }
 
-    private void initMusic() {
+    private void initMusic(String music_name) {
         if (!checkFragment("music")) {
             actionBar_title = mResources.getString(R.string.music_title);
-            if (musicFragment == null) {
-                musicFragment = new MusicListFragment();
+            if (music_name != null) {
+                if (musicFragment == null) {
+//                    musicFragment = new MusicListFragment();
+                    musicFragment = MusicListFragment.newInstance(music_name);
+                }
+                ActivityUtils.replaceFragmentInActivity(mFragmentManager, musicFragment, R.id.contentFrame);
+                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "music");
             }
-            ActivityUtils.replaceFragmentInActivity(mFragmentManager, musicFragment, R.id.contentFrame);
-            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "music");
         }
     }
 
@@ -498,7 +507,8 @@ public class SwipeActivity extends BaseActivity {
             }
         }
     }
-//日历模块语音处理
+
+    //日历模块语音处理
     private void revokeSwipeCalendarVoice(){
         Log.d(TAG, "revokeSwipeCalendarVoice: 日历模块语音处理");
         if (isActivityTop){
@@ -509,6 +519,21 @@ public class SwipeActivity extends BaseActivity {
                 Log.i(TAG, "openSpecifyWebsites: 当前Fragment不是CalendarFragment");
                 initCalendar();
                 mActionBar.setTitle(actionBar_title);
+            }
+        }
+    }
+    //音乐模块语音处理
+    private void  revokeSwipeMusicVoice(String music_name){
+        if (isActivityTop){
+            if (isFragmentTop!=null){
+                if (isFragmentTop.getClass().getSimpleName().equals("MusicFragment")){
+
+                    mMusicBroadcastIntent.putExtra("music",music_name);
+                    sendBroadcast(mMusicBroadcastIntent);
+                }else {
+                    initMusic(music_name);
+                    mActionBar.setTitle(actionBar_title);
+                }
             }
         }
     }
@@ -569,11 +594,21 @@ public class SwipeActivity extends BaseActivity {
                     revokeSwipeShoppingVoice(web_url);
                 }
             });
+
             //日历
             mControllerBinder.setCalendarControllerListener(new CalendarCallBack() {
                 @Override
                 public void onCalendarCallBack() {
-                  revokeSwipeCalendarVoice();
+                   revokeSwipeCalendarVoice();
+                }
+            });
+
+            //音乐
+            mControllerBinder.onGetMusicName(new MusicCallBack() {
+                @Override
+                public void onMusicCallBack(String music_name) {
+                    Log.d(TAG, "onMusicCallBack: "+music_name);
+                    revokeSwipeMusicVoice(music_name);
                 }
             });
         }

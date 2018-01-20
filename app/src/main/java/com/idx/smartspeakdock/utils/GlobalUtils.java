@@ -19,7 +19,7 @@ public class GlobalUtils {
     public static final String CURRENT_FRAGMENT_ID = "current.fragment";
 
     //shopping website id
-    public static final String SHOPPING_WEBSITES_EXTRA_ID = "shopping.websites.extra.id";
+    public static final String SHOPPING_WEBSITES_EXTRA_ID = "shopping.websitpues.extra.id";
 //    public static final String WO_SHOPPING = "购物";
 /*    public static final String PHONE_DIGITAI = "手机数码";
     public static final String COMPUTER_OFFICE = "电脑办公";
@@ -42,5 +42,7 @@ public class GlobalUtils {
 
     //first Satrt app
     public static final String FIRST_APP_START = "app.first.start";
-
+    //music
+    public static final String MUSIC_NAME_ID="music.name.id";
+    public static  final  String MUSIC_BROADCAST_ACTION="music.broadcast.action";
 }

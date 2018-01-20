@@ -4,21 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center">
-    <View
-        android:id="@+id/v_playing"
-        android:layout_width="3dp"
-        android:layout_height="50dp"
-        android:layout_marginRight="3dp"
-        android:contentDescription="@null"
-        android:visibility="invisible" />
+
     <ImageView
         android:id="@+id/iv_cover"
         android:layout_width="50dp"
         android:layout_height="45dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginTop="1dp"
         android:scaleType="fitXY"
-        android:src="@mipmap/music_frame_shadow_music" />
+        android:src="@mipmap/music_icon" />
 
 
             <RelativeLayout
@@ -31,6 +24,9 @@
                     android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="@dimen/weather_basic_textsize"
+                    android:textColor="@color/white"
                     android:text="歌曲" />
 
                 <!--<TextView-->
@@ -50,6 +46,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/weather_basic_textsize"
                     android:layout_marginEnd="20dp" />
             </RelativeLayout>
 </LinearLayout>

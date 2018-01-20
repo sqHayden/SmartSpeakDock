@@ -53,7 +53,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     private static final String TAG = MusicPlayActivity.class.getName();
     private PlayServiceConnection conn;
     private MusicBroadcastReceiver musicBroadcastReceiver = new MusicBroadcastReceiver();
-    private MusicListFragment musicListFragment;
+    private MusicListFragment musicListFragment=new MusicListFragment();
     private ImageView iv_back;
     private TextView title;
     private TextView artist;
@@ -113,6 +113,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
 
         setListener();
         handler.post(runnable);
+
     }
 
 
