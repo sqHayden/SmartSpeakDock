@@ -64,7 +64,6 @@ public class CalendarFragment extends BaseFragment implements
 
     ItemRemoveRecyclerView recyclerView;
     private Presenter presenter;
-    private com.idx.smartspeakdock.calendar.Util util;
     private List<Schedule> list;
     private String date ="";
     private Integer day;
@@ -96,7 +95,6 @@ public class CalendarFragment extends BaseFragment implements
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_calendar,container,false);
-        Log.d(TAG, "onCreateView: calendarfragment创建试图");
         initView();
         onTouchListener = new SwipeActivity.MyOnTouchListener() {
             @Override
@@ -131,124 +129,7 @@ public class CalendarFragment extends BaseFragment implements
             yearopen = true;
         }
         presenter = new Presenter(this,mContext,mCalendarView);
-        util = new com.idx.smartspeakdock.calendar.Util(mContext);
         initData();
-        UnitManager.getInstance(getContext()).setCalenderVoiceListener(new ICalenderVoiceListener() {
-            @Override
-            public String onWeekInfo(String time) {
-                answer="";
-                switch (mCalendarView.getWeek(time)){
-                    case 1:
-                        answer = time+ getString(R.string.monday);
-                        break;
-                    case 2:
-                        answer = time+ getString(R.string.tuesday);
-                        break;
-                    case 3:
-                        answer = time+ getString(R.string.wednesday);
-                        break;
-                    case 4:
-                        answer = time+ getString(R.string.thursday);
-                        break;
-                    case 5:
-                        answer = time+ getString(R.string.friday);
-                        break;
-                    case 6:
-                        answer = time+ getString(R.string.saturday);
-                        break;
-                    case 7:
-                        answer = time+ getString(R.string.sunday);
-                        break;
-                        default:
-                            break;
-                }
-                return answer;
-            }
-
-            @Override
-            public String onTimeInfo() {
-                answer = "";
-                answer = getString(R.string.now)+ mCurrentTime.getText().toString();
-                return answer;
-            }
-
-            @Override
-            public String onFestivalInfo(String time) {
-                switch (time){
-                    case TimeData.YESTERDAY:
-                        answer = util.getFestivalInfogetActInfo(time,mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
-                        break;
-                    case TimeData.TODAY:
-                        answer =  util.getFestivalInfogetActInfo(time,mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
-                        break;
-                    case TimeData.TOMORROW:
-                        answer =  util.getFestivalInfogetActInfo(time,mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
-                        break;
-                    default:
-                        break;
-
-                }
-                return answer;
-            }
-
-            @Override
-            public String onActInfo(String time) {
-                switch (time){
-                    case TimeData.YESTERDAY:
-                       answer =  util.getActInfo(time,mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
-                        break;
-                    case TimeData.TODAY:
-                        answer =  util.getActInfo(time,mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
-                        break;
-                    case TimeData.TOMORROW:
-                        answer =  util.getActInfo(time,mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
-                        break;
-                    default:
-                        break;
-
-                }
-                return answer;
-            }
-
-            @Override
-            public String onDateInfo(String time) {
-                answer="";
-                switch (time){
-                    case TimeData.YESTERDAY:
-                        answer = time + mCalendarView.getYesData().get("month") + getString(R.string.month) + mCalendarView.getYesData().get("day") + getString(R.string.day);
-                        break;
-                    case TimeData.TODAY:
-                        answer = time + mCalendarView.getCurMonth() + getString(R.string.month) + mCalendarView.getCurDay() + getString(R.string.day);
-                        break;
-                    case TimeData.TOMORROW:
-                        answer = time + mCalendarView.getTomoData().get("month") + getString(R.string.month) + mCalendarView.getTomoData().get("day") + getString(R.string.day);
-                        break;
-                    default:
-                        break;
-
-                }
-                return answer;
-            }
-
-            @Override
-            public String onLunarDateInfo(String time) {
-                switch (time){
-                    case TimeData.YESTERDAY:
-                        answer = time + getString(R.string.lunar_calendar)+LunarCalendar.solarToLunar(mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
-                        break;
-                    case TimeData.TODAY:
-                        answer = time+getString(R.string.lunar_calendar) +mCalendarView.getLunar();
-                        break;
-                    case TimeData.TOMORROW:
-                        answer = time + getString(R.string.lunar_calendar)+LunarCalendar.solarToLunar(mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
-                        break;
-                    default:
-                        break;
-
-                }
-                return answer;
-            }
-        });
     }
 
     private void initData() {
@@ -308,19 +189,9 @@ public class CalendarFragment extends BaseFragment implements
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("year",yearopen);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
     }
 
     @Override

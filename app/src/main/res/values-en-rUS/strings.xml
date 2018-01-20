@@ -43,13 +43,6 @@
     <string name="sure">confirm</string>
     <string name="cancel">cancel</string>
     <string name="now">now</string>
-    <string name="monday">monday</string>
-    <string name="tuesday">tuesday</string>
-    <string name="wednesday">wednesday</string>
-    <string name="thursday">thursday</string>
-    <string name="friday">friday</string>
-    <string name="saturday">saturday</string>
-    <string name="sunday">sunday</string>
     <string name="lunar_calendar">lunar calendar</string>
     <string name="yes">is</string>
     <string name="is_the_weekend">is the weekend</string>

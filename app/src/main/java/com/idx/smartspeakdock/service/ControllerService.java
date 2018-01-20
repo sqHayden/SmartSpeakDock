@@ -34,32 +34,15 @@ public class ControllerService extends Service {
     ShoppingCallBack mShoppingCallBack;
     CalendarCallBack mCalendarCallBack;
     CalendarView mCalendarView;
+    Util util;
     String answer;
-    private final int msgKey1 = 1;
-    private String currenttime;
-    private Util util;
-
     @Override
     public void onCreate() {
         Log.i(TAG, "onCreate: ");
         super.onCreate();
+        mCalendarView = new CalendarView(getApplicationContext());
+        util = new Util(getApplicationContext(),mCalendarView);
     }
-    private  Handler mHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what){
-                case msgKey1:
-                    long time = System.currentTimeMillis();
-                    Date date = new Date(time);
-                    SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-                    currenttime = format.format(date);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -103,141 +86,43 @@ public class ControllerService extends Service {
 * 注册日历语音模块
 * */
     public void registerCalendarModule(){
-        util = new Util(getApplicationContext());
         UnitManager.getInstance(getApplicationContext()).setCalenderVoiceListener(new ICalenderVoiceListener() {
             @Override
             public String onWeekInfo(String time) {
-                if (mCalendarCallBack != null){
-                    mCalendarCallBack.onCalendarCallBack();
-                }
-                answer="";
-                switch (mCalendarView.getWeek(time)){
-                    case 1:
-                        answer = time+ getString(R.string.monday);
-                        break;
-                    case 2:
-                        answer = time+ getString(R.string.tuesday);
-                        break;
-                    case 3:
-                        answer = time+ getString(R.string.wednesday);
-                        break;
-                    case 4:
-                        answer = time+ getString(R.string.thursday);
-                        break;
-                    case 5:
-                        answer = time+ getString(R.string.friday);
-                        break;
-                    case 6:
-                        answer = time+ getString(R.string.saturday);
-                        break;
-                    case 7:
-                        answer = time+ getString(R.string.sunday);
-                        break;
-                    default:
-                        break;
-                }
-                return answer;
+                ifmCalendarCallBackNoNull();
+                return mCalendarView.getWeeks(time);
             }
 
             @Override
             public String onTimeInfo() {
-                if (mCalendarCallBack != null){
-                    mCalendarCallBack.onCalendarCallBack();
-                }
+                ifmCalendarCallBackNoNull();
                 answer = "";
-                answer = getString(R.string.now)+currenttime;
+                answer = getString(R.string.now)+Util.getCurrentTime();
                 return answer;
             }
 
             @Override
             public String onFestivalInfo(String time) {
-                if (mCalendarCallBack != null){
-                    mCalendarCallBack.onCalendarCallBack();
-                }
-                answer="";
-                switch (time){
-                    case TimeData.YESTERDAY:
-                        answer = util.getFestivalInfogetActInfo(time,mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
-                        break;
-                    case TimeData.TODAY:
-                        answer =  util.getFestivalInfogetActInfo(time,mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
-                        break;
-                    case TimeData.TOMORROW:
-                        answer =  util.getFestivalInfogetActInfo(time,mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
-                        break;
-                    default:
-                        break;
-
-                }
-                return answer;
+                ifmCalendarCallBackNoNull();
+                return util.getFestivalInfo(time);
             }
 
             @Override
             public String onActInfo(String time) {
-                if (mCalendarCallBack != null){
-                    mCalendarCallBack.onCalendarCallBack();
-                }
-                answer="";
-                switch (time){
-                    case TimeData.YESTERDAY:
-                        answer =  util.getActInfo(time,mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
-                        break;
-                    case TimeData.TODAY:
-                        answer =  util.getActInfo(time,mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
-                        break;
-                    case TimeData.TOMORROW:
-                        answer =  util.getActInfo(time,mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
-                        break;
-                    default:
-                        break;
-                }
-                return answer;
+                ifmCalendarCallBackNoNull();
+                return util.getActionInfo(time);
             }
 
             @Override
             public String onDateInfo(String time) {
-                if (mCalendarCallBack != null){
-                    mCalendarCallBack.onCalendarCallBack();
-                }
-                answer="";
-                switch (time){
-                    case TimeData.YESTERDAY:
-                        answer = time + mCalendarView.getYesData().get("month") + getString(R.string.month) + mCalendarView.getYesData().get("day") + getString(R.string.day);
-                        break;
-                    case TimeData.TODAY:
-                        answer = time + mCalendarView.getCurMonth() + getString(R.string.month) + mCalendarView.getCurDay() + getString(R.string.day);
-                        break;
-                    case TimeData.TOMORROW:
-                        answer = time + mCalendarView.getTomoData().get("month") + getString(R.string.month) + mCalendarView.getTomoData().get("day") + getString(R.string.day);
-                        break;
-                    default:
-                        break;
-
-                }
-                return answer;
+                ifmCalendarCallBackNoNull();
+                return util.getDate(time);
             }
 
             @Override
             public String onLunarDateInfo(String time) {
-                if (mCalendarCallBack != null){
-                    mCalendarCallBack.onCalendarCallBack();
-                }
-                answer="";
-                switch (time){
-                    case TimeData.YESTERDAY:
-                        answer = time + getString(R.string.lunar_calendar)+ LunarCalendar.solarToLunar(mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
-                        break;
-                    case TimeData.TODAY:
-                        answer = time+getString(R.string.lunar_calendar) +mCalendarView.getLunar();
-                        break;
-                    case TimeData.TOMORROW:
-                        answer = time + getString(R.string.lunar_calendar)+LunarCalendar.solarToLunar(mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
-                        break;
-                    default:
-                        break;
-
-                }
-                return answer;
+                ifmCalendarCallBackNoNull();
+                return util.getLunarDateInfo(time);
             }
         });
     }
@@ -250,31 +135,16 @@ public class ControllerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand: ");
-        mCalendarView = new CalendarView(getApplicationContext());
-        //获取当前时间
-        getcurrenttime();
         //注册购物语音模块
         registerShoppingModule();
         //注册日历语音模块
         registerCalendarModule();
         return super.onStartCommand(intent, flags, startId);
     }
-    public  void getcurrenttime(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                do{
-                    try {
-                        Thread.sleep(1000);
-                        Message msg = new Message();
-                        msg.what = msgKey1;
-                        mHandler.sendMessage(msg);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }while (true);
-            }
-        }).start();
+    public void ifmCalendarCallBackNoNull(){
+        if (mCalendarCallBack != null){
+            mCalendarCallBack.onCalendarCallBack();
+        }
     }
     @Override
     public void onDestroy() {

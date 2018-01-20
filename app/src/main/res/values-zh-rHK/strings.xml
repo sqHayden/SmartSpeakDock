@@ -43,13 +43,6 @@
     <string name="sure">確定</string>
     <string name="cancel">取消</string>
     <string name="now">現在</string>
-    <string name="monday">星期一</string>
-    <string name="tuesday">星期二</string>
-    <string name="wednesday">星期三</string>
-    <string name="thursday">星期四</string>
-    <string name="friday">星期五</string>
-    <string name="saturday">星期六</string>
-    <string name="sunday">星期日</string>
     <string name="lunar_calendar">農曆</string>
     <string name="yes">是</string>
     <string name="is_the_weekend">是週末</string>
