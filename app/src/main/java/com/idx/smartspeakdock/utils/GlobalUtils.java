@@ -35,13 +35,18 @@ public class GlobalUtils {
 
     //shopping broadcast
     public static final String SHOPPING_BROADCAST_ACTION = "shopping.broadcast.action";
+    //weather broadcast
+    public static final String WEATHER_BROADCAST_ACTION = "weather.broadcast.action";
     //weather part
     public static final String WEATHER_TIME_TODAY = "今天";
     public static final String WEATHER_TIME_TOMM = "明天";
     public static final String WEATHER_TIME_POSTNATAL = "后天";
+    public static final int WEATHER_VOICE_FLAG = 5;
 
     //first Satrt app
     public static final String FIRST_APP_START = "app.first.start";
+    //first change fragment
+    public static final String FIRST_CHANGE_FRAGMENT = "first.change.fragment";
     //music
     public static final String MUSIC_NAME_ID="music.name.id";
     public static  final  String MUSIC_BROADCAST_ACTION="music.broadcast.action";

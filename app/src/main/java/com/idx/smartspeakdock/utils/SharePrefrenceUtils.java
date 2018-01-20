@@ -47,4 +47,13 @@ public class SharePrefrenceUtils {
     public String getCurrentFragment(String curr_frag_id){
         return mSharedPreferences.getString(curr_frag_id,"");
     }
+
+    public void saveChangeFragment(String first_change,boolean isFirstChange){
+        mEditor.putBoolean(first_change,isFirstChange);
+        mEditor.commit();
+    }
+
+    public boolean getFirstChange(String first_change){
+        return mSharedPreferences.getBoolean(first_change,false);
+    }
 }

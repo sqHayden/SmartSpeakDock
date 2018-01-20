@@ -27,11 +27,11 @@ public class StandByActivity extends BaseActivity {
         Logger.setEnable(true);
         setContentView(R.layout.content_main);
         standByFragment =
-                (StandByFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+                (StandByFragment) mFragmentManager.findFragmentById(R.id.contentFrame);
         if (standByFragment == null) {
             standByFragment = new StandByFragment();
             ActivityUtils.replaceFragmentInActivity(
-                    getSupportFragmentManager(), standByFragment, R.id.contentFrame);
+                    mFragmentManager, standByFragment, R.id.contentFrame);
         }
         
     }

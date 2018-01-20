@@ -27,8 +27,8 @@ import java.util.List;
 public abstract class BaseActivity extends AppCompatActivity {
     private final String TAG = "BaseActivity";
     public  boolean isActivityTop;
-    public Fragment isFragmentTop;
-    public FragmentManager mFragmentManager;
+    public static Fragment isFragmentTop;
+    public static FragmentManager mFragmentManager;
     public String fragment_show_activity = "SwipeActivity";
 
     @Override
@@ -52,7 +52,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         //当前正在显示的Fragment
-        isTopFragment();
+//        isTopFragment();
     }
 
     // 6.0以上权限获取
@@ -113,14 +113,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         Log.i(TAG, "isTop = " + isActivityTop);
     }
 
-    public void isTopFragment(){
+    public static void isTopFragment(){
         List<Fragment> fragments = mFragmentManager.getFragments();
-        Log.i(TAG, "isTopFragment: size = "+fragments.size());
+        Log.i("ryan", "isTopFragment: size = "+fragments.size());
         for(Fragment fragment : fragments){
 //            if(fragment != null && fragment.isVisible()){
                 isFragmentTop = fragment;
 //            }
-            Log.i(TAG, "isTopFragment: "+isFragmentTop.getClass().getSimpleName());
+            Log.i("ryan ", "isTopFragment: "+isFragmentTop.getClass().getSimpleName());
         }
     }
 

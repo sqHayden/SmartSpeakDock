@@ -6,6 +6,6 @@ package com.idx.smartspeakdock.weather.presenter;
  */
 
 //监听天气语音返回接口
-public interface ReturnVoice {
+public interface ReturnVoice{
     void onReturnVoice(String voice_answer);
 }

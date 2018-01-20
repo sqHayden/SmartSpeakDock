@@ -448,4 +448,8 @@
         <webname>优惠券</webname>
         <weburl>https://mall.flnet.com/member-coupon.html</weburl>
     </shopping>
+    <shopping>
+        <webname>注册页面</webname>
+        <weburl>https://account.flnet.com/sso/register</weburl>
+    </shopping>
 </shoppings>

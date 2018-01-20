@@ -2,8 +2,10 @@ package com.idx.smartspeakdock.weather.ui;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,6 +33,7 @@ import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.NetStatusUtils;
 import com.idx.smartspeakdock.utils.ToastUtils;
+import com.idx.smartspeakdock.weather.event.ReturnVoiceEvent;
 import com.idx.smartspeakdock.weather.model.weather.Weather;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherAqi;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherAqiDataSource;
@@ -40,6 +43,7 @@ import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasic;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicDataSource;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicInjection;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicRepository;
+import com.idx.smartspeakdock.weather.presenter.ReturnAnswerCallback;
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
 import com.idx.smartspeakdock.weather.presenter.ReturnWeather;
 import com.idx.smartspeakdock.weather.presenter.WeatherPresenter;
@@ -52,6 +56,9 @@ import com.lljjcoder.bean.DistrictBean;
 import com.lljjcoder.bean.ProvinceBean;
 import com.lljjcoder.citywheel.CityConfig;
 import com.lljjcoder.style.citypickerview.CityPickerView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
@@ -94,6 +101,12 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
 
     private WeatherBasicRepository mWeatherBasicRepository;
     private WeatherAqiRepository mWeatherAqiRepository;
+    private ReturnAnswerCallback mReturnAnswerCallback;
+    private String mWeather_city;
+    private String mWeather_time;
+    private String mWeather_fun_flag;
+    private int mWeather_Voice_flag;
+    private WeatherBroadcastReceiver mWeatherBroadcastReceiver;
 
 //    private GetCityService.MyBinder mCityBinder;
 //    private ServiceConnection mCityConn = new ServiceConnection() {
@@ -133,12 +146,34 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
         mTimer.schedule(mTask, 60 * 1000, 60 * 1000);
     }
 
+    public WeatherFragment(){}
+
+    public static WeatherFragment newInstance(String cityName,String time,String fun_flag,int flag){
+        WeatherFragment weatherFragment = new WeatherFragment();
+        Bundle args = new Bundle();
+        args.putString("cityname",cityName);
+        args.putString("time",time);
+        args.putString("fun_flag",fun_flag);
+        args.putInt("voice_flag",flag);
+        weatherFragment.setArguments(args);
+        return weatherFragment;
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mResources = context.getResources();
         mContext = context;
         Logger.setEnable(true);
+        mWeather_Voice_flag = -1;
+        if (getArguments() != null){
+            Bundle args = getArguments();
+            mWeather_city = args.getString("cityname");
+            mWeather_time = args.getString("time");
+            mWeather_fun_flag = args.getString("fun_flag");
+            mWeather_Voice_flag = args.getInt("voice_flag");
+            Log.i("ryan", "onAttach: mWeather_voice_flag = "+mWeather_Voice_flag);
+        }
     }
 
     @Override
@@ -160,8 +195,14 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
             Log.d(TAG, "onCreate: " + mCurrentCounty + ":" + mCurrentCity);
         }
         mWeatherPresenter = new WeatherPresenterImpl(this);
-        getWeatherBasic(UNVOICE,mCurrentCounty,"",null,"");
-        getWeatherAqi(UNVOICE,mCurrentCity,"",null,"");
+        if (mWeather_Voice_flag == GlobalUtils.WEATHER_VOICE_FLAG){
+            Log.i("ryan", "onCreate: voice_flag = "+mWeather_Voice_flag);
+            judgeVoiceAnswer(mWeather_city,mWeather_time,mWeather_fun_flag);
+        }else {
+            Log.i("ryan", "onCreate: voice_flag_un = "+mWeather_Voice_flag);
+            getWeatherBasic(UNVOICE,mCurrentCounty,"",null,"");
+            getWeatherAqi(UNVOICE,mCurrentCity,"",null,"");
+        }
         /*if (mCurrentCity.isEmpty()) {
             if (NetStatusUtils.isWifiConnected(mContext) || NetStatusUtils.isMobileConnected(mContext)) {
                 getWeatherBasic(UNVOICE,mCurrentCity,"",null,"");
@@ -178,6 +219,15 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
             getWeatherAqi(UNVOICE,mCurrentCity,"",null,"");
         }*/
         initTimer();
+        //注册天气语音广播
+        registerWeatherVoiceBroadcast();
+    }
+
+    private void registerWeatherVoiceBroadcast() {
+        mWeatherBroadcastReceiver = new WeatherBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(GlobalUtils.WEATHER_BROADCAST_ACTION);
+        mContext.registerReceiver(mWeatherBroadcastReceiver,intentFilter);
     }
 
     @Nullable
@@ -268,78 +318,6 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
         Logger.info("ryan", "onActivityCreated: ");
         super.onActivityCreated(savedInstanceState);
         refresh();
-        voiceResult();
-    }
-
-    //语音接口实现
-    private void voiceResult() {
-        voice_answer = "";
-//        voice_weather = null;
-        UnitManager.getInstance(getContext()).setWeatherVoiceListener(new IWeatherVoiceListener() {
-            @Override
-            public void onWeatherInfo(String cityName) {
-                voiceCityName(cityName);
-                Log.i(TAG, "onWeatherInfo: cityName = " + cityName);
-                getWeatherBasic(VOICE,cityName,"",null,"");
-                getWeatherAqi(VOICE,cityName,"",null,"");
-            }
-
-            @Override
-            public void onRangeTempInfo(String cityName, String time, ReturnVoice returnVoice) {
-                voiceCityName(cityName);
-                getWeatherBasic(VOICE,cityName,time,returnVoice,"onRangeTempInfo");
-                getWeatherAqi(UNVOICE,cityName,"",null,"");
-            }
-
-            @Override
-            public void onAirQualityInfo(String cityName, ReturnVoice returnVoice) {
-                voiceCityName(cityName);
-                getWeatherAqi(VOICE,cityName,"",returnVoice,"onAirQualityInfo");
-                getWeatherBasic(UNVOICE,cityName,"",null,"");
-            }
-
-            @Override
-            public void onCurrentTempInfo(String cityName, ReturnVoice returnVoice) {
-                voiceCityName(cityName);
-                getWeatherBasic(VOICE, cityName, "", returnVoice, "onCurrentTempInfo");
-                getWeatherAqi(UNVOICE,cityName,"",null,"");
-            }
-
-            @Override
-            public void onWeatherStatus(String cityName, String time, ReturnVoice returnVoice) {
-                voiceCityName(cityName);
-                getWeatherBasic(VOICE,cityName,time,returnVoice,"onWeatherStatus");
-                getWeatherAqi(UNVOICE,cityName,"",null,"");
-            }
-
-            @Override
-            public void onRainInfo(String cityName, String time, ReturnVoice returnVoice) {
-                voiceCityName(cityName);
-                getWeatherBasic(VOICE,cityName,time,returnVoice,"onRainInfo");
-                getWeatherAqi(UNVOICE,cityName,"",null,"");
-            }
-
-            @Override
-            public void onDressInfo(String cityName, ReturnVoice returnVoice) {
-                voiceCityName(cityName);
-                getWeatherBasic(VOICE,cityName,"",returnVoice,"onDressInfo");
-                getWeatherAqi(UNVOICE,cityName,"",null,"");
-            }
-
-            @Override
-            public void onUitravioletLevelInfo(String cityName, ReturnVoice returnVoice) {
-                voiceCityName(cityName);
-                getWeatherBasic(VOICE,cityName,"",returnVoice,"onUitravioletLevelInfo");
-                getWeatherAqi(UNVOICE,cityName,"",null,"");
-            }
-
-            @Override
-            public void onSmogInfo(String cityName, String time, ReturnVoice returnVoice) {
-                voiceCityName(cityName);
-                getWeatherBasic(VOICE,cityName,time,returnVoice,"onSmogInfo");
-                getWeatherAqi(UNVOICE,cityName,"",null,"");
-            }
-        });
     }
 
     //语音赋值当前城市名
@@ -403,6 +381,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
                 if (weather==null) {
                     Log.d(TAG, "run: " + weather);
                 }
+                Log.i("ryan", "run: setWeatherInfo = "+weather.basic.cityName);
                 updateWeatherInfo(weather);
                 mRefreshWeather.setRefreshing(false);
                 mTitle.setText(weather.basic.cityName);
@@ -494,6 +473,12 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
         super.onDestroy();
         mContext.stopService(new Intent(mContext.getApplicationContext(), SplachService.class));
         ((SwipeActivity) getActivity()).unregisterMyOnTouchListener(onTouchListener);
+        //解绑广播注册
+        mContext.unregisterReceiver(mWeatherBroadcastReceiver);
+        mWeather_city = "";
+        mWeather_time = "";
+        mWeather_fun_flag = "";
+        mWeather_Voice_flag = -1;
     }
 
     @Override
@@ -513,7 +498,10 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
                 String weatherBasicInfo = weatherBasic.weatherBasic;
                 voice_weather = Utility.handleWeatherResponse(weatherBasicInfo);
                 setWeatherInfo(voice_weather);
-                voiceReturnJudge(cityName,time,returnVoice,funcTag);
+//                voiceReturnJudge(cityName,time,returnVoice,funcTag);
+                if(funcTag != "onWeatherInfo"){
+                    voiceReturnJudge(cityName,time,funcTag);
+                }
             }
 
             @Override
@@ -528,22 +516,14 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
                             @Override
                             public void onReturnWeather(Weather weather) {
                                 voice_weather = weather;
-                                if (returnVoice != null) {
-                                    switch (funcTag) {
-                                        case "onCurrentTempInfo":
-                                            currentTempInfo(cityName, returnVoice);
-                                            break;
-                                        case "onWeatherStatus":
-                                            weatherStatus(cityName, time, returnVoice);
-                                            break;
-                                        case "":
-                                            rangeTempInfo(cityName, time, returnVoice);
-                                            break;
-                                    }
+                                if (mReturnAnswerCallback != null) {
                                     if (weather != null) {
                                         voice_weather = weather;
+                                        Log.i("ryan", "onReturnWeather: voice_weather_city = "+voice_weather.basic.cityName);
                                         setWeatherInfo(weather);
-                                        voiceReturnJudge(cityName, time, returnVoice, funcTag);
+                                        if(funcTag != "onWeatherInfo"){
+                                            voiceReturnJudge(cityName,time,funcTag);
+                                        }
                                     }
                                 }
                             }
@@ -564,7 +544,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
                 String weatherAqiInfo = weatherAqi.weatherAqi;
                 voice_aqi = Utility.handleWeatherResponse(weatherAqiInfo);
                 setWeatherAqi(voice_aqi);
-                voiceReturnJudge(cityName,time,returnVoice,funcTag);
+                if(funcTag != "onWeatherInfo"){
+                    voiceReturnJudge(cityName,time,funcTag);
+                }
             }
 
             @Override
@@ -580,7 +562,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
                                 if (weather!=null) {
                                     voice_aqi = weather;
                                     setWeatherAqi(weather);
-                                    voiceReturnJudge(cityName, time, returnVoice, funcTag);
+                                    if(funcTag != "onWeatherInfo"){
+                                        voiceReturnJudge(cityName,time,funcTag);
+                                    }
                                 }
                             }
                         });
@@ -591,32 +575,32 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
     }
 
     //判断所问问题类型(温度、穿衣、紫外线等等)
-    private void voiceReturnJudge(String cityName,String time,ReturnVoice returnVoice,String funcTag){
-        if (returnVoice!=null) {
+    private void voiceReturnJudge(String cityName,String time,String funcTag){
+        if (mReturnAnswerCallback!=null) {
             switch (funcTag) {
                 case "onRangeTempInfo":
-                    rangeTempInfo(cityName,time,returnVoice);
+                    rangeTempInfo(cityName,time);
                     break;
                 case "onAirQualityInfo":
-                    airQualityInfo(cityName,returnVoice);
+                    airQualityInfo(cityName);
                     break;
                 case "onCurrentTempInfo":
-                    currentTempInfo(cityName, returnVoice);
+                    currentTempInfo(cityName);
                     break;
                 case "onWeatherStatus":
-                    weatherStatus(cityName,time,returnVoice);
+                    weatherStatus(cityName,time);
                     break;
                 case "onRainInfo":
-                    rainInfo(cityName,time,returnVoice);
+                    rainInfo(cityName,time);
                     break;
                 case "onDressInfo":
-                    dressInfo(returnVoice);
+                    dressInfo();
                     break;
                 case "onUitravioletLevelInfo":
-                    uitravioletLevelInfo(cityName,returnVoice);
+                    uitravioletLevelInfo(cityName);
                     break;
                 case "onSmogInfo":
-                    smogInfo(cityName,time,returnVoice);
+                    smogInfo(cityName,time);
                     break;
                 default:
                     break;
@@ -625,15 +609,18 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
     }
 
     //温度是多少
-    private void rangeTempInfo(String cityName,String time,ReturnVoice returnVoice){
-        Log.d(TAG, "rangeTempInfo: 温度信息" + voice_weather.status);
+    private void rangeTempInfo(String cityName,String time){
+        Log.d("ryan", "rangeTempInfo: 温度信息" + voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
-            Log.i(TAG, "rangeTempInfo: city = " + voice_weather);
+            Log.i("ryan", "rangeTempInfo: city = " + voice_weather);
             judgeRangeTempInfo(cityName, time);
         } else {
             voice_answer = "查询" + time + cityName + "温度信息失败";
         }
-        returnVoice.onReturnVoice(voice_answer);
+        Log.i("ryan", "rangeTempInfo: voice_answer = "+voice_answer);
+        if (mReturnAnswerCallback != null){
+            mReturnAnswerCallback.onReturnAnswer(voice_answer);
+        }
     }
 
     //温度相关方法
@@ -655,18 +642,20 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
     }
 
     //空气质量
-    private void airQualityInfo(String cityName,ReturnVoice returnVoice){
+    private void airQualityInfo(String cityName){
         Log.i(TAG, "airQualityInfo: cityName = " + cityName);
         if (voice_aqi != null && voice_aqi.status.equals("ok")) {
             voice_answer = cityName + "空气质量为" + voice_aqi.air.qlty;
         } else {
             voice_answer = "查询" + cityName + "空气质量信息失败";
         }
-        returnVoice.onReturnVoice(voice_answer);
+        if (mReturnAnswerCallback != null){
+            mReturnAnswerCallback.onReturnAnswer(voice_answer);
+        }
     }
 
     //当前温度
-    private void currentTempInfo(String cityName, ReturnVoice returnVoice) {
+    private void currentTempInfo(String cityName) {
         Log.d(TAG, "currentTempInfo: 当前温度" + voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
             Log.i(TAG, "currentTempInfo: city = " + voice_weather.basic.cityName);
@@ -674,18 +663,22 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
         } else {
             voice_answer = "查询" + cityName + "当前温度信息失败";
         }
-        returnVoice.onReturnVoice(voice_answer);
+        if (mReturnAnswerCallback != null){
+            mReturnAnswerCallback.onReturnAnswer(voice_answer);
+        }
     }
 
     //天气状况
-    private void weatherStatus(String cityName,String time,ReturnVoice returnVoice){
+    private void weatherStatus(String cityName,String time){
         Log.d(TAG, "weatherStatus: 天气状况" + voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
             judgeStatusInfo(cityName, time);
         } else {
             voice_answer = "查询" + time + cityName + "天气状况失败";
         }
-        returnVoice.onReturnVoice(voice_answer);
+        if (mReturnAnswerCallback != null){
+            mReturnAnswerCallback.onReturnAnswer(voice_answer);
+        }
     }
 
     //天气状况相关方法
@@ -707,14 +700,16 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
     }
 
     //是否有雨
-    private void rainInfo(String cityName,String time,ReturnVoice returnVoice){
+    private void rainInfo(String cityName,String time){
         Log.d(TAG, "rainInfo: 下雨"+voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
             judgeRainInfo(cityName, time);
         } else {
             voice_answer = "查询" + time + cityName + "是否下雨失败";
         }
-        returnVoice.onReturnVoice(voice_answer);
+        if (mReturnAnswerCallback != null){
+            mReturnAnswerCallback.onReturnAnswer(voice_answer);
+        }
     }
 
     //雨相关方法
@@ -759,29 +754,33 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
     }
 
     //穿衣
-    private void dressInfo(ReturnVoice returnVoice){
+    private void dressInfo(){
         Log.d(TAG, "dressInfo: 穿衣指数" + voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
             voice_answer = voice_weather.lifestyleList.get(1).txt;
         } else {
             voice_answer = "查询穿衣指数失败";
         }
-        returnVoice.onReturnVoice(voice_answer);
+        if (mReturnAnswerCallback != null){
+            mReturnAnswerCallback.onReturnAnswer(voice_answer);
+        }
     }
 
     //紫外线
-    private void uitravioletLevelInfo(String cityName,ReturnVoice returnVoice) {
+    private void uitravioletLevelInfo(String cityName) {
         Log.d(TAG, "uitravioletLevelInfo: 紫外线强度" + voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
             voice_answer = cityName + "紫外线强度" + voice_weather.lifestyleList.get(5).brf;
         } else {
             voice_answer = "查询" + cityName + "紫外线强度失败";
         }
-        returnVoice.onReturnVoice(voice_answer);
+        if (mReturnAnswerCallback != null){
+            mReturnAnswerCallback.onReturnAnswer(voice_answer);
+        }
     }
 
     //雾
-    private void smogInfo(String cityName,String time,ReturnVoice returnVoice){
+    private void smogInfo(String cityName,String time){
         Log.d(TAG, "smogInfo: 雾霾" + voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
             String weather_type = HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.now.code));
@@ -793,7 +792,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
         } else {
             voice_answer = "查询" + cityName + "雾霾信息失败";
         }
-        returnVoice.onReturnVoice(voice_answer);
+        if (mReturnAnswerCallback != null){
+            mReturnAnswerCallback.onReturnAnswer(voice_answer);
+        }
     }
 
     // 弹出选择器
@@ -849,5 +850,80 @@ public class WeatherFragment extends BaseFragment implements WeatherUi, ChooseCi
             }
         });
         CityPickerView.getInstance().showCityPicker(getActivity());
+    }
+
+    public void setReturnAnswerCallback(ReturnAnswerCallback returnAnswerCallback){
+        mReturnAnswerCallback = returnAnswerCallback;
+    }
+
+    public class WeatherBroadcastReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i(TAG, "onReceive: actionId = "+intent.getAction());
+            switch (intent.getAction()){
+                case GlobalUtils.WEATHER_BROADCAST_ACTION:
+                    mWeather_city = intent.getStringExtra("cityname");
+                    mWeather_time = intent.getStringExtra("time");
+                    mWeather_fun_flag = intent.getStringExtra("flag");
+                    judgeVoiceAnswer(mWeather_city,mWeather_time,mWeather_fun_flag);
+                    break;
+                default:break;
+            }
+        }
+    }
+
+    private void judgeVoiceAnswer(String cityName,String time,String mWeather_fun_flag) {
+        switch (mWeather_fun_flag){
+            case "onWeatherInfo":
+                Log.i("ryan", "judgeVoiceAnswer: weatherInfo");
+                voiceCityName(cityName);
+                Log.i("ryan", "onWeatherInfo: cityName = " + cityName);
+                getWeatherBasic(VOICE,cityName,"",null,"");
+                getWeatherAqi(VOICE,cityName,"",null,"");
+                break;
+            case "onRangeTempInfo":
+                Log.i("ryan", "judgeVoiceAnswer: rangeTempInfo");
+                voiceCityName(cityName);
+                getWeatherBasic(VOICE,cityName,time,null,"onRangeTempInfo");
+                getWeatherAqi(UNVOICE,cityName,"",null,"");
+                break;
+            case "onAirQualityInfo":
+                voiceCityName(cityName);
+                getWeatherAqi(VOICE,cityName,"",null,"onAirQualityInfo");
+                getWeatherBasic(UNVOICE,cityName,"",null,"");
+                break;
+            case "onCurrentTempInfo":
+                voiceCityName(cityName);
+                getWeatherBasic(VOICE, cityName, "", null, "onCurrentTempInfo");
+                getWeatherAqi(UNVOICE,cityName,"",null,"");
+                break;
+            case "onWeatherStatus":
+                voiceCityName(cityName);
+                getWeatherBasic(VOICE,cityName,time,null,"onWeatherStatus");
+                getWeatherAqi(UNVOICE,cityName,"",null,"");
+                break;
+            case "onRainInfo":
+                voiceCityName(cityName);
+                getWeatherBasic(VOICE,cityName,time,null,"onRainInfo");
+                getWeatherAqi(UNVOICE,cityName,"",null,"");
+                break;
+            case "onDressInfo":
+                voiceCityName(cityName);
+                getWeatherBasic(VOICE,cityName,"",null,"onDressInfo");
+                getWeatherAqi(UNVOICE,cityName,"",null,"");
+                break;
+            case "onUitravioletLevelInfo":
+                voiceCityName(cityName);
+                getWeatherBasic(VOICE,cityName,"",null,"onUitravioletLevelInfo");
+                getWeatherAqi(UNVOICE,cityName,"",null,"");
+                break;
+            case "onSmogInfo":
+                voiceCityName(cityName);
+                getWeatherBasic(VOICE,cityName,time,null,"onSmogInfo");
+                getWeatherAqi(UNVOICE,cityName,"",null,"");
+                break;
+            default:break;
+        }
     }
 }

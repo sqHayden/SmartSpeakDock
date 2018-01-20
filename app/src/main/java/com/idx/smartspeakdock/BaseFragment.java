@@ -34,6 +34,12 @@ public class BaseFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i("ryan", "onResume: topFragment");
+        BaseActivity.isTopFragment();
+    }
 
     public String judgeCurrentFragment(){
         if (this instanceof WeatherFragment){

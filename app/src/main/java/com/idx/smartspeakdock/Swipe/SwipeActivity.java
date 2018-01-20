@@ -40,7 +40,14 @@ import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
+import com.idx.smartspeakdock.weather.event.ReturnVoiceEvent;
+import com.idx.smartspeakdock.weather.presenter.ReturnAnswerCallback;
+import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
+import com.idx.smartspeakdock.weather.presenter.WeatherCallback;
 import com.idx.smartspeakdock.weather.ui.WeatherFragment;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 
@@ -74,14 +81,21 @@ public class SwipeActivity extends BaseActivity {
     private ControllerServiceConnection mServiceConnection;
     private ControllerService.MyBinder mControllerBinder;
     private Intent mShoppingBroadcastIntent;
+    private Intent mWeatherBroadcastIntent;
+    //天气参数
+    private int mWeather_voice_flag;
+    private String mWeather_voice_city;
+    private String mWeather_voice_time;
+    private String mWeather_func_flag;
+    private ReturnVoice mWeather_return_voice;
     private Intent mMusicBroadcastIntent;
-    public interface MyOnTouchListener {
-        public boolean onTouch(MotionEvent ev);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("11111", "onCreate: ");
+        //EventBus
+        EventBus.getDefault().register(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.drawer_main);
         Log.d(TAG, "onCreate: swipeActivity创建");
@@ -91,7 +105,11 @@ public class SwipeActivity extends BaseActivity {
         //侧滑设置
         initDrawer();
         //fragment切换
-        changeFragment(extraIntentId);
+        mWeather_voice_flag = -1;
+        if (mSharePrefrenceUtils.getFirstChange(GlobalUtils.FIRST_CHANGE_FRAGMENT)) {
+            changeFragment(extraIntentId);
+        }
+
         //绑定语音注册监听器service
         Intent intent = new Intent(SwipeActivity.this, ControllerService.class);
         mServiceConnection = new ControllerServiceConnection();
@@ -121,13 +139,25 @@ public class SwipeActivity extends BaseActivity {
         Logger.info(TAG, extraIntentId);
         switch (extraIntentId) {
             case GlobalUtils.WEATHER_FRAGMENT_INTENT_ID:
+                Bundle args = getIntent().getBundleExtra("weather");
+                if (args != null) {
+                    mWeather_voice_flag = args.getInt("voice_flag");
+                    mWeather_voice_city = args.getString("cityname");
+                    mWeather_voice_time = args.getString("time");
+                    mWeather_func_flag = args.getString("fun_flag");
+                    Log.i("11111", "changeFragment: mWeather_voice_flag = " + mWeather_voice_flag);
+                }
                 initWeather();
+                if (mWeather_voice_flag == GlobalUtils.WEATHER_VOICE_FLAG) {
+                    Log.i("11111", "changeFragment: voice_flag");
+                    returnVoiceCallback();
+                }
                 break;
             case GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID:
                 initCalendar();
                 break;
             case GlobalUtils.MUSIC_FRAGMENT_INTENT_ID:
-                music_name=getIntent().getStringExtra("music_name");
+                music_name = getIntent().getStringExtra("music_name");
                 initMusic(music_name);
                 break;
             case GlobalUtils.MAP_FRAGMENT_INTENT_ID:
@@ -261,7 +291,7 @@ public class SwipeActivity extends BaseActivity {
         mShoppingBroadcastIntent = new Intent(GlobalUtils.SHOPPING_BROADCAST_ACTION);
 
         //实例化music广播Intent
-        mMusicBroadcastIntent=new Intent(GlobalUtils.MUSIC_BROADCAST_ACTION);
+        mMusicBroadcastIntent = new Intent(GlobalUtils.MUSIC_BROADCAST_ACTION);
     }
 
     private void initSetting() {
@@ -270,8 +300,8 @@ public class SwipeActivity extends BaseActivity {
             if (settingFragment == null) {
                 settingFragment = new SettingFragment();
             }
-            ActivityUtils.replaceFragmentInActivity(mFragmentManager, settingFragment, R.id.contentFrame);
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "setting");
+            ActivityUtils.replaceFragmentInActivity(mFragmentManager, settingFragment, R.id.contentFrame);
         }
     }
 
@@ -281,20 +311,21 @@ public class SwipeActivity extends BaseActivity {
             if (mapFragment == null) {
                 mapFragment = new MapFragment();
             }
-            ActivityUtils.replaceFragmentInActivity(mFragmentManager, mapFragment, R.id.contentFrame);
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "map");
+            ActivityUtils.replaceFragmentInActivity(mFragmentManager, mapFragment, R.id.contentFrame);
         }
     }
 
     private void initShopping(String web_url) {
+        Log.i(TAG, "initShopping: ");
         if (!checkFragment("shopping")) {
             actionBar_title = mResources.getString(R.string.shopping_title);
-            if (!(web_url.equals("")) && !TextUtils.isEmpty(web_url)){
+            if (!(web_url.equals("")) && !TextUtils.isEmpty(web_url)) {
                 if (shoppingFragment == null) {
                     shoppingFragment = ShoppingFragment.newInstance(web_url);
                 }
-                ActivityUtils.replaceFragmentInActivity(mFragmentManager, shoppingFragment, R.id.contentFrame);
                 mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "shopping");
+                ActivityUtils.replaceFragmentInActivity(mFragmentManager, shoppingFragment, R.id.contentFrame);
             }
         }
     }
@@ -314,24 +345,39 @@ public class SwipeActivity extends BaseActivity {
     }
 
     private void initCalendar() {
+        Log.i(TAG, "initCalendar: ");
         if (!checkFragment("calendar")) {
             actionBar_title = mResources.getString(R.string.calendar_title);
             if (calendarFragment == null) {
                 calendarFragment = new CalendarFragment();
             }
-            ActivityUtils.replaceFragmentInActivity(mFragmentManager, calendarFragment, R.id.contentFrame);
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "calendar");
+            ActivityUtils.replaceFragmentInActivity(mFragmentManager, calendarFragment, R.id.contentFrame);
+            Log.i(TAG, "initCalendar: mCurr_frag_name = " + mSharePrefrenceUtils.getCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID));
         }
     }
 
     private void initWeather() {
-        if (!checkFragment("weather")) {
-            actionBar_title = mResources.getString(R.string.weather_title);
-            if (weatherFragment == null) {
-                weatherFragment = new WeatherFragment();
+        if (mWeather_voice_flag == GlobalUtils.WEATHER_VOICE_FLAG) {
+            Log.i("ryan", "initWeather: voice_flag");
+            if (!checkFragment("weather")) {
+                actionBar_title = mResources.getString(R.string.weather_title);
+                if (weatherFragment == null) {
+                    weatherFragment = WeatherFragment.newInstance(mWeather_voice_city, mWeather_voice_time, mWeather_func_flag, mWeather_voice_flag);
+                }
+                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "weather");
+                ActivityUtils.replaceFragmentInActivity(mFragmentManager, weatherFragment, R.id.contentFrame);
             }
-            ActivityUtils.replaceFragmentInActivity(mFragmentManager, weatherFragment, R.id.contentFrame);
-            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "weather");
+        } else {
+            Log.i("ryan", "initWeather: un_voice_flag");
+            if (!checkFragment("weather")) {
+                actionBar_title = mResources.getString(R.string.weather_title);
+                if (weatherFragment == null) {
+                    weatherFragment = new WeatherFragment();
+                }
+                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "weather");
+                ActivityUtils.replaceFragmentInActivity(mFragmentManager, weatherFragment, R.id.contentFrame);
+            }
         }
     }
 
@@ -366,11 +412,6 @@ public class SwipeActivity extends BaseActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
-/*
-    @Override
-    public void finish() {
-        moveTaskToBack(false);
-    }*/
 
     //判断当前哪个fragment
     public boolean checkFragment(String frag_name) {
@@ -381,17 +422,22 @@ public class SwipeActivity extends BaseActivity {
                 if (mCurr_Frag_Name.equals(frag_name)) {
                     return true;
                 } else {
-                    switch (mCurr_Frag_Name){
+                    switch (mCurr_Frag_Name) {
                         case "calendar":
-                            calendarFragment = null;break;
+                            calendarFragment = null;
+                            break;
                         case "music":
-                            musicFragment = null;break;
+                            musicFragment = null;
+                            break;
                         case "shopping":
-                            shoppingFragment = null;break;
+                            shoppingFragment = null;
+                            break;
                         case "map":
-                            mapFragment = null;break;
+                            mapFragment = null;
+                            break;
                         case "setting":
-                            settingFragment = null;break;
+                            settingFragment = null;
+                            break;
                     }
                 }
                 break;
@@ -399,17 +445,22 @@ public class SwipeActivity extends BaseActivity {
                 if (mCurr_Frag_Name.equals(frag_name)) {
                     return true;
                 } else {
-                    switch (mCurr_Frag_Name){
+                    switch (mCurr_Frag_Name) {
                         case "weather":
-                            weatherFragment = null;break;
+                            weatherFragment = null;
+                            break;
                         case "music":
-                            musicFragment = null;break;
+                            musicFragment = null;
+                            break;
                         case "shopping":
-                            shoppingFragment = null;break;
+                            shoppingFragment = null;
+                            break;
                         case "map":
-                            mapFragment = null;break;
+                            mapFragment = null;
+                            break;
                         case "setting":
-                            settingFragment = null;break;
+                            settingFragment = null;
+                            break;
                     }
                 }
                 break;
@@ -417,17 +468,22 @@ public class SwipeActivity extends BaseActivity {
                 if (mCurr_Frag_Name.equals(frag_name)) {
                     return true;
                 } else {
-                    switch (mCurr_Frag_Name){
+                    switch (mCurr_Frag_Name) {
                         case "weather":
-                            weatherFragment = null;break;
+                            weatherFragment = null;
+                            break;
                         case "calendar":
-                            calendarFragment = null;break;
+                            calendarFragment = null;
+                            break;
                         case "shopping":
-                            shoppingFragment = null;break;
+                            shoppingFragment = null;
+                            break;
                         case "map":
-                            mapFragment = null;break;
+                            mapFragment = null;
+                            break;
                         case "setting":
-                            settingFragment = null;break;
+                            settingFragment = null;
+                            break;
                     }
                 }
                 break;
@@ -435,17 +491,22 @@ public class SwipeActivity extends BaseActivity {
                 if (mCurr_Frag_Name.equals(frag_name)) {
                     return true;
                 } else {
-                    switch (mCurr_Frag_Name){
+                    switch (mCurr_Frag_Name) {
                         case "weather":
-                            weatherFragment = null;break;
+                            weatherFragment = null;
+                            break;
                         case "calendar":
-                            calendarFragment = null;break;
+                            calendarFragment = null;
+                            break;
                         case "music":
-                            musicFragment = null;break;
+                            musicFragment = null;
+                            break;
                         case "map":
-                            mapFragment = null;break;
+                            mapFragment = null;
+                            break;
                         case "setting":
-                            settingFragment = null;break;
+                            settingFragment = null;
+                            break;
                     }
                 }
                 break;
@@ -453,17 +514,22 @@ public class SwipeActivity extends BaseActivity {
                 if (mCurr_Frag_Name.equals(frag_name)) {
                     return true;
                 } else {
-                    switch (mCurr_Frag_Name){
+                    switch (mCurr_Frag_Name) {
                         case "weather":
-                            weatherFragment = null;break;
+                            weatherFragment = null;
+                            break;
                         case "calendar":
-                            calendarFragment = null;break;
+                            calendarFragment = null;
+                            break;
                         case "music":
-                            musicFragment = null;break;
+                            musicFragment = null;
+                            break;
                         case "shopping":
-                            shoppingFragment = null;break;
+                            shoppingFragment = null;
+                            break;
                         case "setting":
-                            settingFragment = null;break;
+                            settingFragment = null;
+                            break;
                     }
                 }
                 break;
@@ -471,17 +537,22 @@ public class SwipeActivity extends BaseActivity {
                 if (mCurr_Frag_Name.equals(frag_name)) {
                     return true;
                 } else {
-                    switch (mCurr_Frag_Name){
+                    switch (mCurr_Frag_Name) {
                         case "weather":
-                            weatherFragment = null;break;
+                            weatherFragment = null;
+                            break;
                         case "calendar":
-                            calendarFragment = null;break;
+                            calendarFragment = null;
+                            break;
                         case "music":
-                            musicFragment = null;break;
+                            musicFragment = null;
+                            break;
                         case "shopping":
-                            shoppingFragment = null;break;
+                            shoppingFragment = null;
+                            break;
                         case "map":
-                            mapFragment = null;break;
+                            mapFragment = null;
+                            break;
                     }
                 }
                 break;
@@ -490,6 +561,11 @@ public class SwipeActivity extends BaseActivity {
         }
         return false;
     }
+/*
+    @Override
+    public void finish() {
+        moveTaskToBack(false);
+    }*/
 
     //购物语音处理
     private void revokeSwipeShoppingVoice(String web_url) {
@@ -508,35 +584,80 @@ public class SwipeActivity extends BaseActivity {
         }
     }
 
-    //日历模块语音处理
-    private void revokeSwipeCalendarVoice(){
+    //日历语音处理
+    private void revokeSwipeCalendarVoice() {
         Log.d(TAG, "revokeSwipeCalendarVoice: 日历模块语音处理");
-        if (isActivityTop){
-            if (isFragmentTop.getClass().getSimpleName().equals("CalendarFragment")) {
-                Log.i(TAG, "openSpecifyWebsites: 当前Fragment是CalendarFragment");
+        if (isActivityTop) {
+            if (isFragmentTop != null) {
+                if (isFragmentTop.getClass().getSimpleName().equals("CalendarFragment")) {
+                    Log.i(TAG, "openSpecifyWebsites: 当前Fragment是CalendarFragment");
 
-            } else {
-                Log.i(TAG, "openSpecifyWebsites: 当前Fragment不是CalendarFragment");
-                initCalendar();
-                mActionBar.setTitle(actionBar_title);
+                } else {
+                    Log.i(TAG, "openSpecifyWebsites: 当前Fragment不是CalendarFragment");
+                    initCalendar();
+                    mActionBar.setTitle(actionBar_title);
+                }
             }
         }
     }
-    //音乐模块语音处理
-    private void  revokeSwipeMusicVoice(String music_name){
-        if (isActivityTop){
-            if (isFragmentTop!=null){
-                if (isFragmentTop.getClass().getSimpleName().equals("MusicFragment")){
 
-                    mMusicBroadcastIntent.putExtra("music",music_name);
+    //天气语音处理
+    private void revokeSwipeWeatherVoice(String cityName, String time, final ReturnVoice returnVoice, String func_flag, int flag) {
+        if (isActivityTop) {
+            if (isFragmentTop != null) {
+                if (isFragmentTop.getClass().getSimpleName().equals("WeatherFragment")) {
+                    Log.i(TAG, "openSpecifyWebsites: 当前Fragment是WeatherFragment");
+                    mWeather_return_voice = returnVoice;
+                    returnVoiceCallback();
+                    mWeatherBroadcastIntent = new Intent(GlobalUtils.WEATHER_BROADCAST_ACTION);
+                    mWeatherBroadcastIntent.putExtra("cityname", cityName);
+                    mWeatherBroadcastIntent.putExtra("time", time);
+                    mWeatherBroadcastIntent.putExtra("flag", func_flag);
+                    sendBroadcast(mWeatherBroadcastIntent);
+                } else {
+                    Log.i(TAG, "openSpecifyWebsites: 当前Fragment不是WeatherFragment");
+                    mWeather_return_voice = returnVoice;
+                    mWeather_voice_city = cityName;
+                    mWeather_voice_time = time;
+                    mWeather_voice_flag = flag;
+                    mWeather_func_flag = func_flag;
+                    initWeather();
+                    mActionBar.setTitle(actionBar_title);
+                    returnVoiceCallback();
+                }
+            }
+        }
+    }
+
+    //音乐模块语音处理
+    private void revokeSwipeMusicVoice(String music_name) {
+        if (isActivityTop) {
+            if (isFragmentTop != null) {
+                if (isFragmentTop.getClass().getSimpleName().equals("MusicFragment")) {
+                    mMusicBroadcastIntent.putExtra("music", music_name);
                     sendBroadcast(mMusicBroadcastIntent);
-                }else {
+                } else {
                     initMusic(music_name);
                     mActionBar.setTitle(actionBar_title);
                 }
             }
         }
     }
+
+    private void returnVoiceCallback() {
+        if (weatherFragment != null) {
+            weatherFragment.setReturnAnswerCallback(new ReturnAnswerCallback() {
+                @Override
+                public void onReturnAnswer(String voiceAnswer) {
+                    if (mWeather_return_voice != null) {
+                        Log.i("11111", "onReturnAnswer: ");
+                        mWeather_return_voice.onReturnVoice(voiceAnswer);
+                    }
+                }
+            });
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -560,13 +681,26 @@ public class SwipeActivity extends BaseActivity {
         }
         if (mSharePrefrenceUtils != null) {
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "");
+            mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, false);
             mSharePrefrenceUtils = null;
         }
         if (mShoppingBroadcastIntent != null) {
             mShoppingBroadcastIntent = null;
         }
+        if (mShoppingBroadcastIntent != null) {
+            mWeatherBroadcastIntent = null;
+        }
         isDrawer = false;
+        mWeather_voice_flag = -1;
+        mWeather_return_voice = null;
+        EventBus.getDefault().unregister(this);
         unbindService(mServiceConnection);
+    }
+
+    @Subscribe
+    public void onEvent(ReturnVoiceEvent returnVoiceEvent) {
+        Log.i("11111", "onEvent: ");
+        mWeather_return_voice = returnVoiceEvent.getReturnVoice();
     }
 
     @Override
@@ -575,8 +709,13 @@ public class SwipeActivity extends BaseActivity {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "");
+            mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, false);
             super.onBackPressed();
         }
+    }
+
+    public interface MyOnTouchListener {
+        public boolean onTouch(MotionEvent ev);
     }
 
     public class ControllerServiceConnection implements ServiceConnection {
@@ -595,11 +734,11 @@ public class SwipeActivity extends BaseActivity {
                 }
             });
 
-            //日历
+            //日历语音处理
             mControllerBinder.setCalendarControllerListener(new CalendarCallBack() {
                 @Override
                 public void onCalendarCallBack() {
-                   revokeSwipeCalendarVoice();
+                    revokeSwipeCalendarVoice();
                 }
             });
 
@@ -607,8 +746,17 @@ public class SwipeActivity extends BaseActivity {
             mControllerBinder.onGetMusicName(new MusicCallBack() {
                 @Override
                 public void onMusicCallBack(String music_name) {
-                    Log.d(TAG, "onMusicCallBack: "+music_name);
+                    Log.d(TAG, "onMusicCallBack: " + music_name);
                     revokeSwipeMusicVoice(music_name);
+                }
+            });
+            //天气语音处理
+            mControllerBinder.setWeatherControllerListener(new WeatherCallback() {
+                @Override
+                public void onWeatherCallback(String cityName, String time, ReturnVoice returnVoice, String func_flag, int flag) {
+                    mWeather_return_voice = returnVoice;
+                    Log.i("ryan", "onWeatherCallback: 1111111");
+                    revokeSwipeWeatherVoice(cityName, time, returnVoice, func_flag, flag);
                 }
             });
         }

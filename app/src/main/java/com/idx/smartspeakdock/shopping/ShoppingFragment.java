@@ -19,6 +19,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 
+import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.baidu.control.UnitManager;

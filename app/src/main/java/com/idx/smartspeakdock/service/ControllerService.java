@@ -3,30 +3,25 @@ package com.idx.smartspeakdock.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.idx.calendarview.CalendarView;
-import com.idx.calendarview.LunarCalendar;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.baidu.control.UnitManager;
 import com.idx.smartspeakdock.baidu.unit.listener.ICalenderVoiceListener;
 import com.idx.smartspeakdock.baidu.unit.listener.IMusicVoiceListener;
-import com.idx.smartspeakdock.calendar.TimeData;
+import com.idx.smartspeakdock.baidu.unit.listener.IShoppingVoiceListener;
+import com.idx.smartspeakdock.baidu.unit.listener.IWeatherVoiceListener;
 import com.idx.smartspeakdock.calendar.Util;
 import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
 import com.idx.smartspeakdock.music.activity.MusicListFragment;
 import com.idx.smartspeakdock.music.service.MusicCallBack;
-import com.idx.smartspeakdock.music.service.MusicService;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
-import com.idx.smartspeakdock.baidu.control.UnitManager;
-import com.idx.smartspeakdock.baidu.unit.listener.IShoppingVoiceListener;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.idx.smartspeakdock.utils.GlobalUtils;
+import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
+import com.idx.smartspeakdock.weather.presenter.WeatherCallback;
 
 /**
  * Created by ryan on 18-1-16.
@@ -35,8 +30,10 @@ import java.util.Date;
 
 public class ControllerService extends Service {
     public final String TAG = "ControllerService";
+    private final int msgKey1 = 1;
     ShoppingCallBack mShoppingCallBack;
     CalendarCallBack mCalendarCallBack;
+    WeatherCallback mWeatherCallback;
     MusicCallBack mMusicCallBack;
     CalendarView mCalendarView;
     Util util;
@@ -61,38 +58,42 @@ public class ControllerService extends Service {
         return new MyBinder();
     }
 
+    public class MyBinder extends Binder implements IControllerServiceListener {
+        //购物
+        @Override
+        public void onReturnWeburl(ShoppingCallBack shoppingCallBack) {
+            mShoppingCallBack = shoppingCallBack;
+        }
+
+        //日历
+        @Override
+        public void setCalendarControllerListener(CalendarCallBack calendarCallBack) {
+            mCalendarCallBack = calendarCallBack;
+        }
+        //音乐
+        @Override
+        public void onGetMusicName(MusicCallBack musicCallBack) {
+            mMusicCallBack=musicCallBack;
+        }
+        //天气
+        @Override
+        public void setWeatherControllerListener(WeatherCallback weatherCallback) {
+            mWeatherCallback = weatherCallback;
+        }
+    }
+
     @Override
     public void onRebind(Intent intent) {
         Log.i(TAG, "onRebind: ");
         super.onRebind(intent);
     }
 
-    public class MyBinder extends Binder implements ControllerServiceListener {
-
-        @Override
-        public void onReturnWeburl(ShoppingCallBack shoppingCallBack) {
-            mShoppingCallBack = shoppingCallBack;
-        }
-        //日历
-        @Override
-        public void setCalendarControllerListener(CalendarCallBack calendarCallBack) {
-            mCalendarCallBack = calendarCallBack;
-        }
-
-        @Override
-        public void onGetMusicName(MusicCallBack musicCallBack) {
-            mMusicCallBack=musicCallBack;
-        }
-
-        @Override
-        public void onTop(boolean isTopActivity, Fragment isTopFragment) {}
-    }
     //注册购物语音模块
-    public void registerShoppingModule(){
+    public void registerShoppingModule() {
         UnitManager.getInstance(getApplicationContext()).setShoppingVoiceListener(new IShoppingVoiceListener() {
             @Override
             public void openSpecifyWebsites(String web_sites_url) {
-                if (mShoppingCallBack != null){
+                if (mShoppingCallBack != null) {
                     mShoppingCallBack.onShoppingCallback(web_sites_url);
                 }
             }
@@ -181,6 +182,7 @@ public class ControllerService extends Service {
             }
         });
     }
+
     @Override
     public boolean onUnbind(Intent intent) {
         Log.i(TAG, "onUnbind: ");
@@ -194,27 +196,105 @@ public class ControllerService extends Service {
         registerShoppingModule();
         //注册日历语音模块
         registerCalendarModule();
+
+        //注册天气语音模块
+        registerWeatherModule();
+
         //注册音乐语音模块
         registerMusicModule();
+
         return super.onStartCommand(intent, flags, startId);
     }
+    //注册天气语音模块
+    private void registerWeatherModule() {
+        UnitManager.getInstance(getApplicationContext()).setWeatherVoiceListener(new IWeatherVoiceListener() {
+            @Override
+            public void onWeatherInfo(String cityName) {
+                if(mWeatherCallback != null){
+                    mWeatherCallback.onWeatherCallback(cityName,"",null,"onWeatherInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                }
+            }
+
+            @Override
+            public void onRangeTempInfo(String cityName, String time, ReturnVoice returnVoice) {
+                if(mWeatherCallback != null){
+                    mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onRangeTempInfo", GlobalUtils.WEATHER_VOICE_FLAG);
+                }
+            }
+
+            @Override
+            public void onAirQualityInfo(String cityName, ReturnVoice returnVoice) {
+                if(mWeatherCallback != null){
+                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onAirQualityInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                }
+            }
+
+            @Override
+            public void onCurrentTempInfo(String cityName, ReturnVoice returnVoice) {
+                if(mWeatherCallback != null){
+                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onCurrentTempInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                }
+            }
+
+            @Override
+            public void onWeatherStatus(String cityName, String time, ReturnVoice returnVoice) {
+                if(mWeatherCallback != null){
+                    mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onWeatherStatus",GlobalUtils.WEATHER_VOICE_FLAG);
+                }
+            }
+
+            @Override
+            public void onRainInfo(String cityName, String time, ReturnVoice returnVoice) {
+                if(mWeatherCallback != null){
+                    mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onRainInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                }
+            }
+
+            @Override
+            public void onDressInfo(String cityName, ReturnVoice returnVoice) {
+                if(mWeatherCallback != null){
+                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onDressInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                }
+            }
+
+            @Override
+            public void onUitravioletLevelInfo(String cityName, ReturnVoice returnVoice) {
+                if(mWeatherCallback != null){
+                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onUitravioletLevelInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                }
+            }
+
+            @Override
+            public void onSmogInfo(String cityName, String time, ReturnVoice returnVoice) {
+                if(mWeatherCallback != null){
+                    mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onSmogInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                }
+            }
+        });
+    }
+
+
     public void ifmCalendarCallBackNoNull(){
         if (mCalendarCallBack != null){
             mCalendarCallBack.onCalendarCallBack();
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.i(TAG, "onDestroy: ");
-        if (mShoppingCallBack != null){
+        if (mShoppingCallBack != null) {
             mShoppingCallBack = null;
         }
-        if (mCalendarCallBack != null){
+        if (mCalendarCallBack != null) {
             mCalendarCallBack = null;
         }
         if (mMusicCallBack!=null){
             mMusicCallBack=null;
+        }
+        if (mWeatherCallback != null){
+            mWeatherCallback = null;
         }
     }
 }

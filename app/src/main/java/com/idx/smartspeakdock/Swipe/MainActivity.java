@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -25,19 +26,24 @@ import android.view.WindowManager;
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
+import com.idx.smartspeakdock.music.service.MusicCallBack;
 import com.idx.smartspeakdock.music.service.MusicService;
 import com.idx.smartspeakdock.service.ControllerService;
-import com.idx.smartspeakdock.service.GetCityService;
 import com.idx.smartspeakdock.service.SpeakerService;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
-import com.idx.smartspeakdock.shopping.ShoppingFragment;
 import com.idx.smartspeakdock.shopping.shoproom.entity.Shopping;
 import com.idx.smartspeakdock.standby.StandByFragment;
 import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.AppExecutors;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
+import com.idx.smartspeakdock.weather.event.ReturnVoiceEvent;
+import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
+import com.idx.smartspeakdock.weather.presenter.WeatherCallback;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -67,6 +73,7 @@ public class MainActivity extends BaseActivity {
     private SharePrefrenceUtils mSharedPreferencesUtils;
     private AppExecutors mAppExecutors;
     List<Shopping> mShoppings;
+    private ReturnVoice mReturnVoice;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -211,6 +218,7 @@ public class MainActivity extends BaseActivity {
                         startActivity(mIntent);
                         menuItem.setChecked(true);
                         mDrawerLayout.closeDrawers();
+                        mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
                         return true;
                     }
                 });
@@ -324,10 +332,27 @@ public class MainActivity extends BaseActivity {
                         revokeMainShoppingVoice(web_url);
                     }
             });
+            //calendar语音处理
             mControllerBinder.setCalendarControllerListener(new CalendarCallBack() {
                 @Override
                 public void onCalendarCallBack() {
                     revokeMainCalendarVoice();
+                }
+            });
+            //weather语音处理
+            mControllerBinder.setWeatherControllerListener(new WeatherCallback() {
+                @Override
+                public void onWeatherCallback(String cityName, String time, ReturnVoice returnVoice,String func_flag, int flag) {
+                    Log.i("11111", "onWeatherCallback: ");
+                    mReturnVoice = returnVoice;
+                    revokeMainWeatherVoice(cityName,time,returnVoice,func_flag,flag);
+                }
+            });
+            //music语音处理
+            mControllerBinder.onGetMusicName(new MusicCallBack() {
+                @Override
+                public void onMusicCallBack(String music_name) {
+                    revokeMainMusicVoice(music_name);
                 }
             });
         }
@@ -341,26 +366,54 @@ public class MainActivity extends BaseActivity {
     }
 
     private void revokeMainShoppingVoice(String web_url) {
-        Log.i(TAG, "revokeMainShoppingVoice: 当前Activity不是SwipeActivity");
         if (!isActivityTop){
-            Log.i(TAG, "openSpecifyWebsites: 当前Activity不是SwipeActivity");
+            Log.i(TAG, "revokeMainShoppingVoice: 当前Activity不是SwipeActivity");
             mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
             mIntent.putExtra("weburl",web_url);
             startActivity(mIntent);
+            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
         }
     }
     private void revokeMainCalendarVoice() {
         if (!isActivityTop){
-            Log.i(TAG, "openSpecifyWebsites: 当前Activity不是SwipeActivity");
+            Log.i(TAG, "revokeMainCalendarVoice: 当前Activity不是SwipeActivity");
             mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID);
             startActivity(mIntent);
+            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
         }
     }
+
+
+    private void revokeMainWeatherVoice(String cityName, String time, ReturnVoice returnVoice, String func_flag,int flag) {
+        if (!isActivityTop){
+            Log.i(TAG, "revokeMainWeatherVoice: 当前Activity不是SwipeActivity");
+            mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.WEATHER_FRAGMENT_INTENT_ID);
+            mReturnVoice = returnVoice;
+            Bundle args = new Bundle();
+            args.putString("cityname",cityName);
+            args.putString("time",time);
+            args.putString("fun_flag",func_flag);
+            args.putInt("voice_flag",flag);
+            mIntent.putExtra("weather",args);
+            startActivity(mIntent);
+            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("11111", "onStop: ");
+        EventBus.getDefault().post(new ReturnVoiceEvent(mReturnVoice));
+    }
+
     private void  revokeMainMusicVoice(String music_name){
-        if (isActivityTop){
+        if (!isActivityTop){
             mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
             mIntent.putExtra("musicname",music_name);
             startActivity(mIntent);
+            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
         }
     }
+
 }
