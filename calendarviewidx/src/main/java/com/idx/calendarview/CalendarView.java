@@ -512,7 +512,6 @@ public class CalendarView extends FrameLayout {
      * @param position 某一年
      */
     public void closeSelectLayout(final int position) {
-        Log.v("1218","guandaoyiyue");
         mSelectLayout.setVisibility(GONE);
         mWeekBar.setVisibility(VISIBLE);
         mMonthPager.setVisibility(VISIBLE);
@@ -524,15 +523,12 @@ public class CalendarView extends FrameLayout {
             calendar.setLunar(lunarCalendar.getLunarText(calendar));
             mDelegate.mSelectedCalendar = calendar;
             if (mDelegate.mDateChangeListener != null) {
-                Log.v("1218","guandaoyiyue11");
                 mDelegate.mDateChangeListener.onDateChange(calendar);
             }
             if (mDelegate.mDateSelectedListener != null) {
-                Log.v("1218","guandaoyiyue22");
                 mDelegate.mDateSelectedListener.onDateSelected(calendar);
             }
         } else {
-            Log.v("1218","guandaoyiyue33b" + position);
             mMonthPager.setCurrentItem(position, true);
         }
         mWeekBar.animate()
@@ -569,7 +565,6 @@ public class CalendarView extends FrameLayout {
      *
      */
     public void selectCurrentMonth( ) {
-        Log.v("1218","指定未知");
         mSelectLayout.setVisibility(GONE);
         mWeekBar.setVisibility(VISIBLE);
         mMonthPager.setVisibility(VISIBLE);

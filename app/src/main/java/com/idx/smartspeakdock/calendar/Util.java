@@ -188,4 +188,52 @@ public  class Util {
         }
         return answer;
     }
+    /*
+    * 返回英文月份
+    * */
+    public static String getEnglishMonth(int month){
+        String englishmonth ="";
+        switch (month){
+            case 1:
+                englishmonth = context.getResources().getString(R.string.january);
+                break;
+            case 2:
+                englishmonth = context.getResources().getString(R.string.february);
+                break;
+            case 3:
+                englishmonth = context.getResources().getString(R.string.march);
+                break;
+            case 4:
+                englishmonth = context.getResources().getString(R.string.april);
+                break;
+            case 5:
+                englishmonth = context.getResources().getString(R.string.may);
+                break;
+            case 6:
+                englishmonth = context.getResources().getString(R.string.june);
+                break;
+            case 7:
+                englishmonth = context.getResources().getString(R.string.july);
+                break;
+            case 8:
+                englishmonth = context.getResources().getString(R.string.augest);
+                break;
+            case 9:
+                englishmonth = context.getResources().getString(R.string.september);
+                break;
+            case 10:
+                englishmonth = context.getResources().getString(R.string.october);
+                break;
+            case 11:
+                englishmonth = context.getResources().getString(R.string.november);
+                break;
+            case 12:
+                englishmonth = context.getResources().getString(R.string.december);
+                break;
+            default:
+                break;
+
+        }
+        return englishmonth;
+    }
 }

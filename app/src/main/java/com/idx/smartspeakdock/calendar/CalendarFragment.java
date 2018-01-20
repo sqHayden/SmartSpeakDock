@@ -69,18 +69,19 @@ public class CalendarFragment extends BaseFragment implements
     private String date ="";
     private Integer day;
     public MyRecyclerView myRecyclerView;
-    private Context context;
     String hour,minutes;
-    String answer;
     String time;
     Boolean yearopen = false;
     int year;
     private TextView selectyeartext;
     private SwipeActivity.MyOnTouchListener onTouchListener;
+    private TextView mYear;
+    private TextView mMonth;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Log.d(TAG, "onAttach: ");
         mContext = context;
     }
 
@@ -88,6 +89,7 @@ public class CalendarFragment extends BaseFragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logger.setEnable(true);
+        Log.d(TAG, "onCreate: ");
         EventBus.getDefault().register(this);
         mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
     }
@@ -96,6 +98,7 @@ public class CalendarFragment extends BaseFragment implements
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_calendar,container,false);
+        Log.d(TAG, "onCreateView: ");
         initView();
         onTouchListener = new SwipeActivity.MyOnTouchListener() {
             @Override
@@ -121,12 +124,15 @@ public class CalendarFragment extends BaseFragment implements
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated: " + savedInstanceState);
         if (savedInstanceState != null && savedInstanceState.getBoolean("year")){
+            Log.d(TAG, "onActivityCreated: ");
             mCalendarView.showSelectLayout(year);
             mTextMonthDay.setVisibility(View.GONE);
+            mMonth.setVisibility(View.GONE);
             recyclerView.setVisibility(View.GONE);
             addButton.setVisibility(View.INVISIBLE);
-            mTextYear.setText(String.valueOf(year+ getString(R.string.year)));
+            mTextYear.setText(String.valueOf(year));
             yearopen = true;
         }
         presenter = new Presenter(this,mContext,mCalendarView);
@@ -142,13 +148,18 @@ public class CalendarFragment extends BaseFragment implements
             mCalendarView.setOnDateSelectedListener(this);
         }
         presenter.getcurrenttime();
-        mTextYear.setText(String.valueOf(mCalendarView.getCurYear()+ getString(R.string.year)));
-        mTextMonthDay.setText(mCalendarView.getCurMonth() +getString(R.string.month));
+        mTextYear.setText(String.valueOf(mCalendarView.getCurYear()));
+        if (getResources().getConfiguration().locale.getCountry().equals("UK") ||getResources().getConfiguration().locale.getCountry().equals("US")){
+            mTextMonthDay.setText(Util.getEnglishMonth(mCalendarView.getCurMonth()));
+            mMonth.setVisibility(View.GONE);
+        }else {
+            mTextMonthDay.setText(String.valueOf(mCalendarView.getCurMonth()));
+        }
         date = String.valueOf(mCalendarView.getCurYear()) + String.valueOf(mCalendarView.getCurMonth());
         day = mCalendarView.getCurDay();
         list = new Model().getdata();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-        myRecyclerView = new MyRecyclerView(date,day,context,list);
+        myRecyclerView = new MyRecyclerView(date,day,mContext,list);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(myRecyclerView);
@@ -167,12 +178,8 @@ public class CalendarFragment extends BaseFragment implements
     }
 
     public void initView(){
-        if ( getResources().getConfiguration().locale.getCountry().equals("UK") || getResources().getConfiguration().locale.getCountry().equals("US")){
-            selectyeartext = mView.findViewById(R.id.selectyeartext);
-            TextView selectmonthtext = mView.findViewById(R.id.selectmonthtext);
-            selectyeartext.setTextSize(getResources().getDimension(R.dimen.calendar_textsize_select));
-            selectmonthtext.setTextSize(getResources().getDimension(R.dimen.calendar_textsize_select));
-        }
+        mYear = mView.findViewById(R.id.year);
+        mMonth = mView.findViewById(R.id.month);
         mTextMonthDay = mView.findViewById(R.id.tv_month_day);
         mTextYear = mView.findViewById(R.id.tv_year);
         mCurrentTime = mView.findViewById(R.id.currenttime);
@@ -186,18 +193,21 @@ public class CalendarFragment extends BaseFragment implements
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume: ");
         mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState: " + yearopen);
         outState.putBoolean("year",yearopen);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
         EventBus.getDefault().unregister(this);
         mContext.stopService(new Intent(mContext.getApplicationContext(), SplachService.class));
         ((SwipeActivity) getActivity()).unregisterMyOnTouchListener(onTouchListener);
@@ -228,12 +238,14 @@ public class CalendarFragment extends BaseFragment implements
    * */
     @Override
     public void showyear(int year) {
+        Log.d(TAG, "showyear: " + yearopen);
         this.year = year;
         mCalendarView.showSelectLayout(year);
         mTextMonthDay.setVisibility(View.GONE);
+        mMonth.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
         addButton.setVisibility(View.INVISIBLE);
-        mTextYear.setText(String.valueOf(year+ getString(R.string.year)));
+        mTextYear.setText(String.valueOf(year));
         yearopen = true;
     }
     /*
@@ -241,8 +253,13 @@ public class CalendarFragment extends BaseFragment implements
     * */
     @Override
     public void showmonth(int year, int month, int day) {
+        Log.d(TAG, "showmonth: "+ yearopen);
         mCalendarView.selectCurrentMonth();
         mCalendarView.scrollToCalendar(year,month,day);
+        if (getResources().getConfiguration().locale.getCountry().equals("UK") ||getResources().getConfiguration().locale.getCountry().equals("US")){
+            mTextMonthDay.setText(Util.getEnglishMonth(mCalendarView.getCurMonth()));
+            mMonth.setVisibility(View.GONE);
+        }
         addButton.setVisibility(View.VISIBLE);
         yearopen = false;
     }
@@ -258,14 +275,24 @@ public class CalendarFragment extends BaseFragment implements
     @Override
     public void onDateSelected(Calendar calendar) {
         mTextYear.setVisibility(View.VISIBLE);
+        mYear.setVisibility(View.VISIBLE);
         mTextMonthDay.setVisibility(View.VISIBLE);
-        mTextMonthDay.setText(calendar.getMonth() + getString(R.string.month));
-        mTextYear.setText(String.valueOf(calendar.getYear()+ getString(R.string.year)));
+        mMonth.setVisibility(View.VISIBLE);
+        if (getResources().getConfiguration().locale.getCountry().equals("UK") ||getResources().getConfiguration().locale.getCountry().equals("US")){
+            mTextMonthDay.setText(Util.getEnglishMonth(calendar.getMonth()));
+            mMonth.setVisibility(View.GONE);
+        }else {
+            mTextMonthDay.setText(String.valueOf(calendar.getMonth()));
+        }
+        mTextYear.setText(String.valueOf(calendar.getYear()));
     }
 
     @Override
     public void onYearChange(int year) {
-        mTextYear.setText(String.valueOf(year+ getString(R.string.year)));}
+        if (isAdded()){
+            mTextYear.setText(String.valueOf(year));
+        }
+       }
 
     @Subscribe
     public void onEvent(MessageEvent messageEvent){

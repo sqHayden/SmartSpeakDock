@@ -76,7 +76,7 @@
     <dimen name="music_title_marginTop">381dp</dimen>
 
 
-    <dimen name="calendar_textsize_select">16sp</dimen>
+    <dimen name="calendar_textsize_select">20sp</dimen>
 
     //weather
     <dimen name="weather_three_little_title_textsize">40sp</dimen>
