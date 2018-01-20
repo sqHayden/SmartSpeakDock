@@ -333,7 +333,7 @@ public class VoiceActionAdapter {
             default:
         }
         String[] preVoice = mContext.getResources().getStringArray(R.array.help_pre);
-        String voiceHelp = preVoice[MathTool.randomIndex(0, preVoice.length)] + voiceArray[MathTool.randomIndex(0, voiceArray.length)];
+        String voiceHelp = preVoice[MathTool.randomValue(preVoice.length)] + voiceArray[MathTool.randomValue(voiceArray.length)];
         TTSManager.getInstance().speak(voiceHelp, mSpeakCallback);
     }
 
