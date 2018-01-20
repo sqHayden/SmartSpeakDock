@@ -4,20 +4,17 @@
         <item>您好啊！</item>
         <item>您有啥事儿？</item>
         <item>您有什么事儿？</item>
-        <item>什么事呀？</item>
-        <item>啥事儿？</item>
-        <item>干（gan4）啥？</item>
-        <item>您想干（gan4）啥？</item>
-        <item>请吩咐。</item>
-        <item>您想干（gan4）什么呢？</item>
         <item>您有什么吩咐？</item>
-        <item>有何贵干（gan4）呀？</item>
+        <item>主人，请吩咐。</item>
+        <item>什么事儿？</item>
+        <item>啥事儿？</item>
     </string-array>
 
     <string-array name="voice_bye">
         <item>好像没有什么事儿，下次再见！</item>
-        <item>没什么事儿，我休息去了！</item>
-        <item>等得（de1）我花儿（er2）都谢了，再见！</item>
+        <item>没有什么事儿，我休息去了！</item>
+        <item>想好了再告诉我吧，再见！</item>
+        <item>等得我花儿都谢啦，再见！</item>
     </string-array>
 
     <string-array name="voice_repeat">
@@ -29,7 +26,7 @@
     <string-array name="voice_sorry">
         <item>对不起，我糊涂了！</item>
         <item>对不起，我需要调整下心情，再见！</item>
-        <item>对不起，臣妾做不到，再见！</item>
+        <item>对不起，臣妾做不到啦，再见！</item>
     </string-array>
 
     <string-array name="help_calender">

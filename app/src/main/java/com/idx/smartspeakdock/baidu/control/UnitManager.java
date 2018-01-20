@@ -237,7 +237,7 @@ public class UnitManager {
                     if (enableSession) {
                         if (sayBye){
                             //询问是否关闭会话
-                            String voice = mVoiceArrayRepeat[MathTool.randomIndex(0, mVoiceArrayRepeat.length)];
+                            String voice = mVoiceArrayRepeat[MathTool.randomValue(mVoiceArrayRepeat.length)];
                             TTSManager.getInstance().speak(voice, new TTSManager.SpeakCallback() {
                                 @Override
                                 public void onSpeakStart() {

@@ -163,7 +163,7 @@ public class SpeakerService extends Service implements IStatus {
                         service.speakDialog = new SpeakDialog(service.getBaseContext());
                     }
                     service.speakDialog.showReady();
-                    String voiceWel = service.mVoiceArrayWel[MathTool.randomIndex(0, service.mVoiceArrayWel.length)];
+                    String voiceWel = service.mVoiceArrayWel[MathTool.randomValue(service.mVoiceArrayWel.length)];
                     Log.d(TAG, "welcome voice: " + voiceWel);
                     TTSManager.getInstance().speak(voiceWel, new TTSManager.SpeakCallback() {
                         @Override
@@ -192,7 +192,7 @@ public class SpeakerService extends Service implements IStatus {
                     break;
                 case CONSTANT_TIME_TICK:
                     //查询超时了
-                    String voiceSorry = service.mVoiceArraySorry[MathTool.randomIndex(0, service.mVoiceArraySorry.length)];
+                    String voiceSorry = service.mVoiceArraySorry[MathTool.randomValue(service.mVoiceArraySorry.length)];
                     TTSManager.getInstance().speak(voiceSorry);
                 case CONSTANT_RECOGNIZE_ERROR:
                 case CONSTANT_SESSION_ERROR:
@@ -423,7 +423,7 @@ public class SpeakerService extends Service implements IStatus {
         @Override
         public void onAsrFinishError(int errorCode, int subErrorCode, String errorMessage, String descMessage, RecogResult recogResult) {
             super.onAsrFinishError(errorCode, subErrorCode, errorMessage, descMessage, recogResult);
-            String voice = mVoiceArrayBye[MathTool.randomIndex(0, mVoiceArrayBye.length)];
+            String voice = mVoiceArrayBye[MathTool.randomValue(mVoiceArrayBye.length)];
             TTSManager.getInstance().speak(voice, new TTSManager.SpeakCallback(){
                 @Override
                 public void onSpeakStart() {
