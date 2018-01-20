@@ -75,6 +75,7 @@ public class CalendarView extends FrameLayout {
      */
     CalendarLayout mParentLayout;
     LunarCalendar lunarCalendar;
+    String answer="";
     private View view;
 
 
@@ -207,7 +208,7 @@ public class CalendarView extends FrameLayout {
     }
     /*
     *
-    * 获取星期几
+    * 获取星期数字
     * */
     public int getWeek(String date){
         int weekNumber = mDelegate.getCurrentDay().getWeek();
@@ -235,6 +236,39 @@ public class CalendarView extends FrameLayout {
         }
         return weekNumber;
     }
+    /*
+    * 获取星期几
+    * */
+    public String getWeeks(String time){
+        answer="";
+        switch (this.getWeek(time)){
+            case 1:
+                answer = time+ this.getResources().getString(R.string.monday);
+                break;
+            case 2:
+                answer = time+ this.getResources().getString(R.string.tuesday);
+                break;
+            case 3:
+                answer = time+ this.getResources().getString(R.string.wednesday);
+                break;
+            case 4:
+                answer = time+ this.getResources().getString(R.string.thursday);
+                break;
+            case 5:
+                answer = time+ this.getResources().getString(R.string.friday);
+                break;
+            case 6:
+                answer = time+ this.getResources().getString(R.string.saturday);
+                break;
+            case 7:
+                answer = time+ this.getResources().getString(R.string.sunday);
+                break;
+            default:
+                break;
+        }
+        return answer;
+    }
+
     /*
     * 获取明天的日期
     *

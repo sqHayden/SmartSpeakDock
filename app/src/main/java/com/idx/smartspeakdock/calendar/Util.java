@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
+import com.idx.calendarview.CalendarView;
 import com.idx.calendarview.LunarCalendar;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.calendar.bean.Schedule;
@@ -24,9 +25,10 @@ public  class Util {
     static   Context context;
     static   String answer1 = "";
     static   String answer = "";
-
-    public Util(Context context) {
+    static CalendarView mCalendarView;
+    public Util(Context context,CalendarView calendarView) {
         this.context = context;
+        this.mCalendarView = calendarView;
     }
 
     public static String getActInfo(String time, Integer year, Integer month, Integer day) {
@@ -45,7 +47,7 @@ public  class Util {
         }
         return time + answer;
     }
-    public static String getFestivalInfogetActInfo(String time,Integer year,Integer month, Integer day) {
+    public static String getFestivalInfo(String time,Integer year,Integer month, Integer day) {
         answer = "";
         String aa =  LunarCalendar.getSolarCalendar(month,day);
         if (!aa.isEmpty()){
@@ -96,5 +98,94 @@ public  class Util {
             Week += 6;
         }
         return Week;
+    }
+    public static String getCurrentTime(){
+        long time = System.currentTimeMillis();
+        Date date = new Date(time);
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        return format.format(date);
+    }
+    /*
+    * 获取节假日
+    * */
+    public String getFestivalInfo(String time){
+        answer="";
+        switch (time){
+            case TimeData.YESTERDAY:
+                answer = getFestivalInfo(time,mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
+                break;
+            case TimeData.TODAY:
+                answer =  getFestivalInfo(time,mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
+                break;
+            case TimeData.TOMORROW:
+                answer =  getFestivalInfo(time,mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
+                break;
+            default:
+                break;
+
+        }
+        return answer;
+    }
+    /*
+    * 获取安排的事情
+    * */
+    public String getActionInfo(String time){
+        answer="";
+        switch (time){
+            case TimeData.YESTERDAY:
+                answer =  Util.getActInfo(time,mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
+                break;
+            case TimeData.TODAY:
+                answer =  Util.getActInfo(time,mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay());
+                break;
+            case TimeData.TOMORROW:
+                answer =  Util.getActInfo(time,mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
+                break;
+            default:
+                break;
+        }
+        return answer;
+    }
+    /*
+   * 获取日期
+   * */
+    public String getDate(String time){
+        answer="";
+        switch (time){
+            case TimeData.YESTERDAY:
+                answer = time + mCalendarView.getYesData().get("month") + context.getResources().getString(R.string.month) + mCalendarView.getYesData().get("day") + context.getResources().getString(R.string.day);
+                break;
+            case TimeData.TODAY:
+                answer = time + mCalendarView.getCurMonth() + context.getResources().getString(R.string.month) + mCalendarView.getCurDay() + context.getResources().getString(R.string.day);
+                break;
+            case TimeData.TOMORROW:
+                answer = time + mCalendarView.getTomoData().get("month") + context.getResources().getString(R.string.month) + mCalendarView.getTomoData().get("day") + context.getResources().getString(R.string.day);
+                break;
+            default:
+                break;
+
+        }
+        return answer;
+    }
+    /*
+    * 获取农历时间
+    * */
+    public String getLunarDateInfo(String time){
+        answer="";
+        switch (time){
+            case TimeData.YESTERDAY:
+                answer = time + context.getResources().getString(R.string.lunar_calendar)+ LunarCalendar.solarToLunar(mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
+                break;
+            case TimeData.TODAY:
+                answer = time+context.getResources().getString(R.string.lunar_calendar) +mCalendarView.getLunar();
+                break;
+            case TimeData.TOMORROW:
+                answer = time + context.getResources().getString(R.string.lunar_calendar)+LunarCalendar.solarToLunar(mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
+                break;
+            default:
+                break;
+
+        }
+        return answer;
     }
 }
