@@ -184,11 +184,16 @@ public class SpeakerService extends Service implements IStatus {
                     break;
                 case CONSTANT_RECOGNIZE_START:
                     //显示会话窗口，并开始识别，需回溯
-                    service.speakDialog.showSpeaking();
-                    service.startRecognize();
+                    if (service.speakDialog != null) {
+                        service.speakDialog.showSpeaking();
+                        service.startRecognize();
+                    }
+
                     break;
                 case CONSTANT_RECOGNIZE_FINISH:
-                    service.speakDialog.showReady();
+                    if (service.speakDialog != null) {
+                        service.speakDialog.showReady();
+                    }
                     break;
                 case CONSTANT_TIME_TICK:
                     //查询超时了
@@ -327,6 +332,16 @@ public class SpeakerService extends Service implements IStatus {
             mRecognizerManager.stop();
             mRecognizerManager.release();
             mRecognizerManager = null;
+        }
+
+        if (speakDialog != null) {
+            speakDialog.dismiss();
+            speakDialog = null;
+        }
+
+        if (mHandler != null) {
+            mHandler.removeCallbacks(timerRunnable);
+            mHandler = null;
         }
 
         TTSManager.getInstance().release();

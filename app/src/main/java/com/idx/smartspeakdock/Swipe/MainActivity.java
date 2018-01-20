@@ -77,11 +77,11 @@ public class MainActivity extends BaseActivity {
         initDrawer();
         mIntent = new Intent(MainActivity.this, SwipeActivity.class);
         //启动语音唤醒识别service
-        if (!isServiceRunning(this, "com.idx.smartspeakdock.start.SpeakerService")) {
+        if (!isServiceRunning(this, SpeakerService.class.getName())) {
             startService(new Intent(this, SpeakerService.class));
         }
         //启动语音注册监听器service
-        if (!isServiceRunning(this,"com.idx.smartspeakdock.service.ControllerService")) {
+        if (!isServiceRunning(this, ControllerService.class.getName())) {
             mControllerintent = new Intent(this, ControllerService.class);
             //启动service
             startService(mControllerintent);

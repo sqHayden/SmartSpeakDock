@@ -15,7 +15,9 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.service.SpeakerService;
 
 /**
  * Created by ryan on 18-1-5.
@@ -48,7 +50,15 @@ public class SettingFragment extends Fragment {
         mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-
+                if (b) {
+                    if (!BaseActivity.isServiceRunning(getActivity(), SpeakerService.class.getName())) {
+                        getActivity().startService(new Intent(getActivity(), SpeakerService.class));
+                    }
+                } else {
+                    if (BaseActivity.isServiceRunning(getActivity(), SpeakerService.class.getName())) {
+                        getActivity().stopService(new Intent(getActivity(), SpeakerService.class));
+                    }
+                }
             }
         });
 
@@ -72,7 +82,7 @@ public class SettingFragment extends Fragment {
             Log.i(TAG, "judgePlatformVersion: 平台版本小于19");
             mSwitch.setTextOn(getResources().getString(R.string.voice_switch_on_text));
             mSwitch.setTextOff(getResources().getString(R.string.voice_switch_off_text));
-        }else{}
+        }
     }
 
     @Override
