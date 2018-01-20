@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="voice_welcome">
-        <item>您好！</item>
+        <item>您好啊！</item>
         <item>您有啥事儿？</item>
         <item>您有什么事儿？</item>
         <item>什么事呀？</item>
@@ -16,14 +16,14 @@
 
     <string-array name="voice_bye">
         <item>好像没有什么事儿，下次再见！</item>
-        <item>没什么事，我休息去了！</item>
-        <item>等得我花儿（er2）都谢了，再见！</item>
+        <item>没什么事儿，我休息去了！</item>
+        <item>等得（de1）我花儿（er2）都谢了，再见！</item>
     </string-array>
 
     <string-array name="voice_repeat">
-        <item>您还有什么吩咐吗，没有请说“再见”？</item>
-        <item>您还有其他事吗，没有请说“再见”？</item>
-        <item>还有事吗，没有请说“再见”？</item>
+        <item>您还有什么吩咐吗？没有请说“再见”。</item>
+        <item>您还有其他事吗？没有请说“再见”。</item>
+        <item>还有事吗？没有请说“再见”。</item>
     </string-array>
 
     <string-array name="voice_sorry">
