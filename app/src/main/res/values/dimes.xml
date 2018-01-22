@@ -30,6 +30,8 @@
     <dimen name="splash_weather_margin_left">12dp</dimen>
     <dimen name="splash_weather_tmp_width">220dp</dimen>
     <dimen name="splash_weather_width">240dp</dimen>
+    <dimen name="splash_weather_margin_left_port">109dp</dimen>
+    <dimen name="splash_weather_margin_left_land">198dp</dimen>
 
     //weather
     <dimen name="weather_three_little_title_textsize">18sp</dimen>
