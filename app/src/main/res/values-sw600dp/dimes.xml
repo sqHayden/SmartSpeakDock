@@ -33,7 +33,7 @@
     <dimen name="calendar_lunar_textsize">8sp</dimen>
     <dimen name="calendar_dialog_title_textsize">40sp</dimen>
     <dimen name="calendar_recycler_textsize">12sp</dimen>
-    <dimen name="calendar_textsize_select">12sp</dimen>
+    <dimen name="calendar_textsize_select">16sp</dimen>
 
     //splash
     <dimen name="splash_timeView_margin_top">220dp</dimen>
@@ -49,6 +49,8 @@
     <dimen name="splash_weather_margin_left">20dp</dimen>
     <dimen name="splash_weather_tmp_width">220dp</dimen>
     <dimen name="splash_weather_width">240dp</dimen>
+    <dimen name="splash_weather_margin_left_port">205dp</dimen>
+    <dimen name="splash_weather_margin_left_land">372dp</dimen>
     //music
     <dimen name="music_album_outboard_marginTop">321dp</dimen>
     <dimen name="music_album_inside_marginTop">340dp</dimen>
