@@ -9,25 +9,25 @@
         android:id="@+id/ready_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/colorPrimary">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Ready"/>
+        android:background="@drawable/dialog_voice_ready">
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:text="Ready"/>-->
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/speaking_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/colorAccent"
+        android:background="@drawable/dialog_voice_speaking"
         android:visibility="gone">
-        <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-            android:layout_gravity="center"
-        android:text="Speaking..."/>
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+        <!--android:text="Speaking..."/>-->
     </FrameLayout>
 
 </RelativeLayout>
