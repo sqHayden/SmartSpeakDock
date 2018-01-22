@@ -51,15 +51,24 @@
         <item>明天有什么事务？</item>
         <item>今天几号？</item>
         <item>今天是几号？</item>
-        <item>今天是农历几号？</item>
+        <item>明天农历几号？</item>
+        <item>明天是农历几号？</item>
         <item>现在几点？</item>
         <item>现在几点了？</item>
+        <item>现在是几点？</item>
+        <item>现在是几点了？</item>
         <item>现在什么时间？</item>
         <item>现在什么时间了？</item>
+        <item>现在是什么时间？</item>
+        <item>现在是什么时间了？</item>
         <item>当前几点？</item>
         <item>当前几点了？</item>
+        <item>当前什么时间了？</item>
+        <item>当前是什么时间？</item>
         <item>此刻几点？</item>
         <item>此刻几点了？</item>
+        <item>此刻什么时间了？</item>
+        <item>此刻是什么时间？</item>
     </string-array>
 
     <string-array name="help_map">
@@ -108,6 +117,10 @@
     <string-array name="help_pre">
         <item>您可以这样问，</item>
         <item>您可以对我说，</item>
+    </string-array>
+
+    <string-array name="help_end">
+        <item>等等！</item>
     </string-array>
 
 </resources>
