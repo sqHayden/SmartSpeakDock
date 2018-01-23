@@ -26,6 +26,8 @@
     <dimen name="splash_weather_margin_left">27dp</dimen>
     <dimen name="splash_weather_tmp_width">200dp</dimen>
     <dimen name="splash_weather_width">319dp</dimen>
+    <dimen name="splash_weather_margin_left_port">273dp</dimen>
+    <dimen name="splash_weather_margin_left_land">496dp</dimen>
     //calendar
     <dimen name="calendar_rl_tool_height">67dp</dimen>
     <dimen name="calendar_rl_tool_margintop">27dp</dimen>
@@ -79,7 +81,7 @@
     <dimen name="music_title_marginTop">381dp</dimen>
 
 
-    <dimen name="calendar_textsize_select">16sp</dimen>
+    <dimen name="calendar_textsize_select">20sp</dimen>
 
     //weather
     <dimen name="weather_three_little_title_textsize">40sp</dimen>

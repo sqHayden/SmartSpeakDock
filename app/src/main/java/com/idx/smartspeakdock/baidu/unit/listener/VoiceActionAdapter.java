@@ -21,6 +21,7 @@ import com.idx.smartspeakdock.utils.MathTool;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -30,6 +31,7 @@ import java.util.HashMap;
 
 public class VoiceActionAdapter {
     private static final String TAG = VoiceActionAdapter.class.getSimpleName();
+    private static final int voiceHelpNum = 3;
     private Context mContext;
     private Intent mIntent;
 
@@ -332,9 +334,17 @@ public class VoiceActionAdapter {
                 break;
             default:
         }
+
         String[] preVoice = mContext.getResources().getStringArray(R.array.help_pre);
-        String voiceHelp = preVoice[MathTool.randomValue(preVoice.length)] + voiceArray[MathTool.randomValue(voiceArray.length)];
-        TTSManager.getInstance().speak(voiceHelp, mSpeakCallback);
+        String[] endVoice = mContext.getResources().getStringArray(R.array.help_end);
+        int[] indexs = MathTool.randomValues(voiceArray.length, voiceHelpNum);
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append(preVoice[MathTool.randomValue(preVoice.length)]);
+        for (int i = 0; i < indexs.length; i++) {
+            stringBuffer.append(voiceArray[indexs[i]]);
+        }
+        stringBuffer.append(endVoice[MathTool.randomValue(endVoice.length)]);
+        TTSManager.getInstance().speak(stringBuffer.toString(), mSpeakCallback);
     }
 
 
@@ -635,28 +645,28 @@ public class VoiceActionAdapter {
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID);
                 mContext.startActivity(mIntent);
-                mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
+                mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, true);
                 break;
             case Modules.WEATHER:
                 mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "");
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.WEATHER_FRAGMENT_INTENT_ID);
                 mContext.startActivity(mIntent);
-                mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
+                mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, true);
                 break;
             case Modules.MAP:
                 mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "");
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.MAP_FRAGMENT_INTENT_ID);
                 mContext.startActivity(mIntent);
-                mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
+                mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, true);
                 break;
             case Modules.MUSIC:
                 mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "");
                 mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
                 mContext.startActivity(mIntent);
-                mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
+                mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, true);
                 break;
             case Modules.SHOPPING:
                 mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "");
@@ -665,7 +675,7 @@ public class VoiceActionAdapter {
                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
                 mIntent.putExtra("weburl", "https://mall.flnet.com");
                 mContext.startActivity(mIntent);
-                mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
+                mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, true);
                 break;
             /**购物指令*/
             case GlobalUtils.IPHONE:
