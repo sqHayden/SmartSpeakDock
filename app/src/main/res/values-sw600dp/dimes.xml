@@ -102,7 +102,7 @@
     <dimen name="weather_land_add_marginright">34dp</dimen>//添加事件右边距
     <dimen name="weather_land_now_icon_below_line_width">708dp</dimen>//天气大图标底线宽度
     <dimen name="weather_land_now_icon_below_line_margin_right_left">126dp</dimen>//天气大图标底线左右边距
-    <dimen name="weather_land_line_below_margintop">18dp</dimen>//线与线下文字间距
+    <dimen name="weather_land_line_below_margintop">15dp</dimen>//线与线下文字间距
     <dimen name="weather_land_tomorrow_margintop">20dp</dimen>//天气小标题与第一行文字间距
     <dimen name="weather_land_tomorrow_weather_margintop">15dp</dimen>//天气预报行间距
     <dimen name="weather_land_tomorrow_line_height">108dp</dimen>//天气预报线高度

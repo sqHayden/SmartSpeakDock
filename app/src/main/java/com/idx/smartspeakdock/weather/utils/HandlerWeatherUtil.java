@@ -65,27 +65,40 @@ public class HandlerWeatherUtil {
     }
 
     /**
+     * 解析日期，返回指定格式
+     *
+     * @param date 日期××××-××-××
+     * @return pm 01:30
+     */
+    public static String parseTime(Date date){
+        String result = new SimpleDateFormat("aa hh:mm").format(date);
+        return result;
+    }
+
+    /**
+     * 解析日期，返回指定格式
+     *
+     * @param date 日期××××-××-××
+     * @return 周一 01 22
+     */
+    public static String parseDate(Date date){
+        String result = new SimpleDateFormat("EE MM dd").format(date);
+        return result;
+    }
+
+    /**
      * 解析日期竖屏，返回指定格式
      *
      * @param date 日期××××-××-××
-     * @return ××月××日星期几
+     * @return 周一/Mon
      */
-    public static String parseDate(String date){
+    public static String parseDateWeek(String date){
         String result="";
         DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-        DateFormat format2 = new SimpleDateFormat("MM月dd日");
-        String[] weekOfDays = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
+        DateFormat format2 = new SimpleDateFormat("EE");
         try {
             Date date1=format1.parse(date);
             result=format2.format(date1);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date1);
-            int w = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-            if (date.equals(format1.format(new Date()))){
-                result+="今天";
-            }else {
-                result=weekOfDays[w]+" "+result;
-            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -101,7 +114,7 @@ public class HandlerWeatherUtil {
     public static String parseDateLand(String date){
         String result="";
         DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-        DateFormat format2 = new SimpleDateFormat("MM/dd");
+        DateFormat format2 = new SimpleDateFormat("MM dd");
         try {
             Date date1=format1.parse(date);
             result=format2.format(date1);

@@ -1,6 +1,7 @@
 package com.idx.smartspeakdock;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.lljjcoder.style.citypickerview.CityPickerView;
 import com.squareup.leakcanary.LeakCanary;
@@ -24,7 +25,6 @@ public class SpeakerApplication extends LitePalApplication {
         context = getApplicationContext();
         LitePalApplication.initialize(context);
         instance = this;
-        CityPickerView.getInstance().init(this);
     }
     public static SpeakerApplication getInstance() {
         return instance;

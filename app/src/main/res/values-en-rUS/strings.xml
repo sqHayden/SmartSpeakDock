@@ -24,8 +24,18 @@
     <string name="get_weather_info_error">get weather info error</string>
     <string name="weather_loading_dialog">Loading Weather...</string>
     <string name="weather">Weather</string>
-    <string name="weather_tomorrow">Tom：</string>
-    <string name="weather_after">Aft：</string>
+    <string name="weather_weather">Weather:</string>
+    <string name="weather_tomorrow">Tomorrow:</string>
+    <string name="weather_after">Acquired:</string>
+    <string name="weather_wash_car">Wash_Car:</string>
+    <string name="weather_clothes">Clothes:</string>
+    <string name="weather_air">Air:</string>
+    <string name="weather_forecast">Weather Forecast</string>
+    <string name="weather_index_of_living">Index Of Living</string>
+    <string name="weather_air_quality">Air Quality</string>
+    <string name="weather_week_monday">MON</string>
+    <string name="weather_week_tuesday">TUE</string>
+    <string name="weather_air_not_support">Air quality queries in the area are not currently supported</string>
 
     //network error
     <string name="network_not_connected">Not any network connected,please set it，and drag out to refresh the interface</string>

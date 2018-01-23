@@ -39,7 +39,7 @@
     //weather
     <dimen name="weather_three_little_title_textsize">18sp</dimen>
     <dimen name="weather_city_textSize">30sp</dimen>
-    <dimen name="weather_city_below_textSize">15sp</dimen>
+    <dimen name="weather_city_below_textSize">14sp</dimen>
     <dimen name="weather_basic_textsize">11sp</dimen>//字体
     <dimen name="weather_now_icon_imagesize">132dp</dimen>//天气大图标大小
     <dimen name="weather_now_icon_marginbottom">11dp</dimen>//天气大图标底外边距
@@ -60,7 +60,7 @@
     <dimen name="weather_land_add_marginright">21dp</dimen>//添加事件右边距
     <dimen name="weather_land_now_icon_below_line_width">425dp</dimen>//天气大图标底线宽度
     <dimen name="weather_land_now_icon_below_line_margin_right_left">76dp</dimen>//天气大图标底线左右边距
-    <dimen name="weather_land_line_below_margintop">11dp</dimen>//线与线下文字间距
+    <dimen name="weather_land_line_below_margintop">9dp</dimen>//线与线下文字间距
     <dimen name="weather_land_tomorrow_margintop">12dp</dimen>//天气小标题与第一行文字间距
     <dimen name="weather_land_tomorrow_weather_margintop">9dp</dimen>//天气预报行间距
     <dimen name="weather_land_tomorrow_line_height">65dp</dimen>//天气预报线高度
