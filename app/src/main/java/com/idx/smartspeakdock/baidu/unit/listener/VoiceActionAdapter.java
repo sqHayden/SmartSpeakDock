@@ -487,9 +487,16 @@ public class VoiceActionAdapter {
     private void refreshWeatherInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         if (mWeatherListener != null) {
-            mWeatherListener.onWeatherInfo(reconginize_city_word);
+            mWeatherListener.onWeatherInfo(reconginize_city_word, new ReturnVoice() {
+                @Override
+                public void onReturnVoice(String voice_answer) {
+                    if (checkVoiceAnswer(voice_answer)) {
+                        Log.i(TAG, "onReturnVoice: ");
+                        TTSManager.getInstance().speak(voice_answer, mSpeakCallback);
+                    }
+                }
+            });
         }
-        result(true);
     }
 
     private void rangeTempInfo() {
