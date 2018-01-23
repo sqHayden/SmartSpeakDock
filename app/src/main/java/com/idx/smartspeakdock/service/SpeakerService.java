@@ -126,6 +126,7 @@ public class SpeakerService extends Service implements IStatus {
     private String[] mVoiceArrayBye;
     private String[] mVoiceArrayWel;
     private String[] mVoiceArraySorry;
+    private String[] mVoiceRepeat;
 
     private static class VoiceHandler extends Handler {
         WeakReference<SpeakerService> weakReference;
@@ -236,17 +237,18 @@ public class SpeakerService extends Service implements IStatus {
 
     }
 
-    private void initData(){
+    private void initData() {
         mVoiceArrayBye = getResources().getStringArray(R.array.voice_bye);
         mVoiceArrayWel = getResources().getStringArray(R.array.voice_welcome);
         mVoiceArraySorry = getResources().getStringArray(R.array.voice_sorry);
+        mVoiceRepeat = getResources().getStringArray(R.array.voice_repeat);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (wakeUpStatus == IStatus.STATUS_NONE) {
             Log.d(TAG, "onStartCommand: 开启唤醒");
-            mHandler.sendEmptyMessage(CONSTANT_WAKE_UP_START);
+            sendEmptyMsg(CONSTANT_WAKE_UP_START);
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -352,10 +354,9 @@ public class SpeakerService extends Service implements IStatus {
     public class SimpleWakeupListener implements IWakeupListener {
         @Override
         public void onSuccess(String word, WakeUpResult result) {
-            if (mHandler != null) {
-                //通知已经唤醒, 回溯1.5s
-                mHandler.sendEmptyMessage(CONSTANT_WAKE_UP);
-            }
+            //通知已经唤醒, 回溯1.5s
+            sendEmptyMsg(CONSTANT_WAKE_UP);
+
             Logger.info(TAG, "唤醒成功，唤醒词：" + word);
         }
 
@@ -415,13 +416,33 @@ public class SpeakerService extends Service implements IStatus {
         public void onAsrFinalResult(String[] results, RecogResult recogResult) {
             super.onAsrFinalResult(results, recogResult);
             Log.d("onAsrFinalResult", "onAsrFinalResult: ");
-            if (mHandler != null) {
-                mHandler.sendEmptyMessage(SpeakerService.CONSTANT_RECOGNIZE_FINISH);
-            }
             int length = results[0].length() - 1;
             String msg = results[0].substring(0, length);
-            //将识别后的语句交由Unit处理
-            UnitManager.getInstance(getBaseContext()).sendMessage(msg);
+
+            if (msg.equals("")) {
+                TTSManager.getInstance().speak(mVoiceRepeat[MathTool.randomValue(mVoiceRepeat.length)], new TTSManager.SpeakCallback() {
+                    @Override
+                    public void onSpeakStart() {
+
+                    }
+
+                    @Override
+                    public void onSpeakFinish() {
+                        sendEmptyMsg(CONSTANT_RECOGNIZE_START, BACK_TRACK);
+
+                    }
+
+                    @Override
+                    public void onSpeakError() {
+
+                    }
+                });
+                return;
+            } else {
+                sendEmptyMsg(CONSTANT_RECOGNIZE_FINISH);
+                //将识别后的语句交由Unit处理
+                UnitManager.getInstance(getBaseContext()).sendMessage(msg);
+            }
 
             //调试使用
             String message = "识别结束，结果是“" + msg + "”";
@@ -439,7 +460,7 @@ public class SpeakerService extends Service implements IStatus {
         public void onAsrFinishError(int errorCode, int subErrorCode, String errorMessage, String descMessage, RecogResult recogResult) {
             super.onAsrFinishError(errorCode, subErrorCode, errorMessage, descMessage, recogResult);
             String voice = mVoiceArrayBye[MathTool.randomValue(mVoiceArrayBye.length)];
-            TTSManager.getInstance().speak(voice, new TTSManager.SpeakCallback(){
+            TTSManager.getInstance().speak(voice, new TTSManager.SpeakCallback() {
                 @Override
                 public void onSpeakStart() {
 
@@ -448,9 +469,8 @@ public class SpeakerService extends Service implements IStatus {
                 @Override
                 public void onSpeakFinish() {
                     //超时交互，自动结束会话
-                    if (mHandler != null) {
-                        mHandler.sendEmptyMessage(CONSTANT_RECOGNIZE_ERROR);
-                    }
+                    sendEmptyMsg(CONSTANT_RECOGNIZE_ERROR);
+
                 }
 
                 @Override
@@ -551,24 +571,33 @@ public class SpeakerService extends Service implements IStatus {
     public class SessionListener implements ISessionListener {
         @Override
         public void onSessionFinish() {
-            if (mHandler != null) {
-                mHandler.sendEmptyMessage(CONSTANT_SESSION_FINISH);
-            }
+            sendEmptyMsg(CONSTANT_SESSION_FINISH);
+
         }
 
         @Override
         public void onRegContinue() {
-            if (mHandler != null) {
-                mHandler.sendEmptyMessageDelayed(CONSTANT_RECOGNIZE_START, BACK_TRACK);
-            }
+            sendEmptyMsg(CONSTANT_RECOGNIZE_START, BACK_TRACK);
+
         }
 
         @Override
         public void onSessionError() {
             //Unit Error，自动结束会话
-            if (mHandler != null) {
-                mHandler.sendEmptyMessage(CONSTANT_SESSION_ERROR);
-            }
+            sendEmptyMsg(CONSTANT_SESSION_ERROR);
+
+        }
+    }
+
+    private void sendEmptyMsg(int what, int timeDelay) {
+        if (mHandler != null) {
+            mHandler.sendEmptyMessageDelayed(what, timeDelay);
+        }
+    }
+
+    private void sendEmptyMsg(int what) {
+        if (mHandler != null) {
+            mHandler.sendEmptyMessage(what);
         }
     }
 

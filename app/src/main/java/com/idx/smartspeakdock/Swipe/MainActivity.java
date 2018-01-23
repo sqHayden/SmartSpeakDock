@@ -35,6 +35,7 @@ import com.idx.smartspeakdock.standby.StandByFragment;
 import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.AppExecutors;
 import com.idx.smartspeakdock.utils.GlobalUtils;
+import com.idx.smartspeakdock.utils.PreUtils;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
 import com.idx.smartspeakdock.weather.presenter.WeatherCallback;
@@ -78,8 +79,12 @@ public class MainActivity extends BaseActivity {
         initDrawer();
         mIntent = new Intent(MainActivity.this, SwipeActivity.class);
         //启动语音唤醒识别service
-        if (!isServiceRunning(this, SpeakerService.class.getName())) {
+        boolean isEnable = PreUtils.getItemObject(getBaseContext(), PreUtils.Items.SETTINGS,
+                PreUtils.Settings.SPEAK_SERVICE_ENABLE_STATE, Boolean.class, true);
+        if (isEnable && !isServiceRunning(this, SpeakerService.class.getName())) {
             startService(new Intent(this, SpeakerService.class));
+            PreUtils.setItemObject(getBaseContext(), PreUtils.Items.SETTINGS,
+                    PreUtils.Settings.SPEAK_SERVICE_ENABLE_STATE, isEnable);
         }
         //启动语音注册监听器service
         if (!isServiceRunning(this, ControllerService.class.getName())) {
@@ -88,7 +93,7 @@ public class MainActivity extends BaseActivity {
             startService(mControllerintent);
             //绑定service
             myServiceConnection = new MyServiceConnection();
-            bindService(mControllerintent,myServiceConnection,BIND_AUTO_CREATE);
+            bindService(mControllerintent, myServiceConnection, BIND_AUTO_CREATE);
         }
 
         //程序是否第一次启动
@@ -130,7 +135,8 @@ public class MainActivity extends BaseActivity {
             }
 
             @Override
-            public void onDrawerOpened(View drawerView) {}
+            public void onDrawerOpened(View drawerView) {
+            }
 
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -138,7 +144,8 @@ public class MainActivity extends BaseActivity {
             }
 
             @Override
-            public void onDrawerStateChanged(int newState) {}
+            public void onDrawerStateChanged(int newState) {
+            }
         });
 
         //实例化SharePreferencesUtls
@@ -191,13 +198,13 @@ public class MainActivity extends BaseActivity {
                             case R.id.list_navigation_music:
                                 // TODO: 17-12-16 MusicFragment
                                 startService(new Intent(MainActivity.this, MusicService.class));
-                                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
+                                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
 
                                 break;
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 ShoppingFragment
                                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
-                                mIntent.putExtra("weburl","https://mall.flnet.com");
+                                mIntent.putExtra("weburl", "https://mall.flnet.com");
                                 break;
                             case R.id.list_navigation_map:
                                 // TODO: 17-12-16 MapFragemnt
@@ -213,7 +220,7 @@ public class MainActivity extends BaseActivity {
                         startActivity(mIntent);
                         menuItem.setChecked(true);
                         mDrawerLayout.closeDrawers();
-                        mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
+                        mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, true);
                         return true;
                     }
                 });
@@ -221,20 +228,21 @@ public class MainActivity extends BaseActivity {
 
     public void isAppFirstStart() {
         if (mSharedPreferencesUtils.getFirstAppStart(GlobalUtils.FIRST_APP_START)) {
-            Log.i(TAG, "isAppFirstStart: isFirst = "+mSharedPreferencesUtils.getFirstAppStart(GlobalUtils.FIRST_APP_START));
+            Log.i(TAG, "isAppFirstStart: isFirst = " + mSharedPreferencesUtils.getFirstAppStart(GlobalUtils.FIRST_APP_START));
             mSharedPreferencesUtils.saveFirstAppStart(GlobalUtils.FIRST_APP_START, false);
             mAppExecutors.getDiskIO().execute(new Runnable() {
                 @Override
                 public void run() {
                     mShoppings = readXMLPull();
-                    for(int i = 0;i<mShoppings.size();i++){
+                    for (int i = 0; i < mShoppings.size(); i++) {
                         Shopping shopping = mShoppings.get(i);
-                        mSharedPreferencesUtils.insertWebUrl(shopping.getWebName(),shopping.getWebUrl());
+                        mSharedPreferencesUtils.insertWebUrl(shopping.getWebName(), shopping.getWebUrl());
                     }
                 }
             });
         }
     }
+
     //weburl xml资源解析
     public List<Shopping> readXMLPull() {
         XmlResourceParser parser = getResources().getXml(R.xml.shopurls);
@@ -265,7 +273,7 @@ public class MainActivity extends BaseActivity {
                     case XmlPullParser.END_TAG:
                         if (parser.getName().equalsIgnoreCase("shopping") && curr_shopping != null) {
                             shoppings.add(curr_shopping);
-                            Log.i(TAG, "readXMLPull: webname = "+curr_shopping.getWebName()+",weburl = "+curr_shopping.getWebUrl());
+                            Log.i(TAG, "readXMLPull: webname = " + curr_shopping.getWebName() + ",weburl = " + curr_shopping.getWebUrl());
                             curr_shopping = null;
                         }
                         break;
@@ -288,17 +296,23 @@ public class MainActivity extends BaseActivity {
             standByFragment = null;
         }
         isDrawer = false;
-        if(mSharedPreferencesUtils != null) { mSharedPreferencesUtils = null;}
-        if(mAppExecutors != null) { mAppExecutors = null;}
-        if(mShoppings != null){
+        if (mSharedPreferencesUtils != null) {
+            mSharedPreferencesUtils = null;
+        }
+        if (mAppExecutors != null) {
+            mAppExecutors = null;
+        }
+        if (mShoppings != null) {
             mShoppings.clear();
             mShoppings = null;
         }
-        if (mIntent != null) { mIntent = null;}
+        if (mIntent != null) {
+            mIntent = null;
+        }
         //停止ControllerService
         unbindService(myServiceConnection);
 //        stopService(mControllerintent);
-        if(mControllerintent != null){
+        if (mControllerintent != null) {
             mControllerintent = null;
         }
     }
@@ -312,7 +326,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    public class MyServiceConnection implements ServiceConnection{
+    public class MyServiceConnection implements ServiceConnection {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -321,11 +335,11 @@ public class MainActivity extends BaseActivity {
 
             //shopping语音处理
             mControllerBinder.onReturnWeburl(new ShoppingCallBack() {
-                    @Override
-                    public void onShoppingCallback(String web_url) {
-                        Log.i(TAG, "onShoppingCallback: " + web_url);
-                        revokeMainShoppingVoice(web_url);
-                    }
+                @Override
+                public void onShoppingCallback(String web_url) {
+                    Log.i(TAG, "onShoppingCallback: " + web_url);
+                    revokeMainShoppingVoice(web_url);
+                }
             });
             //calendar语音处理
             mControllerBinder.setCalendarControllerListener(new CalendarCallBack() {
@@ -337,9 +351,9 @@ public class MainActivity extends BaseActivity {
             //weather语音处理
             mControllerBinder.setWeatherControllerListener(new WeatherCallback() {
                 @Override
-                public void onWeatherCallback(String cityName, String time, ReturnVoice returnVoice,String func_flag, int flag) {
+                public void onWeatherCallback(String cityName, String time, ReturnVoice returnVoice, String func_flag, int flag) {
                     Log.i(TAG, "onWeatherCallback: ");
-                    revokeMainWeatherVoice(cityName,time,returnVoice,func_flag,flag);
+                    revokeMainWeatherVoice(cityName, time, returnVoice, func_flag, flag);
                 }
             });
             //music语音处理
@@ -353,53 +367,54 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            if(mControllerBinder != null){
+            if (mControllerBinder != null) {
                 mControllerBinder = null;
             }
         }
     }
 
     private void revokeMainShoppingVoice(String web_url) {
-        if (!isActivityTop){
+        if (!isActivityTop) {
             Log.i(TAG, "revokeMainShoppingVoice: 当前Activity不是SwipeActivity");
-            mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
-            mIntent.putExtra("weburl",web_url);
+            mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
+            mIntent.putExtra("weburl", web_url);
             startActivity(mIntent);
-            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
+            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, true);
         }
     }
+
     private void revokeMainCalendarVoice() {
-        if (!isActivityTop){
+        if (!isActivityTop) {
             Log.i(TAG, "revokeMainCalendarVoice: 当前Activity不是SwipeActivity");
-            mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID);
+            mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID);
             startActivity(mIntent);
-            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
+            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, true);
         }
     }
 
 
-    private void revokeMainWeatherVoice(String cityName, String time, ReturnVoice returnVoice, String func_flag,int flag) {
-        if (!isActivityTop){
+    private void revokeMainWeatherVoice(String cityName, String time, ReturnVoice returnVoice, String func_flag, int flag) {
+        if (!isActivityTop) {
             Log.i(TAG, "revokeMainWeatherVoice: 当前Activity不是SwipeActivity");
-            mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.WEATHER_FRAGMENT_INTENT_ID);
+            mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.WEATHER_FRAGMENT_INTENT_ID);
             Bundle args = new Bundle();
-            args.putString("cityname",cityName);
-            args.putString("time",time);
-            args.putString("fun_flag",func_flag);
-            args.putInt("voice_flag",flag);
-            mIntent.putExtra("weather",args);
+            args.putString("cityname", cityName);
+            args.putString("time", time);
+            args.putString("fun_flag", func_flag);
+            args.putInt("voice_flag", flag);
+            mIntent.putExtra("weather", args);
             startActivity(mIntent);
-            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
+            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, true);
         }
     }
 
-    private void  revokeMainMusicVoice(String music_name){
-        if (!isActivityTop){
+    private void revokeMainMusicVoice(String music_name) {
+        if (!isActivityTop) {
             Log.i(TAG, "revokeMainMusicVoice: 当前Activity不是SwipeActivity");
-            mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
-            mIntent.putExtra("musicname",music_name);
+            mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
+            mIntent.putExtra("musicname", music_name);
             startActivity(mIntent);
-            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT,true);
+            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, true);
         }
     }
 

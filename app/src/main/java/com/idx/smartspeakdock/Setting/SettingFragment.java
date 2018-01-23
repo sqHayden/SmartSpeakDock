@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.service.SpeakerService;
+import com.idx.smartspeakdock.utils.PreUtils;
 
 /**
  * Created by ryan on 18-1-5.
@@ -46,10 +47,14 @@ public class SettingFragment extends Fragment {
     private void initView() {
         mSwitch = mView.findViewById(R.id.voice_switch);
         mAbout = mView.findViewById(R.id.about);
-
+        boolean isEnable = PreUtils.getItemObject(getContext(), PreUtils.Items.SETTINGS,
+                PreUtils.Settings.SPEAK_SERVICE_ENABLE_STATE, Boolean.class, false);
+        mSwitch.setChecked(isEnable);
         mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                PreUtils.setItemObject(getContext(), PreUtils.Items.SETTINGS,
+                        PreUtils.Settings.SPEAK_SERVICE_ENABLE_STATE, b);
                 if (b) {
                     if (!BaseActivity.isServiceRunning(getActivity(), SpeakerService.class.getName())) {
                         getActivity().startService(new Intent(getActivity(), SpeakerService.class));

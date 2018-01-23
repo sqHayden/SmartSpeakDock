@@ -25,11 +25,10 @@
             android:id="@+id/voice_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/setting_left"
             android:checked="false"
-            android:showText="true"
-            android:splitTrack="false"
             android:textSize="@dimen/setting_switch_textsize"
             android:textColor="#000000"/>
 

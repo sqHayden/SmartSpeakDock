@@ -114,7 +114,7 @@ public class UnitManager {
         }, (String) authParams.get(AuthInfo.META_APP_KEY), (String) authParams.get(AuthInfo.META_APP_SECRET));
         mVoiceAdapter = new VoiceActionAdapter(context);
         ttsManager = TTSManager.getInstance();
-        mVoiceArrayRepeat = context.getResources().getStringArray(R.array.voice_repeat);
+        mVoiceArrayRepeat = context.getResources().getStringArray(R.array.voice_more);
     }
 
     /**

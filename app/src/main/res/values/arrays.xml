@@ -17,10 +17,17 @@
         <item>等得我花儿都谢啦，再见！</item>
     </string-array>
 
-    <string-array name="voice_repeat">
+    <string-array name="voice_more">
         <item>您还有什么吩咐吗？没有请说“再见”。</item>
         <item>您还有其他事吗？没有请说“再见”。</item>
         <item>还有事吗？没有请说“再见”。</item>
+    </string-array>
+
+    <string-array name="voice_repeat">
+        <item>对不起，我没有听清楚您说的是什么，请重复！</item>
+        <item>对不起，请您再说一遍！</item>
+        <item>对不起，请您再说一次！</item>
+        <item>对不起，您大点声好吗，我听不见啦！</item>
     </string-array>
 
     <string-array name="voice_sorry">

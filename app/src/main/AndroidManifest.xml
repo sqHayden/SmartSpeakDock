@@ -114,8 +114,6 @@
             android:exported="false" />
         <service android:name=".service.GetCityService" />
 
-        <service android:name=".service.AutoUpdateService" />
-
         <service
             android:name=".music.service.MusicService"
             android:enabled="true"
