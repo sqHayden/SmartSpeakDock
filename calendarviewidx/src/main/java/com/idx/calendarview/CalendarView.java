@@ -77,7 +77,7 @@ public class CalendarView extends FrameLayout {
     LunarCalendar lunarCalendar;
     String answer="";
     private View view;
-
+    private static final String TAG = "CalendarView";
 
     public CalendarView(@NonNull Context context) {
         this(context, null);
@@ -95,7 +95,7 @@ public class CalendarView extends FrameLayout {
      *
      * @param context context
      */
-    private void init(Context context) {
+    private void init(final Context context) {
         LayoutInflater.from(context).inflate(R.layout.cv_layout_calendar_view, this, true);
         FrameLayout frameContent = (FrameLayout) findViewById(R.id.frameContent);
         this.mWeekPager = (WeekViewPager) findViewById(R.id.vp_week);
@@ -122,7 +122,7 @@ public class CalendarView extends FrameLayout {
         mSelectLayout.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+            
             }
 
             @Override
@@ -172,8 +172,6 @@ public class CalendarView extends FrameLayout {
         mDelegate.mSelectedCalendar = mDelegate.createCurrentDate();
 
         int mCurYear = mDelegate.mSelectedCalendar.getYear();
-//        if (mDelegate.getMinYear() >= mCurYear) mDelegate.setMinYear(mCurYear);
-//        if (mDelegate.getMaxYear() <= mCurYear) mDelegate.setMaxYear(mCurYear + 2);
         mSelectLayout.setup(mDelegate);
         int y = mDelegate.mSelectedCalendar.getYear() - mDelegate.getMinYear();
         mDelegate.mCurrentMonthViewItem = 12 * y + mDelegate.mSelectedCalendar.getMonth() - mDelegate.getMinYearMonth();
@@ -182,6 +180,7 @@ public class CalendarView extends FrameLayout {
         mSelectLayout.setOnMonthSelectedListener(new MonthRecyclerView.OnMonthSelectedListener() {
             @Override
             public void onMonthSelected(int year, int month) {
+                Log.d(TAG, "onItem44: ");
                 int position = 12 * (year - mDelegate.getMinYear()) + month - mDelegate.getMinYearMonth();
                 closeSelectLayout(position);
             }
@@ -446,6 +445,7 @@ public class CalendarView extends FrameLayout {
         mDelegate.mSelectedCalendar = mDelegate.createCurrentDate();
         if (mDelegate.mDateSelectedListener != null &&
                 mDelegate.mCurrentWeekViewItem == mWeekPager.getCurrentItem()) {
+            Log.d(TAG, "calendar89 ");
             mDelegate.mDateSelectedListener.onDateSelected(mDelegate.createCurrentDate());
         }
         mWeekPager.scrollToCurrent();
@@ -460,6 +460,7 @@ public class CalendarView extends FrameLayout {
      * 滚动到下一个月
      */
     public void scrollToNext() {
+        Log.d(TAG, "scrollToNext: ");
         if (mWeekPager.getVisibility() == VISIBLE) {
             mWeekPager.setCurrentItem(mWeekPager.getCurrentItem() + 1);
         } else {
@@ -472,6 +473,7 @@ public class CalendarView extends FrameLayout {
      * 滚动到上一个月
      */
     public void scrollToPre() {
+        Log.d(TAG, "scrollToPre: ");
         if (mWeekPager.getVisibility() == VISIBLE) {
             mWeekPager.setCurrentItem(mWeekPager.getCurrentItem() - 1);
         } else {
@@ -515,7 +517,9 @@ public class CalendarView extends FrameLayout {
         mSelectLayout.setVisibility(GONE);
         mWeekBar.setVisibility(VISIBLE);
         mMonthPager.setVisibility(VISIBLE);
+        Log.d(TAG, "onItem88: ");
         if (position == mMonthPager.getCurrentItem()) {
+            Log.d(TAG, "onItem55: ");
             Calendar calendar = new Calendar();
             calendar.setYear((position + mDelegate.getMinYearMonth() - 1) / 12 + mDelegate.getMinYear());
             calendar.setMonth((position + mDelegate.getMinYearMonth() - 1) % 12 + 1);
@@ -523,12 +527,15 @@ public class CalendarView extends FrameLayout {
             calendar.setLunar(lunarCalendar.getLunarText(calendar));
             mDelegate.mSelectedCalendar = calendar;
             if (mDelegate.mDateChangeListener != null) {
+                Log.d(TAG, "onItem66: ");
                 mDelegate.mDateChangeListener.onDateChange(calendar);
             }
             if (mDelegate.mDateSelectedListener != null) {
+                Log.d(TAG, "calendar77: ");
                 mDelegate.mDateSelectedListener.onDateSelected(calendar);
             }
         } else {
+            Log.d(TAG, "onItem99: ");
             mMonthPager.setCurrentItem(position, true);
         }
         mWeekBar.animate()
@@ -541,6 +548,7 @@ public class CalendarView extends FrameLayout {
                         super.onAnimationEnd(animation);
                         mWeekBar.setVisibility(VISIBLE);
                         if (mParentLayout != null && mParentLayout.mContentView != null) {
+                            Log.d(TAG, "onItem10: ");
                             mParentLayout.mContentView.setVisibility(VISIBLE);
                         }
                     }
@@ -554,6 +562,7 @@ public class CalendarView extends FrameLayout {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
+                        Log.d(TAG, "onItem12: ");
                         mMonthPager.setVisibility(VISIBLE);
 
                     }
@@ -579,6 +588,7 @@ public class CalendarView extends FrameLayout {
             mDelegate.mDateChangeListener.onDateChange(calendar);
         }
         if (mDelegate.mDateSelectedListener != null) {
+            Log.d(TAG, "calendar90 ");
             mDelegate.mDateSelectedListener.onDateSelected(calendar);
         }
         mWeekBar.animate()
@@ -646,6 +656,7 @@ public class CalendarView extends FrameLayout {
             if(!Util.isCalendarInRange(mDelegate.mSelectedCalendar, mDelegate)){
                 return;
             }
+            Log.d(TAG, "calendar91");
             mDelegate.mDateSelectedListener.onDateSelected(mDelegate.mSelectedCalendar);
         }
     }
@@ -777,7 +788,6 @@ public class CalendarView extends FrameLayout {
         mWeekBar.setBackgroundColor(weekBackground);
         mWeekBar.setTextColor(weekTextColor);
     }
-
 
     /**
      * 更新界面，

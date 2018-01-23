@@ -76,7 +76,6 @@ public class SwipeActivity extends BaseActivity {
     private String actionBar_title;
     private SharePrefrenceUtils mSharePrefrenceUtils;
     private String mCurr_Frag_Name;
-    private ArrayList<MyOnTouchListener> onTouchListeners = new ArrayList<MyOnTouchListener>(10);
     private ControllerServiceConnection mServiceConnection;
     private ControllerService.MyBinder mControllerBinder;
     private Intent mShoppingBroadcastIntent;
@@ -111,24 +110,6 @@ public class SwipeActivity extends BaseActivity {
         }
     }
 
-    //待机界面Touch
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        for (MyOnTouchListener listener : onTouchListeners) {
-            if (listener != null) {
-                listener.onTouch(ev);
-            }
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-    public void registerMyOnTouchListener(MyOnTouchListener myOnTouchListener) {
-        onTouchListeners.add(myOnTouchListener);
-    }
-
-    public void unregisterMyOnTouchListener(MyOnTouchListener myOnTouchListener) {
-        onTouchListeners.remove(myOnTouchListener);
-    }
 
     private void changeFragment(String extraIntentId) {
         Logger.info(TAG, extraIntentId);
@@ -148,6 +129,7 @@ public class SwipeActivity extends BaseActivity {
                 break;
             case GlobalUtils.MUSIC_FRAGMENT_INTENT_ID:
                 music_name = getIntent().getStringExtra("music_name");
+                Log.d(TAG, "musicbb" + music_name);
                 initMusic(music_name);
                 break;
             case GlobalUtils.MAP_FRAGMENT_INTENT_ID:
@@ -618,6 +600,7 @@ public class SwipeActivity extends BaseActivity {
                     sendBroadcast(mMusicBroadcastIntent);
                 } else {
                     Log.i(TAG, "revokeSwipeMusicVoice: 当前Fragment不是MusicFragment");
+                    Log.d(TAG, "musicccc");
                     initMusic(music_name);
                     mActionBar.setTitle(actionBar_title);
                 }

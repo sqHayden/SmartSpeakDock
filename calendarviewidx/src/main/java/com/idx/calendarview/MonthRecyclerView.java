@@ -21,6 +21,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import java.util.List;
 
 @SuppressWarnings("all")
 public class MonthRecyclerView extends RecyclerView {
+    private static final String TAG = "MonthRecyclerView";
     private CustomCalendarViewDelegate mDelegate;
     private MonthAdapter mAdapter;
     private OnMonthSelectedListener mListener;
@@ -54,11 +56,14 @@ public class MonthRecyclerView extends RecyclerView {
         mAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, long itemId) {
+                Log.d(TAG, "onItemClick11: ");
                 if (mListener != null && mDelegate != null) {
+                    Log.d(TAG, "onItemClick22: ");
                     Month month = mAdapter.getItem(position);
                     if (!Util.isMonthInRange(month.getYear(), month.getMonth(),
                             mDelegate.getMinYear(), mDelegate.getMinYearMonth(),
                             mDelegate.getMaxYear(), mDelegate.getMaxYearMonth())) {
+                        Log.d(TAG, "onItemClick33: ");
                         return;
                     }
                     mListener.onMonthSelected(month.getYear(), month.getMonth());

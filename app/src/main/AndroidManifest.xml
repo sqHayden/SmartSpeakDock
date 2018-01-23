@@ -108,10 +108,6 @@
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote"></service>
-        <service
-            android:name=".service.SplachService"
-            android:enabled="true"
-            android:exported="false" />
         <service android:name=".service.GetCityService" />
 
         <service

@@ -26,7 +26,6 @@ import android.widget.Toast;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.Swipe.SwipeActivity;
-import com.idx.smartspeakdock.service.SplachService;
 import com.idx.smartspeakdock.standby.Utility;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
@@ -84,7 +83,6 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
     private static String mSelectCounty="北京";
     private Resources mResources;
     private Context mContext;
-    private SwipeActivity.MyOnTouchListener onTouchListener;
 
     private String voice_answer;
     private Weather voice_weather;
@@ -237,29 +235,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
             mVAfterWeek=mWeatherView.findViewById(R.id.weather_vertical_forecast_after_week);
         }
         initView();
-        onTouchListener = new SwipeActivity.MyOnTouchListener() {
-            @Override
-            public boolean onTouch(MotionEvent ev) {
-                switch (ev.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
 
-                        Log.d(TAG, "onTouch: down");
-                        mContext.stopService(new Intent(mContext.getApplicationContext(), SplachService.class));
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        Log.d(TAG, "onTouch: move");
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        Log.d(TAG, "onTouch: up");
-                        mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
-                        break;
-                }
-                return false;
-            }
-        };
 
         judgeAirIsShow();
-        ((SwipeActivity) getActivity()).registerMyOnTouchListener(onTouchListener);
 
         return mWeatherView;
     }
@@ -502,8 +480,6 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
     public void onDestroy() {
         Logger.info(TAG, "onDestroy: ");
         super.onDestroy();
-        mContext.stopService(new Intent(mContext.getApplicationContext(), SplachService.class));
-        ((SwipeActivity) getActivity()).unregisterMyOnTouchListener(onTouchListener);
         //解绑广播注册
         mContext.unregisterReceiver(mWeatherBroadcastReceiver);
         mWeather_city = "";
@@ -559,14 +535,6 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
             editor=null;
         }
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mContext.startService(new Intent(mContext.getApplicationContext(), SplachService.class));
-        Log.d(TAG, "onResume: ");
-    }
-
     /**
      * 加载本地天气数据,未找到则加载网络天气信息
      *

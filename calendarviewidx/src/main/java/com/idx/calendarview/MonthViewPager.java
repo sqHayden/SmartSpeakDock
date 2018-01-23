@@ -20,6 +20,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -31,6 +32,7 @@ import java.lang.reflect.Constructor;
  */
 @SuppressWarnings("deprecation")
 public class MonthViewPager extends ViewPager {
+    private static final String TAG = "MonthViewPager";
     private CustomCalendarViewDelegate mDelegate;
     CalendarLayout mParentLayout;
     WeekViewPager mWeekPager;
@@ -94,6 +96,7 @@ public class MonthViewPager extends ViewPager {
                 }
 
                 if (mDelegate.mDateSelectedListener != null) {
+                    Log.d(TAG, "calendarning");
                     mDelegate.mDateSelectedListener.onDateSelected(mDelegate.mSelectedCalendar);
                 }
 
@@ -141,13 +144,16 @@ public class MonthViewPager extends ViewPager {
         }
 
         if (mDelegate.mInnerListener != null) {
+            Log.d(TAG, "scrollToCalendar11: ");
             mDelegate.mInnerListener.onDateSelected(calendar);
         }
 
         if (mDelegate.mDateSelectedListener != null) {
+            Log.d(TAG, "calendar55: ");
             mDelegate.mDateSelectedListener.onDateSelected(calendar);
         }
         if (mDelegate.mDateChangeListener != null) {
+            Log.d(TAG, "scrollToCalendar22: ");
             mDelegate.mDateChangeListener.onDateChange(calendar);
         }
 

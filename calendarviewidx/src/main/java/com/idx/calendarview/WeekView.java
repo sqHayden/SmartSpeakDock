@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -350,6 +351,7 @@ public abstract class WeekView extends View implements View.OnClickListener {
                 }
 
                 if (mDelegate.mDateSelectedListener != null) {
+                    Log.d("calendar", "calendar77777 ");
                     mDelegate.mDateSelectedListener.onDateSelected(calendar);
                 }
 
@@ -393,6 +395,7 @@ public abstract class WeekView extends View implements View.OnClickListener {
             mDelegate.mDateChangeListener.onDateChange(currentCalendar);
         }
         if (mDelegate.mDateSelectedListener != null && isNotice) {
+            Log.d("calendar", "calendar0.0000 ");
             mDelegate.mDateSelectedListener.onDateSelected(currentCalendar);
         }
         invalidate();

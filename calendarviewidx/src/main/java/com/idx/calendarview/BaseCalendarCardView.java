@@ -22,6 +22,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -385,6 +386,7 @@ public abstract class BaseCalendarCardView extends View implements View.OnClickL
                 }
 
                 if (mDelegate.mDateSelectedListener != null) {
+                    Log.d("calendar", "wishenm ");
                     mDelegate.mDateSelectedListener.onDateSelected(calendar);
                 }
                 if (mDelegate.mDateChangeListener != null) {

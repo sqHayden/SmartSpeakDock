@@ -199,7 +199,7 @@ public class MainActivity extends BaseActivity {
                                 // TODO: 17-12-16 MusicFragment
                                 startService(new Intent(MainActivity.this, MusicService.class));
                                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
-
+                                mIntent.putExtra("music_name","流水");
                                 break;
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 ShoppingFragment
