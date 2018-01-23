@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    //drawer
+    <dimen name="nav_header_textsize">36sp</dimen>
+
     //setting
-    <dimen name="setting_voice_textsize">30sp</dimen>
-    <dimen name="setting_switch_textsize">16sp</dimen>
-    <dimen name="setting_about_textsize">30sp</dimen>
+    <dimen name="setting_voice_textsize">48sp</dimen>
+    <dimen name="setting_switch_textsize">32sp</dimen>
+    <dimen name="setting_about_textsize">48sp</dimen>
     <dimen name="setting_voice_margin_top">10dp</dimen>
     <dimen name="setting_divider_margin_top">6dp</dimen>
     <dimen name="setting_about_margin_top">10dp</dimen>

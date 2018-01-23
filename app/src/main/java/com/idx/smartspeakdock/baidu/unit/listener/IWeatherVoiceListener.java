@@ -7,7 +7,7 @@ import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
  */
 
 public interface IWeatherVoiceListener {
-    void onWeatherInfo(String cityName);
+    void onWeatherInfo(String cityName,ReturnVoice returnVoice);
 
     void onRangeTempInfo(String cityName,String time,ReturnVoice returnVoice);
     void onAirQualityInfo(String cityName,ReturnVoice returnVoice);

@@ -184,13 +184,14 @@ public class ShoppingFragment extends BaseFragment {
             webView.destroy();
         }*/
         super.onDestroy();
-/*        if(mNetworkRefresh != null) {
+        if(mNetworkRefresh != null) {
             mNetworkRefresh = null;
-        }*/
+        }
         if(progDailog != null) {
             progDailog = null;
         }
         mContext.unregisterReceiver(mShopBroadcastReceiver);
+        mContext = null;
     }
 
     public class ShopBroadcastReceiver extends BroadcastReceiver{

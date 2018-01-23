@@ -7,7 +7,6 @@ import android.content.ServiceConnection;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
@@ -37,13 +36,9 @@ import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.AppExecutors;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
-import com.idx.smartspeakdock.weather.event.ReturnVoiceEvent;
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
 import com.idx.smartspeakdock.weather.presenter.WeatherCallback;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.json.JSONException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -73,7 +68,6 @@ public class MainActivity extends BaseActivity {
     private SharePrefrenceUtils mSharedPreferencesUtils;
     private AppExecutors mAppExecutors;
     List<Shopping> mShoppings;
-    private ReturnVoice mReturnVoice;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -203,6 +197,7 @@ public class MainActivity extends BaseActivity {
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 ShoppingFragment
                                 mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID);
+                                mIntent.putExtra("weburl","https://mall.flnet.com");
                                 break;
                             case R.id.list_navigation_map:
                                 // TODO: 17-12-16 MapFragemnt
@@ -343,8 +338,7 @@ public class MainActivity extends BaseActivity {
             mControllerBinder.setWeatherControllerListener(new WeatherCallback() {
                 @Override
                 public void onWeatherCallback(String cityName, String time, ReturnVoice returnVoice,String func_flag, int flag) {
-                    Log.i("11111", "onWeatherCallback: ");
-                    mReturnVoice = returnVoice;
+                    Log.i(TAG, "onWeatherCallback: ");
                     revokeMainWeatherVoice(cityName,time,returnVoice,func_flag,flag);
                 }
             });
@@ -388,7 +382,6 @@ public class MainActivity extends BaseActivity {
         if (!isActivityTop){
             Log.i(TAG, "revokeMainWeatherVoice: 当前Activity不是SwipeActivity");
             mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.WEATHER_FRAGMENT_INTENT_ID);
-            mReturnVoice = returnVoice;
             Bundle args = new Bundle();
             args.putString("cityname",cityName);
             args.putString("time",time);
@@ -400,15 +393,9 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.i("11111", "onStop: ");
-        EventBus.getDefault().post(new ReturnVoiceEvent(mReturnVoice));
-    }
-
     private void  revokeMainMusicVoice(String music_name){
         if (!isActivityTop){
+            Log.i(TAG, "revokeMainMusicVoice: 当前Activity不是SwipeActivity");
             mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
             mIntent.putExtra("musicname",music_name);
             startActivity(mIntent);

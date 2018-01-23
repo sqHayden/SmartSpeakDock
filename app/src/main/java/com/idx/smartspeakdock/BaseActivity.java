@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -16,18 +15,14 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.idx.smartspeakdock.Swipe.SwipeActivity;
-import com.idx.smartspeakdock.utils.GlobalUtils;
-import com.idx.smartspeakdock.utils.Logger;
-
 import java.util.ArrayList;
 import java.util.List;
 
 // 只用于继承
 public abstract class BaseActivity extends AppCompatActivity {
-    private final String TAG = "BaseActivity";
-    public  boolean isActivityTop;
+    private static final String TAG = "BaseActivity";
     public static Fragment isFragmentTop;
+    public boolean isActivityTop;
     public static FragmentManager mFragmentManager;
     public String fragment_show_activity = "SwipeActivity";
 
@@ -101,26 +96,25 @@ public abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
-    public void isTopActivity(){
+    public void isTopActivity() {
         isActivityTop = false;
-        ActivityManager am = (ActivityManager)getSystemService(ACTIVITY_SERVICE);
+        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
         Log.i(TAG, "isTopActivity = " + cn.getClassName());
-        if (cn.getClassName().contains(fragment_show_activity))
-        {
+        if (cn.getClassName().contains(fragment_show_activity)) {
             isActivityTop = true;
         }
         Log.i(TAG, "isTop = " + isActivityTop);
     }
 
-    public static void isTopFragment(){
+    public static void isTopFragment() {
         List<Fragment> fragments = mFragmentManager.getFragments();
-        Log.i("ryan", "isTopFragment: size = "+fragments.size());
-        for(Fragment fragment : fragments){
+        Log.i(TAG, "isTopFragment: size = " + fragments.size());
+        for (Fragment fragment : fragments) {
 //            if(fragment != null && fragment.isVisible()){
-                isFragmentTop = fragment;
+            isFragmentTop = fragment;
 //            }
-            Log.i("ryan ", "isTopFragment: "+isFragmentTop.getClass().getSimpleName());
+            Log.i(TAG, "isTopFragment: " + isFragmentTop.getClass().getSimpleName());
         }
     }
 

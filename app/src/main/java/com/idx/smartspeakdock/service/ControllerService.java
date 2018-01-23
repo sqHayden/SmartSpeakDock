@@ -34,6 +34,7 @@ public class ControllerService extends Service {
     ShoppingCallBack mShoppingCallBack;
     CalendarCallBack mCalendarCallBack;
     WeatherCallback mWeatherCallback;
+    ReturnVoice mWeather_return_voice;
     MusicCallBack mMusicCallBack;
     CalendarView mCalendarView;
     Util util;
@@ -43,22 +44,24 @@ public class ControllerService extends Service {
     String answer;
     @Override
     public void onCreate() {
-        Log.i(TAG, "onCreate: ");
         super.onCreate();
         mCalendarView = new CalendarView(getApplicationContext());
         util = new Util(getApplicationContext(),mCalendarView);
         musicListFragment=new MusicListFragment();
-
-
     }
+    
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.i(TAG, "onBind: ");
         return new MyBinder();
     }
 
     public class MyBinder extends Binder implements IControllerServiceListener {
+        @Override
+        public ControllerService getControlService() {
+            return ControllerService.this;
+        }
+
         //购物
         @Override
         public void onReturnWeburl(ShoppingCallBack shoppingCallBack) {
@@ -84,8 +87,11 @@ public class ControllerService extends Service {
 
     @Override
     public void onRebind(Intent intent) {
-        Log.i(TAG, "onRebind: ");
         super.onRebind(intent);
+    }
+
+    public ReturnVoice getReturnVoice(){
+        return mWeather_return_voice;
     }
 
     //注册购物语音模块
@@ -99,9 +105,8 @@ public class ControllerService extends Service {
             }
         });
     }
-/*
-* 注册日历语音模块
-* */
+
+    //注册日历语音模块
     public void registerCalendarModule(){
         UnitManager.getInstance(getApplicationContext()).setCalenderVoiceListener(new ICalenderVoiceListener() {
             @Override
@@ -185,39 +190,36 @@ public class ControllerService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.i(TAG, "onUnbind: ");
         return true;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "onStartCommand: ");
         //注册购物语音模块
         registerShoppingModule();
         //注册日历语音模块
         registerCalendarModule();
-
         //注册天气语音模块
         registerWeatherModule();
-
         //注册音乐语音模块
         registerMusicModule();
-
         return super.onStartCommand(intent, flags, startId);
     }
     //注册天气语音模块
     private void registerWeatherModule() {
         UnitManager.getInstance(getApplicationContext()).setWeatherVoiceListener(new IWeatherVoiceListener() {
             @Override
-            public void onWeatherInfo(String cityName) {
+            public void onWeatherInfo(String cityName,ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
-                    mWeatherCallback.onWeatherCallback(cityName,"",null,"onWeatherInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onWeatherInfo",GlobalUtils.WEATHER_VOICE_FLAG);
                 }
             }
 
             @Override
             public void onRangeTempInfo(String cityName, String time, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
+                    mWeather_return_voice = returnVoice;
                     mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onRangeTempInfo", GlobalUtils.WEATHER_VOICE_FLAG);
                 }
             }
@@ -225,6 +227,7 @@ public class ControllerService extends Service {
             @Override
             public void onAirQualityInfo(String cityName, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
+                    mWeather_return_voice = returnVoice;
                     mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onAirQualityInfo",GlobalUtils.WEATHER_VOICE_FLAG);
                 }
             }
@@ -232,6 +235,7 @@ public class ControllerService extends Service {
             @Override
             public void onCurrentTempInfo(String cityName, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
+                    mWeather_return_voice = returnVoice;
                     mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onCurrentTempInfo",GlobalUtils.WEATHER_VOICE_FLAG);
                 }
             }
@@ -239,6 +243,7 @@ public class ControllerService extends Service {
             @Override
             public void onWeatherStatus(String cityName, String time, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
+                    mWeather_return_voice = returnVoice;
                     mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onWeatherStatus",GlobalUtils.WEATHER_VOICE_FLAG);
                 }
             }
@@ -246,6 +251,7 @@ public class ControllerService extends Service {
             @Override
             public void onRainInfo(String cityName, String time, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
+                    mWeather_return_voice = returnVoice;
                     mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onRainInfo",GlobalUtils.WEATHER_VOICE_FLAG);
                 }
             }
@@ -253,6 +259,7 @@ public class ControllerService extends Service {
             @Override
             public void onDressInfo(String cityName, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
+                    mWeather_return_voice = returnVoice;
                     mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onDressInfo",GlobalUtils.WEATHER_VOICE_FLAG);
                 }
             }
@@ -260,6 +267,7 @@ public class ControllerService extends Service {
             @Override
             public void onUitravioletLevelInfo(String cityName, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
+                    mWeather_return_voice = returnVoice;
                     mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onUitravioletLevelInfo",GlobalUtils.WEATHER_VOICE_FLAG);
                 }
             }
@@ -267,6 +275,7 @@ public class ControllerService extends Service {
             @Override
             public void onSmogInfo(String cityName, String time, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
+                    mWeather_return_voice = returnVoice;
                     mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onSmogInfo",GlobalUtils.WEATHER_VOICE_FLAG);
                 }
             }
@@ -283,7 +292,6 @@ public class ControllerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i(TAG, "onDestroy: ");
         if (mShoppingCallBack != null) {
             mShoppingCallBack = null;
         }
@@ -295,6 +303,9 @@ public class ControllerService extends Service {
         }
         if (mWeatherCallback != null){
             mWeatherCallback = null;
+        }
+        if (mWeather_return_voice != null){
+            mWeather_return_voice = null;
         }
     }
 }
