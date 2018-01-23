@@ -50,7 +50,7 @@
             android:layout_width="@dimen/splash_weather_width"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/splash_weather_margin_left_land"
             android:layout_below="@+id/linter_1">
             <ImageView
                 android:id="@+id/weatherIcon"
@@ -74,7 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/splash_weather_margin_left_land"
             android:layout_below="@+id/linter_2">
             <ImageView
                 android:id="@+id/image_car"
@@ -97,7 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/splash_weather_margin_left_land"
             android:layout_below="@+id/linter_3">
             <ImageView
                 android:id="@+id/image_clothes"

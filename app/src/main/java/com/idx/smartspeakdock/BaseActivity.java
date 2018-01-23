@@ -4,16 +4,21 @@ import android.Manifest;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.idx.smartspeakdock.standby.StandByActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +30,43 @@ public abstract class BaseActivity extends AppCompatActivity {
     public boolean isActivityTop;
     public static FragmentManager mFragmentManager;
     public String fragment_show_activity = "SwipeActivity";
+    public Handler handler = new Handler();
+    public Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            Intent intent = new Intent();
+            intent.setClass(getApplicationContext(),StandByActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getApplicationContext().startActivity(intent);
+            handler.removeCallbacks(this);
+        }
+    };
+
+    @Override
+    protected void onRestart() {
+        Log.d(TAG, "onRestart: ");
+        if (handler!=null) {
+            handler.removeCallbacks(runnable);
+            handler.postDelayed(runnable,1000 * 60 * 10);
+        }
+
+        super.onRestart();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause: ");
+        if (handler!=null) {
+            handler.removeCallbacks(runnable);
+        }
+        super.onPause();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +83,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         mFragmentManager = getSupportFragmentManager();
         //当前Activity是否是SwipeActivity
         isTopActivity();
+        handler.postDelayed(runnable,1000 * 60 * 10);
+
     }
 
     @Override
@@ -48,6 +92,32 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onResume();
         //当前正在显示的Fragment
 //        isTopFragment();
+        if (handler!=null) {
+            handler.removeCallbacks(runnable);
+            handler.postDelayed(runnable,1000 * 60 * 10);
+        }
+    }
+
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                Log.d(TAG, "onTouchEvent: down");
+                break;
+            case MotionEvent.ACTION_MOVE:
+                Log.d(TAG, "onTouchEvent: move");
+                break;
+            case MotionEvent.ACTION_UP:
+                Log.d(TAG, "onTouchEvent: up");
+                break;
+        }
+
+
+        handler.removeCallbacks(runnable);
+        handler.postDelayed(runnable,1000 * 60 * 10);
+        return super.onTouchEvent(event);
     }
 
     // 6.0以上权限获取
@@ -124,6 +194,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         isActivityTop = false;
         if (isFragmentTop != null) {
             isFragmentTop = null;
+        }
+        if (handler!=null) {
+            handler.removeCallbacks(runnable);
         }
     }
 }
