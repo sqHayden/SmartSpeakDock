@@ -8,11 +8,11 @@ import com.idx.smartspeakdock.map.SearchArea;
  */
 
 public interface IMapVoiceListener {
-    String onLocationInfo();
+    void onLocationInfo(ResultCallback result);
 
-    String onSearchInfo(String name, SearchArea searchArea);
+    void onSearchInfo(String name, ResultCallback result);
 
-    String onSearchAddress(String address);
+    void onSearchAddress(String address, ResultCallback result);
 
     /**
      *
@@ -21,6 +21,6 @@ public interface IMapVoiceListener {
      * @param pathWay
      * @return
      */
-    String onPathInfo(String fromAddress, String toAddress, PathWay pathWay);
+    void onPathInfo(String fromAddress, String toAddress, PathWay pathWay, ResultCallback result);
 
 }

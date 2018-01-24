@@ -784,20 +784,29 @@ public class VoiceActionAdapter {
 
     private void queryLocationInfo() {
         if (mMapListener != null) {
-            String locationInfo = mMapListener.onLocationInfo();
-            Log.d(TAG, "queryLocationInfo: " + locationInfo);
-            TTSManager.getInstance().speak(locationInfo, mSpeakCallback);
-            Log.d(TAG, "queryLocationInfo: 123");
+            mMapListener.onLocationInfo(new ResultCallback() {
+                @Override
+                public void onResult(String result) {
+                    Log.d(TAG, "queryLocationInfo: " + result);
+                    TTSManager.getInstance().speak(result, mSpeakCallback);
+                }
+            });
+
         }
     }
 
     private void searchInfo() {
-        String area = mSlots.get(SlotsTypes.USER_MAP_SEARCH_AREA);
+//        String area = mSlots.get(SlotsTypes.USER_MAP_SEARCH_AREA);
         String searchName = mSlots.get(SlotsTypes.USER_MAP_SEARCH_NAME);
-        Log.d(TAG, "area: " + area + ", name:" + searchName);
+//        Log.d(TAG, "area: " + area + ", name:" + searchName);
         if (mMapListener != null) {
-            String searchInfo = mMapListener.onSearchInfo(searchName, convertArea(area));
-            TTSManager.getInstance().speak(searchInfo, mSpeakCallback);
+            mMapListener.onSearchInfo(searchName, new ResultCallback() {
+                @Override
+                public void onResult(String result) {
+                    TTSManager.getInstance().speak(result, mSpeakCallback);
+                }
+            });
+
         }
     }
 
@@ -805,8 +814,12 @@ public class VoiceActionAdapter {
         String address = mSlots.get(SlotsTypes.USER_SEARCH_ADDRESS);
         Log.d(TAG, "address: " + address);
         if (mMapListener != null) {
-            String searchAddressInfo = mMapListener.onSearchAddress(address);
-            TTSManager.getInstance().speak(searchAddressInfo, mSpeakCallback);
+            mMapListener.onSearchAddress(address, new ResultCallback() {
+                @Override
+                public void onResult(String result) {
+                    TTSManager.getInstance().speak(result, mSpeakCallback);
+                }
+            });
         }
     }
 
@@ -819,19 +832,13 @@ public class VoiceActionAdapter {
         String way = mSlots.get(SlotsTypes.USER_MAP_PATH_WAY);
         Log.d(TAG, "toName:" + toName + ", fromName:" + fromName + ", way:" + way);
         if (mMapListener != null) {
-            String pathInfo = mMapListener.onPathInfo(fromName, toName, convertWay(way));
-            TTSManager.getInstance().speak(pathInfo, mSpeakCallback);
+            mMapListener.onPathInfo(fromName, toName, convertWay(way), new ResultCallback() {
+                @Override
+                public void onResult(String result) {
+                    TTSManager.getInstance().speak(result, mSpeakCallback);
+                }
+            });
         }
-    }
-
-    private SearchArea convertArea(String area) {
-        SearchArea searchArea;
-        if (area.equals(SearchArea.AREA_NEARBY.getDesc())) {
-            searchArea = SearchArea.AREA_NEARBY;
-        } else {
-            searchArea = SearchArea.AREA_CITY;
-        }
-        return searchArea;
     }
 
     private PathWay convertWay(String way) {
