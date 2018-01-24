@@ -48,12 +48,7 @@ public class ControllerService extends Service {
         super.onCreate();
         mCalendarView = new CalendarView(getApplicationContext());
         util = new Util(getApplicationContext(),mCalendarView);
-<<<<<<< HEAD
         musicPlay=new MusicPlay(getApplicationContext());
-
-=======
-        musicListFragment=new MusicListFragment();
->>>>>>> e0ad539c8325dbb8d03805e41f07e3b871b70dfb
     }
     
     @Nullable

@@ -304,6 +304,7 @@ public class SwipeActivity extends BaseActivity {
     private void initMusic(String music_name) {
         if (!checkFragment("music")) {
             actionBar_title = mResources.getString(R.string.music_title);
+            Log.d(TAG, "music111: " + music_name);
             if (music_name != null) {
                 if (musicFragment == null) {
 //                    musicFragment = new MusicListFragment();

@@ -37,9 +37,11 @@ import com.idx.smartspeakdock.utils.AppExecutors;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.PreUtils;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
+import com.idx.smartspeakdock.weather.event.ReturnVoiceEvent;
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
 import com.idx.smartspeakdock.weather.presenter.WeatherCallback;
 
+import org.greenrobot.eventbus.EventBus;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -408,25 +410,11 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-<<<<<<< HEAD
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.i("11111", "onStop: ");
-        EventBus.getDefault().post(new ReturnVoiceEvent(mReturnVoice));
-    }
-
     private void  revokeMainMusicVoice(String music_name){
         if (!isActivityTop){
+            Log.d(TAG, "music222: " + music_name);
             mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
             mIntent.putExtra("music_name",music_name);
-=======
-    private void revokeMainMusicVoice(String music_name) {
-        if (!isActivityTop) {
-            Log.i(TAG, "revokeMainMusicVoice: 当前Activity不是SwipeActivity");
-            mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
-            mIntent.putExtra("musicname", music_name);
->>>>>>> e0ad539c8325dbb8d03805e41f07e3b871b70dfb
             startActivity(mIntent);
             mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, true);
         }
