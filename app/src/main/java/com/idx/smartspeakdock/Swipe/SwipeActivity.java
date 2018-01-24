@@ -672,11 +672,6 @@ public class SwipeActivity extends BaseActivity {
             super.onBackPressed();
         }
     }
-
-    public interface MyOnTouchListener {
-        public boolean onTouch(MotionEvent ev);
-    }
-
     public class ControllerServiceConnection implements ServiceConnection {
 
         @Override

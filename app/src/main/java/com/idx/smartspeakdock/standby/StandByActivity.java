@@ -44,6 +44,16 @@ public class StandByActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: standby");
+//        if (handler != null){
+//            Log.d(TAG, "onResume: handler");
+//            handler.removeCallbacks(runnable);
+//        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if(standByFragment != null){

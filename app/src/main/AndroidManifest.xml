@@ -98,7 +98,8 @@
         <activity android:name=".map.RouteNaviActivity"/>
         <service android:name="com.amap.api.location.APSService"/>
         <!--地图相关文件结束-->
-        <activity android:name=".standby.StandByActivity"/>
+        <activity android:name=".standby.StandByActivity"
+            android:launchMode="singleTop"/>
 
         <service
             android:name=".music.service.MusicService"
