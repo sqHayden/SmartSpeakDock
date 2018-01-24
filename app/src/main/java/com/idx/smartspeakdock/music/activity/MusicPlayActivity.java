@@ -1,6 +1,7 @@
 package com.idx.smartspeakdock.music.activity;
 
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -26,10 +27,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.Swipe.SwipeActivity;
+import com.idx.smartspeakdock.music.service.MusicPlay;
 import com.idx.smartspeakdock.music.service.MusicService;
 import com.idx.smartspeakdock.utils.ActivityUtils;
+import com.idx.smartspeakdock.utils.GlobalUtils;
 
 import java.util.Locale;
 
@@ -49,11 +54,12 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     private static  final int CONSTANT_MUSIC_PRE=4;
     //完成状态
     private static final int CONSTANT_MUSIC_COMPLETE =5;
+    //播放音乐出错
+    private static final int CONSTAN_MUSIC_ERROR=6;
 
     private static final String TAG = MusicPlayActivity.class.getName();
     private PlayServiceConnection conn;
     private MusicBroadcastReceiver musicBroadcastReceiver = new MusicBroadcastReceiver();
-    private MusicListFragment musicListFragment=new MusicListFragment();
     private ImageView iv_back;
     private TextView title;
     private TextView artist;
@@ -66,7 +72,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     private ImageButton ib_start;
     private MusicService musicService;
     private boolean isPlay=false;
-
+    public ProgressDialog mProgressDialog;
 
     //对组件设置监听
     private void setListener() {
@@ -104,15 +110,22 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
 
          //注册广播
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(MusicService.ACTION_MEDIA_NEXT);
-        intentFilter.addAction(MusicService.ACTION_MEDIA_PLAY);
-        intentFilter.addAction(MusicService.ACTION_MEDIA_PAUSE);
-        intentFilter.addAction(MusicService.ACTION_MEDIA_PREVIOUS);
-        intentFilter.addAction(MusicService.ACTION_MEDIA_COMPLETE);
+        intentFilter.addAction(MusicPlay.ACTION_MEDIA_NEXT);
+        intentFilter.addAction(MusicPlay.ACTION_MEDIA_PLAY);
+        intentFilter.addAction(MusicPlay.ACTION_MEDIA_PAUSE);
+        intentFilter.addAction(MusicPlay.ACTION_MEDIA_PREVIOUS);
+        intentFilter.addAction(MusicPlay.ACTION_MEDIA_COMPLETE);
+        intentFilter.addAction(MusicPlay.ACTION_MEDIA_ERROR);
+        intentFilter.addAction(GlobalUtils.MUSIC_BROADCAST_ACTION);
         registerReceiver(musicBroadcastReceiver, intentFilter);
 
         setListener();
         handler.post(runnable);
+        //音乐未加载完毕
+        mProgressDialog=new ProgressDialog(MusicPlayActivity.this);
+        mProgressDialog.setTitle("请稍等");
+        mProgressDialog.setMessage("Loading...");
+        mProgressDialog.setCancelable(true);
 
     }
 
@@ -147,6 +160,9 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
                     break;
                 case CONSTANT_MUSIC_COMPLETE:
                     pauseState();
+                case CONSTAN_MUSIC_ERROR:
+                    pauseState();
+                    Toast.makeText(MusicPlayActivity.this,"找不到该音乐",Toast.LENGTH_LONG).show();
                     break;
                 default:
                     break;
@@ -158,17 +174,9 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back:
-
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction(); // import android.support.v4.app.FragmentTransaction;
-//
-//                transaction.replace(R.id.music_main, new MusicListFragment());
-//                transaction.commit();
-
-
-//                if (musicListFragment == null) {
-//                    musicListFragment = MusicListFragment.newInstance();
-//                }
-//                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), musicListFragment,R.id.contentFrame);
+                Intent intent=new Intent(MusicPlayActivity.this, SwipeActivity.class);
+                intent.putExtra(GlobalUtils.MUSIC_FRAGMENT_INTENT_ID,"music");
+                startActivity(intent);
                 break;
             case R.id.iv_pre:
                 prev();
@@ -227,18 +235,19 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
 
         musicService.pre();
     }
+
     //音乐播放状态，界面图标显示
     private void playState(){
             isPlay=true;
             ib_start.setImageResource(R.mipmap.music_pause);
-
+            handler.post(runnable);
     }
 
     //音乐暂停状态，界面图标显示
     private void pauseState(){
             isPlay=false;
             ib_start.setImageResource(R.mipmap.music_play);
-
+            mHandler.post(runnable);
     }
 
     // 通过 Handler 更新 UI 上的组件状态
@@ -247,20 +256,30 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     public Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            title.setText(musicService.getPlayingMusic().getTitle());
-            Log.d(TAG, "run: " + musicService.getCurrentPosition());
+            try {
+                if (musicService.getCurrentPosition() == 0 && musicService.getPlayingMusic() != null) {
+                    mProgressDialog.show();
+                   }else {
+                    mProgressDialog.dismiss();
+                   }
+                    title.setText(musicService.getPlayingMusic().getTitle());
+                    Log.d(TAG, "run: " + musicService.getCurrentPosition());
+                    current.setText("00:00");
+                    current.setText(formatTime("mm:ss", musicService.getCurrentPosition()));
+                    seekBar.setProgress((int) musicService.getCurrentPosition());
+                    seekBar.setMax((int) musicService.getPlayingMusic().getDuration());
+                    draution.setText(formatTime("mm:ss", musicService.getPlayingMusic().getDuration()));
+                    if (musicService.isPlaying()) {
+                        ib_start.setImageResource(R.mipmap.music_pause);
+                    } else {
+                        ib_start.setImageResource(R.mipmap.music_play);
+                    }
+                    handler.postDelayed(runnable, 1000);
 
-            current.setText("00:00");
-            current.setText(formatTime("mm:ss",musicService.getCurrentPosition()));
-            seekBar.setProgress((int) musicService.getCurrentPosition());
-            seekBar.setMax((int) musicService.getPlayingMusic().getDuration());
-            draution.setText(formatTime("mm:ss", musicService.getPlayingMusic().getDuration()));
-            if (musicService.isPlaying()) {
-                    ib_start.setImageResource(R.mipmap.music_pause);
-            }else {
-                   ib_start.setImageResource(R.mipmap.music_play);
-            }
-            handler.postDelayed(runnable, 1000);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+
         }
     };
 
@@ -288,24 +307,28 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             switch (action){
-                case MusicService.ACTION_MEDIA_PLAY:
+                case MusicPlay.ACTION_MEDIA_PLAY:
                     Log.d(TAG, "onReceive: playfragment play2222");
                     mHandler.sendEmptyMessage(CONSTANT_MUSIC_PLAY);
                     break;
-                case MusicService.ACTION_MEDIA_PAUSE:
+                case MusicPlay.ACTION_MEDIA_PAUSE:
                     Log.d(TAG, "onReceive: playfragment pause2222");
                     mHandler.sendEmptyMessage(CONSTANT_MUSIC_PAUSE);
-                case MusicService.ACTION_MEDIA_NEXT:
+                    break;
+                case MusicPlay.ACTION_MEDIA_NEXT:
                     Log.d(TAG, "onReceive: playfragment next222");
                     mHandler.sendEmptyMessage(CONSTANT_MUSIC_NEXT);
                     break;
-                case MusicService.ACTION_MEDIA_PREVIOUS:
+                case MusicPlay.ACTION_MEDIA_PREVIOUS:
                     Log.d(TAG, "onReceive: playfragment pre222");
                     mHandler.sendEmptyMessage(CONSTANT_MUSIC_PRE);
                     break;
-                case MusicService.ACTION_MEDIA_COMPLETE:
+                case MusicPlay.ACTION_MEDIA_COMPLETE:
                     Log.d(TAG, "onReceive: playfragment complete222");
                     mHandler.sendEmptyMessage(CONSTANT_MUSIC_COMPLETE);
+                    break;
+                case MusicPlay.ACTION_MEDIA_ERROR:
+                    mHandler.sendEmptyMessage(CONSTAN_MUSIC_ERROR);
                     break;
                 default:
                     break;

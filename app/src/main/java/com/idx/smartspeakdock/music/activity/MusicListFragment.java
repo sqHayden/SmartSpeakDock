@@ -1,7 +1,7 @@
 package com.idx.smartspeakdock.music.activity;
 
 
-import android.app.Activity;
+
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -14,7 +14,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,19 +22,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
-import com.idx.smartspeakdock.Swipe.MainActivity;
-import com.idx.smartspeakdock.baidu.control.UnitManager;
-import com.idx.smartspeakdock.baidu.unit.listener.IMusicVoiceListener;
 import com.idx.smartspeakdock.music.adapter.MusicAdapter;
+import com.idx.smartspeakdock.music.service.MusicPlay;
 import com.idx.smartspeakdock.music.service.MusicService;
-import com.idx.smartspeakdock.music.util.AppCache;
-import com.idx.smartspeakdock.music.util.MusicUtil;
-import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 
 
@@ -52,11 +46,13 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
     private static  final int CONSTANT_MUSIC_PRE=4;
     //完成状态
     private static final int CONSTANT_MUSIC_COMPLETE =5;
+    //播放音乐出错
+    private static final int CONSTAN_MUSIC_ERROR=6;
     private MusicAdapter musicAdapter;
     private ListView listView;
-    public MusicService musicService,service1;
+    public  MusicService musicService;
     private PlayServiceConnection conn;
-    private MusicBroadcastReceiver musicBroadcastReceiver=new MusicBroadcastReceiver();
+    private MusicBroadcastReceiver musicBroadcastReceiver;
     private ImageView bar_start;
     private ImageView bar_next;
     private View viewBar;
@@ -67,14 +63,20 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
     public String music_name;
 
 
+    public MusicListFragment(){}
+
     public static MusicListFragment newInstance(String music_name){
+
         MusicListFragment musicListFragment=new MusicListFragment();
         Bundle args = new Bundle();
         args.putString(GlobalUtils.MUSIC_NAME_ID,music_name);
         musicListFragment.setArguments(args);
+        Log.d(TAG, "newInstance: "+musicListFragment);
         return musicListFragment;
     }
-
+//    public static MusicListFragment newInstance(){
+//        return new MusicListFragment();
+//    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -90,8 +92,10 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
         Log.d(TAG, "onCreate: ");
 
         if (savedInstanceState != null){
-           music_name = savedInstanceState.getString("musicname");
+           music_name = savedInstanceState.getString("music_name");
+           bar_title.setText(music_name);
         }
+
 
         //调用 bindService 保持与 Service 的通信
         try {
@@ -100,18 +104,20 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
                 conn = new PlayServiceConnection();
                 getActivity().bindService(intent, conn, Context.BIND_AUTO_CREATE);
             }
+            handler.post(runnable);
         }catch (Exception e){
             e.printStackTrace();
         }
 
-
         //注册广播
+        musicBroadcastReceiver=new MusicBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(MusicService.ACTION_MEDIA_NEXT);
-        intentFilter.addAction(MusicService.ACTION_MEDIA_PLAY);
-        intentFilter.addAction(MusicService.ACTION_MEDIA_PAUSE);
-        intentFilter.addAction(MusicService.ACTION_MEDIA_PREVIOUS);
-        intentFilter.addAction(MusicService.ACTION_MEDIA_COMPLETE);
+        intentFilter.addAction(MusicPlay.ACTION_MEDIA_NEXT);
+        intentFilter.addAction(MusicPlay.ACTION_MEDIA_PLAY);
+        intentFilter.addAction(MusicPlay.ACTION_MEDIA_PAUSE);
+        intentFilter.addAction(MusicPlay.ACTION_MEDIA_PREVIOUS);
+        intentFilter.addAction(MusicPlay.ACTION_MEDIA_COMPLETE);
+        intentFilter.addAction(MusicPlay.ACTION_MEDIA_ERROR);
         intentFilter.addAction(GlobalUtils.MUSIC_BROADCAST_ACTION);
         getActivity().registerReceiver(musicBroadcastReceiver,intentFilter);
 
@@ -139,7 +145,6 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
 
         bar_title.setOnClickListener(this);
         viewBar.setOnClickListener(this);
-
     }
 
     @Override
@@ -199,7 +204,7 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
         bar_title.setText(musicService.getPlayingMusic().getTitle());
         bar_start.setImageResource(R.mipmap.music_pause);
         handler.post(runnable);
-        Log.d(TAG, "onItemClick: "+getService());
+
     }
 
     //音乐播放
@@ -251,6 +256,10 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
                 case CONSTANT_MUSIC_COMPLETE:
                     pauseState();
                     break;
+                case CONSTAN_MUSIC_ERROR:
+                    pauseState();
+                    Toast.makeText(getActivity(),"找不到该音乐",Toast.LENGTH_LONG).show();
+                    break;
                 default:
                     break;
             }
@@ -263,7 +272,6 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             try {
                 musicService=((MusicService.PlayBinder)iBinder) .getService();
-                service1=musicService;
             }catch (ClassCastException e){
                 e.printStackTrace();
             }
@@ -280,16 +288,16 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
         @Override
         public void run() {
             try {
+                Log.d(TAG, "run: "+musicService.getCurrentPosition());
                 if (musicService.getCurrentPosition()==0 && musicService.getPlayingMusic()!=null){
                     mProgressDialog.show();
                 }else {
                     mProgressDialog.dismiss();
                 }
                     bar_title.setText(musicService.getPlayingMusic().getTitle());
-                if (musicService.isPlaying()) {
-                    bar_start.setImageResource(R.mipmap.music_pause);
-                    }
-                    else{
+                    if (musicService.isPlaying()) {
+                       bar_start.setImageResource(R.mipmap.music_pause);
+                    } else{
                         bar_start.setImageResource(R.mipmap.music_play);
                     }
                     handler.postDelayed(runnable, 1000);
@@ -305,23 +313,26 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             switch (action){
-                case MusicService.ACTION_MEDIA_PLAY:
+                case MusicPlay.ACTION_MEDIA_PLAY:
                     mHandler.sendEmptyMessage(CONSTANT_MUSIC_PLAY);
                     break;
-                case MusicService.ACTION_MEDIA_PAUSE:
+                case MusicPlay.ACTION_MEDIA_PAUSE:
 
                     mHandler.sendEmptyMessage(CONSTANT_MUSIC_PAUSE);
                     break;
-                case MusicService.ACTION_MEDIA_NEXT:
+                case MusicPlay.ACTION_MEDIA_NEXT:
 
                     mHandler.sendEmptyMessage(CONSTANT_MUSIC_NEXT);
                     break;
-                case MusicService.ACTION_MEDIA_COMPLETE:
+                case MusicPlay.ACTION_MEDIA_COMPLETE:
 
                     mHandler.sendEmptyMessage(CONSTANT_MUSIC_COMPLETE);
                     break;
+                case MusicPlay.ACTION_MEDIA_ERROR:
+                    mHandler.sendEmptyMessage(CONSTAN_MUSIC_ERROR);
+                    break;
                 case GlobalUtils.MUSIC_BROADCAST_ACTION:
-                    music_name=intent.getStringExtra("music");
+                    music_name=intent.getStringExtra("music_name");
                     Log.d(TAG, "onReceive: "+music_name);
                     musicService.play(music_name);
                     break;
@@ -331,10 +342,6 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
         }
     }
 
-    public MusicService getService(){
-        Log.d(TAG, "getService: "+musicService);
-        return musicService;
-    }
 
     @Override
     public void onDetach() {
@@ -359,16 +366,4 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
         }
     }
 
-    public void playList(String name){
-        musicService.play(name);
-    }
-    public void pause(){
-        musicService.pause();
-    }
-    public void cont(){
-        musicService.continuePlay();
-    }
-    public void previous(){
-        musicService.pre();
-    }
 }

@@ -408,11 +408,25 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+<<<<<<< HEAD
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("11111", "onStop: ");
+        EventBus.getDefault().post(new ReturnVoiceEvent(mReturnVoice));
+    }
+
+    private void  revokeMainMusicVoice(String music_name){
+        if (!isActivityTop){
+            mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
+            mIntent.putExtra("music_name",music_name);
+=======
     private void revokeMainMusicVoice(String music_name) {
         if (!isActivityTop) {
             Log.i(TAG, "revokeMainMusicVoice: 当前Activity不是SwipeActivity");
             mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
             mIntent.putExtra("musicname", music_name);
+>>>>>>> e0ad539c8325dbb8d03805e41f07e3b871b70dfb
             startActivity(mIntent);
             mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, true);
         }

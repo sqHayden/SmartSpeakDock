@@ -18,6 +18,8 @@ import com.idx.smartspeakdock.calendar.Util;
 import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
 import com.idx.smartspeakdock.music.activity.MusicListFragment;
 import com.idx.smartspeakdock.music.service.MusicCallBack;
+//import com.idx.smartspeakdock.music.service.MusicVoice;
+import com.idx.smartspeakdock.music.service.MusicPlay;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
@@ -38,8 +40,7 @@ public class ControllerService extends Service {
     MusicCallBack mMusicCallBack;
     CalendarView mCalendarView;
     Util util;
-
-    MusicListFragment musicListFragment;
+    MusicPlay musicPlay;
 
     String answer;
     @Override
@@ -47,7 +48,12 @@ public class ControllerService extends Service {
         super.onCreate();
         mCalendarView = new CalendarView(getApplicationContext());
         util = new Util(getApplicationContext(),mCalendarView);
+<<<<<<< HEAD
+        musicPlay=new MusicPlay(getApplicationContext());
+
+=======
         musicListFragment=new MusicListFragment();
+>>>>>>> e0ad539c8325dbb8d03805e41f07e3b871b70dfb
     }
     
     @Nullable
@@ -154,35 +160,37 @@ public class ControllerService extends Service {
         UnitManager.getInstance(getApplicationContext()).setMusicVoiceListener(new IMusicVoiceListener() {
             @Override
             public void onPlay(int index) {
-
             }
 
             @Override
             public void onPlay(String name) {
-                mMusicCallBack.onMusicCallBack(name);
-                musicListFragment.getService().play(name);
-                
+                if (mMusicCallBack!=null) {
+                    mMusicCallBack.onMusicCallBack(name);
+                     musicPlay.play(name);
+                }
             }
 
             @Override
             public void onPause() {
-                   musicListFragment.getService().pause();
+                 musicPlay.pause();
+
             }
 
             @Override
             public void onContinue() {
-                   musicListFragment.getService().continuePlay();
+                 musicPlay.continuePlay();
+
             }
 
             @Override
             public void onNext() {
-                    musicListFragment.getService().next();
+                 musicPlay.next();
 
             }
 
             @Override
             public void onPrevious() {
-                    musicListFragment.getService().pre();
+                 musicPlay.pre();
 
             }
         });
