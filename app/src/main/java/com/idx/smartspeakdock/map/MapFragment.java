@@ -1,2339 +1,742 @@
 package com.idx.smartspeakdock.map;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
+/**
+ * Created by hayden on 18-1-15.
+ */
+
 import android.app.ProgressDialog;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ZoomControls;
-import com.baidu.location.BDLocation;
-import com.baidu.mapapi.SDKInitializer;
-import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptor;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.MapPoi;
-import com.baidu.mapapi.map.MapStatus;
-import com.baidu.mapapi.map.MapStatusUpdate;
-import com.baidu.mapapi.map.MapStatusUpdateFactory;
-import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.MyLocationConfiguration;
-import com.baidu.mapapi.map.MyLocationData;
-import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.core.PoiInfo;
-import com.baidu.mapapi.search.core.RouteLine;
-import com.baidu.mapapi.search.core.RouteNode;
-import com.baidu.mapapi.search.core.SearchResult;
-import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
-import com.baidu.mapapi.search.poi.PoiCitySearchOption;
-import com.baidu.mapapi.search.poi.PoiDetailResult;
-import com.baidu.mapapi.search.poi.PoiIndoorResult;
-import com.baidu.mapapi.search.poi.PoiNearbySearchOption;
-import com.baidu.mapapi.search.poi.PoiResult;
-import com.baidu.mapapi.search.poi.PoiSearch;
-import com.baidu.mapapi.search.route.BikingRoutePlanOption;
-import com.baidu.mapapi.search.route.BikingRouteResult;
-import com.baidu.mapapi.search.route.DrivingRouteLine;
-import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
-import com.baidu.mapapi.search.route.DrivingRouteResult;
-import com.baidu.mapapi.search.route.IndoorRouteResult;
-import com.baidu.mapapi.search.route.MassTransitRouteLine;
-import com.baidu.mapapi.search.route.MassTransitRoutePlanOption;
-import com.baidu.mapapi.search.route.MassTransitRouteResult;
-import com.baidu.mapapi.search.route.OnGetRoutePlanResultListener;
-import com.baidu.mapapi.search.route.PlanNode;
-import com.baidu.mapapi.search.route.RoutePlanSearch;
-import com.baidu.mapapi.search.route.TransitRoutePlanOption;
-import com.baidu.mapapi.search.route.TransitRouteResult;
-import com.baidu.mapapi.search.route.WalkingRoutePlanOption;
-import com.baidu.mapapi.search.route.WalkingRouteResult;
-import com.baidu.mapapi.utils.DistanceUtil;
-import com.baidu.navisdk.adapter.BNCommonSettingParam;
-import com.baidu.navisdk.adapter.BNOuterLogUtil;
-import com.baidu.navisdk.adapter.BNOuterTTSPlayerCallback;
-import com.baidu.navisdk.adapter.BNRoutePlanNode;
-import com.baidu.navisdk.adapter.BNaviSettingManager;
-import com.baidu.navisdk.adapter.BaiduNaviManager;
-import com.baidu.vi.VDeviceAPI;
-import com.idx.smartspeakdock.BaseActivity;
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.MapView;
+import com.amap.api.maps.UiSettings;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.CameraPosition;
+import com.amap.api.maps.model.CircleOptions;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MarkerOptions;
+import com.amap.api.maps.model.MyTrafficStyle;
+import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.core.PoiItem;
+import com.amap.api.services.core.SuggestionCity;
+import com.amap.api.services.help.Tip;
+import com.amap.api.services.poisearch.PoiResult;
+import com.amap.api.services.poisearch.PoiSearch;
+import com.google.gson.Gson;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
-import com.idx.smartspeakdock.SpeakerApplication;
-import com.idx.smartspeakdock.Swipe.SwipeActivity;
-import com.idx.smartspeakdock.baidu.control.UnitManager;
-import com.idx.smartspeakdock.baidu.unit.listener.IMapVoiceListener;
-import com.idx.smartspeakdock.map.overlayutil.BikingRouteOverlay;
-import com.idx.smartspeakdock.map.overlayutil.DrivingRouteOverlay;
-import com.idx.smartspeakdock.map.overlayutil.MassTransitRouteOverlay;
-import com.idx.smartspeakdock.map.overlayutil.OverlayManager;
-import com.idx.smartspeakdock.map.overlayutil.TransitRouteOverlay;
-import com.idx.smartspeakdock.map.overlayutil.WalkingRouteOverlay;
-import com.idx.smartspeakdock.map.tools.BNDemoGuideActivity;
-import com.idx.smartspeakdock.map.tools.BNEventHandler;
-import com.idx.smartspeakdock.map.tools.MyOrientationListener;
-import com.idx.smartspeakdock.map.tools.MyPoiOverlay;
-import com.idx.smartspeakdock.map.tools.RouteLineAdapter;
-import com.idx.smartspeakdock.service.GetCityService;
-import com.squareup.leakcanary.RefWatcher;
-import java.io.File;
-import java.math.BigDecimal;
+import com.idx.smartspeakdock.map.adapter.SearchResultAdapter;
+import com.idx.smartspeakdock.map.overlay.PoiOverlay;
+import com.idx.smartspeakdock.map.util.Constants;
+import com.idx.smartspeakdock.map.util.SensorEventHelper;
+import com.idx.smartspeakdock.map.util.ToastUtil;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import static android.content.Context.BIND_AUTO_CREATE;
 
-
-public class MapFragment extends BaseFragment implements DialogInterface.OnClickListener, OnGetRoutePlanResultListener, BaiduMap.OnMapClickListener{
-   public static final String TAG = MapFragment.class.getSimpleName();
-    //fragment相关
-    private View view;
-    //定义适配器
-    private MySimpleAdapter mSimpleAdapter;
-    //获取listview
-    private ListView listView;
-    //获取数据列表
-    private ArrayList<Map<String, String>> list = new ArrayList<>();
-    //利用Map存储各项数据
-    private Map<String, String> map;
-    //地图控件
-    private MapView mMapView = null;
+/**
+ * MapFragment
+ */
+public class MapFragment extends BaseFragment implements
+        AMapLocationListener, AMap.OnMarkerClickListener,
+        AMap.OnCameraChangeListener, View.OnClickListener,
+        AMap.OnMapClickListener, PoiSearch.OnPoiSearchListener {
+    //地图视图对象
+    private MapView mapView;
     //地图控制对象
-    private BaiduMap mBaiduMap;
-    //自定义当前位置图标
-    private BitmapDescriptor bitmapDescriptor;
-    //我的位置
-    private LatLng my_latlng;
-    private LatLng my_reallatlng;
-    //定位图标
-    private ImageView my_location;
-    //Poi搜索对象
-    private PoiSearch mPoiSearch;
-    //资源对象
-    private EditText edit_key;
-    private Button nearby_search, city_search;
-    //当前城市名称
-    private String city_name = "";
-    //是否首次进入地图
-    private boolean state;
-    //指定地点搜索框
-    private LinearLayout search_layout;
-    //点对点搜索框
-    private LinearLayout ptp_layout;
-    private RelativeLayout ptp_all;
-    //缩放级别
-    double now_zoom, next_zoom;
-    //存储poi结果集
-    private PoiResult poiResult;
+    private AMap aMap;
+    //地图缩放级别
+    private float zoom;
+    //定位按钮
+    private Button locbtn;
+    //出行按钮
+    private Button go_style;
+    //地图标志物清除控件
+    private ImageView clean_view;
+    //地图搜索框控件
+    private TextView input_text;
+    //ListView控件定义
+    private ListView listView;
+    //地图定位控制对象
+    private AMapLocationClient mLocationClient;
+    //位置标记marker
+    private Marker mBigIcon, mSmallIcon;
     //传感器对象
-    private MyOrientationListener myOrientationListener;
-    //旋转角度值
-    private float currentX;
-    //范围距离值
-    private float accu;
-    //路线选择按钮
-    private Button chooseRoute;
-    //出行方式按钮
-    private FloatingActionButton fab;
-    private LinearLayout fab_parent;
-    //导航起始点及终点定义
-    private LatLng toLocationData;
-    public static List<Activity> activityList = new LinkedList<>();
-    private static final String APP_FOLDER_NAME = "BNSDKSimpleDemo";
-    private String mSDCardPath = null;
-    public static final String ROUTE_PLAN_NODE = "routePlanNode";
-    private final static String authBaseArr[] =
-            {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION};
-    private final static String authComArr[] = {Manifest.permission.READ_PHONE_STATE};
-    private final static int authBaseRequestCode = 1;
-    private final static int authComRequestCode = 2;
-    private boolean hasInitSuccess = false;
-    private boolean hasRequestComAuth = false;
-    // 搜索相关
-    // 浏览路线节点相关
-//    Button mBtnPre = null; // 上一个节点
-//    Button mBtnNext = null; // 下一个节点
-//    int nodeIndex = -1; // 节点索引,供浏览节点时使用
-    RouteLine route = null;
-    MassTransitRouteLine massroute = null;
-    OverlayManager routeOverlay = null;
-    boolean useDefaultIcon = false;
-    private TextView popupText = null; // 泡泡view
-    // 地图相关，使用继承MapView的MyRouteMapView目的是重写touch事件实现泡泡处理
-    // 如果不处理touch事件，则无需继承，直接使用MapView即可
-    // 搜索相关
-    RoutePlanSearch mSearch = null;    // 搜索模块，也可去掉地图模块独立使用
-    WalkingRouteResult nowResultwalk = null;
-    BikingRouteResult nowResultbike = null;
-    TransitRouteResult nowResultransit = null;
-    DrivingRouteResult nowResultdrive = null;
-    MassTransitRouteResult nowResultmass = null;
-    int nowSearchType = -1; // 当前进行的检索，供判断浏览节点时结果使用。
-    boolean hasShownDialogue = false;
-    //路径选择相关
-    private EditText route_start, route_end;
-    private Button mass,drive,transit,walk,bike,route_make;
-    List<Button> bs = new ArrayList<>();
-    private LatLng start_llg, end_llg;
-    private Button point_start, point_end;
-    private LinearLayout map_go;
-    //是否是路径位置地点查询
-    private boolean start_flag;
-    //是否是起点查询
-    private boolean isstart;
-    //显示查询等待
-    private ProgressDialog mDialog;
-    //路线相关信息
-    private TextView spend_time,distance_count,traffic_count;
-    //语音交互模块参数
-    String my_address = "未查询到地址";
-    boolean voice_flag = false;
-    private GetCityService.MyBinder myBinder;
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d("binder连接已经执行","123456");
-            myBinder = (GetCityService.MyBinder) service;
-            //连接调用
-            myBinder.getCity(new GetCityService.CallBack(){
-                @Override
-                public void call(BDLocation bdLocation) {
-                    if(null != bdLocation && bdLocation.getLocType() != BDLocation.TypeServerError) {
-                        my_latlng = new LatLng(bdLocation.getLatitude(), bdLocation.getLongitude());
-                        StringBuffer sb = new StringBuffer(256);
-                        if (state) {
-                            sb.append(bdLocation.getProvince());    //获取省份
-                            sb.append(bdLocation.getCity());   //获取城市
-                            sb.append(bdLocation.getDistrict());//获取区县
-                            sb.append(bdLocation.getStreet()); //获取街道信息
-                            Log.d("街道信息:",bdLocation.getStreet());
-                            sb.append(bdLocation.getLocationDescribe());//位置描述信息
-                            Log.d("位置描述信息:",bdLocation.getLocationDescribe());
-                            Log.d("我的位置为:",sb.toString());
-                            if(my_address.equals("未查询到地址")) {
-                                my_address = sb.toString();
-                            }
-                            Log.d("定位方式:",""+bdLocation.getNetworkLocationType());
-                            if(bdLocation.hasAddr()){
-                                Log.d("有地址信息","abdce");
-                            }
-                            my_reallatlng = my_latlng;
-                            accu = bdLocation.getRadius();
-                            //自定义图标对象创建
-                            bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.map_point);
-                            //应用自定义图标显示
-                            MyLocationConfiguration config = new MyLocationConfiguration(
-                                    MyLocationConfiguration.LocationMode.NORMAL, true, bitmapDescriptor);
-                            mBaiduMap.setMyLocationConfiguration(config);
+    private SensorEventHelper mSensorHelper;
+    //定位InfoWindow内容
+    private String LOCATION_MARKER_FLAG = "mylocation";
+    //是否首次定位标识
+    private boolean isFirstLoc = true;
+    //我的位置对象
+    private LatLng currentLocation = null;
+    //所在城市名称
+    private String currentCity = "";
+    //搜索时进度条
+    private ProgressDialog progDialog = null;
+    //搜索Pio的返回结果集
+    private PoiResult poiResult;
+    //Poi查询条件类
+    private PoiSearch.Query query;
+    //Poi搜索对象
+    private PoiSearch poiSearch;
+    //Poi返回对象Marker标识定义
+    private Marker mPoiMarker;
+    //搜索关键字
+    private String mKeyWords;
+    //List结果集
+    private List<PoiItem> poiItems;
+    //结果集数据对象
+    private SearchResultAdapter searchResultAdapter;
+    //搜索结果返回码
+    public static final int REQUEST_CODE = 100;
+    public static final int RESULT_CODE_INPUTTIPS = 101;
+    public static final int RESULT_CODE_KEYWORDS = 102;
+    //定位蓝点颜色参数
+    private static final int STROKE_COLOR = Color.argb(180, 3, 145, 255);
+    private static final int FILL_COLOR = Color.argb(10, 0, 0, 180);
 
-                            //显示当前位置图标
-                            MyLocationData data = new MyLocationData
-                                    .Builder()
-                                    .accuracy(accu)
-                                    .latitude(my_reallatlng.latitude)
-                                    .longitude(my_reallatlng.longitude).build();
-                            mBaiduMap.setMyLocationData(data);
-                            //调整地图显示尺寸
-                            set_map_size(my_latlng, 15);
-                            //获取当前城市名称
-                            city_name = bdLocation.getCity();
-//                Log.d("当前城市为：", city_name);
-                        }
-                    }
-                }
-            });
-        }
-    };
+    //构造参数
+    public static MapFragment newInstance() {
+        return new MapFragment();
+    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        mKeyWords = "";
+        poiItems = new ArrayList<>();
         super.onCreate(savedInstanceState);
-        //在使用SDK各组件之前初始化context信息，传入ApplicationContext
-        //注意该方法要再setContentView方法之前实现
-        SDKInitializer.initialize(getActivity().getApplicationContext());
-        activityList.add(getActivity());
-        Handler h = new Handler();
-        h.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                String name = Thread.currentThread().getName();
-                Log.i("crug", name);
-                delayTest();
-            }
-        }, 500);
-        BNOuterLogUtil.setLogSwitcher(true);
-        BaseActivity baseActivity = (BaseActivity) getActivity();
-        if(!BaseActivity.isServiceRunning(baseActivity.getApplicationContext(),"com.idx.smartspeakdock.start.GetCityService")) {
-            Log.d("启动服务", "startService");
-            Intent intent = new Intent(baseActivity.getApplicationContext(), GetCityService.class);
-            //启动
-            baseActivity.getApplicationContext().startService(intent);
-            //绑定
-            baseActivity.getApplicationContext().bindService(intent, connection, BIND_AUTO_CREATE);
-        }
-        //初始化导航相关
-        if (initDirs()) {
-            initNavi();
-        }
-        UnitManager.getInstance(getContext()).setMapVoiceListener(new IMapVoiceListener() {
-            //语句：打開地图/我在哪兒/這是哪裡/這是哪兒/我現在在哪裡  测试完成 可以实现
-            @Override
-            public String onLocationInfo() {
-                //执行地点查询方案
-                Log.d(TAG, "onLocationInfo: ");
-                voice_flag = false;
-                //调用我的位置
-                pointToLocation();
-                return my_address;
-            }
-            //语句：搜索,
-            @Override
-            public String onSearchInfo(String name, SearchArea searchArea) {
-                Log.d(TAG, "onSearchInfo: ");
-                Log.d("key:"+name,"area"+searchArea.getDesc());
-                edit_key.setText(name);
-                if("附近".equals(searchArea.getDesc())){
-                    //显示搜索框
-                    search_layout.setVisibility(View.VISIBLE);
-                    //执行查看附近
-                    nearbySearch();
-                    int i = list.size();
-                    return "已为您查询到附近"+i+"条信息，请查看";
-                }else if("全市".equals(searchArea.getDesc())){
-                    //执行查看全市
-                    citySearch();
-                    return "已为您查询到全市10条信息，请查看";
-                }
-                return null;
-            }
-            //语句：我要搜索[NAME]
-            @Override
-            public String onSearchAddress(String address) {
-                Log.d("地点：",address);
-                edit_key.setText(address);
-                nearbySearch();
-                return "已为您查询到5条信息，请查看";
-            }
-            //语句：我要从哪儿到哪儿  可以了
-            //语句：我要从哪儿驾车去哪儿 可以了
-            //语句：我要去哪儿   可以了
-            @Override
-            public String onPathInfo(String fromAddress, String toAddress, PathWay pathWay) {
-                Log.d("出行方式:",pathWay.toString());
-                Log.d(TAG, "onPathInfo:");
-                voice_flag = true;
-                //调用我的位置
-                pointToLocation();
-                //隐藏路径选择视图
-                fab_parent.setVisibility(View.GONE);
-                //显示点对点视图
-                ptp_layout.setVisibility(View.VISIBLE);
-                //设置起点名字
-                if(fromAddress.equals("")){//设置为我的位置
-                    route_start.setText("我的位置");
-                    start_llg = my_latlng;
-                }else{
-                    route_start.setText(fromAddress);
-                }
-                //设置终点名字
-                route_end.setText(toAddress);
-                //设置出行方式
-                for(Button b:bs){
-                    if(b.getText().equals(pathWay.getDesc())){
-                        b.setBackgroundResource(R.drawable.map_button_checked);
-                    }
-                }
-                Log.d("-----"+fromAddress+"-----","-----"+toAddress+"-----"+"::"+"-----"+pathWay+"-----");
-                return "已为您进行查询，请在地图中点击定位按钮，选择精确的始末地点，启动路径导航操作";
-            }
-        });
     }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.map_main,container,false);
-        //初始化地图资源
-        init(view);
-        //初始化位置
+        //设置全屏
+        WindowManager.LayoutParams lp = getActivity().getWindow().getAttributes();
+        lp.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        getActivity().getWindow().setAttributes(lp);
+        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        //获取视图对象
+        View view = inflater.inflate(R.layout.map_main, container, false);
+        //资源初始化
+        init(view, savedInstanceState);
+        //初始化定位
         initLocation();
-        // 初始化搜索模块，注册事件监听
-        mSearch = RoutePlanSearch.newInstance();
-        mSearch.setOnGetRoutePlanResultListener(this);
-        //设置Poi检索监听
-        mPoiSearch.setOnGetPoiSearchResultListener(resultListener);
-        //设置button监听
-        city_search.setOnClickListener(city_listener);
-        nearby_search.setOnClickListener(nearby_listener);
-        //给我的位置图标添加监听实现定位当前位置
-        my_location.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                voice_flag = false;
-                pointToLocation();
-            }
-        });
-        //实现edit_key监听事件
-        edit_key.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    //非空状态下的搜索
-                    if(!edit_key.getText().toString().trim().equals("")) {
-                        //关闭路径标志
-                        start_flag = false;
-                        //隐藏出行图标
-                        fab_parent.setVisibility(View.GONE);
-                        //失去焦点
-                        close_point(edit_key);
-                        //设置缩放
-                        set_map_size(my_latlng, 17);
-                        //清空覆盖物
-                        clear_overlays();
-                        //附近搜索方法
-                        nearbySearch();
-                    }else{
-                        Toast.makeText(getContext(),"关键字不能为空", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                return false;
-            }
-        });
-        //实现edit_key的点击监听
-        edit_key.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //获取焦点
-                get_point(edit_key);
-            }
-        });
-        //点击地图隐藏marker属性
-        mBaiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                //点击地图失去edit_key的焦点
-                close_point(edit_key);
-                listView.setVisibility(View.GONE);
-            }
-            @Override
-            public boolean onMapPoiClick(MapPoi mapPoi) {
-                return false;
-            }
-        });
-        //监听listView点击事件
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("item列表项被点击了", "Test Demo");
-                //失去焦点
-                route_end.clearFocus();
-                route_end.setFocusable(false);
-                //显示点击时的中心点切换
-                goto_item(poiResult, position);
-            }
-        });
-        //监听路径选择事件
-        chooseRoute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(), "正在为您启用导航，请稍后", Toast.LENGTH_SHORT).show();
-                mDialog = null;
-                //显示等待
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mDialog != null && mDialog.isShowing()) {
-                            mDialog.dismiss();
-                        }
-                        mDialog = ProgressDialog.show(getContext(), "", "正在获取中...");
-                        Log.d("Test Demo", "进入缓冲开启方法");
-                    }
-                });
-                //启用导航功能
-                if (BaiduNaviManager.isNaviInited()) {
-                    Log.d("准备进入导航方法", "Test Demo");
-                    routeplanToNavi(BNRoutePlanNode.CoordinateType.WGS84);
-                } else {
-                    Log.d("地图功能没有准备好", "Test Demo");
-                }
-            }
-        });
-        //监听出行方式点击事件
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //隐藏关键搜索视图
-                search_layout.setVisibility(View.GONE);
-                //导航隐藏
-                map_go.setVisibility(View.GONE);
-                //自身显示隐藏
-                fab_parent.setVisibility(View.GONE);
-                //显示路径搜索视图
-                ptp_all.setVisibility(View.VISIBLE);
-            }
-        });
-        //实现起点键盘搜索监听事件
-        route_start.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    isstart = true;
-                    //失去焦点
-                    close_point(route_start);
-                    if (route_start.getText().toString().isEmpty()) {
-                        Toast.makeText(getContext(), "起始点不能为空", Toast.LENGTH_SHORT).show();
-                    } else {
-                        if (route_start.getText().toString().equals("我的位置")) {
-                            start_llg = my_latlng;
-                        } else {
-                            choose_location(route_start, v);
-                        }
-                    }
-                }
-                return false;
-            }
-        });
-        //实现起点的焦点获取点击监听
-        route_start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //获取焦点
-                get_point(route_start);
-            }
-        });
-        //设置起点选择按钮监听
-        point_start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isstart = true;
-                if (route_start.getText().toString().isEmpty()) {
-                    Toast.makeText(getContext(), "起始点不能为空", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (route_start.getText().toString().equals("我的位置")) {
-                        start_llg = my_latlng;
-                    } else {
-                        choose_location(route_start, v);
-                    }
-                }
-            }
-        });
-        //实现终点选择监听事件
-        route_end.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    isstart = false;
-                    //实现终点的焦点失去
-                    close_point(route_end);
-                    //开始规划路径
-                    //出发点处理：如果没动第一项，设置为我的位置
-                    if (route_start.getText().toString().equals("我的位置")) {
-                        start_llg = my_latlng;
-                        if (route_end.getText().toString().isEmpty()) {
-                            Toast.makeText(getContext(), "终点不能为空", Toast.LENGTH_SHORT).show();
-                        } else {
-                            choose_location(route_end, v);
-                        }
-                    } else {//如果动了查看是否是空的
-                        if (route_start.getText().toString().isEmpty()) {
-                            Toast.makeText(getContext(), "起始点不能为空", Toast.LENGTH_SHORT).show();
-                        } else {//如果动了不是空的看是否定位了
-                            if (start_llg == null) {
-                                Toast.makeText(getContext(), "您还未选择出发点位置", Toast.LENGTH_SHORT).show();
-                            } else {//如果起始点定位了处理目标点
-                                //目标点处理：如果为空提示
-                                if (route_end.getText().toString().isEmpty()) {
-                                    Toast.makeText(getContext(), "终点不能为空", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    choose_location(route_end, v);
-                                }
-                            }
-                        }
-                    }
-                }
-                return false;
-            }
-        });
-        //设置终点选择按钮监听
-        point_end.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!route_end.getText().toString().isEmpty()) {
-                    isstart = false;
-                    //终点的焦点失去
-                    close_point(route_end);
-                    //开始规划路径
-                    //出发点处理：如果没动第一项，设置为我的位置
-                    if (route_start.getText().toString().equals("我的位置")) {
-                        start_llg = my_latlng;
-                        choose_location(route_end, v);
-                    } else {//如果动了查看是否是空的
-                        if (route_start.getText().toString().isEmpty()) {
-                            Toast.makeText(getContext(), "起始点不能为空", Toast.LENGTH_SHORT).show();
-                        } else {//如果动了不是空的看是否定位了
-                            if (start_llg == null) {
-                                Toast.makeText(getContext(), "您还未选择出发点位置", Toast.LENGTH_SHORT).show();
-                            } else {//如果起始点定位了处理目标点
-                                //目标点处理：如果为空提示
-                                if (route_end.getText().toString().isEmpty()) {
-                                    Toast.makeText(getContext(), "终点不能为空", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    choose_location(route_end, v);
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    Toast.makeText(getContext(), "请输入终点位置", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        //实现终点的焦点获取点击监听
-        route_end.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //获取焦点
-                get_point(route_end);
-            }
-        });
-        //实现出行方式五个按钮的监听
-        for(Button b: bs){
-            b.setOnClickListener(listener);
-        }
-        //实现生成路径的按钮监听
-        route_make.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getContext(), "正在为您规划路径，请稍后", Toast.LENGTH_SHORT).show();
-                //重新规划线路
-                clear_overlays();
-                PlanNode stNode = PlanNode.withLocation(start_llg);
-                PlanNode enNode = PlanNode.withLocation(end_llg);
-                //进入驾车路径规划生成
-                mSearch.drivingSearch((new DrivingRoutePlanOption())
-                        .from(stNode).to(enNode));
-                nowSearchType = 1;
-                //显示开始导航按钮
-                map_go.setVisibility(View.VISIBLE);
-            }
-        });
+        //开始定位
+        startLocation();
         return view;
     }
 
-    //初始化地图初始资源
-    private void init(View view) {
-        //获取地图控件引用
-        mMapView = view.findViewById(R.id.bmapView);
-        //获取BaiduMap对象
-        mBaiduMap = mMapView.getMap();
-        //隐藏百度地图下角标
-        View child = mMapView.getChildAt(1);
-        if (child != null && (child instanceof ImageView || child instanceof ZoomControls)) {
-            child.setVisibility(View.INVISIBLE);
+    /**
+     * 资源控件初始化
+     */
+    private void init(View view, Bundle savedInstanceState) {
+        //获取mapView
+        mapView = view.findViewById(R.id.map);
+        mapView.onCreate(savedInstanceState);
+        if (aMap == null) {
+            aMap = mapView.getMap();
+            setUpMap();
         }
-        //设置地图放大比例
-        MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(18.0f);
-        mBaiduMap.setMapStatus(msu);
-        //创建Poi实例
-        mPoiSearch = PoiSearch.newInstance();
-        //获取Edit关键字
-        edit_key = view.findViewById(R.id.edit_key);
-        //获取搜索附近按钮
-        nearby_search = view.findViewById(R.id.nearby_search);
-        //获取搜索全市按钮
-        city_search = view.findViewById(R.id.city_search);
-        //获取定位按钮
-        my_location = view.findViewById(R.id.my_location);
-        //获取路径搜索按钮
-        fab = view.findViewById(R.id.fab);
-        fab_parent = view.findViewById(R.id.fab_parent);
-        //获取起点终点位置定位按钮
-        point_start = view.findViewById(R.id.route_start_location);
-        point_end = view.findViewById(R.id.route_end_location);
-        //获取搜索框布局
-        search_layout = view.findViewById(R.id.search_edit);
-        //获取listView对象
-        listView = view.findViewById(R.id.list_view);
-        //获取路线选择按钮对象
-        chooseRoute = view.findViewById(R.id.choose_route);
-        //获取出行方式相关
-        route_start = view.findViewById(R.id.route_start);
-        route_end = view.findViewById(R.id.route_end);
-        mass = view.findViewById(R.id.mass);
-        drive = view.findViewById(R.id.drive);
-        transit = view.findViewById(R.id.transit);
-        bike = view.findViewById(R.id.bike);
-        route_make = view.findViewById(R.id.make_route);
-        walk = view.findViewById(R.id.walk);
-        if(mass!=null&&drive!=null&transit!=null&walk!=null&bike!=null){
-            bs.add(mass);
-            bs.add(drive);
-            bs.add(transit);
-            bs.add(walk);
-            bs.add(bike);
-        }
-        ptp_layout = view.findViewById(R.id.ptp_layout);
-        ptp_all = view.findViewById(R.id.ptp_all);
-//        go_style = view.findViewById(R.id.go_style);
-        map_go = view.findViewById(R.id.map_go);
-        //获取导航按钮中相关信息设置文本框
-        spend_time = view.findViewById(R.id.spend_time);
-        distance_count = view.findViewById(R.id.distance_count);
-        traffic_count = view.findViewById(R.id.traffic_count);
-        //设置首次进入
-        state = true;
-        start_flag = false;
-        mDialog = null;
-    }
-
-    //位置初始化功能
-    private void initLocation() {
-        //传感器对象创建
-        myOrientationListener = new MyOrientationListener(getContext());
-        //传感器改变方向回调
-        myOrientationListener.setOnOrientationListener(new MyOrientationListener.OnOrientationListener() {
-            @Override
-            public void onOrientationChanged(float x) {
-                currentX = x;
-                if (my_latlng != null) {
-                    //动态改变地图的图标方向
-                    MyLocationData data = new MyLocationData
-                            .Builder()
-                            .accuracy(accu)
-                            .direction(currentX)
-                            .latitude(my_latlng.latitude)
-                            .longitude(my_latlng.longitude).build();
-                    mBaiduMap.setMyLocationData(data);
-                }
-            }
-        });
-    }
-
-    //初始化适配器功能
-    private void initAdapter() {
-        //定义适配器
-        mSimpleAdapter = new MySimpleAdapter(getContext(), list, R.layout.map_item,
-                new String[]{"place_name", "place_distance", "place_location"},
-                new int[]{R.id.place_name, R.id.place_distance, R.id.place_location});
-        listView.setAdapter(mSimpleAdapter);
-        //显示视图
-        listView.setVisibility(View.VISIBLE);
-    }
-
-    //定位到当前位置
-    private void pointToLocation() {
-        //清除绘制物
-        clear_overlays();
-        //设置缩放
-        set_map_size(my_reallatlng, 17);
-        //自定义图标对象创建
-        bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.map_gpslocked);
-        //应用自定义图标显示
-        MyLocationConfiguration config = new MyLocationConfiguration(
-                MyLocationConfiguration.LocationMode.NORMAL, true, bitmapDescriptor);
-        mBaiduMap.setMyLocationConfiguration(config);
-        //显示当前位置图标
-        MyLocationData data = new MyLocationData
-                .Builder()
-                .accuracy(400)
-                .latitude(my_reallatlng.latitude)
-                .longitude(my_reallatlng.longitude).build();
-        mBaiduMap.setMyLocationData(data);
-        if(!voice_flag) {
-            //搜索框显示
-            search_layout.setVisibility(View.VISIBLE);
-            //路径导航隐藏
-            ptp_all.setVisibility(View.GONE);
-        }else{
-            //搜索框隐藏
-            search_layout.setVisibility(View.GONE);
-            //路径导航显示
-            ptp_all.setVisibility(View.VISIBLE);
-        }
-        //导航隐藏
-        map_go.setVisibility(View.GONE);
-        if (listView.getVisibility() == View.GONE) {
-            //浮动图标显示
-            fab_parent.setVisibility(View.VISIBLE);
-        }
-        //关闭首次进入
-        state = false;
-    }
-
-    //Poi-->搜索附近 点击事件
-    private View.OnClickListener nearby_listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //附近搜索方法
-            if(!edit_key.getText().toString().trim().equals("")) {
-                //关闭路径标志
-                start_flag = false;
-                //隐藏出行图标
-                fab_parent.setVisibility(View.GONE);
-                //失去焦点
-                close_point(edit_key);
-                //设置缩放
-                set_map_size(my_latlng, 17);
-                //清空覆盖物
-                clear_overlays();
-                //执行搜索动作
-                nearbySearch();
-            }else{
-                Toast.makeText(getContext(),"关键字不能为空", Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
-
-    //Poi-->全市搜索 点击事件
-    private View.OnClickListener city_listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if(!edit_key.getText().toString().trim().equals("")) {
-                //关闭路径标志
-                start_flag = false;
-                //隐藏出行图标
-                fab_parent.setVisibility(View.GONE);
-                //失去焦点
-                close_point(edit_key);
-                //清空覆盖物
-                clear_overlays();
-                //全市搜索方法
-                citySearch();
-            }else{
-                Toast.makeText(getContext(),"关键字不能为空", Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
-
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        switch (which) {
-            case DialogInterface.BUTTON_POSITIVE:            //点击“确定”进入登录界面
-                Toast.makeText(getContext(), "您点击了确定", Toast.LENGTH_SHORT).show();
-                //设置列表隐藏
-                listView.setVisibility(View.GONE);
-                //重新规划线路
-                clear_overlays();
-                PlanNode stNode = PlanNode.withLocation(my_latlng);
-                PlanNode enNode = PlanNode.withLocation(toLocationData);
-                //进入驾车路径规划生成
-                mSearch.drivingSearch((new DrivingRoutePlanOption())
-                        .from(stNode).to(enNode));
-                nowSearchType = 1;
-                //显示开始导航按钮
-                map_go.setVisibility(View.VISIBLE);
-                break;
-            case DialogInterface.BUTTON_NEUTRAL:             //点击“取消”
-                Toast.makeText(getContext(), "您点击了取消", Toast.LENGTH_SHORT).show();
-                break;
+        //定位按钮
+        locbtn = (Button) view.findViewById(R.id.locbtn);
+        locbtn.setOnClickListener(this);
+        //出行按钮
+        go_style = (Button) view.findViewById(R.id.go_style);
+        go_style.setOnClickListener(this);
+        //搜索框
+        input_text = view.findViewById(R.id.input_text);
+        input_text.setOnClickListener(this);
+        //清除图片获取
+        clean_view = view.findViewById(R.id.clean_keywords);
+        clean_view.setOnClickListener(this);
+        //拿到listView
+        listView = view.findViewById(R.id.listview);
+        listView.setOnItemClickListener(onItemClickListener);
+        //方向传感器类
+        mSensorHelper = new SensorEventHelper(getContext());
+        if (mSensorHelper != null) {
+            mSensorHelper.registerSensorListener();
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        //开启定位
-        mBaiduMap.setMyLocationEnabled(true);
-        //开启传感器
-        myOrientationListener.start();
+    /**
+     * 设置一些amap的属性
+     */
+    private void setUpMap() {
+        //获取UI设置对象
+        UiSettings settings = aMap.getUiSettings();
+        //设置默认定位按钮是否显示
+        settings.setMyLocationButtonEnabled(false);
+        //获取缩放按钮位置
+        Log.d("" + settings.getZoomPosition(), "123");
+        //设置缩放按钮位置
+        settings.setZoomPosition(0);
+        //设置标记物点击监听
+        aMap.setOnMarkerClickListener(this);
+        //设置地图缩放监听
+        aMap.setOnCameraChangeListener(this);
+        //设置地图点击事件监听
+        aMap.setOnMapClickListener(this);
+        //设置显示地图比例尺
+        settings.setScaleControlsEnabled(true);
+        //初始化交通信息
+        initTraffic();
     }
 
+    /**
+     * 初始化交通信息
+     **/
+    private void initTraffic() {
+        //自定义实时交通信息的颜色样式
+        MyTrafficStyle myTrafficStyle = new MyTrafficStyle();
+        myTrafficStyle.setSeriousCongestedColor(0xff92000a);
+        myTrafficStyle.setCongestedColor(0xffea0312);
+        myTrafficStyle.setSlowColor(0xffff7508);
+        myTrafficStyle.setSmoothColor(0xff00a209);
+        aMap.setMyTrafficStyle(myTrafficStyle);
+        //显示实时交通状况
+        aMap.setTrafficEnabled(true);
+        //显示3D楼块
+        aMap.showBuildings(true);
+        //显示底图文字
+        aMap.showMapText(true);
+    }
+
+    /**
+     * 方法必须重写
+     */
     @Override
     public void onResume() {
         super.onResume();
-        //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
-        mMapView.onResume();
+        mapView.onResume();
+        if (mSensorHelper != null) {
+            mSensorHelper.registerSensorListener();
+        }
     }
 
+    /**
+     * 方法必须重写
+     */
     @Override
     public void onPause() {
         super.onPause();
-        //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
-        mMapView.onPause();
-        Log.d("Test Demo()", "执行了onPause()方法");
-        if (mDialog != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (mDialog != null && mDialog.isShowing()) {
-                        mDialog.dismiss();
-                        Log.d("Test Demo:", "悬浮窗取消操作");
-                    }
-                }
-            });
-            //隐藏导航按钮
-            map_go.setVisibility(View.GONE);
-        }
+        mapView.onPause();
+        isFirstLoc = false;
     }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        //停止定位
-        mBaiduMap.setMyLocationEnabled(false);
-        //停止方向传感器
-        myOrientationListener.stop();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        RefWatcher refWatcher = SpeakerApplication.getRefWatcher(getActivity());
-        refWatcher.watch(this);
-        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
-        mMapView.onDestroy();
-        //清空操作
-        mBaiduMap.clear();
-        //释放Poi实例
-        mPoiSearch.destroy();
-        //释放listView
-        listView.removeAllViews();
-        //释放路径搜索实例
-        if (mSearch != null) {
-            mSearch.destroy();
-        }
-        VDeviceAPI.unsetNetworkChangedCallback();
-    }
-
 
     /**
-     * 城市内搜索
+     * 方法必须重写
      */
-    private void citySearch() {
-        // 设置检索参数
-        PoiCitySearchOption citySearchOption = new PoiCitySearchOption();
-        citySearchOption.city(city_name);// 城市
-        citySearchOption.keyword(edit_key.getText().toString());// 关键字
-        Log.d("城市为:" + city_name, "关键字是：" + edit_key.getText().toString());
-        if (start_flag) {
-            citySearchOption.pageCapacity(5);// 默认10条
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mBigIcon != null) {
+            mBigIcon.destroy();
+        }
+        if (mSmallIcon != null) {
+            mSmallIcon.destroy();
+        }
+        if (mSensorHelper != null) {
+            mSensorHelper.unRegisterSensorListener();
+            mSensorHelper.setCurrentMarker(null);
+            mSensorHelper = null;
+        }
+        mapView.onDestroy();
+        mapView = null;
+        aMap.clear();
+        aMap = null;
+        if (null != mLocationClient) {
+            mLocationClient.onDestroy();
+        }
+    }
+
+    /**
+     * 初始化定位，设置回调监听
+     */
+    private void initLocation() {
+        //初始化client
+        mLocationClient = new AMapLocationClient(getActivity().getApplicationContext());
+        // 设置定位监听
+        mLocationClient.setLocationListener(this);
+    }
+
+    /**
+     * 设置定位参数
+     *
+     * @return 定位参数类
+     */
+    private AMapLocationClientOption getOption() {
+        //初始化定位参数
+        AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
+        //设置定位模式为Hight_Accuracy高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        //设置是否返回地址信息（默认返回地址信息）
+        mLocationOption.setNeedAddress(true);
+        //设置是否只定位一次,默认为false
+        mLocationOption.setOnceLocation(false);
+        //设置是否强制刷新WIFI，默认为强制刷新
+        mLocationOption.setWifiActiveScan(true);
+        //设置是否允许模拟位置,默认为false，不允许模拟位置
+        mLocationOption.setMockEnable(false);
+        //设置定位间隔,单位毫秒,默认为2000ms
+        mLocationOption.setInterval(2000);
+        return mLocationOption;
+    }
+
+    /**
+     * 开始定位
+     */
+    private void startLocation() {
+        if (checkWifiSetting()) {
+            //设置定位参数
+            mLocationClient.setLocationOption(getOption());
+            // 启动定位
+            mLocationClient.startLocation();
         } else {
-            citySearchOption.pageCapacity(10);// 默认10条
+            Toast.makeText(getContext(), "您的网络存在问题，请重试", Toast.LENGTH_SHORT).show();
         }
-        // 发起检索请求
-        mPoiSearch.searchInCity(citySearchOption);
     }
 
     /**
-     * 附近检索
+     * 检查网络连接状况
      */
-    private void nearbySearch() {
-        Log.d("进入了附近检索方法","Test Demo");
-        PoiNearbySearchOption nearbySearchOption = new PoiNearbySearchOption();
-        nearbySearchOption.location(my_latlng);
-        nearbySearchOption.keyword(edit_key.getText().toString());
-        nearbySearchOption.radius(1000);// 检索半径，单位是米
-        nearbySearchOption.pageCapacity(4);//附近4条
-        mPoiSearch.searchNearby(nearbySearchOption);// 发起附近检索请求
+    private boolean checkWifiSetting() {
+        return true;
     }
 
-    //POI检索的监听对象
-    OnGetPoiSearchResultListener resultListener = new OnGetPoiSearchResultListener() {
-        //获得POI的检索结果，一般检索数据都是在这里获取
-        @Override
-        public void onGetPoiResult(PoiResult poi) {
-            Log.d("Test Demo:", "进入了回调");
-            //保存poi结果集
-            poiResult = poi;
-            //如果搜索到的结果不为空，并且没有错误
-            if (poiResult != null && poiResult.error == PoiResult.ERRORNO.NO_ERROR) {
-                Log.d("Test Demo:", "进入检索方法");
-                //清空list
-                list.clear();
-                //将结果传入到详细方法中进行处理
-                resultCheck(poiResult);
-                //listView赋值操作
-                initAdapter();
-                //这传入search对象，因为一般搜索到后，点击时方便发出详细搜索
-                MyPoiOverlay overlay = new MyPoiOverlay(mBaiduMap, mPoiSearch);
-                //设置数据,这里只需要一\步，
-                overlay.setData(poiResult);
-                //添加到地图
-                overlay.addToMap();
-                //将显示视图拉倒正好可以看到所有POI兴趣点的缩放等级
-                overlay.zoomToSpan();//计算工具
-                //将中心点设在第一个位置
-//                set_map_size(poiResult.getAllPoi().get(0).location, (int) mBaiduMap.getMapStatus().zoom);
-//                if (search_mode == 2) {
-//                    overlay.zoomToSpan();//计算工具
-//                } else {
-//                    //将中心点设在第一个位置
-//                    set_map_size(poiResult.getAllPoi().get(0).location, 17);
-//                }
-                //设置标记物的点击监听事件
-                mBaiduMap.setOnMarkerClickListener(overlay);
-            } else {
-                //清空list
-                list.clear();
-                Toast.makeText(getContext(), "搜索不到你需要的信息！", Toast.LENGTH_SHORT).show();
+    /**
+     * 定位成功后回调函数
+     */
+    @Override
+    public void onLocationChanged(AMapLocation amapLocation) {
+        if (amapLocation != null && amapLocation.getErrorCode() == 0) {
+            currentLocation = new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
+            if (isFirstLoc) {
+                Log.d("定位回调被执行", "123465");
+                isFirstLoc = false;
+                searchResultAdapter = new SearchResultAdapter(getActivity(), amapLocation);
+                //获取定位信息
+                StringBuffer buffer = new StringBuffer();
+                buffer.append(amapLocation.getCountry() + ""
+                        + amapLocation.getProvince() + ""
+                        + amapLocation.getCity() + ""
+                        + amapLocation.getProvince() + ""
+                        + amapLocation.getDistrict() + ""
+                        + amapLocation.getStreet() + ""
+                        + amapLocation.getStreetNum());
+                currentCity = amapLocation.getCity();
+                //获取marker内容
+                LOCATION_MARKER_FLAG = buffer.toString();
+                //创建我的方向位置marker
+                addCircle(currentLocation, 100.0f);//添加定位精度圆
+                addMarker(currentLocation);//添加定位图标
+                mSensorHelper.setCurrentMarker(mSmallIcon);//定位图标旋转
+                toMyLocation(currentLocation);
             }
+        } else {
+            String errText = "定位失败," + amapLocation.getErrorCode() + ": " + amapLocation.getErrorInfo();
+            Log.e("定位信息：", errText);
         }
+    }
 
-        //获得POI的详细检索结果，如果发起的是详细检索，这个方法会得到回调(需要uid)
-        //详细检索一般用于单个地点的搜索，比如搜索一大堆信息后，选择其中一个地点再使用详细检索
-        @Override
-        public void onGetPoiDetailResult(PoiDetailResult poiDetailResult) {
-            if (poiDetailResult.error != SearchResult.ERRORNO.NO_ERROR) {
-                Toast.makeText(getContext(), "抱歉，未找到结果",
-                        Toast.LENGTH_SHORT).show();
-            } else {// 正常返回结果的时候，此处可以获得很多相关信息
-                Toast.makeText(getContext(), poiDetailResult.getName() + ": "
-                                + poiDetailResult.getAddress(),
-                        Toast.LENGTH_LONG).show();
-            }
-        }
-
-        //获得POI室内检索结果
-        @Override
-        public void onGetPoiIndoorResult(PoiIndoorResult poiIndoorResult) {
-        }
-    };
-
-    //listItem点击转换坐标方法
-    private void goto_item(PoiResult poiResult, int index) {
-        //设置起点坐标值
-        if (start_flag) {
-            if (isstart) {
-                start_llg = poiResult.getAllPoi().get(index).location;
-            } else {
-                end_llg = poiResult.getAllPoi().get(index).location;
-                //设置列表隐藏
+    /**
+     * 点击事件回调方法
+     */
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.locbtn://定位按钮
+                toMyLocation(currentLocation);
+                break;
+            case R.id.input_text://关键字跳转
+                Log.d("EditText点击监听", "123456");
+                Intent intent = new Intent(getActivity(), InputTipsActivity.class);
+                intent.putExtra("city_name", currentCity);
+                intent.putExtra("style","search");
+                startActivityForResult(intent, REQUEST_CODE);
+                break;
+            case R.id.clean_keywords://关键字清除
+                input_text.setText("");
+                clearMarkers();
+                clean_view.setVisibility(View.GONE);
                 listView.setVisibility(View.GONE);
-                //默认置驾车按钮为高亮选中状态
-                drive.setBackgroundResource(R.drawable.map_button_checked);
-            }
-            listView.setVisibility(View.GONE);
-        } else {
-            //将中心点设在第index个位置
-            set_map_size(poiResult.getAllPoi().get(index).location, 19);
+                go_style.setVisibility(View.VISIBLE);
+                break;
+            case R.id.go_style://出行
+                Intent intent1 = new Intent(this.getActivity(),CalculateRouteActivity.class);
+                Gson gson = new Gson();
+                //发送点击的模式
+                intent1.putExtra("click_style","startClick");
+                //发送位置信息
+                intent1.putExtra("start_location",gson.toJson(currentLocation));
+                //发送城市名字
+                intent1.putExtra("city_name",currentCity);
+                startActivity(intent1);
+                break;
+            default:
+                break;
         }
     }
 
+    /**
+     * 地图点击事件监听
+     **/
+    @Override
+    public void onMapClick(LatLng latLng) {
 
-    //清空所有覆盖物方法
-    private void clear_overlays() {
-        mBaiduMap.clear();
     }
 
-    //地图尺寸调整方法
-    /*
-     *  p1:当前中心点位置
-     *  p2:当前缩放级别
-     * **/
-    private void set_map_size(LatLng latLng, int size) {
-        //调整地图显示尺寸
-        /*
-        * 尺寸示例：
-        *    百度地图对应缩放级别
-        *    int[] zoomLevel = { 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6,5, 4, 3 };
-        *    对应级别单位
-        *    String[] zoomLevelStr = { “10”, “20”, “50”, “100”, “200”, “500”, “1000”,
-        *    “2000”, “5000”, “10000”, “20000”, “25000”, “50000”, “100000”,
-        *    “200000”, “500000”, “1000000”, “2000000” }; 单位/m
-        * **/
-        MapStatus mMapStatus = new MapStatus.Builder()
-                .target(latLng)
-                .zoom(size)
-                .build();
-        //定义MapStatusUpdate对象，以便描述地图状态将要发生的变化
-        MapStatusUpdate mMapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mMapStatus);
-        //改变地图状态
-        mBaiduMap.setMapStatus(mMapStatusUpdate);
+    /**
+     * 我的位置小蓝点属性初始化
+     **/
+    private void addCircle(LatLng latlng, double radius) {
+        CircleOptions options = new CircleOptions();
+        options.strokeWidth(1f);
+        options.fillColor(FILL_COLOR);
+        options.strokeColor(STROKE_COLOR);
+        options.center(latlng);
+        options.radius(radius);
+        aMap.addCircle(options);
     }
 
-    //发起详细检索
-    public boolean resultCheck(PoiResult poiResult) {
-        //获取点击的标记物的数据,对于每一条发起一个详细检索
-        for (int i = 0; i < poiResult.getAllPoi().size(); i++) {
-            PoiInfo poiInfo = poiResult.getAllPoi().get(i);
-            map = new HashMap<>();
-            String name = "";
-            if (poiInfo.address.contains("有轨电车")) {
-                name = poiInfo.name + "(有轨电车)";
-            } else if (poiInfo.address.contains("路;") && !poiInfo.name.contains("(公交站)")) {
-                name = poiInfo.name + "(公交站)";
-            } else {
-                name = poiInfo.name;
-            }
-            //添加详情到list集合中
-            map.put("place_name", name);
-            //获取两点之间的距离
-            map.put("place_distance", distanceUtils(DistanceUtil.getDistance(my_latlng, poiInfo.location)));
-            map.put("place_location", poiInfo.address);
-            list.add(map);
+    /**
+     * 添加我的位置覆盖物及浮动窗
+     **/
+    private void addMarker(LatLng latlng) {
+        if (mSmallIcon != null) {
+            return;
+        }
+        MarkerOptions options = new MarkerOptions();
+        options.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(this.getResources(),
+                R.mipmap.map_navi_map_gps_locked)));
+        options.anchor(0.5f, 0.5f);
+        options.position(latlng);
+        mSmallIcon = aMap.addMarker(options);
+        mSmallIcon.setObject("location");
+        mSmallIcon.setTitle(LOCATION_MARKER_FLAG);
+        mSmallIcon.setPerspective(true);
+    }
+
+    /**
+     * marker标记点击事件
+     **/
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        if (marker.isInfoWindowShown()) {
+            marker.hideInfoWindow();
+        } else {
+            marker.showInfoWindow();
         }
         return true;
     }
 
+    @Override
+    public void onCameraChange(CameraPosition cameraPosition) {
+    }
+
     /**
-     * 两点间坐标单位转换
+     * 地图放大缩小事件监听
+     **/
+    @Override
+    public void onCameraChangeFinish(CameraPosition cameraPosition) {
+        if (mSmallIcon != null) {
+            //更大的地图状态
+            if (cameraPosition.zoom < 13) {
+                //关闭实时交通状况
+                if (aMap.isTrafficEnabled()) {
+                    aMap.setTrafficEnabled(false);
+                }
+                //隐藏方向marker
+                if (mSmallIcon.isVisible()) {
+                    mSmallIcon.setVisible(false);
+                    //显示小蓝点
+                    setMCLocationMarker();
+                }
+            } else {//更小的地图状态
+                //开启实时交通状况
+                if (!aMap.isTrafficEnabled()) {
+                    aMap.setTrafficEnabled(true);
+                }
+                //隐藏小蓝点
+                if (mBigIcon != null && mSmallIcon != null) {
+                    if (mBigIcon.isVisible()) {
+                        mBigIcon.setVisible(false);
+                        //显示方向marker
+                        mSmallIcon.setVisible(true);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 设置蓝点marker
+     */
+    private void setMCLocationMarker() {
+        if (mBigIcon == null) {
+            MarkerOptions options = new MarkerOptions();
+            options.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(this.getResources(),
+                    R.mipmap.map_gps_point)));
+            options.anchor(0.5f, 0.5f);
+            options.position(currentLocation);
+            mBigIcon = aMap.addMarker(options);
+            mBigIcon.setObject("location");
+        }
+        mBigIcon.setVisible(true);
+    }
+
+    /**
+     * 输入提示activity选择结果后的处理逻辑
      *
-     * @param distance
-     * @return 米
+     * @param requestCode
+     * @param resultCode
+     * @param data
      */
-    public String distanceUtils(double distance) {
-        //大于1000m转换为km
-        if (distance > 1000) {
-            distance = distance / 1000;
-            BigDecimal b = new BigDecimal(distance);
-            double distance1 = b.setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
-            return distance1 + "km";
-        } else {
-            return (int) distance + "m";
-        }
-    }
-
-    class MySimpleAdapter extends SimpleAdapter {
-
-        private ArrayList<Map<String, String>> listitem;
-        //导航图标对象
-        private ImageView img_point;
-        private LinearLayout goto_there;
-
-        public MySimpleAdapter(Context context, ArrayList<Map<String, String>> data, int resource, String[] from, int[] to) {
-            super(context, data, resource, from, to);
-            this.listitem = data;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, final ViewGroup parent) {
-            View view = super.getView(position, convertView, parent);
-            //获取导航图片对象
-            img_point = view.findViewById(R.id.img_point);
-            goto_there = view.findViewById(R.id.goto_there);
-            if (start_flag) {
-                //隐藏图片
-                goto_there.setVisibility(View.GONE);
-            } else {
-                img_point.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //保存查看的地点当做预备的目的地
-                        toLocationData = poiResult.getAllPoi().get(position).location;
-                        int index = position + 1;
-                        //创建一个AlertDialog对话框
-                        Dialog dialog = new AlertDialog.Builder(getContext())
-                                .setTitle("导航")
-                                .setMessage("是否前往" + index + "号标记点？")
-                                .setPositiveButton("确定", MapFragment.this)
-                                .setNegativeButton("取消", MapFragment.this)
-                                .create();
-                        dialog.show();
-                    }
-                });
-            }
-            return view;
-        }
-    }
-
-    //导航相关
-
-    public void delayTest() {
-
-    }
-
-    private boolean initDirs() {
-        mSDCardPath = getSdcardDir();
-        if (mSDCardPath == null) {
-            return false;
-        }
-        File f = new File(mSDCardPath, APP_FOLDER_NAME);
-        if (!f.exists()) {
-            try {
-                f.mkdir();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-        return true;
-    }
-
-    String authinfo = null;
-
-    /**
-     * 内部TTS播报状态回传handler
-     */
-    private Handler ttsHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            int type = msg.what;
-            switch (type) {
-                case BaiduNaviManager.TTSPlayMsgType.PLAY_START_MSG: {
-                    // showToastMsg("Handler : TTS play start");
-                    break;
-                }
-                case BaiduNaviManager.TTSPlayMsgType.PLAY_END_MSG: {
-                    // showToastMsg("Handler : TTS play end");
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
-    };
-
-    /**
-     * 内部TTS播报状态回调接口
-     */
-    private BaiduNaviManager.TTSPlayStateListener ttsPlayStateListener = new BaiduNaviManager.TTSPlayStateListener() {
-
-        @Override
-        public void playEnd() {
-            // showToastMsg("TTSPlayStateListener : TTS play end");
-        }
-
-        @Override
-        public void playStart() {
-            // showToastMsg("TTSPlayStateListener : TTS play start");
-        }
-    };
-
-    public void showToastMsg(final String msg) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private boolean hasBasePhoneAuth() {
-        // TODO Auto-generated method stub
-
-        PackageManager pm = this.getActivity().getPackageManager();
-        for (String auth : authBaseArr) {
-            if (pm.checkPermission(auth, this.getActivity().getPackageName()) != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean hasCompletePhoneAuth() {
-        // TODO Auto-generated method stub
-
-        PackageManager pm = this.getActivity().getPackageManager();
-        for (String auth : authComArr) {
-            if (pm.checkPermission(auth, this.getActivity().getPackageName()) != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void initNavi() {
-
-        BNOuterTTSPlayerCallback ttsCallback = null;
-
-        // 申请权限
-        if (android.os.Build.VERSION.SDK_INT >= 23) {
-
-            if (!hasBasePhoneAuth()) {
-
-                this.requestPermissions(authBaseArr, authBaseRequestCode);
-                return;
-
-            }
-        }
-
-        BaiduNaviManager.getInstance().init(getActivity(), mSDCardPath, APP_FOLDER_NAME, new BaiduNaviManager.NaviInitListener() {
-            @Override
-            public void onAuthResult(int status, String msg) {
-                if (0 == status) {
-                    authinfo = "key校验成功!";
-                } else {
-                    authinfo = "key校验失败, " + msg;
-                }
-                getActivity().runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        Toast.makeText(getContext(), authinfo, Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-
-            public void initSuccess() {
-                Toast.makeText(getContext(), "百度导航引擎初始化成功", Toast.LENGTH_SHORT).show();
-                hasInitSuccess = true;
-                initSetting();
-            }
-
-            public void initStart() {
-                Toast.makeText(getContext(), "百度导航引擎初始化开始", Toast.LENGTH_SHORT).show();
-            }
-
-            public void initFailed() {
-                Toast.makeText(getContext(), "百度导航引擎初始化失败", Toast.LENGTH_SHORT).show();
-            }
-
-        }, null, ttsHandler, ttsPlayStateListener);
-
-    }
-
-    private String getSdcardDir() {
-        if (Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
-            return Environment.getExternalStorageDirectory().toString();
-        }
-        return null;
-    }
-
-    private BNRoutePlanNode.CoordinateType mCoordinateType = null;
-
-    private void routeplanToNavi(BNRoutePlanNode.CoordinateType coType) {
-        Log.d("进入导航方法了", "Test Demo");
-        mCoordinateType = coType;
-        if (!hasInitSuccess) {
-            Toast.makeText(getContext(), "还未初始化!", Toast.LENGTH_SHORT).show();
-        }
-        // 权限申请
-        if (android.os.Build.VERSION.SDK_INT >= 23) {
-            // 保证导航功能完备
-            if (!hasCompletePhoneAuth()) {
-                if (!hasRequestComAuth) {
-                    hasRequestComAuth = true;
-                    this.requestPermissions(authComArr, authComRequestCode);
-                    return;
-                } else {
-                    Toast.makeText(getContext(), "没有完备的权限!", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-        }
-        BNRoutePlanNode sNode = null;
-        BNRoutePlanNode eNode = null;
-//        BNRoutePlanNode sNode = new BNRoutePlanNode(114.052481,22.671418, "我的起点", null, coType);
-//        BNRoutePlanNode eNode = new BNRoutePlanNode(114.04567852765966,22.660850629358585, "我的终点", null, coType);
-        if (start_flag) {
-            //点对点语音
-            sNode = new BNRoutePlanNode(start_llg.longitude, start_llg.latitude, "我的起点", null, coType);
-            eNode = new BNRoutePlanNode(end_llg.longitude, end_llg.latitude, "我的终点", null, coType);
-        } else {
-            //默认语音
-            sNode = new BNRoutePlanNode(my_latlng.longitude, my_latlng.latitude, "我的起点", null, coType);
-            eNode = new BNRoutePlanNode(toLocationData.longitude, toLocationData.latitude, "我的终点", null, coType);
-        }
-
-//        switch (coType) {
-//            case GCJ02: {
-//                sNode = new BNRoutePlanNode(116.30142, 40.05087, "百度大厦", null, coType);
-//                eNode = new BNRoutePlanNode(116.39750, 39.90882, "北京天安门", null, coType);
-//                break;
-//            }
-//            case WGS84: {
-//                sNode = new BNRoutePlanNode(116.300821, 40.050969, "百度大厦", null, coType);
-//                eNode = new BNRoutePlanNode(116.397491, 39.908749, "北京天安门", null, coType);
-//                break;
-//            }
-//            case BD09_MC: {
-//                sNode = new BNRoutePlanNode(12947471, 4846474, "百度大厦", null, coType);
-//                eNode = new BNRoutePlanNode(12958160, 4825947, "北京天安门", null, coType);
-//                break;
-//            }
-//            case BD09LL: {
-//                sNode = new BNRoutePlanNode(116.30784537597782, 40.057009624099436, "百度大厦", null, coType);
-//                eNode = new BNRoutePlanNode(116.40386525193937, 39.915160800132085, "北京天安门", null, coType);
-//                break;
-//            }
-//            default:
-//                ;
-//        }
-        if (sNode != null && eNode != null) {
-            List<BNRoutePlanNode> list = new ArrayList<BNRoutePlanNode>();
-            list.add(sNode);
-            list.add(eNode);
-
-            // 开发者可以使用旧的算路接口，也可以使用新的算路接口,可以接收诱导信息等
-            // BaiduNaviManager.getInstance().launchNavigator(this, list, 1, true, new DemoRoutePlanListener(sNode));
-            BaiduNaviManager.getInstance().launchNavigator(getActivity(), list, 1, false, new DemoRoutePlanListener(sNode),
-                    eventListerner);
-        }
-    }
-
-    BaiduNaviManager.NavEventListener eventListerner = new BaiduNaviManager.NavEventListener() {
-
-        @Override
-        public void onCommonEventCall(int what, int arg1, int arg2, Bundle bundle) {
-            BNEventHandler.getInstance().handleNaviEvent(what, arg1, arg2, bundle);
-        }
-    };
-
-    public class DemoRoutePlanListener implements BaiduNaviManager.RoutePlanListener {
-
-        private BNRoutePlanNode mBNRoutePlanNode = null;
-
-        public DemoRoutePlanListener(BNRoutePlanNode node) {
-            mBNRoutePlanNode = node;
-        }
-
-        @Override
-        public void onJumpToNavigator() {
-            /*
-             * 设置途径点以及resetEndNode会回调该接口
-             */
-
-            for (Activity ac : activityList) {
-
-                if (ac.getClass().getName().endsWith("BNDemoGuideActivity")) {
-
-                    return;
-                }
-            }
-            Intent intent = new Intent(getContext(), BNDemoGuideActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putSerializable(ROUTE_PLAN_NODE, (BNRoutePlanNode) mBNRoutePlanNode);
-            intent.putExtras(bundle);
-            startActivity(intent);
-
-        }
-
-        @Override
-        public void onRoutePlanFailed() {
-            // TODO Auto-generated method stub
-            Toast.makeText(getContext(), "算路失败", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void initSetting() {
-        // BNaviSettingManager.setDayNightMode(BNaviSettingManager.DayNightMode.DAY_NIGHT_MODE_DAY);
-        BNaviSettingManager
-                .setShowTotalRoadConditionBar(BNaviSettingManager.PreViewRoadCondition.ROAD_CONDITION_BAR_SHOW_ON);
-        BNaviSettingManager.setVoiceMode(BNaviSettingManager.VoiceMode.Veteran);
-        // BNaviSettingManager.setPowerSaveMode(BNaviSettingManager.PowerSaveMode.DISABLE_MODE);
-        BNaviSettingManager.setRealRoadCondition(BNaviSettingManager.RealRoadCondition.NAVI_ITS_ON);
-        BNaviSettingManager.setIsAutoQuitWhenArrived(true);
-        Bundle bundle = new Bundle();
-        // 必须设置APPID，否则会静音
-        bundle.putString(BNCommonSettingParam.TTS_APP_ID, "10636332");
-        BNaviSettingManager.setNaviSdkParam(bundle);
-    }
-
-    private BNOuterTTSPlayerCallback mTTSCallback = new BNOuterTTSPlayerCallback() {
-
-        @Override
-        public void stopTTS() {
-            // TODO Auto-generated method stub
-            Log.e("test_TTS", "stopTTS");
-        }
-
-        @Override
-        public void resumeTTS() {
-            // TODO Auto-generated method stub
-            Log.e("test_TTS", "resumeTTS");
-        }
-
-        @Override
-        public void releaseTTSPlayer() {
-            // TODO Auto-generated method stub
-            Log.e("test_TTS", "releaseTTSPlayer");
-        }
-
-        @Override
-        public int playTTSText(String speech, int bPreempt) {
-            // TODO Auto-generated method stub
-            Log.e("test_TTS", "playTTSText" + "_" + speech + "_" + bPreempt);
-
-            return 1;
-        }
-
-        @Override
-        public void phoneHangUp() {
-            // TODO Auto-generated method stub
-            Log.e("test_TTS", "phoneHangUp");
-        }
-
-        @Override
-        public void phoneCalling() {
-            // TODO Auto-generated method stub
-            Log.e("test_TTS", "phoneCalling");
-        }
-
-        @Override
-        public void pauseTTS() {
-            // TODO Auto-generated method stub
-            Log.e("test_TTS", "pauseTTS");
-        }
-
-        @Override
-        public void initTTSPlayer() {
-            // TODO Auto-generated method stub
-            Log.e("test_TTS", "initTTSPlayer");
-        }
-
-        @Override
-        public int getTTSState() {
-            // TODO Auto-generated method stub
-            Log.e("test_TTS", "getTTSState");
-            return 1;
-        }
-    };
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        // TODO Auto-generated method stub
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == authBaseRequestCode) {
-            for (int ret : grantResults) {
-                if (ret == 0) {
-                    continue;
-                } else {
-                    Toast.makeText(getContext(), "缺少导航基本的权限!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_CODE_INPUTTIPS && data
+                != null) {
+            //结果返回清除以前标记
+            clearMarkers();
+            //得到Item返回的封装对象
+            Tip tip = data.getParcelableExtra(Constants.EXTRA_TIP);
+            Log.d("item点击接收", tip.getName());
+            if (tip.getPoiID() == null || tip.getPoiID().equals("")) {
+                doSearchQuery(tip.getName());
+            } else {
+                Log.d("直接进入了添加marker操作", "123456");
+                addTipMarker(tip);
             }
-            initNavi();
-        } else if (requestCode == authComRequestCode) {
-            for (int ret : grantResults) {
-                if (ret == 0) {
-                    continue;
-                }
+            input_text.setText(tip.getName());
+            mKeyWords = tip.getName();
+            if (!tip.getName().equals("")) {
+                clean_view.setVisibility(View.VISIBLE);
             }
-            routeplanToNavi(mCoordinateType);
+        } else if (resultCode == RESULT_CODE_KEYWORDS && data != null) {
+            //清除以前标记
+            clearMarkers();
+            String keywords = data.getStringExtra(Constants.KEY_WORDS_NAME);
+            if (keywords != null && !keywords.equals("")) {
+                doSearchQuery(keywords);
+            }
+            input_text.setText(keywords);
+            if (!keywords.equals("")) {
+                clean_view.setVisibility(View.VISIBLE);
+            }
+            Log.d("item结果接收", keywords);
+        }
+        //显示框框
+        listView.setVisibility(View.VISIBLE);
+        //隐藏button
+        go_style.setVisibility(View.GONE);
+    }
+
+    /**
+     * 开始进行poi搜索
+     */
+    protected void doSearchQuery(String keywords) {
+        //显示进度框
+        showProgressDialog();
+        //第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
+        query = new PoiSearch.Query(keywords, "", currentCity);
+        //设置每页最多返回多少条poiItem
+        query.setPageSize(3);
+        //设置查第一页
+        query.setPageNum(1);
+        //Poi查询设置
+        poiSearch = new PoiSearch(getContext(), query);
+        poiSearch.setOnPoiSearchListener(this);
+        poiSearch.searchPOIAsyn();
+    }
+
+    /**
+     * 显示进度框
+     */
+    private void showProgressDialog() {
+        if (progDialog == null)
+            progDialog = new ProgressDialog(getContext());
+        progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progDialog.setIndeterminate(false);
+        progDialog.setCancelable(false);
+        progDialog.setMessage("正在搜索:\n" + mKeyWords);
+        progDialog.show();
+    }
+
+    /**
+     * 隐藏进度框
+     */
+    private void dissmissProgressDialog() {
+        if (progDialog != null) {
+            progDialog.dismiss();
         }
     }
 
+    /**
+     * POI信息查询回调方法
+     */
+    @Override
+    public void onPoiSearched(PoiResult result, int rCode) {
+        dissmissProgressDialog();// 隐藏对话框
+        if (rCode == 1000) {
+            if (result != null && result.getQuery() != null) {// 搜索poi的结果
+                if (result.getQuery().equals(query)) {// 是否是同一条
+                    poiResult = result;
+                    // 取得搜索到的poiItems有多少页
+                    poiItems = poiResult.getPois();
+                    //获取第一页的数据
+                    searchResultAdapter.setData(poiItems);
+                    listView.setAdapter(searchResultAdapter);
+                    // 取得第一页的poiItem数据，页数从数字0开始
+                    List<SuggestionCity> suggestionCities = poiResult
+                            .getSearchSuggestionCitys();
+                    // 当搜索不到poiItem数据时，会返回含有搜索关键字的城市信息
+                    if (poiItems != null && poiItems.size() > 0) {
+                        PoiOverlay poiOverlay = new PoiOverlay(aMap, poiItems);
+                        poiOverlay.removeFromMap();
+                        poiOverlay.addToMap();
+                        zoom = poiOverlay.zoomToSpan();
+                        Log.d("地图等级为：", "" + zoom);
+                        //我的位置点显示
+                        try {
+                            if (zoom < 13) {
+                                mSmallIcon.setVisible(false);
+                                mBigIcon.setVisible(true);
+                            } else {
+                                mSmallIcon.setVisible(true);
+                                mBigIcon.setVisible(false);
+                            }
+                        }catch (NullPointerException e){
+                            e.printStackTrace();
+                        }
+                    } else if (suggestionCities != null
+                            && suggestionCities.size() > 0) {
+                        showSuggestCity(suggestionCities);
+                    } else {
+                        ToastUtil.show(getContext(), R.string.no_result);
+                    }
+                }
+            } else {
+                ToastUtil.show(getContext(), R.string.no_result);
+            }
+        } else {
+            ToastUtil.showerror(getContext(), rCode);
+        }
+    }
 
-    //路径规划开始
+    @Override
+    public void onPoiItemSearched(PoiItem item, int rCode) {
+    }
 
     /**
-     * 发起路线规划搜索示例
+     * poi没有搜索到数据，返回一些推荐城市的信息
+     */
+    private void showSuggestCity(List<SuggestionCity> cities) {
+        String infomation = "推荐城市\n";
+        for (int i = 0; i < cities.size(); i++) {
+            infomation += "城市名称:" + cities.get(i).getCityName() + "城市区号:"
+                    + cities.get(i).getCityCode() + "城市编码:"
+                    + cities.get(i).getAdCode() + "\n";
+        }
+        ToastUtil.show(getContext(), infomation);
+    }
+
+    /**
+     * 用marker展示输入提示list选中数据
      *
-     * @param v
+     * @param tip
      */
-    public void searchButtonProcess(View v) {
-        // 重置浏览节点的路线数据
-        route = null;
-//        mBtnPre.setVisibility(View.INVISIBLE);
-//        mBtnNext.setVisibility(View.INVISIBLE);
-        mBaiduMap.clear();
-        // 处理搜索按钮响应
-        // 设置起终点信息，对于tranist search 来说，城市名无意义
-//        PlanNode stNode = PlanNode.withCityNameAndPlaceName("北京", startNodeStr);
-//        PlanNode enNode = PlanNode.withCityNameAndPlaceName("北京", endNodeStr);
-        PlanNode stNode = PlanNode.withLocation(my_latlng);
-        PlanNode enNode = PlanNode.withLocation(toLocationData);
-        // 实际使用中请对起点终点城市进行正确的设定
-
-        if (v.getId() == R.id.mass) {
-            PlanNode stMassNode = PlanNode.withCityNameAndPlaceName("北京", "天安门");
-            PlanNode enMassNode = PlanNode.withCityNameAndPlaceName("上海", "东方明珠");
-
-            mSearch.masstransitSearch(new MassTransitRoutePlanOption().from(stMassNode).to(enMassNode));
-            nowSearchType = 0;
-        } else if (v.getId() == R.id.drive) {
-            mSearch.drivingSearch((new DrivingRoutePlanOption())
-                    .from(stNode).to(enNode));
-            nowSearchType = 1;
-        } else if (v.getId() == R.id.transit) {
-            mSearch.transitSearch((new TransitRoutePlanOption())
-                    .from(stNode).city("北京").to(enNode));
-            nowSearchType = 2;
-        } else if (v.getId() == R.id.walk) {
-            mSearch.walkingSearch((new WalkingRoutePlanOption())
-                    .from(stNode).to(enNode));
-            nowSearchType = 3;
-        } else if (v.getId() == R.id.bike) {
-            mSearch.bikingSearch((new BikingRoutePlanOption())
-                    .from(stNode).to(enNode));
-            nowSearchType = 4;
+    private void addTipMarker(Tip tip) {
+        if (tip == null) {
+            return;
         }
+        mPoiMarker = aMap.addMarker(new MarkerOptions());
+        LatLonPoint point = tip.getPoint();
+        //list更新操作
+        poiItems.clear();
+        poiItems.add(new PoiItem("id", point, tip.getName(), tip.getAddress()));
+        searchResultAdapter.setData(poiItems);
+        listView.setAdapter(searchResultAdapter);
+        if (point != null) {
+            LatLng markerPosition = new LatLng(point.getLatitude(), point.getLongitude());
+            mPoiMarker.setPosition(markerPosition);
+            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPosition, 17));
+        }
+        mPoiMarker.setTitle(tip.getName());
+        mPoiMarker.setSnippet(tip.getAddress());
     }
 
     /**
-     * 节点浏览示例
-     *
-     * @param v
+     * 列表点击监听
      */
-//    public void nodeClick(View v) {
-//        LatLng nodeLocation = null;
-//        String nodeTitle = null;
-//        Object step = null;
-//
-//        if (nowSearchType != 0 && nowSearchType != -1) {
-//            // 非跨城综合交通
-//            if (route == null || route.getAllStep() == null) {
-//                return;
-//            }
-//            if (nodeIndex == -1 && v.getId() == R.id.pre) {
-//                return;
-//            }
-//            // 设置节点索引
-//            if (v.getId() == R.id.next) {
-//                if (nodeIndex < route.getAllStep().size() - 1) {
-//                    nodeIndex++;
-//                } else {
-//                    return;
-//                }
-//            } else if (v.getId() == R.id.pre) {
-//                if (nodeIndex > 0) {
-//                    nodeIndex--;
-//                } else {
-//                    return;
-//                }
-//            }
-//            // 获取节结果信息
-//            step = route.getAllStep().get(nodeIndex);
-//            if (step instanceof DrivingRouteLine.DrivingStep) {
-//                nodeLocation = ((DrivingRouteLine.DrivingStep) step).getEntrance().getLocation();
-//                nodeTitle = ((DrivingRouteLine.DrivingStep) step).getInstructions();
-//            } else if (step instanceof WalkingRouteLine.WalkingStep) {
-//                nodeLocation = ((WalkingRouteLine.WalkingStep) step).getEntrance().getLocation();
-//                nodeTitle = ((WalkingRouteLine.WalkingStep) step).getInstructions();
-//            } else if (step instanceof TransitRouteLine.TransitStep) {
-//                nodeLocation = ((TransitRouteLine.TransitStep) step).getEntrance().getLocation();
-//                nodeTitle = ((TransitRouteLine.TransitStep) step).getInstructions();
-//            } else if (step instanceof BikingRouteLine.BikingStep) {
-//                nodeLocation = ((BikingRouteLine.BikingStep) step).getEntrance().getLocation();
-//                nodeTitle = ((BikingRouteLine.BikingStep) step).getInstructions();
-//            }
-//        } else if (nowSearchType == 0) {
-//            // 跨城综合交通  综合跨城公交的结果判断方式不一样
-//
-//
-//            if (massroute == null || massroute.getNewSteps() == null) {
-//                return;
-//            }
-//            if (nodeIndex == -1 && v.getId() == R.id.pre) {
-//                return;
-//            }
-//            boolean isSamecity = nowResultmass.getOrigin().getCityId() == nowResultmass.getDestination().getCityId();
-//            int size = 0;
-//            if (isSamecity) {
-//                size = massroute.getNewSteps().size();
-//            } else {
-//                for (int i = 0; i < massroute.getNewSteps().size(); i++) {
-//                    size += massroute.getNewSteps().get(i).size();
-//                }
-//            }
-//
-//            // 设置节点索引
-//            if (v.getId() == R.id.next) {
-//                if (nodeIndex < size - 1) {
-//                    nodeIndex++;
-//                } else {
-//                    return;
-//                }
-//            } else if (v.getId() == R.id.pre) {
-//                if (nodeIndex > 0) {
-//                    nodeIndex--;
-//                } else {
-//                    return;
-//                }
-//            }
-//            if (isSamecity) {
-//                // 同城
-//                step = massroute.getNewSteps().get(nodeIndex).get(0);
-//            } else {
-//                // 跨城
-//                int num = 0;
-//                for (int j = 0; j < massroute.getNewSteps().size(); j++) {
-//                    num += massroute.getNewSteps().get(j).size();
-//                    if (nodeIndex - num < 0) {
-//                        int k = massroute.getNewSteps().get(j).size() + nodeIndex - num;
-//                        step = massroute.getNewSteps().get(j).get(k);
-//                        break;
-//                    }
-//                }
-//            }
-//
-//            nodeLocation = ((MassTransitRouteLine.TransitStep) step).getStartLocation();
-//            nodeTitle = ((MassTransitRouteLine.TransitStep) step).getInstructions();
-//        }
-//
-//        if (nodeLocation == null || nodeTitle == null) {
-//            return;
-//        }
-//
-//        // 移动节点至中心
-//        mBaiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(nodeLocation));
-//        // show popup
-//        popupText = new TextView(MainActivity.this);
-//        popupText.setBackgroundResource(R.drawable.popup);
-//        popupText.setTextColor(0xFF000000);
-//        popupText.setText(nodeTitle);
-//        mBaiduMap.showInfoWindow(new InfoWindow(popupText, nodeLocation, 0));
-//    }
+    AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            if (position != searchResultAdapter.getSelectedPosition()) {
+                PoiItem poiItem = (PoiItem) searchResultAdapter.getItem(position);
+                LatLng curLatlng = new LatLng(poiItem.getLatLonPoint().getLatitude(), poiItem.getLatLonPoint().getLongitude());
+                aMap.moveCamera(CameraUpdateFactory.changeLatLng(curLatlng));
+                searchResultAdapter.setSelectedPosition(position);
+                searchResultAdapter.notifyDataSetChanged();
+            }
+        }
+    };
 
     /**
-     * 切换路线图标，刷新地图使其生效
-     * 注意： 起终点图标使用中心对齐.
-     */
-    public void changeRouteIcon(View v) {
-        if (routeOverlay == null) {
-            return;
-        }
-        if (useDefaultIcon) {
-            ((Button) v).setText("自定义起终点图标");
-            Toast.makeText(getContext(),
-                    "将使用系统起终点图标",
-                    Toast.LENGTH_SHORT).show();
-
-        } else {
-            ((Button) v).setText("系统起终点图标");
-            Toast.makeText(getContext(),
-                    "将使用自定义起终点图标",
-                    Toast.LENGTH_SHORT).show();
-
-        }
-        useDefaultIcon = !useDefaultIcon;
-        routeOverlay.removeFromMap();
-        routeOverlay.addToMap();
-    }
-    
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
+     * 我的位置
+     **/
+    private void toMyLocation(LatLng currentLocation) {
+        //设置缩放级别
+        aMap.moveCamera(CameraUpdateFactory.zoomTo(16));
+        //将地图移动到定位点
+        aMap.moveCamera(CameraUpdateFactory.changeLatLng(currentLocation));
     }
 
-    @Override
-    public void onGetWalkingRouteResult(WalkingRouteResult result) {
-        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(getContext(), "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
-        }
-        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
-            // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
-            // result.getSuggestAddrInfo()
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("提示");
-            builder.setMessage("检索地址有歧义，请重新设置。\n可通过getSuggestAddrInfo()接口获得建议查询信息");
-            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
+    //删除位置以外Marker
+    private void clearMarkers() {
+        //获取地图上所有Marker
+        List<Marker> mapScreenMarkers = aMap.getMapScreenMarkers();
+        Log.d("map Markers:",""+mapScreenMarkers.size());
+        for (int i = 0; i < mapScreenMarkers.size(); i++) {
+            Marker marker = mapScreenMarkers.get(i);
+            if(marker.getObject()!=null) {
+                if (!marker.getObject().toString().equals("location")) {
+                    //移除当前Marker
+                    marker.remove();
                 }
-            });
-            builder.create().show();
-            return;
-        }
-        if (result.error == SearchResult.ERRORNO.NO_ERROR) {
-//            nodeIndex = -1;
-//            mBtnPre.setVisibility(View.VISIBLE);
-//            mBtnNext.setVisibility(View.VISIBLE);
-            if (result.getRouteLines().size() > 1) {
-                nowResultwalk = result;
-                if (!hasShownDialogue) {
-                    MyTransitDlg myTransitDlg = new MyTransitDlg(getContext(),
-                            result.getRouteLines(),
-                            RouteLineAdapter.Type.WALKING_ROUTE);
-                    myTransitDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            hasShownDialogue = false;
-                        }
-                    });
-                    myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
-                        public void onItemClick(int position) {
-                            route = nowResultwalk.getRouteLines().get(position);
-                            WalkingRouteOverlay overlay = new MyWalkingRouteOverlay(mBaiduMap);
-                            mBaiduMap.setOnMarkerClickListener(overlay);
-                            routeOverlay = overlay;
-                            overlay.setData(nowResultwalk.getRouteLines().get(position));
-                            overlay.addToMap();
-                            overlay.zoomToSpan();
-                        }
-
-                    });
-                    myTransitDlg.show();
-                    hasShownDialogue = true;
-                }
-            } else if (result.getRouteLines().size() == 1) {
-                // 直接显示
-                route = result.getRouteLines().get(0);
-                WalkingRouteOverlay overlay = new MyWalkingRouteOverlay(mBaiduMap);
-                mBaiduMap.setOnMarkerClickListener(overlay);
-                routeOverlay = overlay;
-                overlay.setData(result.getRouteLines().get(0));
-                overlay.addToMap();
-                overlay.zoomToSpan();
-
-            } else {
-                Log.d("route result", "结果数<0");
-                return;
-            }
-
-        }
-
-    }
-
-    @Override
-    public void onGetTransitRouteResult(TransitRouteResult result) {
-
-        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(getContext(), "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
-        }
-        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
-            // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
-            // result.getSuggestAddrInfo()
-            return;
-        }
-        if (result.error == SearchResult.ERRORNO.NO_ERROR) {
-//            nodeIndex = -1;
-//            mBtnPre.setVisibility(View.VISIBLE);
-//            mBtnNext.setVisibility(View.VISIBLE);
-            if (result.getRouteLines().size() > 1) {
-                nowResultransit = result;
-                if (!hasShownDialogue) {
-                    MyTransitDlg myTransitDlg = new MyTransitDlg(getContext(),
-                            result.getRouteLines(),
-                            RouteLineAdapter.Type.TRANSIT_ROUTE);
-                    myTransitDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            hasShownDialogue = false;
-                        }
-                    });
-                    myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
-                        public void onItemClick(int position) {
-
-                            route = nowResultransit.getRouteLines().get(position);
-                            TransitRouteOverlay overlay = new MyTransitRouteOverlay(mBaiduMap);
-                            mBaiduMap.setOnMarkerClickListener(overlay);
-                            routeOverlay = overlay;
-                            overlay.setData(nowResultransit.getRouteLines().get(position));
-                            overlay.addToMap();
-                            overlay.zoomToSpan();
-                        }
-
-                    });
-                    myTransitDlg.show();
-                    hasShownDialogue = true;
-                }
-            } else if (result.getRouteLines().size() == 1) {
-                // 直接显示
-                route = result.getRouteLines().get(0);
-                TransitRouteOverlay overlay = new MyTransitRouteOverlay(mBaiduMap);
-                mBaiduMap.setOnMarkerClickListener(overlay);
-                routeOverlay = overlay;
-                overlay.setData(result.getRouteLines().get(0));
-                overlay.addToMap();
-                overlay.zoomToSpan();
-
-            } else {
-                Log.d("route result", "结果数<0");
-                return;
-            }
-        }
-    }
-
-    @Override
-    public void onGetMassTransitRouteResult(MassTransitRouteResult result) {
-        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(getContext(), "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
-        }
-        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
-            // 起终点模糊，获取建议列表
-            result.getSuggestAddrInfo();
-            return;
-        }
-        if (result.error == SearchResult.ERRORNO.NO_ERROR) {
-            nowResultmass = result;
-//
-//            nodeIndex = -1;
-//            mBtnPre.setVisibility(View.VISIBLE);
-//            mBtnNext.setVisibility(View.VISIBLE);
-
-            if (!hasShownDialogue) {
-                // 列表选择
-                MyTransitDlg myTransitDlg = new MyTransitDlg(getContext(),
-                        result.getRouteLines(),
-                        RouteLineAdapter.Type.MASS_TRANSIT_ROUTE);
-                nowResultmass = result;
-                myTransitDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        hasShownDialogue = false;
-                    }
-                });
-                myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
-                    public void onItemClick(int position) {
-
-                        MyMassTransitRouteOverlay overlay = new MyMassTransitRouteOverlay(mBaiduMap);
-                        mBaiduMap.setOnMarkerClickListener(overlay);
-                        routeOverlay = overlay;
-                        massroute = nowResultmass.getRouteLines().get(position);
-                        overlay.setData(nowResultmass.getRouteLines().get(position));
-
-                        MassTransitRouteLine line = nowResultmass.getRouteLines().get(position);
-                        overlay.setData(line);
-                        if (nowResultmass.getOrigin().getCityId() == nowResultmass.getDestination().getCityId()) {
-                            // 同城
-                            overlay.setSameCity(true);
-                        } else {
-                            // 跨城
-                            overlay.setSameCity(false);
-                        }
-                        mBaiduMap.clear();
-                        overlay.addToMap();
-                        overlay.zoomToSpan();
-                    }
-
-                });
-                myTransitDlg.show();
-                hasShownDialogue = true;
-            }
-        }
-    }
-
-
-    @Override
-    public void onGetDrivingRouteResult(DrivingRouteResult result) {
-        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(getContext(), "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
-        }
-        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
-            // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
-            // result.getSuggestAddrInfo()
-            return;
-        }
-        if (result.error == SearchResult.ERRORNO.NO_ERROR) {
-//            nodeIndex = -1;
-//            if (result.getRouteLines().size() > 1) {
-//                nowResultdrive = result;
-//                if (!hasShownDialogue) {
-//                    MyTransitDlg myTransitDlg = new MyTransitDlg(MainActivity.this,
-//                            result.getRouteLines(),
-//                            RouteLineAdapter.Type.DRIVING_ROUTE);
-//                    myTransitDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                        @Override
-//                        public void onDismiss(DialogInterface dialog) {
-//                            hasShownDialogue = false;
-//                        }
-//                    });
-//                    myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
-//                        public void onItemClick(int position) {
-//                            route = nowResultdrive.getRouteLines().get(position);
-//                            DrivingRouteOverlay overlay = new MyDrivingRouteOverlay(mBaiduMap);
-//                            mBaiduMap.setOnMarkerClickListener(overlay);
-//                            routeOverlay = overlay;
-//                            overlay.setData(nowResultdrive.getRouteLines().get(position));
-//                            overlay.addToMap();
-//                            overlay.zoomToSpan();
-//                        }
-//
-//                    });
-//                    myTransitDlg.show();
-//                    hasShownDialogue = true;
-//                }
-//            } else if (result.getRouteLines().size() == 1) {
-            DrivingRouteLine dr = result.getRouteLines().get(0);
-            //获取规划路径距离
-            int distance = dr.getDistance();
-            Log.d("距离为：",""+distance);
-            if(distance>1000){
-                double dis = (double)dr.getDistance()/1000;
-                BigDecimal b = new BigDecimal(dis);
-                double f1 = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                distance_count.setText("路线总长度："+f1+"公里");
-            }else {
-                distance_count.setText("路线总长度：" + dr.getDistance() + "米");
-            }
-            //获取规划路径红绿灯数量
-            traffic_count.setText( "红绿灯数：" +dr.getLightNum()+"个");
-            //所需时间
-            int time = dr.getDuration();
-            if ( time / 3600 == 0 ) {
-                spend_time.setText( "大约需要：" + time / 60 + "分钟" );
-            } else {
-                spend_time.setText( "大约需要：" + time / 3600 + "小时" + (time % 3600) / 60 + "分钟" );
-            }
-            RouteNode start = dr.getStarting();
-            RouteNode end = dr.getTerminal();
-            if (!start.equals("我的位置")) {
-                my_latlng = start.getLocation();
-            }
-            toLocationData = end.getLocation();
-            DrivingRouteOverlay overlay = new MyDrivingRouteOverlay(mBaiduMap);
-            routeOverlay = overlay;
-            mBaiduMap.setOnMarkerClickListener(overlay);
-            overlay.setData(result.getRouteLines().get(0));
-            overlay.addToMap();
-            overlay.zoomToSpan();
-//                mBtnPre.setVisibility(View.VISIBLE);
-//                mBtnNext.setVisibility(View.VISIBLE);
-        } else {
-            Log.d("route result", "结果数<0");
-            return;
-        }
-    }
-
-    @Override
-    public void onGetIndoorRouteResult(IndoorRouteResult indoorRouteResult) {
-
-    }
-
-    @Override
-    public void onGetBikingRouteResult(BikingRouteResult result) {
-        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(getContext(), "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
-        }
-        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
-            // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
-            // result.getSuggestAddrInfo()
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("提示");
-            builder.setMessage("检索地址有歧义，请重新设置。\n可通过getSuggestAddrInfo()接口获得建议查询信息");
-            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.create().show();
-            return;
-        }
-        if (result.error == SearchResult.ERRORNO.NO_ERROR) {
-//            nodeIndex = -1;
-//            mBtnPre.setVisibility(View.VISIBLE);
-//            mBtnNext.setVisibility(View.VISIBLE);
-
-            if (result.getRouteLines().size() > 1) {
-                nowResultbike = result;
-                if (!hasShownDialogue) {
-                    MyTransitDlg myTransitDlg = new MyTransitDlg(getContext(),
-                            result.getRouteLines(),
-                            RouteLineAdapter.Type.DRIVING_ROUTE);
-                    myTransitDlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            hasShownDialogue = false;
-                        }
-                    });
-                    myTransitDlg.setOnItemInDlgClickLinster(new OnItemInDlgClickListener() {
-                        public void onItemClick(int position) {
-                            route = nowResultbike.getRouteLines().get(position);
-                            BikingRouteOverlay overlay = new MyBikingRouteOverlay(mBaiduMap);
-                            mBaiduMap.setOnMarkerClickListener(overlay);
-                            routeOverlay = overlay;
-                            overlay.setData(nowResultbike.getRouteLines().get(position));
-                            overlay.addToMap();
-                            overlay.zoomToSpan();
-                        }
-
-                    });
-                    myTransitDlg.show();
-                    hasShownDialogue = true;
-                }
-            } else if (result.getRouteLines().size() == 1) {
-                route = result.getRouteLines().get(0);
-                BikingRouteOverlay overlay = new MyBikingRouteOverlay(mBaiduMap);
-                routeOverlay = overlay;
-                mBaiduMap.setOnMarkerClickListener(overlay);
-                overlay.setData(result.getRouteLines().get(0));
-                overlay.addToMap();
-                overlay.zoomToSpan();
-//                mBtnPre.setVisibility(View.VISIBLE);
-//                mBtnNext.setVisibility(View.VISIBLE);
-            } else {
-                Log.d("route result", "结果数<0");
-                return;
-            }
-
-        }
-    }
-
-    // 定制RouteOverly
-    private class MyDrivingRouteOverlay extends DrivingRouteOverlay {
-
-        public MyDrivingRouteOverlay(BaiduMap baiduMap) {
-            super(baiduMap);
-        }
-
-        @Override
-        public BitmapDescriptor getStartMarker() {
-            if (useDefaultIcon) {
-                return BitmapDescriptorFactory.fromResource(R.drawable.map_icon_st);
-            }
-            return null;
-        }
-
-        @Override
-        public BitmapDescriptor getTerminalMarker() {
-            if (useDefaultIcon) {
-                return BitmapDescriptorFactory.fromResource(R.drawable.map_icon_en);
-            }
-            return null;
-        }
-    }
-
-    private class MyWalkingRouteOverlay extends WalkingRouteOverlay {
-
-        public MyWalkingRouteOverlay(BaiduMap baiduMap) {
-            super(baiduMap);
-        }
-
-        @Override
-        public BitmapDescriptor getStartMarker() {
-            if (useDefaultIcon) {
-                return BitmapDescriptorFactory.fromResource(R.drawable.map_icon_st);
-            }
-            return null;
-        }
-
-        @Override
-        public BitmapDescriptor getTerminalMarker() {
-            if (useDefaultIcon) {
-                return BitmapDescriptorFactory.fromResource(R.drawable.map_icon_en);
-            }
-            return null;
-        }
-    }
-
-    private class MyTransitRouteOverlay extends TransitRouteOverlay {
-
-        public MyTransitRouteOverlay(BaiduMap baiduMap) {
-            super(baiduMap);
-        }
-
-        @Override
-        public BitmapDescriptor getStartMarker() {
-            if (useDefaultIcon) {
-                return BitmapDescriptorFactory.fromResource(R.drawable.map_icon_st);
-            }
-            return null;
-        }
-
-        @Override
-        public BitmapDescriptor getTerminalMarker() {
-            if (useDefaultIcon) {
-                return BitmapDescriptorFactory.fromResource(R.drawable.map_icon_en);
-            }
-            return null;
-        }
-    }
-
-    private class MyBikingRouteOverlay extends BikingRouteOverlay {
-        public MyBikingRouteOverlay(BaiduMap baiduMap) {
-            super(baiduMap);
-        }
-
-        @Override
-        public BitmapDescriptor getStartMarker() {
-            if (useDefaultIcon) {
-                return BitmapDescriptorFactory.fromResource(R.drawable.map_icon_st);
-            }
-            return null;
-        }
-
-        @Override
-        public BitmapDescriptor getTerminalMarker() {
-            if (useDefaultIcon) {
-                return BitmapDescriptorFactory.fromResource(R.drawable.map_icon_en);
-            }
-            return null;
-        }
-
-
-    }
-
-    private class MyMassTransitRouteOverlay extends MassTransitRouteOverlay {
-        public MyMassTransitRouteOverlay(BaiduMap baiduMap) {
-            super(baiduMap);
-        }
-
-        @Override
-        public BitmapDescriptor getStartMarker() {
-            if (useDefaultIcon) {
-                return BitmapDescriptorFactory.fromResource(R.drawable.map_icon_st);
-            }
-            return null;
-        }
-
-        @Override
-        public BitmapDescriptor getTerminalMarker() {
-            if (useDefaultIcon) {
-                return BitmapDescriptorFactory.fromResource(R.drawable.map_icon_en);
-            }
-            return null;
-        }
-    }
-
-    @Override
-    public void onMapClick(LatLng point) {
-        mBaiduMap.hideInfoWindow();
-    }
-
-    @Override
-    public boolean onMapPoiClick(MapPoi poi) {
-        return false;
-    }
-
-    // 响应DLg中的List item 点击
-    interface OnItemInDlgClickListener {
-        public void onItemClick(int position);
-    }
-
-    // 供路线选择的Dialog
-    class MyTransitDlg extends Dialog {
-
-        private List<? extends RouteLine> mtransitRouteLines;
-        private ListView transitRouteList;
-        private RouteLineAdapter mTransitAdapter;
-
-        OnItemInDlgClickListener onItemInDlgClickListener;
-
-        public MyTransitDlg(Context context, int theme) {
-            super(context, theme);
-        }
-
-        public MyTransitDlg(Context context, List<? extends RouteLine> transitRouteLines, RouteLineAdapter.Type
-                type) {
-            this(context, 0);
-            mtransitRouteLines = transitRouteLines;
-            mTransitAdapter = new RouteLineAdapter(context, mtransitRouteLines, type);
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-        }
-
-        @Override
-        public void setOnDismissListener(OnDismissListener listener) {
-            super.setOnDismissListener(listener);
-        }
-
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.map_activity_transit_dialog);
-
-            transitRouteList = (ListView) view.findViewById(R.id.transitList);
-            transitRouteList.setAdapter(mTransitAdapter);
-
-            transitRouteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    onItemInDlgClickListener.onItemClick(position);
-//                    mBtnPre.setVisibility(View.VISIBLE);
-//                    mBtnNext.setVisibility(View.VISIBLE);
-                    dismiss();
-                    hasShownDialogue = false;
-                }
-            });
-        }
-
-        public void setOnItemInDlgClickLinster(OnItemInDlgClickListener itemListener) {
-            onItemInDlgClickListener = itemListener;
-        }
-    }
-
-    //供路径选择的方法
-    private void choose_location(EditText route, View v) {
-        //设置标量
-        start_flag = true;
-        //隐藏导航的
-        map_go.setVisibility(View.GONE);
-        //获取文本点输入
-        String place_name = route.getText().toString();
-        String place_list[] = null;
-        if (place_name.contains("市")) {
-            //以“市”作为分割
-            place_list = place_name.split("市");
-            if(place_list.length>1) {
-                city_name = place_list[0];
-                //重新赋值关键字
-                edit_key.setText(place_list[1]);
             }else{
-                edit_key.setText(place_name);
-            }
-        } else {
-            edit_key.setText(place_name);
-        }
-        citySearch();
-    }
-
-    //供editview失去焦点的方法
-    private void close_point(EditText editText) {
-        editText.clearFocus();
-        editText.setFocusable(false);
-        //关闭键盘
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0); //强制隐藏键盘
-        }
-    }
-
-    //供editview重新获取焦点的方法
-    private void get_point(EditText editText) {
-        //为edit_key重新获取焦点
-        editText.setFocusable(true);
-        editText.setFocusableInTouchMode(true);
-        editText.requestFocus();
-        editText.findFocus();
-        //开启键盘
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.showSoftInput(editText, 0);
-        }
-    }
-    //提供一个出行方式选择的监听器
-    private View.OnClickListener listener = new View.OnClickListener() {
-        private Button button;
-        @Override
-        public void onClick(View view) {
-            button = (Button)view;
-            //重置所有按钮的背景
-            resetButton();
-            if("跨城交通".equals(button.getText().toString())){
-                //处理跨城交通
-                button.setBackgroundResource(R.drawable.map_button_checked);
-                Toast.makeText(getContext(),"跨城交通被点击了",Toast.LENGTH_SHORT).show();
-            }else if("驾车".equals(button.getText().toString())){
-                //处理驾车
-                button.setBackgroundResource(R.drawable.map_button_checked);
-                Toast.makeText(getContext(),"驾车被点击了",Toast.LENGTH_SHORT).show();
-            }else if("公交".equals(button.getText().toString())){
-                //处理公交
-                button.setBackgroundResource(R.drawable.map_button_checked);
-                Toast.makeText(getContext(),"公交被点击了",Toast.LENGTH_SHORT).show();
-            }else if("步行".equals(button.getText().toString())){
-                //处理步行
-                button.setBackgroundResource(R.drawable.map_button_checked);
-                Toast.makeText(getContext(),"步行被点击了",Toast.LENGTH_SHORT).show();
-            }else if("骑行".equals(button.getText().toString())){
-                //处理骑行
-                button.setBackgroundResource(R.drawable.map_button_checked);
-                Toast.makeText(getContext(),"骑行被点击了",Toast.LENGTH_SHORT).show();
+                //移除当前Marker
+                marker.remove();
             }
         }
-    };
-
-    //重置所有button的背景色
-    private void resetButton(){
-        for(Button b : bs){
-            b.setBackgroundResource(R.drawable.map_button_notcheck);
-        }
+        //地图刷新
+        aMap.runOnDrawFrame();
     }
 }

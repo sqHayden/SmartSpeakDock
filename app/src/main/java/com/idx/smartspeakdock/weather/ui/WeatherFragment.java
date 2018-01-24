@@ -15,7 +15,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -25,7 +24,6 @@ import android.widget.Toast;
 
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
-import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.standby.Utility;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
@@ -179,16 +177,6 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*BaseActivity baseActivity = (BaseActivity) getActivity();
-        if (!BaseActivity.isServiceRunning(baseActivity.getApplicationContext(), "com.idx.smartspeakdock.start.GetCityService")) {
-            Log.d("启动服务", "startService");
-            Intent intent = new Intent(baseActivity.getApplicationContext(), GetCityService.class);
-            //启动
-            baseActivity.getApplicationContext().startService(intent);
-            //绑定
-            baseActivity.getApplicationContext().bindService(intent, mCityConn, BIND_AUTO_CREATE);
-        }*/
-
         if (savedInstanceState != null) {
             mCurrentCity = savedInstanceState.getString("city");
             mCurrentCounty = savedInstanceState.getString("county");
@@ -349,6 +337,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         outState.putString("selectCity", mSelectCity);
         outState.putString("selectCounty", mSelectCounty);
     }
+
 
     public void loading(){
         try {

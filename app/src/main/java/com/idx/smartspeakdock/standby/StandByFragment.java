@@ -1,11 +1,11 @@
 package com.idx.smartspeakdock.standby;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -17,7 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.baidu.location.BDLocation;
+import com.amap.api.location.AMapLocation;
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
@@ -65,11 +65,16 @@ public class StandByFragment extends BaseFragment implements IStandByView{
             //连接调用
             myBinder.getCity(new GetCityService.CallBack(){
                 @Override
+<<<<<<< HEAD
+                public void call(AMapLocation aMapLocation) {
+                    mStandByPresenter.requestWeather(aMapLocation.getCity());
+=======
                 public void call(BDLocation bdLocation) {
                     cityname = bdLocation.getCity();
                     location_textView.setText(cityname);
                     mStandByPresenter.requestWeather(cityname);
 
+>>>>>>> e0ad539c8325dbb8d03805e41f07e3b871b70dfb
                 }
             });
         }

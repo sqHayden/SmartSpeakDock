@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">SmartSpeakDock</string>
+    <string name="action_settings">Settings</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="home_title">Menu</string>
+    <string name="weather_title">天气</string>
+    <string name="calendar_title">日历</string>
+    <string name="music_title">音乐</string>
+    <string name="shopping_title">购物</string>
+    <string name="map_title">地图</string>
+    <string name="baiduAI_title">语音设置</string>
+    <string name="setting_title">设置</string>
+    //drawer
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    //shopping web loading
+    <string name="web_title_loading">网页加载中</string>
+    <string name="web_message_loading">请等待...</string>
+    <string name="web_sites_not_exists">抱歉，该页面不存在</string>
+
+    //weather loading
+    <string name="get_weather_info_error">获取天气信息失败</string>
+    <string name="weather_loading_dialog">加载天气中...</string>
+    <string name="weather">天气</string>
+    <string name="weather_tomorrow">明天：</string>
+    <string name="weather_after">后天：</string>
+
+    //network error
+    <string name="network_not_connected">网络未连接，页面无法显示,联网后，往下拖动页面刷新</string>
+
+    //setting
+    <string name="voice_switch_on_off">语音开启设置</string>
+    <string name="about">关于</string>
+    //calendar
+    <string name="year">年</string>
+    <string name="month">月</string>
+    <string name="day">号</string>
+    <string name="add_event">添加事件</string>
+    <string name="sure">确定</string>
+    <string name="cancel">取消</string>
+    <string name="now">现在</string>
+    <string name="week">星期</string>
+    <string name="sunday">日</string>
+    <string name="lunar_calendar">农历</string>
+    <string name="yes">是</string>
+    <string name="is_the_weekend">是周末</string>
+    <string name="is_usual_day">是平常日</string>
+    <string name="no_arrangement">没有安排事情</string>
+    <string name="please_select_date">请选择日期</string>
+    <string name="please_add_event">请添加事件</string>
+    <string name="delete">删除</string>
+
+
+
+</resources>

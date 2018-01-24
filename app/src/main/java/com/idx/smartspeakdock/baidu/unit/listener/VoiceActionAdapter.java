@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
-
 import com.idx.smartspeakdock.Actions;
-import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.Modules;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.SlotsTypes;
@@ -21,7 +19,6 @@ import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.MathTool;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 

@@ -5,7 +5,7 @@ android {
         config{
             keyAlias 'key0'
             keyPassword '1365233'
-            storeFile file('./smart.jks')
+            storeFile file('./smart_debug.jks')
             storePassword '1365233'
         }
     }
@@ -15,6 +15,7 @@ android {
         applicationId "com.idx.smartspeakdock"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -51,10 +52,7 @@ dependencies {
     compile "com.squareup.okhttp3:okhttp:$rootProject.okhttpVersion"
     compile 'com.belerweb:pinyin4j:2.5.0'
     compile 'com.github.andremion:musiccoverview:1.0.0'
-    compile 'com.android.support:recyclerview-v7:27.0.2'
-    //引入LeakCanary
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1' // or 1.4-beta1
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3.1' // or 1.4-beta1
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3.1' // or 1.4-beta1
+    compile 'com.android.support:recyclerview-v7:21.0.+'
+    compile project(path: ':citypickerview')
     compile project(path: ':citypickerview')
 }

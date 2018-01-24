@@ -9,10 +9,11 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
-import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
+
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.idx.smartspeakdock.utils.NetStatusUtils;
 import com.idx.smartspeakdock.weather.utils.UpdateWeatherUtil;
 
@@ -20,13 +21,14 @@ import com.idx.smartspeakdock.weather.utils.UpdateWeatherUtil;
  * Created by hayden on 18-1-6.
  */
 
-public class GetCityService extends Service implements BDLocationListener{
+public class GetCityService extends Service implements AMapLocationListener{
     private static final String TAG = "GetCityService";
     private String city_name;
 
     //定位的客户端
-    private LocationClient mLocationClient;
-    private AlarmManager manager;
+    private AMapLocationClient mLocationClient;
+    //定位参数
+    private AMapLocationClientOption mLocationOption;
 
     @Override
     public void onCreate() {
@@ -36,51 +38,55 @@ public class GetCityService extends Service implements BDLocationListener{
         super.onCreate();
     }
 
-    /*
-    * 初始化定位信息
-    * **/
-    private void init(){
-        //设置定位的相关配置
-        LocationClientOption option = new LocationClientOption();
-        //打开GPS
-        option.setOpenGps(true);
-        //可选，默认高精度，设置定位模式，高精度，低功耗，仅设备
-        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
-        //可选，默认gcj02，设置返回的定位结果坐标系，如果配合百度地图使用，建议设置为bd09ll;
-        option.setCoorType("bd09ll");
-        //可选，默认0，即仅定位一次，设置发起定位请求的间隔需要大于等于1000ms才是有效的
-        option.setScanSpan(0);
-        //可选，设置是否需要地址信息，默认不需要
-        option.setIsNeedAddress(true);
-        //可选，设置是否需要地址描述
-        option.setIsNeedLocationDescribe(true);
-        // 可选，设置是否需要设备方向结果
-        option.setNeedDeviceDirect(false);
-        //可选，默认false，设置是否当gps有效时按照1S1次频率输出GPS结果
-        option.setLocationNotify(false);
-        //可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
-        option.setIgnoreKillProcess(true);
-        //可选，默认false，设置是否需要位置语义化结果，可以在BDLocation.getLocationDescribe里得到，结果类似于“在北京天安门附近”
-        option.setIsNeedLocationDescribe(true);
-        //可选，默认false，设置是否需要POI结果，可以在BDLocation.getPoiList里得到
-        option.setIsNeedLocationPoiList(true);
-        //可选，默认false，设置是否收集CRASH信息，默认收集
-        option.SetIgnoreCacheException(false);
-        //应用
-        mLocationClient.setLocOption(option);
-        //注册
-        mLocationClient.registerLocationListener(this);
+    /**
+     * 设置定位参数
+     * @return 定位参数类
+     */
+    private AMapLocationClientOption getOption() {
+        //初始化定位参数
+        mLocationOption = new AMapLocationClientOption();
+        //设置定位模式为Hight_Accuracy高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        //设置是否返回地址信息（默认返回地址信息）
+        mLocationOption.setNeedAddress(true);
+        //设置是否只定位一次,默认为false
+        mLocationOption.setOnceLocation(false);
+        //设置是否强制刷新WIFI，默认为强制刷新
+        mLocationOption.setWifiActiveScan(true);
+        //设置是否允许模拟位置,默认为false，不允许模拟位置
+        mLocationOption.setMockEnable(false);
+//        //设置定位间隔,单位毫秒,默认为2000ms
+//        mLocationOption.setInterval(0);
+        //是否只定位一次
+        mLocationOption.setOnceLocation(true);
+        return mLocationOption;
     }
 
-
-
+    /**
+     * 检查网络连接状况
+     */
+    private boolean checkWifiSetting() {
+        return true;
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("服务已启动，已连接","123456");
+        //初始化client
+        mLocationClient = new AMapLocationClient(getApplicationContext());
+        // 设置定位监听
+        mLocationClient.setLocationListener(this);
+        if(checkWifiSetting()){
+            //设置定位参数
+            mLocationClient.setLocationOption(getOption());
+            // 启动定位
+            mLocationClient.startLocation();
+        }else {
+            Toast.makeText(this,"您的网络存在问题，请重试", Toast.LENGTH_SHORT).show();
+        }
+
         Log.d(TAG, "onStartCommand: ");
         UpdateWeatherUtil.updateWeather();
-        manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        cycleTime(manager);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -118,7 +124,7 @@ public class GetCityService extends Service implements BDLocationListener{
                 new Thread(){
                     public void run() {
                         if(NetStatusUtils.isMobileConnected(getApplicationContext())||NetStatusUtils.isWifiConnected(getApplicationContext())){
-                            mLocationClient.start();//开启定位比较耗时，在启动的时候就调用
+                            mLocationClient.startLocation();//开启定位比较耗时，在启动的时候就调用
                         }else{
                             Toast.makeText(getApplicationContext(),"你的网络有问题，请连接后重试",Toast.LENGTH_SHORT).show();
                         }
@@ -128,22 +134,22 @@ public class GetCityService extends Service implements BDLocationListener{
         }
     }
 
+    /**
+     * 定位成功后回调函数
+     */
     @Override
-    public void onReceiveLocation(BDLocation bdLocation) {
-        city_name = bdLocation.getCity();
-        Log.d("已经进入地点获取监听,地名为:",city_name);
-        //回调
-        if(callBack!=null) {
-            callBack.call(bdLocation);
-        }
-        if(mLocationClient.isStarted()){
-            Log.d("client","定位对象关闭");
-            mLocationClient.stop();
+    public void onLocationChanged(AMapLocation amapLocation) {
+        if (amapLocation != null && amapLocation.getErrorCode() == 0) {
+                Log.d("定位回调被执行","123465");
+                city_name = amapLocation.getCity();
+        } else {
+            String errText = "定位失败," + amapLocation.getErrorCode() + ": " + amapLocation.getErrorInfo();
+            Log.e("定位信息：", errText);
         }
     }
 
     public interface CallBack{
-        void call(BDLocation location);
+        void call(AMapLocation amapLocation);
     }
 
     public CallBack callBack;

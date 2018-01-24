@@ -29,6 +29,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 
     <application
         android:name=".SpeakerApplication"
@@ -53,22 +56,6 @@
             android:value="xFRGimRDN3nBqBX7V1InmM7E1Eb4o6px" />
         <!--ASR end-->
 
-        <meta-data
-            android:name="BaiduMobAd_STAT_ID"
-            android:value="48ae76de3f" />
-        <meta-data
-            android:name="BaiduMobAd_CELL_LOCATION"
-            android:value="true" />
-        <meta-data
-            android:name="BaiduMobAd_GPS_LOCATION"
-            android:value="true" />
-        <meta-data
-            android:name="BaiduMobAd_WIFI_LOCATION"
-            android:value="true" />
-        <meta-data
-            android:name="com.baidu.lbsapi.API_KEY"
-            android:value="nxmCoUWO2Kc29Fluq0U2Tfvan8eLAOgV" />
-
 
         <activity
             android:name=".Swipe.MainActivity"
@@ -84,8 +71,9 @@
         <activity
             android:name=".Swipe.SwipeActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <!--android:configChanges="orientation|screenSize|keyboardHidden"-->
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan|stateHidden"
+            />
         <activity
             android:name=".Setting.AboutActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -97,18 +85,20 @@
 
 
         <!--地图相关的文件-->
-        <activity android:name=".standby.StandByActivity" />
-        <activity
-            android:name=".map.tools.BNDemoGuideActivity"
-            android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
-            android:label="bnddemo"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+        <meta-data android:name="com.amap.api.v2.apikey" android:value="997d68f7a99cc7709be6a3df2c013f3d" />
+        <activity android:name=".map.InputTipsActivity"/>
+        <activity android:name=".map.CalculateRouteActivity">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
 
-        <service
-            android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote"></service>
-        <service android:name=".service.GetCityService" />
+        <activity android:name=".map.bus.BusRouteDetailActivity"/>
+        <activity android:name=".map.RouteNaviActivity"/>
+        <service android:name="com.amap.api.location.APSService"/>
+        <!--地图相关文件结束-->
+        <activity android:name=".standby.StandByActivity"/>
 
         <service
             android:name=".music.service.MusicService"

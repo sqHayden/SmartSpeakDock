@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="textSize">36sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="list_item_padding">8dp</dimen>
+
+    //drawer
+    <dimen name="nav_header_textsize">9sp</dimen>
+
+    //setting
+    <dimen name="setting_voice_textsize">12sp</dimen>
+    <dimen name="setting_switch_textsize">8sp</dimen>
+    <dimen name="setting_about_textsize">12sp</dimen>
+    <dimen name="setting_voice_margin_top">10dp</dimen>
+    <dimen name="setting_divider_margin_top">6dp</dimen>
+    <dimen name="setting_about_margin_top">10dp</dimen>
+    <dimen name="setting_left">6dp</dimen>
+
+    //splash
+    <dimen name="splash_timeView_margin_top">132dp</dimen>
+    <dimen name="splash_dateView_margin_top">14dp</dimen>
+    <dimen name="splash_clothes_margin_top">32dp</dimen>
+    <dimen name="splash_car_margin_top">11dp</dimen>
+    <dimen name="splash_air_margin_top">11dp</dimen>
+    <dimen name="splash_timeView_textsize">78sp</dimen>
+    <dimen name="splash_dateView_textsize">18sp</dimen>
+    <dimen name="splash_weather_textsize">14sp</dimen>
+    <dimen name="splash_weather_image_width_size">36dp</dimen>
+    <dimen name="splash_weather_image_height_size">36dp</dimen>
+    <dimen name="splash_weather_margin_left">12dp</dimen>
+    <dimen name="splash_weather_tmp_width">90dp</dimen>
+    <dimen name="splash_weather_width">144dp</dimen>
+
+    //map
+    <dimen name="title_text_size">15sp</dimen>
+    <dimen name="city_name_size">20sp</dimen>
+    <dimen name="city_size_size">12sp</dimen>
+    <dimen name="city_progress_size">11sp</dimen>
+    <dimen name="normal_margin">5dp</dimen>
+    <dimen name="font_58">29dp</dimen>
+    <dimen name="font_170">85dp</dimen>
+    <dimen name="font_26">13sp</dimen>
+    <dimen name="offline_down_title_hight">25dp</dimen>
+    <dimen name="font_24">12sp</dimen>
+    <dimen name="font_30">15sp</dimen>
+    <dimen name="font_32">16sp</dimen>
+    <dimen name="font_28">14sp</dimen>
+    <dimen name="font_22">11sp</dimen>
+    <dimen name="poi_title_size">14sp</dimen>
+    <dimen name="poi_field_size">14sp</dimen>
+    <dimen name="margin_left">15dp</dimen>
+    <dimen name="margin_right">15dp</dimen>
+    <dimen name="offset_title">5dp</dimen>
+    <dimen name="width_title_leftImg">30dp</dimen>
+    <dimen name="offset_title_left">5dp</dimen>
+    <dimen name="margin_padding">15dp</dimen>
+    <dimen name="zero">0dp</dimen>
+    <dimen name="trace_spinner_padding">2dp</dimen>
+    <dimen name="titlebar_height">48dp</dimen>
+    <dimen name="splash_weather_margin_left_port">109dp</dimen>
+    <dimen name="splash_weather_margin_left_land">198dp</dimen>
+
+    //weather
+    <dimen name="weather_three_little_title_textsize">18sp</dimen>
+    <dimen name="weather_city_textSize">30sp</dimen>
+    <dimen name="weather_city_below_textSize">14sp</dimen>
+    <dimen name="weather_basic_textsize">11sp</dimen>//字体
+    <dimen name="weather_now_icon_imagesize">132dp</dimen>//天气大图标大小
+    <dimen name="weather_now_icon_marginbottom">11dp</dimen>//天气大图标底外边距
+    <dimen name="weather_now_icon_right_line_height">143dp</dimen>//天气大图标右侧线高度
+    <dimen name="weather_line">1dp</dimen>//线
+    <dimen name="weather_now_weather_marginleft">45dp</dimen>//天气信息距左侧线的距离
+    <dimen name="weather_now_tem_margintop">8dp</dimen>//最高最低温度与城市间距
+    <dimen name="weather_now_weather_margintop">6dp</dimen>//最高最低温度与天气(阴)间距
+    <dimen name="weather_below_icon_marginbottom">5dp</dimen>//低部图标距底间距
+    <dimen name="weather_below_icon_point_marginbottom">10dp</dimen>//底部点距底部距离
+    <dimen name="weather_below_icon_point_margin">9dp</dimen>//底部点间间距
+
+    //weather land
+    <dimen name="weather_land_now_icon_marginleft">108dp</dimen>//天气大图标左外边距
+    <dimen name="weather_land_now_icon_margintop">16dp</dimen>//天气大图标顶外边距
+    <dimen name="weather_land_now_icon_marginright">47dp</dimen>//天气大图标右外边距
+    <dimen name="weather_land_add_margintop">2dp</dimen>//添加事件顶边距
+    <dimen name="weather_land_add_marginright">21dp</dimen>//添加事件右边距
+    <dimen name="weather_land_now_icon_below_line_width">425dp</dimen>//天气大图标底线宽度
+    <dimen name="weather_land_now_icon_below_line_margin_right_left">76dp</dimen>//天气大图标底线左右边距
+    <dimen name="weather_land_line_below_margintop">9dp</dimen>//线与线下文字间距
+    <dimen name="weather_land_tomorrow_margintop">12dp</dimen>//天气小标题与第一行文字间距
+    <dimen name="weather_land_tomorrow_weather_margintop">9dp</dimen>//天气预报行间距
+    <dimen name="weather_land_tomorrow_line_height">65dp</dimen>//天气预报线高度
+    <dimen name="weather_land_tomorrow_line_marginleft">14dp</dimen>//天气预报与右侧线间距
+    <dimen name="weather_land_tomorrow_line_marginright">11dp</dimen>//线与右侧间距
+    <dimen name="weather_land_life_marginleft">111dp</dimen>//生活指数与天气预报标题间距
+    <dimen name="weather_land_air_marginleft">77dp</dimen>//空气质量与生活指数标题间距
+    <dimen name="weather_land_car_margintop">12dp</dimen>//生活指数小标题与第一行文字间距
+    <dimen name="weather_land_life_air_icon_width_height">15dp</dimen>//小图标大小
+    <dimen name="weather_image_text_margin">6dp</dimen>图标与文字间距
+    //weather vertical
+    <dimen name="weather_vertical_now_icon_marginleft">35dp</dimen>//天气大图标左外边距
+    <dimen name="weather_vertical_now_icon_margintop">60dp</dimen>//天气大图标顶外边距
+    <dimen name="weather_vertical_now_icon_marginright">28dp</dimen>//天气大图标右外边距
+    <dimen name="weather_vertical_line_below_margintop">12dp</dimen>//线与线下文字间距
+    <dimen name="weather_vertical_add_margintop">9dp</dimen>//添加事件顶边距
+    <dimen name="weather_vertical_add_marginright">12dp</dimen>//添加事件右边距
+    <dimen name="weather_vertical_now_icon_right_line_height">143dp</dimen>//天气大图标右线高度
+    <dimen name="weather_vertical_now_icon_below_line_right_left">18dp</dimen>//天气大图标底线左右边距
+    <dimen name="weather_vertical_forecast_margin">6dp</dimen>//生活指数小标题与第一行文字间距
+    <dimen name="weather_vertical_basic_textsize">13sp</dimen>//字体
+>>>>>>> e0ad539c8325dbb8d03805e41f07e3b871b70dfb:app/src/main/res/values/dimes.xml
+</resources>
