@@ -38,6 +38,7 @@ public class UpdateWeatherUtil {
     //更新数据库数据
     public static void updateWeather(/*final String currentCity*/) {
 //        mWeather = null;
+        Log.d(TAG, "updateWeather: ");
         mWeatherBasicRepository = WeatherBasicInjection.getNoteRepository(SpeakerApplication.getContext());
         mWeatherBasicRepository.getWeatherBasics(new WeatherBasicDataSource.LoadWeatherBasicsListCallback() {
             @Override

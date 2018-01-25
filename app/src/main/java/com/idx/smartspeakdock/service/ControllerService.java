@@ -138,7 +138,7 @@ public class ControllerService extends Service {
             public String onTimeInfo() {
                 ifmCalendarCallBackNoNull();
                 answer = "";
-                answer = getString(R.string.now)+Util.getCurrentTime();
+                answer = "现在"+Util.getCurrentTime();
                 return answer;
             }
 

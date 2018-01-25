@@ -242,25 +242,25 @@ public class CalendarView extends FrameLayout {
         answer="";
         switch (this.getWeek(time)){
             case 1:
-                answer = time+ this.getResources().getString(R.string.monday);
+                answer = time+ "星期一";
                 break;
             case 2:
-                answer = time+ this.getResources().getString(R.string.tuesday);
+                answer = time+ "星期二";
                 break;
             case 3:
-                answer = time+ this.getResources().getString(R.string.wednesday);
+                answer = time+ "星期三";
                 break;
             case 4:
-                answer = time+ this.getResources().getString(R.string.thursday);
+                answer = time+ "星期四";
                 break;
             case 5:
-                answer = time+ this.getResources().getString(R.string.friday);
+                answer = time+ "星期五";
                 break;
             case 6:
-                answer = time+ this.getResources().getString(R.string.saturday);
+                answer = time+ "星期六";
                 break;
             case 7:
-                answer = time+ this.getResources().getString(R.string.sunday);
+                answer = time+ "星期日";
                 break;
             default:
                 break;

@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.standby.Utility;
+import com.idx.smartspeakdock.utils.AppExecutors;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.NetStatusUtils;
@@ -98,6 +99,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
     private int mWeather_Voice_flag;
     private WeatherBroadcastReceiver mWeatherBroadcastReceiver;
     private SharedPreferences sp;
+    private AppExecutors mAppExecutors;
 
 //    private GetCityService.MyBinder mCityBinder;
 //    private ServiceConnection mCityConn = new ServiceConnection() {
@@ -176,6 +178,17 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*BaseActivity baseActivity = (BaseActivity) getActivity();
+        if (!BaseActivity.isServiceRunning(baseActivity.getApplicationContext(), "com.idx.smartspeakdock.start.GetCityService")) {
+            Log.d("启动服务", "startService");
+            Intent intent = new Intent(baseActivity.getApplicationContext(), GetCityService.class);
+            //启动
+            baseActivity.getApplicationContext().startService(intent);
+            //绑定
+            baseActivity.getApplicationContext().bindService(intent, mCityConn, BIND_AUTO_CREATE);
+        }*/
+
+        mAppExecutors=new AppExecutors();
         if (savedInstanceState != null) {
             mCurrentCity = savedInstanceState.getString("city");
             mCurrentCounty = savedInstanceState.getString("county");
@@ -196,7 +209,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         initTimer();
         //注册天气语音广播
         registerWeatherVoiceBroadcast();
-        getActivity().runOnUiThread(new Runnable() {
+        mAppExecutors.getDiskIO().execute(new Runnable() {
             @Override
             public void run() {
                 CityPickerView.getInstance().init(mContext);
@@ -336,7 +349,6 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         outState.putString("selectCity", mSelectCity);
         outState.putString("selectCounty", mSelectCounty);
     }
-
 
     public void loading(){
         try {
@@ -501,6 +513,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         }
         if (mReturnAnswerCallback!=null){
             mReturnAnswerCallback=null;
+        }
+        if (mAppExecutors!=null){
+            mAppExecutors=null;
         }
         spSaveInfo();
         if (sp!=null){
@@ -798,13 +813,16 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
     private void judgeStatusInfo(String cityName, String time) {
         switch (time) {
             case GlobalUtils.Weather.WEATHER_TIME_TODAY:
-                voice_answer = cityName + time + HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.now.code)) + "天";
+                voice_answer = cityName + time + HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.now.code)) + "天."
+                        +"最高温度为" + voice_weather.forecastList.get(0).max + "度,最低温度为" + voice_weather.forecastList.get(0).min + "度";
                 break;
             case GlobalUtils.Weather.WEATHER_TIME_TOMM:
-                voice_answer = cityName + time + HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.forecastList.get(1).code)) + "天";
+                voice_answer = cityName + time + HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.forecastList.get(1).code)) + "天."
+                        +"最高温度为" + voice_weather.forecastList.get(1).max + "度,最低温度为" + voice_weather.forecastList.get(1).min + "度";
                 break;
             case GlobalUtils.Weather.WEATHER_TIME_POSTNATAL:
-                voice_answer = cityName + time + HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.forecastList.get(2).code)) + "天";
+                voice_answer = cityName + time + HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.forecastList.get(2).code)) + "天."
+                        +"最高温度为" + voice_weather.forecastList.get(2).max + "度,最低温度为" + voice_weather.forecastList.get(2).min + "度";
                 break;
             default:
                 voice_answer = "抱歉，只能查询今天、明天、后天三天以内的天气信息";

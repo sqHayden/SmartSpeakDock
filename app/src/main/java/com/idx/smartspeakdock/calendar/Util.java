@@ -43,7 +43,7 @@ public  class Util {
             }
 
         } else {
-            answer = context.getString(R.string.no_arrangement);
+            answer = "没有安排事情";
         }
         return time + answer;
     }
@@ -51,12 +51,12 @@ public  class Util {
         answer = "";
         String aa =  LunarCalendar.getSolarCalendar(month,day);
         if (!aa.isEmpty()){
-            answer = time+context.getString(R.string.yes) + aa;
+            answer = time+"是" + aa;
         }else {
             if (getWeek(year,month,day) == 6||getWeek(year,month,day) == 7){
-                answer = time+context.getString(R.string.is_the_weekend);
+                answer = time+"是周末";
             }else {
-                answer = time+context.getString(R.string.is_usual_day);
+                answer = time+"是平常日";
             }
         }
 
@@ -153,13 +153,13 @@ public  class Util {
         answer="";
         switch (time){
             case TimeData.YESTERDAY:
-                answer = time + mCalendarView.getYesData().get("month") + context.getResources().getString(R.string.month) + mCalendarView.getYesData().get("day") + context.getResources().getString(R.string.day);
+                answer = time + mCalendarView.getYesData().get("month") + "月" + mCalendarView.getYesData().get("day") + "号";
                 break;
             case TimeData.TODAY:
-                answer = time + mCalendarView.getCurMonth() + context.getResources().getString(R.string.month) + mCalendarView.getCurDay() + context.getResources().getString(R.string.day);
+                answer = time + mCalendarView.getCurMonth() + "月" + mCalendarView.getCurDay() + "号";
                 break;
             case TimeData.TOMORROW:
-                answer = time + mCalendarView.getTomoData().get("month") + context.getResources().getString(R.string.month) + mCalendarView.getTomoData().get("day") + context.getResources().getString(R.string.day);
+                answer = time + mCalendarView.getTomoData().get("month") + "月" + mCalendarView.getTomoData().get("day") + "号";
                 break;
             default:
                 break;
@@ -174,13 +174,13 @@ public  class Util {
         answer="";
         switch (time){
             case TimeData.YESTERDAY:
-                answer = time + context.getResources().getString(R.string.lunar_calendar)+ LunarCalendar.solarToLunar(mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
+                answer = time + "农历"+ LunarCalendar.solarToLunar(mCalendarView.getYesData().get("year"),mCalendarView.getYesData().get("month"),mCalendarView.getYesData().get("day"));
                 break;
             case TimeData.TODAY:
-                answer = time+context.getResources().getString(R.string.lunar_calendar) +mCalendarView.getLunar();
+                answer = time+"农历" +mCalendarView.getLunar();
                 break;
             case TimeData.TOMORROW:
-                answer = time + context.getResources().getString(R.string.lunar_calendar)+LunarCalendar.solarToLunar(mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
+                answer = time + "农历"+LunarCalendar.solarToLunar(mCalendarView.getTomoData().get("year"),mCalendarView.getTomoData().get("month"),mCalendarView.getTomoData().get("day"));
                 break;
             default:
                 break;

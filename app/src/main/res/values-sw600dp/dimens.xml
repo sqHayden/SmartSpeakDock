@@ -116,9 +116,11 @@
 
     //weather vertical
     <dimen name="weather_vertical_now_icon_marginleft">58dp</dimen>//天气大图标左外边距
-    <dimen name="weather_vertical_now_icon_margintop">100dp</dimen>//天气大图标顶外边距
+    <dimen name="weather_vertical_now_icon_margintop">80dp</dimen>//天气大图标顶外边距
     <dimen name="weather_vertical_now_icon_marginright">46dp</dimen>//天气大图标右外边距
-    <dimen name="weather_vertical_line_below_margintop">20dp</dimen>//线与线下文字间距
+    <dimen name="weather_vertical_little_title_left_right">130dp</dimen>
+    <dimen name="weather_vertical_line_below_margintop">15dp</dimen>//线与线下文字间距
+    <dimen name="weather_vertical_car_margintop">12dp</dimen>//生活指数小标题与第一行文字间距
     <dimen name="weather_vertical_add_margintop">15dp</dimen>//添加事件顶边距
     <dimen name="weather_vertical_add_marginright">20dp</dimen>//添加事件右边距
     <dimen name="weather_vertical_now_icon_right_line_height">238dp</dimen>//天气大图标右线高度

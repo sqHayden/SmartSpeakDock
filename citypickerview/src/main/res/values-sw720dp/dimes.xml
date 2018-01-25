@@ -6,6 +6,6 @@
     <dimen name="city_dialog_width">576dp</dimen>
     <dimen name="city_dialog_height">324dp</dimen>
     <dimen name="city_name_textsize">22sp</dimen>
-    <dimen name="city_dialog_width_land">432dp</dimen>
-    <dimen name="city_dialog_height_land">240dp</dimen>
+    <dimen name="city_dialog_width_land">504dp</dimen>
+    <dimen name="city_dialog_height_land">288dp</dimen>
 </resources>

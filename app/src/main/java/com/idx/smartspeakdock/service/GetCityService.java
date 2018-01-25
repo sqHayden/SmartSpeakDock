@@ -87,6 +87,8 @@ public class GetCityService extends Service implements AMapLocationListener{
 
         Log.d(TAG, "onStartCommand: ");
         UpdateWeatherUtil.updateWeather();
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        cycleTime(alarmManager);
         return super.onStartCommand(intent, flags, startId);
     }
 
