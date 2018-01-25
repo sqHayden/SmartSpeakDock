@@ -27,9 +27,10 @@ import com.idx.smartspeakdock.utils.PreUtils;
 
 public class SettingFragment extends Fragment {
     private static final String TAG = SettingFragment.class.getSimpleName();
-    View mView;
+    private View mView;
     private Switch mSwitch;
     private TextView mAbout;
+    public SettingFragment(){}
 
     @Override
     public void onAttach(Context context) {

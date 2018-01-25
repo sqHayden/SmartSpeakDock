@@ -49,7 +49,7 @@ public class ShoppingFragment extends BaseFragment {
     public static ShoppingFragment newInstance(String web_url){
         ShoppingFragment shoppingFragment = new ShoppingFragment();
         Bundle args = new Bundle();
-        args.putString(GlobalUtils.SHOPPING_WEBSITES_EXTRA_ID,web_url);
+        args.putString(GlobalUtils.Shopping.SHOPPING_WEBSITES_EXTRA_ID,web_url);
         shoppingFragment.setArguments(args);
         return shoppingFragment;
     }
@@ -59,7 +59,7 @@ public class ShoppingFragment extends BaseFragment {
         super.onAttach(context);
         mContext = context;
         if(getArguments() != null){
-            web_url = getArguments().getString(GlobalUtils.SHOPPING_WEBSITES_EXTRA_ID);
+            web_url = getArguments().getString(GlobalUtils.Shopping.SHOPPING_WEBSITES_EXTRA_ID);
         }
     }
 
@@ -81,7 +81,7 @@ public class ShoppingFragment extends BaseFragment {
     private void registerBroadcast() {
         mShopBroadcastReceiver = new ShopBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GlobalUtils.SHOPPING_BROADCAST_ACTION);
+        intentFilter.addAction(GlobalUtils.Shopping.SHOPPING_BROADCAST_ACTION);
         mContext.registerReceiver(mShopBroadcastReceiver,intentFilter);
     }
 
@@ -179,10 +179,6 @@ public class ShoppingFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
-        //webView销毁
-        /*if(webView != null){
-            webView.destroy();
-        }*/
         super.onDestroy();
         if(mNetworkRefresh != null) {
             mNetworkRefresh = null;
@@ -200,7 +196,7 @@ public class ShoppingFragment extends BaseFragment {
         public void onReceive(Context context, Intent intent) {
             Log.i(TAG, "onReceive: "+intent.getAction().toString());
             switch (intent.getAction()){
-                case GlobalUtils.SHOPPING_BROADCAST_ACTION:
+                case GlobalUtils.Shopping.SHOPPING_BROADCAST_ACTION:
                     web_url = intent.getStringExtra("shoppings");
                     Log.i(TAG, "onReceive: web_url = "+web_url);
                     loadWebUrl(web_url);

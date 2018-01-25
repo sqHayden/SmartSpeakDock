@@ -12,16 +12,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -30,15 +23,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.idx.smartspeakdock.R;
-
 import com.idx.smartspeakdock.music.service.MusicPlay;
-
 import com.idx.smartspeakdock.service.ControllerService;
-
 import com.idx.smartspeakdock.utils.GlobalUtils;
-
-import java.util.Locale;
-
 import static com.idx.smartspeakdock.music.entity.Music.formatTime;
 
 
@@ -117,7 +104,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
         intentFilter.addAction(MusicPlay.ACTION_MEDIA_PREVIOUS);
         intentFilter.addAction(MusicPlay.ACTION_MEDIA_COMPLETE);
         intentFilter.addAction(MusicPlay.ACTION_MEDIA_ERROR);
-        intentFilter.addAction(GlobalUtils.MUSIC_BROADCAST_ACTION);
+        intentFilter.addAction(GlobalUtils.Music.MUSIC_BROADCAST_ACTION);
         registerReceiver(musicBroadcastReceiver, intentFilter);
 
         setListener();

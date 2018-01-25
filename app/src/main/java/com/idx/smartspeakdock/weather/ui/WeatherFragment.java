@@ -185,7 +185,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
             mSelectCounty=savedInstanceState.getString("selectCounty");
         }
         mWeatherPresenter = new WeatherPresenterImpl(this);
-        if (mWeather_Voice_flag == GlobalUtils.WEATHER_VOICE_FLAG){
+        if (mWeather_Voice_flag == GlobalUtils.Weather.WEATHER_VOICE_FLAG){
             Log.i(TAG, "onCreate: voice_flag = "+mWeather_Voice_flag);
             judgeVoiceAnswer(mWeather_city,mWeather_time,mWeather_fun_flag);
         }else {
@@ -207,7 +207,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
     private void registerWeatherVoiceBroadcast() {
         mWeatherBroadcastReceiver = new WeatherBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GlobalUtils.WEATHER_BROADCAST_ACTION);
+        intentFilter.addAction(GlobalUtils.Weather.WEATHER_BROADCAST_ACTION);
         mContext.registerReceiver(mWeatherBroadcastReceiver,intentFilter);
     }
 
@@ -721,13 +721,13 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
      */
     private void judgeRangeTempInfo(String cityName, String time) {
         switch (time) {
-            case GlobalUtils.WEATHER_TIME_TODAY:
+            case GlobalUtils.Weather.WEATHER_TIME_TODAY:
                 voice_answer = cityName + time + "最高温度为" + voice_weather.forecastList.get(0).max + "度,最低温度为" + voice_weather.forecastList.get(0).min + "度";
                 break;
-            case GlobalUtils.WEATHER_TIME_TOMM:
+            case GlobalUtils.Weather.WEATHER_TIME_TOMM:
                 voice_answer = cityName + time + "最高温度为" + voice_weather.forecastList.get(1).max + "度,最低温度为" + voice_weather.forecastList.get(1).min + "度";
                 break;
-            case GlobalUtils.WEATHER_TIME_POSTNATAL:
+            case GlobalUtils.Weather.WEATHER_TIME_POSTNATAL:
                 voice_answer = cityName + time + "最高温度为" + voice_weather.forecastList.get(2).max + "度,最低温度为" + voice_weather.forecastList.get(2).min + "度";
                 break;
             default:
@@ -797,13 +797,13 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
      */
     private void judgeStatusInfo(String cityName, String time) {
         switch (time) {
-            case GlobalUtils.WEATHER_TIME_TODAY:
+            case GlobalUtils.Weather.WEATHER_TIME_TODAY:
                 voice_answer = cityName + time + HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.now.code)) + "天";
                 break;
-            case GlobalUtils.WEATHER_TIME_TOMM:
+            case GlobalUtils.Weather.WEATHER_TIME_TOMM:
                 voice_answer = cityName + time + HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.forecastList.get(1).code)) + "天";
                 break;
-            case GlobalUtils.WEATHER_TIME_POSTNATAL:
+            case GlobalUtils.Weather.WEATHER_TIME_POSTNATAL:
                 voice_answer = cityName + time + HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.forecastList.get(2).code)) + "天";
                 break;
             default:
@@ -838,13 +838,13 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
      */
     private void judgeRainInfo(String cityName, String time) {
         switch (time) {
-            case GlobalUtils.WEATHER_TIME_TODAY:
+            case GlobalUtils.Weather.WEATHER_TIME_TODAY:
                 rainResult(cityName, time);
                 break;
-            case GlobalUtils.WEATHER_TIME_TOMM:
+            case GlobalUtils.Weather.WEATHER_TIME_TOMM:
                 rainResult(cityName, time);
                 break;
-            case GlobalUtils.WEATHER_TIME_POSTNATAL:
+            case GlobalUtils.Weather.WEATHER_TIME_POSTNATAL:
                 rainResult(cityName, time);
                 break;
             default:
@@ -875,11 +875,11 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
      */
     private boolean judgeRain(String time) {
         switch (time) {
-            case GlobalUtils.WEATHER_TIME_TODAY:
+            case GlobalUtils.Weather.WEATHER_TIME_TODAY:
                 return HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.now.code)).equals("雨") ? true : false;
-            case GlobalUtils.WEATHER_TIME_TOMM:
+            case GlobalUtils.Weather.WEATHER_TIME_TOMM:
                 return HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.forecastList.get(1).code)).equals("雨") ? true : false;
-            case GlobalUtils.WEATHER_TIME_POSTNATAL:
+            case GlobalUtils.Weather.WEATHER_TIME_POSTNATAL:
                 return HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.forecastList.get(2).code)).equals("雨") ? true : false;
             default:
                 return false;
@@ -1012,7 +1012,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         public void onReceive(Context context, Intent intent) {
             Log.i(TAG, "onReceive: actionId = "+intent.getAction());
             switch (intent.getAction()){
-                case GlobalUtils.WEATHER_BROADCAST_ACTION:
+                case GlobalUtils.Weather.WEATHER_BROADCAST_ACTION:
                     mWeather_city = intent.getStringExtra("cityname");
                     mWeather_time = intent.getStringExtra("time");
                     mWeather_fun_flag = intent.getStringExtra("flag");

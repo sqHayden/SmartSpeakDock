@@ -40,15 +40,10 @@ import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
-import com.idx.smartspeakdock.weather.event.ReturnVoiceEvent;
 import com.idx.smartspeakdock.weather.presenter.ReturnAnswerCallback;
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
 import com.idx.smartspeakdock.weather.presenter.WeatherCallback;
 import com.idx.smartspeakdock.weather.ui.WeatherFragment;
-
-import org.greenrobot.eventbus.Subscribe;
-
-import java.util.ArrayList;
 
 /**
  * Created by ryan on 17-12-22.
@@ -98,14 +93,14 @@ public class SwipeActivity extends BaseActivity {
         mServiceConnection = new ControllerServiceConnection();
         bindService(intent, mServiceConnection, 0);
         //对应fragment的id
-        extraIntentId = getIntent().getStringExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT);
+        extraIntentId = getIntent().getStringExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT);
         initToolBar();
         //侧滑设置
         initDrawer();
 
         //fragment切换
         mWeather_voice_flag = -1;
-        if (mSharePrefrenceUtils.getFirstChange(GlobalUtils.FIRST_CHANGE_FRAGMENT)) {
+        if (mSharePrefrenceUtils.getFirstChange(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT)) {
             changeFragment(extraIntentId);
         }
     }
@@ -114,7 +109,7 @@ public class SwipeActivity extends BaseActivity {
     private void changeFragment(String extraIntentId) {
         Logger.info(TAG, extraIntentId);
         switch (extraIntentId) {
-            case GlobalUtils.WEATHER_FRAGMENT_INTENT_ID:
+            case GlobalUtils.WhichFragment.WEATHER_FRAGMENT_INTENT_ID:
                 Bundle args = getIntent().getBundleExtra("weather");
                 if (args != null) {
                     mWeather_voice_flag = args.getInt("voice_flag");
@@ -124,21 +119,21 @@ public class SwipeActivity extends BaseActivity {
                 }
                 initWeather();
                 break;
-            case GlobalUtils.CALENDAR_FRAGMENT_INTENT_ID:
+            case GlobalUtils.WhichFragment.CALENDAR_FRAGMENT_INTENT_ID:
                 initCalendar();
                 break;
-            case GlobalUtils.MUSIC_FRAGMENT_INTENT_ID:
+            case GlobalUtils.WhichFragment.MUSIC_FRAGMENT_INTENT_ID:
                 music_name = getIntent().getStringExtra("music_name");
                 initMusic();
                 break;
-            case GlobalUtils.MAP_FRAGMENT_INTENT_ID:
+            case GlobalUtils.WhichFragment.MAP_FRAGMENT_INTENT_ID:
                 initMap();
                 break;
-            case GlobalUtils.SHOPPING_FRAGMENT_INTENT_ID:
+            case GlobalUtils.WhichFragment.SHOPPING_FRAGMENT_INTENT_ID:
                 websites_url = getIntent().getStringExtra("weburl");
                 initShopping(websites_url);
                 break;
-            case GlobalUtils.SETTING_FRAGMENT_INTENT_ID:
+            case GlobalUtils.WhichFragment.SETTING_FRAGMENT_INTENT_ID:
                 initSetting();
                 break;
             default:
@@ -196,7 +191,7 @@ public class SwipeActivity extends BaseActivity {
         });
 
         mSharePrefrenceUtils = new SharePrefrenceUtils(this);
-        //mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "");
+        mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "");
     }
 
     private void initToolBar() {
@@ -259,10 +254,10 @@ public class SwipeActivity extends BaseActivity {
                 });
 
         //实例化Shopping广播Intent
-        mShoppingBroadcastIntent = new Intent(GlobalUtils.SHOPPING_BROADCAST_ACTION);
+        mShoppingBroadcastIntent = new Intent(GlobalUtils.Shopping.SHOPPING_BROADCAST_ACTION);
 
         //实例化music广播Intent
-        mMusicBroadcastIntent = new Intent(GlobalUtils.MUSIC_BROADCAST_ACTION);
+        mMusicBroadcastIntent = new Intent(GlobalUtils.Music.MUSIC_BROADCAST_ACTION);
     }
 
     private void initSetting() {
@@ -271,7 +266,7 @@ public class SwipeActivity extends BaseActivity {
             if (settingFragment == null) {
                 settingFragment = new SettingFragment();
             }
-            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "setting");
+            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "setting");
             ActivityUtils.replaceFragmentInActivity(mFragmentManager, settingFragment, R.id.contentFrame);
         }
     }
@@ -282,7 +277,7 @@ public class SwipeActivity extends BaseActivity {
             if (mapFragment == null) {
                 mapFragment = new MapFragment();
             }
-            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "map");
+            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "map");
             ActivityUtils.replaceFragmentInActivity(mFragmentManager, mapFragment, R.id.contentFrame);
         }
     }
@@ -294,7 +289,7 @@ public class SwipeActivity extends BaseActivity {
                 if (shoppingFragment == null) {
                     shoppingFragment = ShoppingFragment.newInstance(web_url);
                 }
-                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "shopping");
+                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "shopping");
                 ActivityUtils.replaceFragmentInActivity(mFragmentManager, shoppingFragment, R.id.contentFrame);
             }
         }
@@ -314,7 +309,7 @@ public class SwipeActivity extends BaseActivity {
                 }
             }
             ActivityUtils.replaceFragmentInActivity(mFragmentManager, musicFragment, R.id.contentFrame);
-            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "music");
+            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "music");
         }
     }
 
@@ -324,14 +319,14 @@ public class SwipeActivity extends BaseActivity {
             if (calendarFragment == null) {
                 calendarFragment = new CalendarFragment();
             }
-            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "calendar");
+            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "calendar");
             ActivityUtils.replaceFragmentInActivity(mFragmentManager, calendarFragment, R.id.contentFrame);
         }
     }
 
     private void initWeather() {
         if (!checkFragment("weather")) {
-            if (mWeather_voice_flag == GlobalUtils.WEATHER_VOICE_FLAG) {
+            if (mWeather_voice_flag == GlobalUtils.Weather.WEATHER_VOICE_FLAG) {
                 if (weatherFragment == null) {
                     weatherFragment = WeatherFragment.newInstance(mWeather_voice_city, mWeather_voice_time, mWeather_func_flag, mWeather_voice_flag);
                 }
@@ -341,7 +336,7 @@ public class SwipeActivity extends BaseActivity {
                 }
             }
             actionBar_title = mResources.getString(R.string.weather_title);
-            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "weather");
+            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "weather");
             ActivityUtils.replaceFragmentInActivity(mFragmentManager, weatherFragment, R.id.contentFrame);
         }
     }
@@ -380,7 +375,7 @@ public class SwipeActivity extends BaseActivity {
 
     //判断当前哪个fragment
     public boolean checkFragment(String frag_name) {
-        mCurr_Frag_Name = mSharePrefrenceUtils.getCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID);
+        mCurr_Frag_Name = mSharePrefrenceUtils.getCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID);
         Log.i(TAG, "checkFragment: frag_name_curr = " + mCurr_Frag_Name + ",frag_name = " + frag_name);
         switch (frag_name) {
             case "weather":
@@ -502,11 +497,13 @@ public class SwipeActivity extends BaseActivity {
                             shoppingFragment = null;break;
                         case "map":
                             mapFragment = null;break;
-                        default:break;
+                        default:
+                            break;
                     }
                 }
                 break;
-            default:break;
+            default:
+                break;
         }
         return false;
     }
@@ -557,7 +554,7 @@ public class SwipeActivity extends BaseActivity {
                     Log.i(TAG, "revokeSwipeWeatherVoice: 当前Fragment是WeatherFragment");
                     mWeather_return_voice = returnVoice;
                     returnVoiceCallback();
-                    mWeatherBroadcastIntent = new Intent(GlobalUtils.WEATHER_BROADCAST_ACTION);
+                    mWeatherBroadcastIntent = new Intent(GlobalUtils.Weather.WEATHER_BROADCAST_ACTION);
                     mWeatherBroadcastIntent.putExtra("cityname", cityName);
                     mWeatherBroadcastIntent.putExtra("time", time);
                     mWeatherBroadcastIntent.putExtra("flag", func_flag);
@@ -633,8 +630,8 @@ public class SwipeActivity extends BaseActivity {
             settingFragment = null;
         }
         if (mSharePrefrenceUtils != null) {
-            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "");
-            mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, false);
+            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "");
+            mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, false);
             mSharePrefrenceUtils = null;
         }
         if (mShoppingBroadcastIntent != null) {
@@ -658,8 +655,8 @@ public class SwipeActivity extends BaseActivity {
             if (shoppingFragment != null){
                 shoppingFragment.progDailog.dismiss();
             }
-            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.CURRENT_FRAGMENT_ID, "");
-            mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.FIRST_CHANGE_FRAGMENT, false);
+            mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "");
+            mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, false);
             super.onBackPressed();
         }
     }
@@ -705,7 +702,7 @@ public class SwipeActivity extends BaseActivity {
             });
 
             //天气ReturnVoice注册
-            if (mWeather_voice_flag == GlobalUtils.WEATHER_VOICE_FLAG){
+            if (mWeather_voice_flag == GlobalUtils.Weather.WEATHER_VOICE_FLAG){
                 Log.i(TAG, "onServiceConnected: 天气ReturnVoice注册");
                 mWeather_return_voice = mControllerBinder.getControlService().getReturnVoice();
                 returnVoiceCallback();

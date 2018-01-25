@@ -211,7 +211,7 @@ public class ControllerService extends Service {
             public void onWeatherInfo(String cityName,ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onWeatherInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onWeatherInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -219,7 +219,7 @@ public class ControllerService extends Service {
             public void onRangeTempInfo(String cityName, String time, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onRangeTempInfo", GlobalUtils.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onRangeTempInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -227,7 +227,7 @@ public class ControllerService extends Service {
             public void onAirQualityInfo(String cityName, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onAirQualityInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onAirQualityInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -235,7 +235,7 @@ public class ControllerService extends Service {
             public void onCurrentTempInfo(String cityName, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onCurrentTempInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onCurrentTempInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -243,7 +243,7 @@ public class ControllerService extends Service {
             public void onWeatherStatus(String cityName, String time, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onWeatherStatus",GlobalUtils.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onWeatherStatus",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -251,7 +251,7 @@ public class ControllerService extends Service {
             public void onRainInfo(String cityName, String time, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onRainInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onRainInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -259,7 +259,7 @@ public class ControllerService extends Service {
             public void onDressInfo(String cityName, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onDressInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onDressInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -267,7 +267,7 @@ public class ControllerService extends Service {
             public void onUitravioletLevelInfo(String cityName, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onUitravioletLevelInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onUitravioletLevelInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -275,7 +275,7 @@ public class ControllerService extends Service {
             public void onSmogInfo(String cityName, String time, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onSmogInfo",GlobalUtils.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onSmogInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
         });
