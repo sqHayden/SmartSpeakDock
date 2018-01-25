@@ -10,8 +10,6 @@ import android.widget.TextView;
 
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.music.entity.Music;
-import com.idx.smartspeakdock.music.service.MusicService;
-import com.idx.smartspeakdock.music.util.AppCache;
 import com.idx.smartspeakdock.music.util.MusicUtil;
 
 import java.util.ArrayList;

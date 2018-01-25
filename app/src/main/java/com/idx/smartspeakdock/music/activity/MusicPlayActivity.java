@@ -30,10 +30,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.idx.smartspeakdock.R;
-import com.idx.smartspeakdock.Swipe.SwipeActivity;
+
 import com.idx.smartspeakdock.music.service.MusicPlay;
-import com.idx.smartspeakdock.music.service.MusicService;
-import com.idx.smartspeakdock.utils.ActivityUtils;
+
+import com.idx.smartspeakdock.service.ControllerService;
+
 import com.idx.smartspeakdock.utils.GlobalUtils;
 
 import java.util.Locale;
@@ -70,7 +71,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     private ImageButton ib_pre;
     private ImageButton ib_next;
     private ImageButton ib_start;
-    private MusicService musicService;
+    private ControllerService musicService;
     private boolean isPlay=false;
     public ProgressDialog mProgressDialog;
 
@@ -104,7 +105,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.music_fragment_play);
         Log.d(TAG, "onCreate: ");
         //调用 bindService 保持与 Service 的通信
-        Intent intent = new Intent(MusicPlayActivity.this, MusicService.class);
+        Intent intent = new Intent(MusicPlayActivity.this, ControllerService.class);
         conn = new PlayServiceConnection();
         bindService(intent, conn, Context.BIND_AUTO_CREATE);
 
@@ -138,11 +139,11 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
             switch (msg.what) {
                 case CONSTANT_MUSIC_PLAY:
                     playState();
-                    if (musicService.getPlayingMusic() != null) {
-                        title.setText(musicService.getPlayingMusic().getTitle());
-                        current.setText(formatTime("mm:ss",musicService.getCurrentPosition()));
-                        if (musicService.getPlayingMusic().getArtist()!=null) {
-                            artist.setText(musicService.getPlayingMusic().getArtist());
+                    if (musicService.musicPlay.getPlayingMusic() != null) {
+                        title.setText(musicService.musicPlay.getPlayingMusic().getTitle());
+                        current.setText(formatTime("mm:ss",musicService.musicPlay.getCurrentPosition()));
+                        if (musicService.musicPlay.getPlayingMusic().getArtist()!=null) {
+                            artist.setText(musicService.musicPlay.getPlayingMusic().getArtist());
                         }else {
                             artist.setText("未知");
                         }
@@ -174,9 +175,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back:
-                Intent intent=new Intent(MusicPlayActivity.this, SwipeActivity.class);
-                intent.putExtra(GlobalUtils.MUSIC_FRAGMENT_INTENT_ID,"music");
-                startActivity(intent);
+                finish();
                 break;
             case R.id.iv_pre:
                 prev();
@@ -210,30 +209,30 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     //进度条停止拖动
     @Override
     public void onStopTrackingTouch(SeekBar seekBar1) {
-        if (musicService.getPlayingMusic()!=null ) {
+        if (musicService.musicPlay.getPlayingMusic()!=null ) {
             Log.d(TAG, "onStopTrackingTouch: ");
             int progress = seekBar1.getProgress();
-            musicService.seekTo(progress);
+            musicService.musicPlay.seekTo(progress);
         }
     }
 
     //播放
     private void play() {
 
-        musicService.playPause();
+        musicService.musicPlay.playPause();
     }
 
     //下一首
     private void next() {
 
-        musicService.next();
+        musicService.musicPlay.next();
 
     }
 
     //上一首
     private void prev() {
 
-        musicService.pre();
+        musicService.musicPlay.pre();
     }
 
     //音乐播放状态，界面图标显示
@@ -257,19 +256,20 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void run() {
             try {
-                if (musicService.getCurrentPosition() == 0 && musicService.getPlayingMusic() != null) {
+                if (musicService.musicPlay.getCurrentPosition() == 0 &&
+                        musicService.musicPlay.getPlayingMusic() != null) {
                     mProgressDialog.show();
                    }else {
                     mProgressDialog.dismiss();
                    }
-                    title.setText(musicService.getPlayingMusic().getTitle());
-                    Log.d(TAG, "run: " + musicService.getCurrentPosition());
+                    title.setText(musicService.musicPlay.getPlayingMusic().getTitle());
+                    Log.d(TAG, "run: " + musicService.musicPlay.getCurrentPosition());
                     current.setText("00:00");
-                    current.setText(formatTime("mm:ss", musicService.getCurrentPosition()));
-                    seekBar.setProgress((int) musicService.getCurrentPosition());
-                    seekBar.setMax((int) musicService.getPlayingMusic().getDuration());
-                    draution.setText(formatTime("mm:ss", musicService.getPlayingMusic().getDuration()));
-                    if (musicService.isPlaying()) {
+                    current.setText(formatTime("mm:ss", musicService.musicPlay.getCurrentPosition()));
+                    seekBar.setProgress((int) musicService.musicPlay.getCurrentPosition());
+                    seekBar.setMax((int) musicService.musicPlay.getPlayingMusic().getDuration());
+                    draution.setText(formatTime("mm:ss", musicService.musicPlay.getPlayingMusic().getDuration()));
+                    if (musicService.musicPlay.isPlaying()) {
                         ib_start.setImageResource(R.mipmap.music_pause);
                     } else {
                         ib_start.setImageResource(R.mipmap.music_play);
@@ -288,8 +288,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             try {
-                musicService = ((MusicService.PlayBinder) iBinder).getService();
-                Log.d(TAG, "onServiceConnected: "+musicService.getPlayingMusic());
+                musicService=((ControllerService.MyBinder)iBinder).getControlService();
             } catch (ClassCastException e) {
                 e.printStackTrace();
             }
@@ -348,7 +347,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
                 unbindService(conn);
             }
             if (musicService!=null){
-                musicService.stop();
+                musicService.musicPlay.stop();
             }
         }catch (Exception e){
             e.printStackTrace();

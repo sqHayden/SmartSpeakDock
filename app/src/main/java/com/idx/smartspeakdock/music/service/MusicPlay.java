@@ -199,7 +199,7 @@ public class MusicPlay {
     public MediaPlayer.OnPreparedListener mPreparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
-            Log.d(TAG, "onPrepared: MusicService");
+            Log.d(TAG, "onPrepared: musicService");
             mp.start();
             notifyMusicState(ACTION_MEDIA_PLAY, true);
         }

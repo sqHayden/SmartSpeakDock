@@ -16,9 +16,7 @@ import com.idx.smartspeakdock.baidu.unit.listener.IShoppingVoiceListener;
 import com.idx.smartspeakdock.baidu.unit.listener.IWeatherVoiceListener;
 import com.idx.smartspeakdock.calendar.Util;
 import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
-import com.idx.smartspeakdock.music.activity.MusicListFragment;
 import com.idx.smartspeakdock.music.service.MusicCallBack;
-//import com.idx.smartspeakdock.music.service.MusicVoice;
 import com.idx.smartspeakdock.music.service.MusicPlay;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
 import com.idx.smartspeakdock.utils.GlobalUtils;
@@ -40,7 +38,7 @@ public class ControllerService extends Service {
     MusicCallBack mMusicCallBack;
     CalendarView mCalendarView;
     Util util;
-    MusicPlay musicPlay;
+    public MusicPlay musicPlay;
 
     String answer;
     @Override

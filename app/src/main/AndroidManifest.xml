@@ -100,10 +100,6 @@
         <activity android:name=".standby.StandByActivity"
             android:launchMode="singleTop"/>
 
-        <service
-            android:name=".music.service.MusicService"
-            android:enabled="true"
-            android:exported="false" />
         <service android:name=".service.ControllerService" />
 
         <activity android:name=".music.activity.MusicPlayActivity" />
