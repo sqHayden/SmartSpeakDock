@@ -1,6 +1,7 @@
 package com.idx.smartspeakdock;
 
 import android.content.Context;
+import android.util.Log;
 
 import android.support.multidex.MultiDex;
 

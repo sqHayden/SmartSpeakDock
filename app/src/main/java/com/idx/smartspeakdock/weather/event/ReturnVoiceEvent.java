@@ -1,7 +1,5 @@
 package com.idx.smartspeakdock.weather.event;
 
-import android.util.Log;
-
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
 
 /**

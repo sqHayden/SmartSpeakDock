@@ -2,6 +2,8 @@ package com.idx.smartspeakdock.Setting;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.utils.BitmapUtils;
 
 /**
  * Created by ryan on 18-1-5.
@@ -20,6 +23,7 @@ public class AboutActivity extends BaseActivity {
     private static final String TAG = AboutActivity.class.getSimpleName();
     private Toolbar toolbar;
     private TextView app_version_show;
+    private Bitmap mBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +35,7 @@ public class AboutActivity extends BaseActivity {
 
     private void initView() {
         app_version_show = findViewById(R.id.app_version);
-
+        mBitmap = BitmapUtils.decodeBitmapFromResources(this,R.drawable.back);
         PackageManager pm = getPackageManager();
         PackageInfo packageInfo = null;
         try {
@@ -39,7 +43,7 @@ public class AboutActivity extends BaseActivity {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        app_version_show.setText("Version v" + packageInfo.versionName);
+        app_version_show.setText(getResources().getString(R.string.version)+" v" + packageInfo.versionName);
 
     }
 
@@ -47,7 +51,8 @@ public class AboutActivity extends BaseActivity {
             toolbar = (Toolbar) findViewById(R.id.about_toolbar);
             setSupportActionBar(toolbar);
             ActionBar ab = getSupportActionBar();
-            ab.setHomeAsUpIndicator(R.drawable.back);
+            mBitmap = BitmapUtils.scaleBitmapFromResources(this,R.drawable.back,15,30);
+            ab.setHomeAsUpIndicator(new BitmapDrawable(mBitmap));
             ab.setTitle(getResources().getString(R.string.about));
             ab.setDisplayHomeAsUpEnabled(true);
     }
@@ -62,4 +67,12 @@ public class AboutActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mBitmap != null){
+            mBitmap.recycle();
+            mBitmap = null;
+        }
+    }
 }

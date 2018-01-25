@@ -43,7 +43,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-
         <!--ASR start-->
         <meta-data
             android:name="com.baidu.speech.APP_ID"

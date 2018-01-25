@@ -1,3 +1,4 @@
+/*
 package com.idx.smartspeakdock.weather.ui;
 
 import android.app.DialogFragment;
@@ -37,52 +38,68 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 
+*/
 /**
  * Created by danny on 12/15/17.
- */
+ *//*
+
 
 public class ChooseCityDialogFragment extends DialogFragment {
-    /**
+    */
+/**
      * 城市级别
-     */
+     *//*
+
     public static final int LEVEL_PROVINCE = 0;
     public static final int LEVEL_CITY = 1;
     public static final int LEVEL_COUNTY = 2;
 
-    /**
+    */
+/**
      * 组件
-     */
+     *//*
+
     private TextView mAreaName;
     private Button mBack;
     private ListView mListView;
 
-    /**
+    */
+/**
      * 数据适配器
-     */
+     *//*
+
     private ArrayAdapter mAdapter;
     private ProgressDialog mProgressDialog;
     private List<String> mDataList = new ArrayList<>();
 
-    /**
+    */
+/**
      * 省、市、县列表
-     */
+     *//*
+
     private List<Province> mProvinces;
     private List<City> mCities;
     private List<County> mCounties;
 
-    /**
+    */
+/**
      * 选中的省份
-     */
+     *//*
+
     private Province mSelectedProvince;
 
-    /**
+    */
+/**
      * 选中的城市
-     */
+     *//*
+
     private City mSelectedCity;
 
-    /**
+    */
+/**
      * 当前选中的级别
-     */
+     *//*
+
     private int mCurrentLevel;
     private OnChooseCityCompleted mOnChooseCityCompleted;
     private AreaRepository mAreaRepository;
@@ -145,10 +162,12 @@ public class ChooseCityDialogFragment extends DialogFragment {
         return view;
     }
 
-    /**
+    */
+/**
      * 初始化控件
      * @param view 布局view
-     */
+     *//*
+
     private void initView(View view) {
         mAreaName = view.findViewById(R.id.title_text);
         mBack = view.findViewById(R.id.back_button);
@@ -161,9 +180,11 @@ public class ChooseCityDialogFragment extends DialogFragment {
         setDialogSize();
     }
 
-    /**
+    */
+/**
      * 设置对话框大小
-     */
+     *//*
+
     private void setDialogSize(){
         WindowManager wm = (WindowManager) getActivity()
                 .getSystemService(Context.WINDOW_SERVICE);
@@ -172,9 +193,11 @@ public class ChooseCityDialogFragment extends DialogFragment {
         getDialog().getWindow().setLayout(width/2, height/2);
     }
 
-    /**
+    */
+/**
      * 查询全国所有的省，优先从数据库查询，如果没有查询到再去服务器上查询。
-     */
+     *//*
+
     private void queryProvinces() {
         mAreaName.setText("中国");
         mBack.setVisibility(View.GONE);
@@ -202,9 +225,11 @@ public class ChooseCityDialogFragment extends DialogFragment {
         });
     }
 
-    /**
+    */
+/**
      * 查询选中省内所有的市，优先从数据库查询，如果没有查询到再去服务器上查询。
-     */
+     *//*
+
     private void queryCities() {
         mAreaName.setText(mSelectedProvince.provinceName);
         mBack.setVisibility(View.VISIBLE);
@@ -233,9 +258,11 @@ public class ChooseCityDialogFragment extends DialogFragment {
         });
     }
 
-    /**
+    */
+/**
      * 查询选中市内所有的县，优先从数据库查询，如果没有查询到再去服务器上查询。
-     */
+     *//*
+
     private void queryCounties() {
         mAreaName.setText(mSelectedCity.cityName);
         mBack.setVisibility(View.VISIBLE);
@@ -265,9 +292,11 @@ public class ChooseCityDialogFragment extends DialogFragment {
         });
     }
 
-    /**
+    */
+/**
      * 根据传入的地址和类型从服务器上查询省市县数据。
-     */
+     *//*
+
     private void queryFromServer(String address, final String type) {
         showProgressDialog();
         HttpUtil.sendOkHttpRequest(address, new Callback() {
@@ -327,3 +356,4 @@ public class ChooseCityDialogFragment extends DialogFragment {
         }
     }
 }
+*/

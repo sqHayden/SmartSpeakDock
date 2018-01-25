@@ -33,6 +33,7 @@
     //setting
     <string name="voice_switch_on_off">语音开启设置</string>
     <string name="about">关于</string>
+    <string name="version">版本</string>
     //calendar
     <string name="year">年</string>
     <string name="month">月</string>

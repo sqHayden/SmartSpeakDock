@@ -46,6 +46,7 @@
     <string name="voice_switch_on_text">開啓</string>
     <string name="voice_switch_off_text">關閉</string>
     <string name="about">關於</string>
+    <string name="version">版本</string>
     //calendar
     <string name="year">年</string>
     <string name="month">月</string>

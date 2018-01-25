@@ -45,6 +45,7 @@
     <string name="voice_switch_on_text">on</string>
     <string name="voice_switch_off_text">off</string>
     <string name="about">about</string>
+    <string name="version">Version</string>
     //calendar
     <string name="year">year</string>
     <string name="month">month</string>

@@ -180,13 +180,11 @@ public class ControllerService extends Service {
             @Override
             public void onNext() {
                  musicPlay.next();
-
             }
 
             @Override
             public void onPrevious() {
                  musicPlay.pre();
-
             }
         });
     }
@@ -309,6 +307,15 @@ public class ControllerService extends Service {
         }
         if (mWeather_return_voice != null){
             mWeather_return_voice = null;
+        }
+        if (mCalendarView != null){
+            mCalendarView = null;
+        }
+        if (util != null){
+            util = null;
+        }
+        if (musicPlay != null){
+            musicPlay = null;
         }
     }
 }

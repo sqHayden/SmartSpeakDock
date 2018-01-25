@@ -62,7 +62,6 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
     public ProgressDialog mProgressDialog;
     public String music_name;
 
-
     public MusicListFragment(){}
 
     public static MusicListFragment newInstance(String music_name){
@@ -80,7 +79,7 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d("", "onAttach: ");
+        Log.d(TAG, "onAttach: ");
         if(getArguments() != null){
             music_name = getArguments().getString(GlobalUtils.MUSIC_NAME_ID);
         }
@@ -205,6 +204,11 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
         bar_start.setImageResource(R.mipmap.music_pause);
         handler.post(runnable);
 
+    }
+
+    //音乐暂停
+    public void  pause(){
+        musicService.pause();
     }
 
     //音乐播放

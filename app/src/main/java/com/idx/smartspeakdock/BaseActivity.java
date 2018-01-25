@@ -31,10 +31,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
     public boolean isActivityTop;
     public static FragmentManager mFragmentManager;
     private ArrayList<SwipeActivity.MyOnTouchListener> onTouchListeners = new ArrayList<SwipeActivity.MyOnTouchListener>(10);
-
     public String fragment_show_activity = "SwipeActivity";
-
-
 
     @Override
     protected void onRestart() {
@@ -82,7 +79,6 @@ public  abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.drawer_main);
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
@@ -102,8 +98,6 @@ public  abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //当前正在显示的Fragment
-//        isTopFragment();
 //        if (handler!=null) {
 //            handler.removeCallbacks(runnable);
 ////            handler.postDelayed(runnable,1000 * 60 * 10);
@@ -180,7 +174,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
-    public void isTopActivity() {
+    public boolean isTopActivity() {
         isActivityTop = false;
         ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
@@ -189,9 +183,11 @@ public  abstract class BaseActivity extends AppCompatActivity {
             isActivityTop = true;
         }
         Log.i(TAG, "isTop = " + isActivityTop);
+        return isActivityTop;
     }
 
-    public static void isTopFragment() {
+    public static Fragment isTopFragment() {
+        isFragmentTop = null;
         List<Fragment> fragments = mFragmentManager.getFragments();
         Log.i(TAG, "isTopFragment: size = " + fragments.size());
         for (Fragment fragment : fragments) {
@@ -200,6 +196,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
 //            }
             Log.i(TAG, "isTopFragment: " + isFragmentTop.getClass().getSimpleName());
         }
+        return isFragmentTop;
     }
     public interface MyOnTouchListener {
         public boolean onTouch(MotionEvent ev);

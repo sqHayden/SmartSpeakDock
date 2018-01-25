@@ -1,28 +1,16 @@
 package com.idx.smartspeakdock.music.service;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-
 import android.media.MediaPlayer;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.idx.smartspeakdock.baidu.control.UnitManager;
 import com.idx.smartspeakdock.baidu.unit.listener.IMusicVoiceListener;
-import com.idx.smartspeakdock.music.activity.MusicListFragment;
 import com.idx.smartspeakdock.music.entity.Music;
-import com.idx.smartspeakdock.music.util.AppCache;
-import com.idx.smartspeakdock.music.util.MusicUtil;
-
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 
 public class MusicService extends Service implements MediaPlayer.OnCompletionListener{

@@ -1,5 +1,6 @@
 package com.idx.smartspeakdock.music.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,7 +79,7 @@ public class MusicAdapter extends BaseAdapter {
         for (String key:MusicUtil.getMusic().keySet()){
             list.add(MusicUtil.getMusic().get(key));
         }
-
+        Log.i("ryan", "getView: list.size() =  "+list.size());
         //music实例化
         music =list.get(position) ;
         //显示标题

@@ -98,7 +98,6 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
     private int mWeather_Voice_flag;
     private WeatherBroadcastReceiver mWeatherBroadcastReceiver;
     private SharedPreferences sp;
-//    private ReturnVoice mWeather_return_voice;
 
 //    private GetCityService.MyBinder mCityBinder;
 //    private ServiceConnection mCityConn = new ServiceConnection() {

@@ -51,6 +51,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     private String cityname = "深圳市" ;
     private Context mContext;
     private View view;
+    long startTime;
 //    private GetCityService.MyBinder myBinder;
 /*    private ServiceConnection connection = new ServiceConnection() {
 
@@ -105,7 +106,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        startTime = System.currentTimeMillis();
         BaseActivity baseActivity = (BaseActivity) getActivity();
         Logger.setEnable(true);
         if (savedInstanceState != null) {
@@ -114,7 +115,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
             }
         }else {
             if(!BaseActivity.isServiceRunning(baseActivity.getApplicationContext(),"com.idx.smartspeakdock.start.GetCityService")) {
-            Log.d("启动服务", "startService");
+                Log.d("启动服务", "startService");
             Intent intent = new Intent(baseActivity.getApplicationContext(), GetCityService.class);
             //启动
             baseActivity.getApplicationContext().startService(intent);
@@ -122,6 +123,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
 //            baseActivity.getApplicationContext().bindService(intent, connection, BIND_AUTO_CREATE);
         }
         }
+
        getWeatherBasic(cityname);
     }
 
@@ -132,6 +134,14 @@ public class StandByFragment extends BaseFragment implements IStandByView{
         init();
         location_textView.setText(getActivity().getString(R.string.Shenzhen));
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        long endTime = System.currentTimeMillis();
+        long time = endTime - startTime;
+        Log.i("ryan", "onCreate: standby time_interval = "+time);
     }
 
     @Override

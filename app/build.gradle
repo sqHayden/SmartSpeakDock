@@ -2,11 +2,18 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-        config{
+        config {
             keyAlias 'key0'
             keyPassword '1365233'
             storeFile file('./smart_debug.jks')
             storePassword '1365233'
+        }
+        //App签名
+        release {
+            keyAlias "Smartspeakdock"
+            keyPassword "Smart123456"
+            storeFile file('./src/speak.jks')
+            storePassword "Smart123456"
         }
     }
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -22,6 +29,7 @@ android {
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -29,6 +37,13 @@ android {
             signingConfig signingConfigs.config
         }
     }
+
+   /* lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }*/
 }
 
 dependencies {

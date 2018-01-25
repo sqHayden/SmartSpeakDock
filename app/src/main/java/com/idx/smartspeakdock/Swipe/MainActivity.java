@@ -14,6 +14,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
@@ -200,8 +201,7 @@ public class MainActivity extends BaseActivity {
                             case R.id.list_navigation_music:
                                 // TODO: 17-12-16 MusicFragment
                                 startService(new Intent(MainActivity.this, MusicService.class));
-                                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
-                                mIntent.putExtra("music_name","流水");
+                                mIntent.putExtra(GlobalUtils.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.MUSIC_FRAGMENT_INTENT_ID);
                                 break;
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 ShoppingFragment
@@ -275,7 +275,6 @@ public class MainActivity extends BaseActivity {
                     case XmlPullParser.END_TAG:
                         if (parser.getName().equalsIgnoreCase("shopping") && curr_shopping != null) {
                             shoppings.add(curr_shopping);
-                            Log.i(TAG, "readXMLPull: webname = " + curr_shopping.getWebName() + ",weburl = " + curr_shopping.getWebUrl());
                             curr_shopping = null;
                         }
                         break;

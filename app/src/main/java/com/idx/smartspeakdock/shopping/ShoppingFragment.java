@@ -37,14 +37,14 @@ import com.idx.smartspeakdock.utils.ToastUtils;
 
 public class ShoppingFragment extends BaseFragment {
     private final String TAG = "ShoppingFragment";
-    View view;
-    WebView webView;
-    ProgressDialog progDailog;
-    TextView mNetwork_error;
-    SwipeRefreshLayout mNetworkRefresh;
-    Context mContext;
-    String web_url;
-    ShopBroadcastReceiver mShopBroadcastReceiver;
+    private View view;
+    private WebView webView;
+    public ProgressDialog progDailog;
+    private TextView mNetwork_error;
+    private SwipeRefreshLayout mNetworkRefresh;
+    private Context mContext;
+    private String web_url;
+    private ShopBroadcastReceiver mShopBroadcastReceiver;
 
     public static ShoppingFragment newInstance(String web_url){
         ShoppingFragment shoppingFragment = new ShoppingFragment();
