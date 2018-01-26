@@ -31,6 +31,7 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
@@ -50,6 +51,8 @@ import com.amap.api.services.poisearch.PoiSearch;
 import com.google.gson.Gson;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.SpeakerApplication;
+import com.idx.smartspeakdock.map.Bean.CityCallBack;
 import com.idx.smartspeakdock.map.Bean.ReturnMapAnswerCallBack;
 import com.idx.smartspeakdock.map.adapter.SearchResultAdapter;
 import com.idx.smartspeakdock.map.overlay.PoiOverlay;
@@ -60,6 +63,8 @@ import com.idx.smartspeakdock.utils.GlobalUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * MapFragment
@@ -129,6 +134,8 @@ public class MapFragment extends BaseFragment implements
     private static String pathWay;
     private MapBroadcastReceiver mMapBroadcastReceiver;
     private Context context;
+    private PoiItem firstPoiItem,secondPoiItem;
+    private boolean isFirstLocation;
 
 
     //无参构造
@@ -151,6 +158,7 @@ public class MapFragment extends BaseFragment implements
         super.onCreate(savedInstanceState);
         //注册地图语音广播
         registerMapVoiceBroadcast();
+        isFirstLocation = true;
     }
 
     private void registerMapVoiceBroadcast() {
@@ -174,6 +182,8 @@ public class MapFragment extends BaseFragment implements
                     address = intent.getStringExtra("address");
                     fromAddress = intent.getStringExtra("fromAddress");
                     toAddress = intent.getStringExtra("toAddress");
+                    pathWay = intent.getStringExtra("pathWay");
+                    Log.d("广播中的出行方式:",pathWay);
                     speakMethod();
                     break;
                 default:
@@ -293,14 +303,91 @@ public class MapFragment extends BaseFragment implements
      * 处理语音执行及回调
      * **/
     private void speakMethod(){
-        Log.d("地图信息查看：","name:"+name+"---"+"address:"+address+"---"+"fromAddress:"+fromAddress+"---"+"toAddress:"+toAddress+"---"+"pathWay"+pathWay);
-        if(name.equals("")&&address.equals("")&&fromAddress.equals("")) {//说明查位置，直接进行回调
+        Log.d("地图信息查看：","name:"+name+"---"+"address:"+address+"---"+"fromAddress:"+fromAddress+"---"+"toAddress:"+toAddress+"---"+"pathWay:"+pathWay);
+        if(name.equals("")&&address.equals("")&&toAddress.equals("")) {//说明查位置，直接进行回调
             //隐藏list
             listView.setVisibility(View.GONE);
             //设置定位在 我的位置
             toMyLocation(currentLocation);
             //返回语音
-            returnMapAnswerCallBack.onReturnAnswer(LOCATION_MARKER_FLAG);
+            returnMapAnswerCallBack.onReturnAnswer("您当前位于"+LOCATION_MARKER_FLAG);
+        }else if(!address.equals("")){//说明搜索某地
+            //设置文本框
+            input_text.setText(address);
+            //显示清除符号
+            clean_view.setVisibility(View.VISIBLE);
+            //清除标记
+            clearMarkers();
+            //搜索
+            doSearchQuery(address,1);
+            //显示
+            listView.setVisibility(View.VISIBLE);
+            //返回语音
+            returnMapAnswerCallBack.onReturnAnswer("如果不符合，请说我要选其他结果");
+        }else if(!pathWay.equals("")&&!toAddress.equals("")){//说明要去某地
+            if(!fromAddress.equals("")){//处理从哪儿去哪儿
+                Log.d("处理从哪儿","去哪儿");
+                setCityCallBack(new CityCallBack() {
+                    @Override
+                    public void getCityPoint(PoiItem poiItem) {
+                        Log.d("起点位置回调被执行","1");
+                        Log.d("poiItem",poiItem.getLatLonPoint().getLatitude()+"---"+poiItem.getLatLonPoint().getLongitude());
+                        if(isFirstLocation){
+                            firstPoiItem = poiItem;
+                            isFirstLocation = false;
+                            doSearchQuery(toAddress,1);
+                        }else {
+                            secondPoiItem = poiItem;
+                            LatLng startLatlng = new LatLng(firstPoiItem.getLatLonPoint().getLatitude(),firstPoiItem.getLatLonPoint().getLongitude());
+                            Log.d("起点坐标：",firstPoiItem.getLatLonPoint().getLatitude()+","+firstPoiItem.getLatLonPoint().getLongitude());
+                            LatLng endLatlng = new LatLng(secondPoiItem.getLatLonPoint().getLatitude(),secondPoiItem.getLatLonPoint().getLongitude());
+                            Log.d("终点坐标:",secondPoiItem.getLatLonPoint().getLatitude()+","+secondPoiItem.getLatLonPoint().getLongitude());
+                            isFirstLocation = true;
+                            //判断距离及出行方式(超过100公里会失败)
+                            float distance = AMapUtils.calculateLineDistance(startLatlng,endLatlng);
+                            int dis = (int)distance/1000;
+                            Log.d("dis:",dis+"");
+                            if(dis>100){
+                                returnMapAnswerCallBack.onReturnAnswer("您要去的地方太远了，建议选择驾车模式");
+                            }else {
+                                //启动导航activity
+                                Intent intent = new Intent(SpeakerApplication.getContext(), CalculateRouteActivity.class);
+                                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                                //添加起点及终点信息
+                                Gson gson = new Gson();
+                                intent.putExtra("start_location", gson.toJson(startLatlng));
+                                intent.putExtra("end_location", gson.toJson(endLatlng));
+                                intent.putExtra("start_name", fromAddress);
+                                intent.putExtra("end_name", toAddress);
+                                intent.putExtra("pathWay", pathWay);
+                                SpeakerApplication.getContext().startActivity(intent);
+                            }
+                        }
+                    }
+                });
+                doSearchQuery(fromAddress,1);
+            }else{//处理从我的位置去哪里
+                Log.d("处理从我的位置","去哪儿");
+                setCityCallBack(new CityCallBack() {
+                    @Override
+                    public void getCityPoint(PoiItem poiItem) {
+                        Log.d("终点位置回调被执行","123456");
+                        firstPoiItem = poiItem;
+                        LatLng endLatlng = new LatLng(firstPoiItem.getLatLonPoint().getLatitude(),firstPoiItem.getLatLonPoint().getLongitude());
+                        //启动导航activity
+                        Intent intent = new Intent(SpeakerApplication.getContext(),CalculateRouteActivity.class);
+                        intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                        //添加起点及终点信息
+                        Gson gson = new Gson();
+                        intent.putExtra("start_location",gson.toJson(currentLocation));
+                        intent.putExtra("end_location",gson.toJson(endLatlng));
+                        intent.putExtra("end_name",toAddress);
+                        intent.putExtra("pathWay",pathWay);
+                        SpeakerApplication.getContext().startActivity(intent);
+                    }
+                });
+                doSearchQuery(toAddress,1);
+            }
         }
     }
 
@@ -682,7 +769,11 @@ public class MapFragment extends BaseFragment implements
                 if (result.getQuery().equals(query)) {// 是否是同一条
                     poiResult = result;
                     // 取得搜索到的poiItems有多少页
+                    Log.d("进来搜索了","准备拿值");
                     poiItems = poiResult.getPois();
+                    if(cityCallBack!=null) {
+                        cityCallBack.getCityPoint(poiItems.get(0));
+                    }
                     //获取第一页的数据
                     searchResultAdapter.setData(poiItems);
                     listView.setAdapter(searchResultAdapter);
@@ -697,17 +788,13 @@ public class MapFragment extends BaseFragment implements
                         zoom = poiOverlay.zoomToSpan();
                         Log.d("地图等级为：", "" + zoom);
                         //我的位置点显示
-                        try {
                             if (zoom < 13) {
                                 mSmallIcon.setVisible(false);
                                 mBigIcon.setVisible(true);
-                            } else {
+                            } else if(mBigIcon!=null){
                                 mSmallIcon.setVisible(true);
                                 mBigIcon.setVisible(false);
                             }
-                        }catch (NullPointerException e){
-                            e.printStackTrace();
-                        }
                     } else if (suggestionCities != null
                             && suggestionCities.size() > 0) {
                         showSuggestCity(suggestionCities);
@@ -816,5 +903,11 @@ public class MapFragment extends BaseFragment implements
 
     public void setMapReturnAnswerCallback(ReturnMapAnswerCallBack returnMapAnswerCallback){
         returnMapAnswerCallBack = returnMapAnswerCallback;
+    }
+
+    private CityCallBack cityCallBack;
+
+    public void setCityCallBack(CityCallBack cityCallBack1){
+        cityCallBack = cityCallBack1;
     }
 }

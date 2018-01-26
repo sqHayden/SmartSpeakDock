@@ -436,8 +436,10 @@ public class MainActivity extends BaseActivity {
             args.putString("fromAddress", fromAddress);
             args.putString("toAddress", toAddress);
             if(pathWay==null){
+                Log.d("pathWay","是空的");
                 args.putString("pathWay","");
             }else{
+                Log.d("pathWay不为空，是：",pathWay.getDesc());
                 args.putString("pathWay",pathWay.getDesc());
             }
             mIntent.putExtra("map", args);

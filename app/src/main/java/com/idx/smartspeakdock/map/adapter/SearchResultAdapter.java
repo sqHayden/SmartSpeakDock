@@ -118,6 +118,7 @@ public class SearchResultAdapter extends BaseAdapter {
                     intent.putExtra("start_location",gson.toJson(start_location));
                     intent.putExtra("end_location",gson.toJson(new LatLng(end_location.getLatitude(),end_location.getLongitude())));
                     intent.putExtra("end_name",poiItem.getTitle());
+                    intent.putExtra("pathWay","驾车");
                     SpeakerApplication.getContext().startActivity(intent);
                 }
             });

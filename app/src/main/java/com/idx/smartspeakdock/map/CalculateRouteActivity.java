@@ -484,9 +484,31 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
             Log.d("目的点坐标为：",""+endLatlng.getLatitude()+","+endLatlng.getLongitude());
             //目的地设置文本
             endLocationName.setText(intent.getStringExtra("end_name"));
-            //开始驾车
-            way = "Drive";
-            startDriveNavi();
+            value = intent.getStringExtra("start_name");
+            if(value!=null){
+                myLocationName.setText(intent.getStringExtra("start_name"));
+            }
+            //获取用户的出行方式
+            value = intent.getStringExtra("pathWay");
+            switch (value) {
+                case "步行":
+                    way = "Walk";
+                    startWalkNavi();
+                    break;
+                case "骑车":
+                    way = "Bike";
+                    startBikeNavi();
+                    break;
+                case "坐公交":
+                    way = "Bus";
+                    startBusNavi();
+                    break;
+                case "驾车":
+                    way = "Drive";
+                    startDriveNavi();
+                default:
+                    break;
+            }
         }
     }
 
@@ -770,6 +792,7 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
      * 设置步行的内容填充
      * **/
     private void setWalkContent(int id){
+        Log.d("步行内容填充","123");
         routeID = routeOverlays.keyAt(0);
         RouteOverLay overlay = routeOverlays.get(id);
         overlay.zoomToSpan();
@@ -782,6 +805,8 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
         mRouteTextTimeTwo.setText(timeDes);
         String disDes = Utils.getFriendlyDistance(path.getAllLength());
         mRouteTextDistanceTwo.setText(disDes);
+        //显示中间的
+        mRouteLinelayoutTwo.setVisibility(View.VISIBLE);
         mRouteTextStrategyThree.setText("");
         mRouteTextTimeThree.setText("");
         mRouteTextDistanceThree.setText("");
@@ -805,6 +830,8 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
         mRouteTextTimeTwo.setText(timeDes);
         String disDes = Utils.getFriendlyDistance(path.getAllLength());
         mRouteTextDistanceTwo.setText(disDes);
+        //骑行显示
+        mRouteLinelayoutTwo.setVisibility(View.VISIBLE);
         mRouteTextStrategyThree.setText("");
         mRouteTextTimeThree.setText("");
         mRouteTextDistanceThree.setText("");

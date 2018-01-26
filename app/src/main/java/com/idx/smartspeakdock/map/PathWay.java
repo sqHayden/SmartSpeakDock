@@ -8,7 +8,8 @@ public enum PathWay {
     WALK("步行"),
     RIDE("骑车"),
     DRIVE("驾车"),
-    TRANSIT("公交");
+    TRANSIT("公交"),
+    DOTRANSIT("坐公交");
     private String desc;
     private PathWay(String desc){
         this.desc = desc;

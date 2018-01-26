@@ -672,13 +672,13 @@ public class SwipeActivity extends BaseActivity {
                     Log.i(TAG, "revokeSwipeMapVoice: 当前Fragment是MapFragment");
                     mMap_result_callback = resultCallback;
                     returnMapVoicecallBack();
-                    mMap_voice_flag = 6;
                     mMapBroadcastIntent = new Intent(GlobalUtils.Map.MAP_BROADCAST_ACTION);
                     mMapBroadcastIntent.putExtra("name", name);
                     mMapBroadcastIntent.putExtra("address", address);
                     mMapBroadcastIntent.putExtra("fromAddress", fromAddress);
                     mMapBroadcastIntent.putExtra("toAddress",toAddress);
                     mMapBroadcastIntent.putExtra("pathWay",pathWay);
+                    Log.d("广播发出去的出行方式:",pathWay);
                     sendBroadcast(mMapBroadcastIntent);
                 } else {
                     Log.i(TAG, "revokeSwipeMapVoice: 当前Fragment不是MapFragment");
@@ -803,8 +803,10 @@ public class SwipeActivity extends BaseActivity {
                 @Override
                 public void onMapCallBack(String name, String address, String fromAddress, String toAddress, PathWay pathWay, ResultCallback resultCallback) {
                     if(pathWay!=null) {
+                        Log.d("pathWay","不是空的");
                         revokeSwipeMapVoice(name, address, fromAddress, toAddress, pathWay.getDesc(), resultCallback);
                     }else{
+                        Log.d("pathWay","是空的");
                         revokeSwipeMapVoice(name, address, fromAddress, toAddress, "", resultCallback);
                     }
                 }

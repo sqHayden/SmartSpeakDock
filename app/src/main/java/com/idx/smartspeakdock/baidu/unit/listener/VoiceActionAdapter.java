@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.idx.smartspeakdock.Actions;
 import com.idx.smartspeakdock.Modules;
 import com.idx.smartspeakdock.R;
@@ -847,6 +848,8 @@ public class VoiceActionAdapter {
             pathWay = PathWay.RIDE;
         } else if (way.equals(PathWay.TRANSIT.getDesc())) {
             pathWay = PathWay.TRANSIT;
+        } else if (way.equals(PathWay.DOTRANSIT.getDesc())){
+            pathWay = PathWay.DOTRANSIT;
         } else {
             pathWay = PathWay.WALK;
         }
