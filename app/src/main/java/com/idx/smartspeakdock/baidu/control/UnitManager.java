@@ -74,7 +74,10 @@ public class UnitManager {
      * 4.Unit Session未关闭，即以上条件不满足，继续触发识别 onRegContinue
      */
     private ISessionListener mSessionListener;
-    private String[] mVoiceArrayRepeat;
+    /**
+     * 重复语音数据
+     */
+    private String[] mVoiceMore;
 
     private UnitManager(Context context) {
         init(context);
@@ -114,7 +117,7 @@ public class UnitManager {
         }, (String) authParams.get(AuthInfo.META_APP_KEY), (String) authParams.get(AuthInfo.META_APP_SECRET));
         mVoiceAdapter = new VoiceActionAdapter(context);
         ttsManager = TTSManager.getInstance();
-        mVoiceArrayRepeat = context.getResources().getStringArray(R.array.voice_more);
+        mVoiceMore = context.getResources().getStringArray(R.array.voice_more);
     }
 
     /**
@@ -237,7 +240,7 @@ public class UnitManager {
                     if (enableSession) {
                         if (sayBye){
                             //询问是否关闭会话
-                            String voice = mVoiceArrayRepeat[MathTool.randomValue(mVoiceArrayRepeat.length)];
+                            String voice = mVoiceMore[MathTool.randomValue(mVoiceMore.length)];
                             TTSManager.getInstance().speak(voice, new TTSManager.SpeakCallback() {
                                 @Override
                                 public void onSpeakStart() {

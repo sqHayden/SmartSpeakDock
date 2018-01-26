@@ -115,7 +115,7 @@ public class TTSManager {
     }
 
     /**
-     * 播放单个语音时，暂时取消回调
+     * 播放单个语音时
      *
      * @param text 要播放的文本
      */
@@ -190,6 +190,7 @@ public class TTSManager {
         }
     }
 
+    //BaiDu API SpeechSynthesizerListener为子线程回调，先将其转换为主线程
     private class TtsStatusListener implements SpeechSynthesizerListener {
         private TtsStatusListener() {
         }
