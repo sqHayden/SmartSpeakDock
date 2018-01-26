@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.widget.TextClock;
 
 /**
- * Created by peter on 12/20/17.
+ * Created by Franck on 12/20/17.
  */
 
 public class DataView extends TextClock {

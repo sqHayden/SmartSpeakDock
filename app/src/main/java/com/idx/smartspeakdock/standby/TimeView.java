@@ -8,7 +8,7 @@ import android.view.Gravity;
 import android.widget.TextClock;
 
 /**
- * Created by peter on 12/15/17.
+ * Created by Franck on 12/15/17.
  */
 
 public class TimeView extends TextClock{

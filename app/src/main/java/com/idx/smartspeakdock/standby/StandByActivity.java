@@ -12,7 +12,7 @@ import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.Logger;
 
 /**
- * Created by peter on 1/4/18.
+ * Created by Franck on 1/4/18.
  */
 
 public class StandByActivity extends BaseActivity {

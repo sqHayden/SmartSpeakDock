@@ -132,6 +132,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
         view = inflater.inflate(R.layout.activity_standby,container,false);
         init();
         location_textView.setText(getActivity().getString(R.string.Shenzhen));
+        Log.d(TAG, "onCreateView: ");
         return view;
     }
 

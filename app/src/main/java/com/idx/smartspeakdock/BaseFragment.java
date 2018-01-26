@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -52,11 +53,17 @@ public class BaseFragment extends Fragment {
         }
     }
 
+    
     @Override
     public void onResume() {
         super.onResume();
         Log.i("BaseFragment", "onResume: topFragment");
         BaseActivity.isTopFragment();
+        handler.removeCallbacks(runnable);
+        handler.postDelayed(runnable,60*10*1000);
+//        handler.postDelayed(runnable,10*1000);
+
+        Log.d(TAG, "onResume: ");
         onTouchListener = new BaseActivity.MyOnTouchListener() {
             @Override
             public boolean onTouch(MotionEvent ev) {
@@ -65,7 +72,9 @@ public class BaseFragment extends Fragment {
                         if (handler != null) {
                             Log.d(TAG, "onTouch: 你开启了倒计时");
                             handler.removeCallbacks(runnable);
-                            handler.postDelayed(runnable, 1000 * 10 * 60);                        }
+                            handler.postDelayed(runnable, 1000 * 10 * 60);
+//                            handler.postDelayed(runnable, 1000 * 10 );
+                        }
                         Log.d(TAG, "onTouch: ACTION_DOWN");
                         break;
                     case MotionEvent.ACTION_MOVE:
@@ -97,6 +106,33 @@ public class BaseFragment extends Fragment {
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Log.d(TAG, "onLowMemory: ");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Log.d(TAG, "onStart: ");
+    }
+
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        handler.removeCallbacks(runnable);
+        Log.d(TAG, "onStop: ");
+    }
 
     public String judgeCurrentFragment(){
         if (this instanceof WeatherFragment){
