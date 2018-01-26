@@ -7,7 +7,7 @@ package com.idx.smartspeakdock.utils;
 
 public interface GlobalUtils {
 
-   interface  WhichFragment{
+    interface WhichFragment {
         //reconginize which fragment
         String RECONGINIZE_WHICH_FRAGMENT = "reconginize.which.fragment";
         String WEATHER_FRAGMENT_INTENT_ID = "weather.fragment.intent.id";
@@ -24,7 +24,7 @@ public interface GlobalUtils {
         String FIRST_CHANGE_FRAGMENT = "first.change.fragment";
     }
 
-    interface Shopping{
+    interface Shopping {
         //shopping website id
         String SHOPPING_WEBSITES_EXTRA_ID = "shopping.websitpues.extra.id";
         String IPHONE = "苹果专区";
@@ -40,7 +40,7 @@ public interface GlobalUtils {
         String SHOPPING_BROADCAST_ACTION = "shopping.broadcast.action";
     }
 
-    interface Weather{
+    interface Weather {
         //weather broadcast
         String WEATHER_BROADCAST_ACTION = "weather.broadcast.action";
         //weather part
@@ -51,13 +51,20 @@ public interface GlobalUtils {
         int WEATHER_VOICE_FLAG = 5;
     }
 
-    interface Music{
+    interface Music {
         //music
-        String MUSIC_NAME_ID="music.name.id";
-        String MUSIC_BROADCAST_ACTION="music.broadcast.action";
+        String MUSIC_NAME_ID = "music.name.id";
+        String MUSIC_BROADCAST_ACTION = "music.broadcast.action";
     }
 
-    interface FirstSatrt{
+    interface Map {
+        //map broadcast
+        public static final String MAP_BROADCAST_ACTION = "map.broadcast.action";
+        //map part
+        public static final int MAP_VOICE_FLAG = 6;
+    }
+
+    interface FirstSatrt {
         //first Satrt app
         String FIRST_APP_START = "app.first.start";
     }

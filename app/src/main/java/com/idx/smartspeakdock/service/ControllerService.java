@@ -5,23 +5,28 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.idx.calendarview.CalendarView;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.baidu.control.UnitManager;
 import com.idx.smartspeakdock.baidu.unit.listener.ICalenderVoiceListener;
+import com.idx.smartspeakdock.baidu.unit.listener.IMapVoiceListener;
 import com.idx.smartspeakdock.baidu.unit.listener.IMusicVoiceListener;
 import com.idx.smartspeakdock.baidu.unit.listener.IShoppingVoiceListener;
 import com.idx.smartspeakdock.baidu.unit.listener.IWeatherVoiceListener;
+import com.idx.smartspeakdock.baidu.unit.listener.ResultCallback;
 import com.idx.smartspeakdock.calendar.Util;
 import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
+import com.idx.smartspeakdock.map.Bean.MapCallBack;
+import com.idx.smartspeakdock.map.PathWay;
 import com.idx.smartspeakdock.music.service.MusicCallBack;
 import com.idx.smartspeakdock.music.service.MusicPlay;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
 import com.idx.smartspeakdock.weather.presenter.WeatherCallback;
+
+//import com.idx.smartspeakdock.music.service.MusicVoice;
 
 /**
  * Created by ryan on 18-1-16.
@@ -34,7 +39,9 @@ public class ControllerService extends Service {
     ShoppingCallBack mShoppingCallBack;
     CalendarCallBack mCalendarCallBack;
     WeatherCallback mWeatherCallback;
+    MapCallBack mMapCallBack;
     ReturnVoice mWeather_return_voice;
+    ResultCallback mMap_result_callback;
     MusicCallBack mMusicCallBack;
     CalendarView mCalendarView;
     Util util;
@@ -77,6 +84,13 @@ public class ControllerService extends Service {
         public void onGetMusicName(MusicCallBack musicCallBack) {
             mMusicCallBack=musicCallBack;
         }
+
+        //地图
+        @Override
+        public void setMapControllerListener(MapCallBack mapCallBack) {
+            mMapCallBack = mapCallBack;
+        }
+
         //天气
         @Override
         public void setWeatherControllerListener(WeatherCallback weatherCallback) {
@@ -89,8 +103,14 @@ public class ControllerService extends Service {
         super.onRebind(intent);
     }
 
+    //获取天气的语音接口对象
     public ReturnVoice getReturnVoice(){
         return mWeather_return_voice;
+    }
+
+    //获取地图的语音接口对象
+    public ResultCallback getResultCallBack(){
+        return mMap_result_callback;
     }
 
     //注册购物语音模块
@@ -187,6 +207,45 @@ public class ControllerService extends Service {
         });
     }
 
+    //注册地图语音模块
+    public void registerMapModule(){
+        UnitManager.getInstance(getApplicationContext()).setMapVoiceListener(new IMapVoiceListener() {
+            /**
+             * 语音实现
+             ***/
+            @Override
+            public void onLocationInfo(ResultCallback result) {
+                if(mMapCallBack!=null){
+                    mMap_result_callback = result;
+                    mMapCallBack.onMapCallBack("","","","",null,result);
+                }
+            }
+
+            @Override
+            public void onSearchInfo(String name, ResultCallback result) {
+                if(mMapCallBack!=null){
+                    mMap_result_callback = result;
+                    mMapCallBack.onMapCallBack(name,"","","",null,result);
+                }
+            }
+
+            @Override
+            public void onSearchAddress(String address, ResultCallback result) {
+                if(mMapCallBack!=null){
+                    mMap_result_callback = result;
+                    mMapCallBack.onMapCallBack("",address,"","",null,result);
+                }
+            }
+
+            @Override
+            public void onPathInfo(String fromAddress, String toAddress, PathWay pathWay, ResultCallback result) {
+                if(mMapCallBack!=null){
+                    mMap_result_callback = result;
+                    mMapCallBack.onMapCallBack("","",fromAddress,toAddress,pathWay,result);
+                }
+            }
+        });
+    }
     @Override
     public boolean onUnbind(Intent intent) {
         return true;
@@ -202,6 +261,8 @@ public class ControllerService extends Service {
         registerWeatherModule();
         //注册音乐语音模块
         registerMusicModule();
+        //注册地图语音模块
+        registerMapModule();
         return super.onStartCommand(intent, flags, startId);
     }
     //注册天气语音模块
@@ -297,23 +358,29 @@ public class ControllerService extends Service {
         if (mCalendarCallBack != null) {
             mCalendarCallBack = null;
         }
-        if (mMusicCallBack!=null){
-            mMusicCallBack=null;
+        if (mMusicCallBack != null) {
+            mMusicCallBack = null;
         }
-        if (mWeatherCallback != null){
+        if (mWeatherCallback != null) {
             mWeatherCallback = null;
         }
-        if (mWeather_return_voice != null){
+        if (mWeather_return_voice != null) {
             mWeather_return_voice = null;
         }
-        if (mCalendarView != null){
-            mCalendarView = null;
+        if (mMapCallBack != null) {
+            mMapCallBack = null;
         }
-        if (util != null){
-            util = null;
-        }
-        if (musicPlay != null){
-            musicPlay = null;
+        if (mMap_result_callback != null) {
+            mMap_result_callback = null;
+            if (mCalendarView != null) {
+                mCalendarView = null;
+            }
+            if (util != null) {
+                util = null;
+            }
+            if (musicPlay != null) {
+                musicPlay = null;
+            }
         }
     }
 }

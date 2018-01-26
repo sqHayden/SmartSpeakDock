@@ -28,9 +28,13 @@ import android.view.WindowManager;
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.Setting.SettingFragment;
+import com.idx.smartspeakdock.baidu.unit.listener.ResultCallback;
 import com.idx.smartspeakdock.calendar.CalendarFragment;
 import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
+import com.idx.smartspeakdock.map.Bean.MapCallBack;
+import com.idx.smartspeakdock.map.Bean.ReturnMapAnswerCallBack;
 import com.idx.smartspeakdock.map.MapFragment;
+import com.idx.smartspeakdock.map.PathWay;
 import com.idx.smartspeakdock.music.activity.MusicListFragment;
 import com.idx.smartspeakdock.music.service.MusicCallBack;
 import com.idx.smartspeakdock.service.ControllerService;
@@ -75,6 +79,7 @@ public class SwipeActivity extends BaseActivity {
     private ControllerService.MyBinder mControllerBinder;
     private Intent mShoppingBroadcastIntent;
     private Intent mWeatherBroadcastIntent;
+    private Intent mMapBroadcastIntent;
     //天气参数
     private int mWeather_voice_flag;
     private String mWeather_voice_city;
@@ -82,6 +87,14 @@ public class SwipeActivity extends BaseActivity {
     private String mWeather_func_flag;
     private Intent mMusicBroadcastIntent;
     private ReturnVoice mWeather_return_voice;
+    //地图参数
+    private int mMap_voice_flag;
+    private String mMap_voice_name;
+    private String mMap_voice_address;
+    private String mMap_voice_fromAddress;
+    private String mMap_voice_toAddress;
+    private String mMap_voice_pathWay;
+    private ResultCallback mMap_result_callback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +113,7 @@ public class SwipeActivity extends BaseActivity {
 
         //fragment切换
         mWeather_voice_flag = -1;
+        mMap_voice_flag = -1;
         if (mSharePrefrenceUtils.getFirstChange(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT)) {
             changeFragment(extraIntentId);
         }
@@ -127,6 +141,16 @@ public class SwipeActivity extends BaseActivity {
                 initMusic();
                 break;
             case GlobalUtils.WhichFragment.MAP_FRAGMENT_INTENT_ID:
+                Log.d("进来Map了","哇哈哈");
+                Bundle map_args = getIntent().getBundleExtra("map");
+                if (map_args != null) {
+                    mMap_voice_name = map_args.getString("name");
+                    mMap_voice_address = map_args.getString("address");
+                    mMap_voice_fromAddress = map_args.getString("fromAddress");
+                    mMap_voice_toAddress = map_args.getString("toAddress");
+                    mMap_voice_pathWay = map_args.getString("pathWay");
+                }
+                mMap_voice_flag = 6;
                 initMap();
                 break;
             case GlobalUtils.WhichFragment.SHOPPING_FRAGMENT_INTENT_ID:
@@ -201,6 +225,7 @@ public class SwipeActivity extends BaseActivity {
         mActionBar = getSupportActionBar();
         mActionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         mActionBar.setDisplayHomeAsUpEnabled(true);
+        mMap_voice_flag = -1;
     }
 
     @Override
@@ -273,12 +298,22 @@ public class SwipeActivity extends BaseActivity {
 
     private void initMap() {
         if (!checkFragment("map")) {
-            actionBar_title = mResources.getString(R.string.map_title);
-            if (mapFragment == null) {
-                mapFragment = new MapFragment();
+            Log.d("进来init()了","123456749");
+            if (mMap_voice_flag == GlobalUtils.Map.MAP_VOICE_FLAG) {
+                if (mapFragment == null) {
+                    Log.d("进来语音传值了","12346");
+                    mapFragment = MapFragment.newInstance(mMap_voice_name,mMap_voice_address,mMap_voice_fromAddress,mMap_voice_toAddress,mMap_voice_pathWay);
+                }
+            } else {
+                if (mapFragment== null) {
+                    mapFragment = new MapFragment();
+                }
             }
+            actionBar_title = mResources.getString(R.string.map_title);
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "map");
             ActivityUtils.replaceFragmentInActivity(mFragmentManager, mapFragment, R.id.contentFrame);
+        }else{
+            Log.d("表示当前是","map");
         }
     }
 
@@ -593,6 +628,7 @@ public class SwipeActivity extends BaseActivity {
         }
     }
 
+    //天气语音接口回调
     private void returnVoiceCallback() {
         if (weatherFragment != null) {
             weatherFragment.setReturnAnswerCallback(new ReturnAnswerCallback() {
@@ -605,6 +641,57 @@ public class SwipeActivity extends BaseActivity {
                     }
                 }
             });
+        }
+    }
+
+    //地图语音接口回调
+    private void returnMapVoicecallBack() {
+        if(mapFragment != null){
+            mapFragment.setMapReturnAnswerCallback(new ReturnMapAnswerCallBack() {
+                @Override
+                public void onReturnAnswer(String mapAnswer) {
+                    Log.d("地图语音答复回调","return Answer");
+                    if (mMap_result_callback !=null){
+                        Log.d("看到说明没办法了","146");
+                        mMap_result_callback.onResult(mapAnswer);
+                        mMap_voice_flag = -1;
+                    }
+                }
+            });
+        }
+    }
+
+    //地图模块处理
+    private void revokeSwipeMapVoice(String name,String address,String fromAddress,String toAddress,String pathWay,ResultCallback resultCallback) {
+        Log.d("isActivityTop:",""+isActivityTop);
+        if (isActivityTop) {
+            if (isFragmentTop != null) {
+                if (isFragmentTop.getClass().getSimpleName().equals("MapFragment")) {
+                    Log.i(TAG, "revokeSwipeMapVoice: 当前Fragment是MapFragment");
+                    mMap_result_callback = resultCallback;
+                    returnMapVoicecallBack();
+                    mMap_voice_flag = 6;
+                    mMapBroadcastIntent = new Intent(GlobalUtils.Map.MAP_BROADCAST_ACTION);
+                    mMapBroadcastIntent.putExtra("name", name);
+                    mMapBroadcastIntent.putExtra("address", address);
+                    mMapBroadcastIntent.putExtra("fromAddress", fromAddress);
+                    mMapBroadcastIntent.putExtra("toAddress",toAddress);
+                    mMapBroadcastIntent.putExtra("pathWay",pathWay);
+                    sendBroadcast(mMapBroadcastIntent);
+                } else {
+                    Log.i(TAG, "revokeSwipeMapVoice: 当前Fragment不是MapFragment");
+                    mMap_result_callback = resultCallback;
+                    mMap_voice_name = name;
+                    mMap_voice_address = address;
+                    mMap_voice_fromAddress = fromAddress;
+                    mMap_voice_toAddress = toAddress;
+                    mMap_voice_pathWay = pathWay;
+                    mMap_voice_flag = 6;
+                    initMap();
+                    mActionBar.setTitle(actionBar_title);
+                    returnMapVoicecallBack();
+                }
+            }
         }
     }
 
@@ -643,6 +730,7 @@ public class SwipeActivity extends BaseActivity {
         isDrawer = false;
         mWeather_voice_flag = -1;
         if (mWeather_return_voice != null) {mWeather_return_voice = null;}
+        if (mMap_result_callback!=null) {mMap_result_callback = null;}
         music_name = null;
         unbindService(mServiceConnection);
     }
@@ -706,6 +794,26 @@ public class SwipeActivity extends BaseActivity {
                 Log.i(TAG, "onServiceConnected: 天气ReturnVoice注册");
                 mWeather_return_voice = mControllerBinder.getControlService().getReturnVoice();
                 returnVoiceCallback();
+            }
+
+            //地图语音处理
+            mControllerBinder.setMapControllerListener(new MapCallBack() {
+                @Override
+                public void onMapCallBack(String name, String address, String fromAddress, String toAddress, PathWay pathWay, ResultCallback resultCallback) {
+                    if(pathWay!=null) {
+                        revokeSwipeMapVoice(name, address, fromAddress, toAddress, pathWay.getDesc(), resultCallback);
+                    }else{
+                        revokeSwipeMapVoice(name, address, fromAddress, toAddress, "", resultCallback);
+                    }
+                }
+            });
+
+            //地图ResultCallBack注册
+            if (mMap_voice_flag == GlobalUtils.Map.MAP_VOICE_FLAG){
+                Log.i(TAG, "onServiceConnected: 地图ResultCallBack注册");
+                mMap_result_callback = mControllerBinder.getControlService().getResultCallBack();
+                returnMapVoicecallBack();
+
             }
         }
 

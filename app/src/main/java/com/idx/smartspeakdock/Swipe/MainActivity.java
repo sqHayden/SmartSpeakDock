@@ -24,7 +24,10 @@ import android.view.WindowManager;
 
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.baidu.unit.listener.ResultCallback;
 import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
+import com.idx.smartspeakdock.map.Bean.MapCallBack;
+import com.idx.smartspeakdock.map.PathWay;
 import com.idx.smartspeakdock.music.service.MusicCallBack;
 import com.idx.smartspeakdock.service.ControllerService;
 import com.idx.smartspeakdock.service.SpeakerService;
@@ -360,6 +363,13 @@ public class MainActivity extends BaseActivity {
                     revokeMainMusicVoice(music_name);
                 }
             });
+            //map语音处理
+            mControllerBinder.setMapControllerListener(new MapCallBack() {
+                @Override
+                public void onMapCallBack(String name, String address, String fromAddress, String toAddress, PathWay pathWay, ResultCallback result) {
+                    revokeMainMapVoice(name,address,fromAddress,toAddress,pathWay,result);
+                }
+            });
         }
 
         @Override
@@ -410,6 +420,26 @@ public class MainActivity extends BaseActivity {
             Log.d(TAG, "music222: " + music_name);
             mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.WhichFragment.MUSIC_FRAGMENT_INTENT_ID);
             mIntent.putExtra("music_name",music_name);
+            startActivity(mIntent);
+            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
+        }
+    }
+
+    private void revokeMainMapVoice(String name, String address, String fromAddress, String toAddress, PathWay pathWay, ResultCallback result){
+        if (!isActivityTop) {
+            Log.i(TAG, "revokeMainMapVoice: 当前Activity不是SwipeActivity");
+            mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.WhichFragment.MAP_FRAGMENT_INTENT_ID);
+            Bundle args = new Bundle();
+            args.putString("name", name);
+            args.putString("address", address);
+            args.putString("fromAddress", fromAddress);
+            args.putString("toAddress", toAddress);
+            if(pathWay==null){
+                args.putString("pathWay","");
+            }else{
+                args.putString("pathWay",pathWay.getDesc());
+            }
+            mIntent.putExtra("map", args);
             startActivity(mIntent);
             mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
         }
