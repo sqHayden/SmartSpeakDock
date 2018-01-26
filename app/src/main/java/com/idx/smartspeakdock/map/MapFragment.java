@@ -5,7 +5,10 @@ package com.idx.smartspeakdock.map;
  */
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -22,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
@@ -46,11 +50,14 @@ import com.amap.api.services.poisearch.PoiSearch;
 import com.google.gson.Gson;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.map.Bean.ReturnMapAnswerCallBack;
 import com.idx.smartspeakdock.map.adapter.SearchResultAdapter;
 import com.idx.smartspeakdock.map.overlay.PoiOverlay;
 import com.idx.smartspeakdock.map.util.Constants;
 import com.idx.smartspeakdock.map.util.SensorEventHelper;
 import com.idx.smartspeakdock.map.util.ToastUtil;
+import com.idx.smartspeakdock.utils.GlobalUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +67,7 @@ import java.util.List;
 public class MapFragment extends BaseFragment implements
         AMapLocationListener, AMap.OnMarkerClickListener,
         AMap.OnCameraChangeListener, View.OnClickListener,
-        AMap.OnMapClickListener, PoiSearch.OnPoiSearchListener {
+        AMap.OnMapClickListener, PoiSearch.OnPoiSearchListener{
     //地图视图对象
     private MapView mapView;
     //地图控制对象
@@ -114,17 +121,65 @@ public class MapFragment extends BaseFragment implements
     //定位蓝点颜色参数
     private static final int STROKE_COLOR = Color.argb(180, 3, 145, 255);
     private static final int FILL_COLOR = Color.argb(10, 0, 0, 180);
+    //语音回调相关参数传递
+    private static String name;
+    private static String address;
+    private static String fromAddress;
+    private static String toAddress;
+    private static String pathWay;
+    private MapBroadcastReceiver mMapBroadcastReceiver;
+    private Context context;
 
-    //构造参数
-    public static MapFragment newInstance() {
-        return new MapFragment();
+
+    //无参构造
+    public MapFragment(){}
+    public static MapFragment newInstance(String name1,String address1,String fromAddress1,String toAddress1,String pathWay1){
+        MapFragment mapFragment = new MapFragment();
+        name = name1;
+        address = address1;
+        fromAddress = fromAddress1;
+        toAddress = toAddress1;
+        pathWay = pathWay1;
+        return mapFragment;
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         mKeyWords = "";
         poiItems = new ArrayList<>();
         super.onCreate(savedInstanceState);
+        //注册地图语音广播
+        registerMapVoiceBroadcast();
+    }
+
+    private void registerMapVoiceBroadcast() {
+        mMapBroadcastReceiver = new MapBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(GlobalUtils.Map.MAP_BROADCAST_ACTION);
+        context = getContext();
+        context.registerReceiver(mMapBroadcastReceiver,intentFilter);
+    }
+
+    /**
+     * 注册广播
+     * **/
+    public class MapBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("地图广播", "onReceive: actionId = "+intent.getAction());
+            switch (intent.getAction()){
+                case GlobalUtils.Map.MAP_BROADCAST_ACTION:
+                    name = intent.getStringExtra("name");
+                    address = intent.getStringExtra("address");
+                    fromAddress = intent.getStringExtra("fromAddress");
+                    toAddress = intent.getStringExtra("toAddress");
+                    speakMethod();
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     @Nullable
@@ -235,6 +290,21 @@ public class MapFragment extends BaseFragment implements
     }
 
     /**
+     * 处理语音执行及回调
+     * **/
+    private void speakMethod(){
+        Log.d("地图信息查看：","name:"+name+"---"+"address:"+address+"---"+"fromAddress:"+fromAddress+"---"+"toAddress:"+toAddress+"---"+"pathWay"+pathWay);
+        if(name.equals("")&&address.equals("")&&fromAddress.equals("")) {//说明查位置，直接进行回调
+            //隐藏list
+            listView.setVisibility(View.GONE);
+            //设置定位在 我的位置
+            toMyLocation(currentLocation);
+            //返回语音
+            returnMapAnswerCallBack.onReturnAnswer(LOCATION_MARKER_FLAG);
+        }
+    }
+
+    /**
      * 方法必须重写
      */
     @Override
@@ -256,6 +326,8 @@ public class MapFragment extends BaseFragment implements
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        //解绑广播注册
+        context.unregisterReceiver(mMapBroadcastReceiver);
         if (mBigIcon != null) {
             mBigIcon.destroy();
         }
@@ -343,10 +415,8 @@ public class MapFragment extends BaseFragment implements
                 searchResultAdapter = new SearchResultAdapter(getActivity(), amapLocation);
                 //获取定位信息
                 StringBuffer buffer = new StringBuffer();
-                buffer.append(amapLocation.getCountry() + ""
-                        + amapLocation.getProvince() + ""
+                buffer.append(amapLocation.getProvince() + ""
                         + amapLocation.getCity() + ""
-                        + amapLocation.getProvince() + ""
                         + amapLocation.getDistrict() + ""
                         + amapLocation.getStreet() + ""
                         + amapLocation.getStreetNum());
@@ -358,6 +428,8 @@ public class MapFragment extends BaseFragment implements
                 addMarker(currentLocation);//添加定位图标
                 mSensorHelper.setCurrentMarker(mSmallIcon);//定位图标旋转
                 toMyLocation(currentLocation);
+                //判断是否有语音
+                speakMethod();
             }
         } else {
             String errText = "定位失败," + amapLocation.getErrorCode() + ": " + amapLocation.getErrorInfo();
@@ -530,7 +602,7 @@ public class MapFragment extends BaseFragment implements
             Tip tip = data.getParcelableExtra(Constants.EXTRA_TIP);
             Log.d("item点击接收", tip.getName());
             if (tip.getPoiID() == null || tip.getPoiID().equals("")) {
-                doSearchQuery(tip.getName());
+                doSearchQuery(tip.getName(),3);
             } else {
                 Log.d("直接进入了添加marker操作", "123456");
                 addTipMarker(tip);
@@ -545,7 +617,7 @@ public class MapFragment extends BaseFragment implements
             clearMarkers();
             String keywords = data.getStringExtra(Constants.KEY_WORDS_NAME);
             if (keywords != null && !keywords.equals("")) {
-                doSearchQuery(keywords);
+                doSearchQuery(keywords,3);
             }
             input_text.setText(keywords);
             if (!keywords.equals("")) {
@@ -562,13 +634,13 @@ public class MapFragment extends BaseFragment implements
     /**
      * 开始进行poi搜索
      */
-    protected void doSearchQuery(String keywords) {
+    protected void doSearchQuery(String keywords,int page) {
         //显示进度框
         showProgressDialog();
         //第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
         query = new PoiSearch.Query(keywords, "", currentCity);
         //设置每页最多返回多少条poiItem
-        query.setPageSize(3);
+        query.setPageSize(page);
         //设置查第一页
         query.setPageNum(1);
         //Poi查询设置
@@ -738,5 +810,11 @@ public class MapFragment extends BaseFragment implements
         }
         //地图刷新
         aMap.runOnDrawFrame();
+    }
+
+    private ReturnMapAnswerCallBack returnMapAnswerCallBack;
+
+    public void setMapReturnAnswerCallback(ReturnMapAnswerCallBack returnMapAnswerCallback){
+        returnMapAnswerCallBack = returnMapAnswerCallback;
     }
 }

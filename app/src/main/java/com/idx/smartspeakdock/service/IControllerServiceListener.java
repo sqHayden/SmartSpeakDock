@@ -1,6 +1,7 @@
 package com.idx.smartspeakdock.service;
 
 import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
+import com.idx.smartspeakdock.map.Bean.MapCallBack;
 import com.idx.smartspeakdock.music.service.MusicCallBack;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
 import com.idx.smartspeakdock.weather.presenter.WeatherCallback;
@@ -16,4 +17,5 @@ public interface IControllerServiceListener {
     void setCalendarControllerListener(CalendarCallBack calendarCallBack);
     void setWeatherControllerListener(WeatherCallback weatherCallback);
     void onGetMusicName(MusicCallBack musicCallBack);
+    void setMapControllerListener(MapCallBack mapCallBack);
 }

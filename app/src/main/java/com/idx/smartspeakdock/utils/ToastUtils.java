@@ -9,12 +9,19 @@ import android.widget.Toast;
  */
 
 public class ToastUtils {
+    public static Toast mToasts = null;
 
     public static void showMessage(Context context,String msg){
-        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+        mToasts = mToasts != null ? mToasts : Toast.makeText(context, msg, Toast.LENGTH_LONG) ;
+        mToasts.show();
     }
 
     public static void showError(Context context,String errorMsg){
-        Toast.makeText(context, errorMsg, Toast.LENGTH_LONG).show();
+        mToasts = mToasts != null ? mToasts : Toast.makeText(context, errorMsg, Toast.LENGTH_LONG) ;
+        mToasts.show();
+    }
+
+    public void onDestroy(){
+        mToasts = null;
     }
 }

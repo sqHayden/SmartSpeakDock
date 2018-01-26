@@ -69,7 +69,7 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
 
         MusicListFragment musicListFragment=new MusicListFragment();
         Bundle args = new Bundle();
-        args.putString(GlobalUtils.MUSIC_NAME_ID,music_name);
+        args.putString(GlobalUtils.Music.MUSIC_NAME_ID,music_name);
         musicListFragment.setArguments(args);
         Log.d(TAG, "newInstance: "+musicListFragment);
         return musicListFragment;
@@ -80,7 +80,7 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
         super.onAttach(context);
         Log.d(TAG, "onAttach: ");
         if(getArguments() != null){
-            music_name = getArguments().getString(GlobalUtils.MUSIC_NAME_ID);
+            music_name = getArguments().getString(GlobalUtils.Music.MUSIC_NAME_ID);
         }
     }
 
@@ -116,7 +116,7 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
         intentFilter.addAction(MusicPlay.ACTION_MEDIA_PREVIOUS);
         intentFilter.addAction(MusicPlay.ACTION_MEDIA_COMPLETE);
         intentFilter.addAction(MusicPlay.ACTION_MEDIA_ERROR);
-        intentFilter.addAction(GlobalUtils.MUSIC_BROADCAST_ACTION);
+        intentFilter.addAction(GlobalUtils.Music.MUSIC_BROADCAST_ACTION);
         getActivity().registerReceiver(musicBroadcastReceiver,intentFilter);
 
     }
@@ -345,7 +345,7 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
                 case MusicPlay.ACTION_MEDIA_ERROR:
                     mHandler.sendEmptyMessage(CONSTAN_MUSIC_ERROR);
                     break;
-                case GlobalUtils.MUSIC_BROADCAST_ACTION:
+                case GlobalUtils.Music.MUSIC_BROADCAST_ACTION:
                     music_name=intent.getStringExtra("music_name");
                     Log.d(TAG, "onReceive: "+music_name);
                     musicService.musicPlay.play(music_name);

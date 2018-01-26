@@ -106,7 +106,6 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        startTime = System.currentTimeMillis();
         BaseActivity baseActivity = (BaseActivity) getActivity();
         Logger.setEnable(true);
         if (savedInstanceState != null) {
@@ -134,14 +133,6 @@ public class StandByFragment extends BaseFragment implements IStandByView{
         init();
         location_textView.setText(getActivity().getString(R.string.Shenzhen));
         return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        long endTime = System.currentTimeMillis();
-        long time = endTime - startTime;
-        Log.i("ryan", "onCreate: standby time_interval = "+time);
     }
 
     @Override
