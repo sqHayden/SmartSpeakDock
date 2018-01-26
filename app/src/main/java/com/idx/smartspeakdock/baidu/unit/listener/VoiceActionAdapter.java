@@ -13,13 +13,12 @@ import com.idx.smartspeakdock.Swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.TTSManager;
 import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
 import com.idx.smartspeakdock.map.PathWay;
-import com.idx.smartspeakdock.map.SearchArea;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.MathTool;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 
 
@@ -138,7 +137,7 @@ public class VoiceActionAdapter {
                 Log.d(TAG, "voice session: end");
                 return true;
 
-            case Actions.HELP_MODULE:
+            case Actions.HELP_MODULE_NAME:
                 return false;
             case Actions.HELP:
                 help();

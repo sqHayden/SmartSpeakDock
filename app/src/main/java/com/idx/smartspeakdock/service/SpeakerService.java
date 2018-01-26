@@ -105,12 +105,22 @@ public class SpeakerService extends Service implements IStatus {
      * 唤醒服务状态标识
      */
     private int wakeUpStatus = STATUS_NONE;
-
-    private Handler mHandler = null;
-    private SpeakDialog speakDialog = null;
+    /**
+     * 语音交互声波纹
+     */
+    private SpeakDialog mSpeakDialog = null;
+    /**
+     * 唤醒状态
+     */
     private boolean isWaked = false;
+    /**
+     * 消息接收状态，定时置false，接收到消息置为true
+     */
     private boolean isReceived = false;
-
+    private Handler mHandler = null;
+    /**
+     * 超时定时器
+     */
     private Runnable timerRunnable = new Runnable() {
         @Override
         public void run() {
@@ -123,9 +133,22 @@ public class SpeakerService extends Service implements IStatus {
             }
         }
     };
+    /**
+     * 数据部分为本地化，若迁移至伺服器，可联网获取，动态变更
+     * 再见语音数据
+     */
     private String[] mVoiceArrayBye;
+    /**
+     * 欢迎语音数据
+     */
     private String[] mVoiceArrayWel;
+    /**
+     * 抱歉语音数据
+     */
     private String[] mVoiceArraySorry;
+    /**
+     * 重复语音数据
+     */
     private String[] mVoiceRepeat;
 
     private static class VoiceHandler extends Handler {
@@ -146,7 +169,8 @@ public class SpeakerService extends Service implements IStatus {
             switch (msg.what) {
                 case CONSTANT_WAKE_UP:
                 case CONSTANT_SESSION_START:
-                    //语音唤醒后，开启会话，创建会话窗口
+                    // 进入口为wake up，定义CONSTANT_SESSION_START，只为便于将session和wake up区分理解，细化逻辑
+                    // 语音唤醒后，开启会话，创建会话窗口
                     if (service.isWaked) {
                         long timeNow = System.currentTimeMillis();
                         if (timeNow - startTime < CONSTANT_WAKE_UP_SPACE) {
@@ -160,10 +184,10 @@ public class SpeakerService extends Service implements IStatus {
                     service.mHandler.post(service.timerRunnable);
 
                     UnitManager.getInstance(service.getBaseContext()).enableSession(true);
-                    if (service.speakDialog == null) {
-                        service.speakDialog = new SpeakDialog(service.getBaseContext());
+                    if (service.mSpeakDialog == null) {
+                        service.mSpeakDialog = new SpeakDialog(service.getBaseContext());
                     }
-                    service.speakDialog.showReady();
+                    service.mSpeakDialog.showReady();
                     String voiceWel = service.mVoiceArrayWel[MathTool.randomValue(service.mVoiceArrayWel.length)];
                     Log.d(TAG, "welcome voice: " + voiceWel);
                     TTSManager.getInstance().speak(voiceWel, new TTSManager.SpeakCallback() {
@@ -185,15 +209,15 @@ public class SpeakerService extends Service implements IStatus {
                     break;
                 case CONSTANT_RECOGNIZE_START:
                     //显示会话窗口，并开始识别，需回溯
-                    if (service.speakDialog != null) {
-                        service.speakDialog.showSpeaking();
+                    if (service.mSpeakDialog != null) {
+                        service.mSpeakDialog.showSpeaking();
                         service.startRecognize();
                     }
 
                     break;
                 case CONSTANT_RECOGNIZE_FINISH:
-                    if (service.speakDialog != null) {
-                        service.speakDialog.showReady();
+                    if (service.mSpeakDialog != null) {
+                        service.mSpeakDialog.showReady();
                     }
                     break;
                 case CONSTANT_TIME_TICK:
@@ -204,9 +228,9 @@ public class SpeakerService extends Service implements IStatus {
                 case CONSTANT_SESSION_ERROR:
                 case CONSTANT_SESSION_FINISH:
                     UnitManager.getInstance(service.getBaseContext()).enableSession(false);
-                    if (service.speakDialog != null) {
-                        service.speakDialog.dismiss();
-                        service.speakDialog = null;
+                    if (service.mSpeakDialog != null) {
+                        service.mSpeakDialog.dismiss();
+                        service.mSpeakDialog = null;
                     }
                     service.isWaked = false;
                     service.mHandler.removeCallbacks(service.timerRunnable);
@@ -281,6 +305,9 @@ public class SpeakerService extends Service implements IStatus {
 
     }
 
+    /**
+     * 初始化
+     */
     private void initRecog() {
         //初始化语音唤醒
         mWakeUpManager = new WakeUpManager(getBaseContext(), new SimpleWakeupListener());
@@ -336,9 +363,9 @@ public class SpeakerService extends Service implements IStatus {
             mRecognizerManager = null;
         }
 
-        if (speakDialog != null) {
-            speakDialog.dismiss();
-            speakDialog = null;
+        if (mSpeakDialog != null) {
+            mSpeakDialog.dismiss();
+            mSpeakDialog = null;
         }
 
         if (mHandler != null) {
@@ -351,6 +378,9 @@ public class SpeakerService extends Service implements IStatus {
 
     }
 
+    /**
+     * 唤醒事件监听器
+     */
     public class SimpleWakeupListener implements IWakeupListener {
         @Override
         public void onSuccess(String word, WakeUpResult result) {
@@ -378,6 +408,10 @@ public class SpeakerService extends Service implements IStatus {
     }
 
     //百度Demo引用类
+
+    /**
+     * 识别过程监听器
+     */
     public class MessageStatusRecogListener extends StatusRecogListener {
 
         private long speechEndTime;
@@ -568,6 +602,9 @@ public class SpeakerService extends Service implements IStatus {
         }
     }
 
+    /**
+     * 会话状态监听器
+     */
     public class SessionListener implements ISessionListener {
         @Override
         public void onSessionFinish() {

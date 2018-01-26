@@ -8,7 +8,7 @@ public interface Actions {
     String OPEN_MODULE_NAME = "open_user_module_name_clarify";
     String OPEN_NOW = "open_satisfy";
     String EXIT_VOICE = "voice_session_exit_satisfy";
-    String HELP_MODULE = "help_user_module_name_clarify";
+    String HELP_MODULE_NAME = "help_user_module_name_clarify";
     String HELP = "help_satisfy";
 
     interface Calender {
