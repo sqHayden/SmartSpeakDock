@@ -9,7 +9,7 @@ import com.idx.smartspeakdock.Actions;
 import com.idx.smartspeakdock.Modules;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.SlotsTypes;
-import com.idx.smartspeakdock.Swipe.SwipeActivity;
+import com.idx.smartspeakdock.swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.TTSManager;
 import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
 import com.idx.smartspeakdock.map.PathWay;

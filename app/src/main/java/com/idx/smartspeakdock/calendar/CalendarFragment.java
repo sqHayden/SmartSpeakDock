@@ -1,7 +1,6 @@
 package com.idx.smartspeakdock.calendar;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,7 +24,7 @@ import com.idx.calendarview.CalendarView;
 import com.idx.calendarview.MessageEvent;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
-import com.idx.smartspeakdock.Swipe.SwipeActivity;
+import com.idx.smartspeakdock.swipe.SwipeActivity;
 import com.idx.smartspeakdock.calendar.adapter.MyRecyclerView;
 import com.idx.smartspeakdock.calendar.bean.Schedule;
 import com.idx.smartspeakdock.calendar.model.Model;

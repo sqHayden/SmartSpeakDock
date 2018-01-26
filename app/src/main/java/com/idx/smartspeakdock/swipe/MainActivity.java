@@ -1,4 +1,4 @@
-package com.idx.smartspeakdock.Swipe;
+package com.idx.smartspeakdock.swipe;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -158,9 +158,10 @@ public class MainActivity extends BaseActivity {
 
     private void initToolBar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setBackgroundColor(getResources().getColor(R.color.colorSelfBlack));
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setHomeAsUpIndicator(R.drawable.menu_left);
         ab.setTitle("");
         ab.setDisplayHomeAsUpEnabled(true);
         //待机界面

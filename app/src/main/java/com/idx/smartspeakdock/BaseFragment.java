@@ -1,7 +1,6 @@
 package com.idx.smartspeakdock;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -10,7 +9,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.idx.smartspeakdock.Swipe.SwipeActivity;
+import com.idx.smartspeakdock.swipe.SwipeActivity;
 import com.idx.smartspeakdock.calendar.CalendarFragment;
 import com.idx.smartspeakdock.map.MapFragment;
 import com.idx.smartspeakdock.music.activity.MusicListFragment;

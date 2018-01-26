@@ -40,6 +40,37 @@
         android:background="#3C3F41"
         android:layout_marginTop="@dimen/setting_divider_margin_top"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/setting_voice_margin_top">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bind_device"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/setting_left"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/setting_voice_textsize"/>
+
+        <ImageView
+            android:id="@+id/device_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/setting_left"
+            android:background="@mipmap/device_add_other"
+            />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#3C3F41"
+        android:layout_marginTop="@dimen/setting_divider_margin_top"/>
+
     <TextView
         android:id="@+id/about"
         android:layout_width="match_parent"

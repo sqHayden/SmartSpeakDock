@@ -32,6 +32,9 @@
 
     //setting
     <string name="voice_switch_on_off">语音开启设置</string>
+    <string name="voice_switch_on_text">开启</string>
+    <string name="voice_switch_off_text">关闭</string>
+    <string name="bind_device">设备绑定</string>
     <string name="about">关于</string>
     <string name="version">版本</string>
     //calendar
@@ -53,6 +56,13 @@
     <string name="please_add_event">请添加事件</string>
     <string name="delete">删除</string>
 
-
+    //map
+    <string name="no_result">对不起，没有搜索到相关数据！</string>
+    //splash
+    <string name="Shenzhen">深圳市</string>
+    <string name="life_car">洗车：较适宜</string>
+    <string name="life_clothes">穿衣：较冷</string>
+    <string name="wash_car">洗车</string>
+    <string name="clothes">穿衣</string>
 
 </resources>

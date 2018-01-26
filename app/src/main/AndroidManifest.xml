@@ -57,7 +57,7 @@
 
 
         <activity
-            android:name=".Swipe.MainActivity"
+            android:name=".swipe.MainActivity"
 
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -68,13 +68,13 @@
 
 
         <activity
-            android:name=".Swipe.SwipeActivity"
+            android:name=".swipe.SwipeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan|stateHidden"
             />
         <activity
-            android:name=".Setting.AboutActivity"
+            android:name=".setting.AboutActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service

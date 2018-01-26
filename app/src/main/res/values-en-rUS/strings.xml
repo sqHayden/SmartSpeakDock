@@ -44,6 +44,7 @@
     <string name="voice_switch_on_off">voice switch on or off</string>
     <string name="voice_switch_on_text">on</string>
     <string name="voice_switch_off_text">off</string>
+    <string name="bind_device">bind device</string>
     <string name="about">about</string>
     <string name="version">Version</string>
     //calendar

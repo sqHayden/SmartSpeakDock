@@ -72,6 +72,8 @@ public class ShoppingFragment extends BaseFragment {
         }
         progDailog = new ProgressDialog(mContext);
         progDailog.setTitle(getActivity().getResources().getString(R.string.web_message_loading));
+        progDailog.setIndeterminate(true);
+        progDailog.setCanceledOnTouchOutside(true);
         //注册广播
         registerBroadcast();
 //        web_url = "http://m.flnet.com";
@@ -100,7 +102,7 @@ public class ShoppingFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
-        progDailog.setCancelable(false);
+//        progDailog.setCancelable(false);
         webView.setWebChromeClient(new WebChromeClient());
         //判断是否网络
         initWebsites();

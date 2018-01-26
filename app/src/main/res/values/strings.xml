@@ -46,6 +46,7 @@
     <string name="voice_switch_on_off">语音开启设置</string>
     <string name="voice_switch_on_text">开启</string>
     <string name="voice_switch_off_text">关闭</string>
+    <string name="bind_device">设备绑定</string>
     <string name="about">关于</string>
     <string name="version">版本</string>
     //calendar
@@ -76,6 +77,4 @@
     <string name="life_clothes">穿衣：较冷</string>
     <string name="wash_car">洗车</string>
     <string name="clothes">穿衣</string>
-
->>>>>>> e0ad539c8325dbb8d03805e41f07e3b871b70dfb
 </resources>

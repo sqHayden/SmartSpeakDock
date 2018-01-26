@@ -1,4 +1,4 @@
-package com.idx.smartspeakdock.Setting;
+package com.idx.smartspeakdock.setting;
 
 import android.content.Context;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package com.idx.smartspeakdock.Swipe;
+package com.idx.smartspeakdock.swipe;
 
 import android.content.Context;
 import android.support.v4.view.ViewCompat;

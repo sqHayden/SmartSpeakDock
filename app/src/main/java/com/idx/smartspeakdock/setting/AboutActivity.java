@@ -1,4 +1,4 @@
-package com.idx.smartspeakdock.Setting;
+package com.idx.smartspeakdock.setting;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
-import com.idx.smartspeakdock.Swipe.SwipeActivity;
+import com.idx.smartspeakdock.swipe.SwipeActivity;
 import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
 import com.idx.smartspeakdock.music.service.MusicCallBack;
 import com.idx.smartspeakdock.service.ControllerService;
@@ -69,17 +69,17 @@ public class AboutActivity extends BaseActivity {
             e.printStackTrace();
         }
         app_version_show.setText(getResources().getString(R.string.version)+" v" + packageInfo.versionName);
-
     }
 
     private void initToolbar() {
-            toolbar = (Toolbar) findViewById(R.id.about_toolbar);
-            setSupportActionBar(toolbar);
-            ActionBar ab = getSupportActionBar();
-            mBitmap = BitmapUtils.scaleBitmapFromResources(this,R.drawable.back,15,30);
-            ab.setHomeAsUpIndicator(new BitmapDrawable(mBitmap));
-            ab.setTitle(getResources().getString(R.string.about));
-            ab.setDisplayHomeAsUpEnabled(true);
+        toolbar = (Toolbar) findViewById(R.id.about_toolbar);
+        toolbar.setBackgroundColor(getResources().getColor(R.color.colorSelfBlack));
+        setSupportActionBar(toolbar);
+        ActionBar ab = getSupportActionBar();
+        mBitmap = BitmapUtils.scaleBitmapFromResources(this,R.drawable.back,15,30);
+        ab.setHomeAsUpIndicator(new BitmapDrawable(mBitmap));
+        ab.setTitle(getResources().getString(R.string.about));
+        ab.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

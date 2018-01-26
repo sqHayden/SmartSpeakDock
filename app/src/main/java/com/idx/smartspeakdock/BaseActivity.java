@@ -4,10 +4,8 @@ import android.Manifest;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,8 +16,7 @@ import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.idx.smartspeakdock.Swipe.SwipeActivity;
-import com.idx.smartspeakdock.standby.StandByActivity;
+import com.idx.smartspeakdock.swipe.SwipeActivity;
 
 import java.util.ArrayList;
 import java.util.List;

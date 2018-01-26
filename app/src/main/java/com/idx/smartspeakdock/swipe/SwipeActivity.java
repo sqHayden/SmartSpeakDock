@@ -1,4 +1,4 @@
-package com.idx.smartspeakdock.Swipe;
+package com.idx.smartspeakdock.swipe;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -27,7 +27,7 @@ import android.view.WindowManager;
 
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
-import com.idx.smartspeakdock.Setting.SettingFragment;
+import com.idx.smartspeakdock.setting.SettingFragment;
 import com.idx.smartspeakdock.baidu.unit.listener.ResultCallback;
 import com.idx.smartspeakdock.calendar.CalendarFragment;
 import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
@@ -221,9 +221,10 @@ public class SwipeActivity extends BaseActivity {
     private void initToolBar() {
         mResources = getResources();
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setBackgroundColor(mResources.getColor(R.color.colorSelfBlack));
         setSupportActionBar(mToolbar);
         mActionBar = getSupportActionBar();
-        mActionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        mActionBar.setHomeAsUpIndicator(R.drawable.menu_left);
         mActionBar.setDisplayHomeAsUpEnabled(true);
         mMap_voice_flag = -1;
     }
@@ -638,6 +639,7 @@ public class SwipeActivity extends BaseActivity {
                     if (mWeather_return_voice != null) {
                             Log.i(TAG, "onReturnAnswer: voiceAnswer");
                             mWeather_return_voice.onReturnVoice(voiceAnswer);
+                            mWeather_voice_flag = -1;
                     }
                 }
             });
