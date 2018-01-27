@@ -21,6 +21,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 
 /**
+ * 语音加载天气回调工具类
  * Created by ryan on 17-12-23.
  * Email: Ryan_chan01212@yeah.net
  */

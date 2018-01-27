@@ -148,11 +148,11 @@ public class CityConfig {
         //滚轮显示的item个数
         private int visibleItems = 3;
 
-        private String cancelTextColorStr = "#000000";
+        private String cancelTextColorStr = "#ffffff";
         private String cancelText = "CANCEL";
         private int cancelTextSize = 16;
 
-        private String confirmTextColorStr = "#0000FF";
+        private String confirmTextColorStr = "#ffffff";
         private String confirmText = "OK";
         private int confirmTextSize = 16;
 

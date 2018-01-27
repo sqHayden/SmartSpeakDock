@@ -3,6 +3,7 @@ package com.idx.smartspeakdock.weather.ui;
 import com.idx.smartspeakdock.weather.model.weather.Weather;
 
 /**
+ * MVP：view接口
  * Created by danny on 12/22/17.
  */
 

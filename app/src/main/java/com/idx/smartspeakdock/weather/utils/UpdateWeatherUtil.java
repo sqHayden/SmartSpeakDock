@@ -25,6 +25,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 
 /**
+ * 定时更新数据库工具类
  * Created by danny on 1/8/18.
  */
 

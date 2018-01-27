@@ -83,6 +83,8 @@
     <dimen name="calendar_textsize_select">18sp</dimen>
 
     //weather
+    <dimen name="city_dialog_button_textsize">29sp</dimen>
+    <dimen name="city_dialog_title_textsize">48sp</dimen>
     <dimen name="weather_three_little_title_textsize">36sp</dimen>
     <dimen name="weather_city_textSize">60sp</dimen>
     <dimen name="weather_city_below_textSize">29sp</dimen>

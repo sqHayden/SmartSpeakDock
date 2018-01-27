@@ -1,6 +1,7 @@
 package com.idx.smartspeakdock.weather.model.weather;
 
 /**
+ * 空气质量对象
  * Created by danny on 12/16/17.
  */
 

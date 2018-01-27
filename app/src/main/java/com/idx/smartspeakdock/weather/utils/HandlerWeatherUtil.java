@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
+ * 天气信息处理工具类
  * Created by danny on 12/15/17.
  */
 

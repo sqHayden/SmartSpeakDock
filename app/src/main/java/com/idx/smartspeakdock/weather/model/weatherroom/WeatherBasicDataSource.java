@@ -3,6 +3,7 @@ package com.idx.smartspeakdock.weather.model.weatherroom;
 import java.util.List;
 
 /**
+ * 对天气基本信息操作数据库接口
  * Created by danny on 1/5/18.
  */
 

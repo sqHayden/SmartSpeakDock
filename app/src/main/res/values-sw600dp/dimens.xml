@@ -79,6 +79,8 @@
     <dimen name="music_title_marginTop">286dp</dimen>
 
     //weather
+    <dimen name="city_dialog_button_textsize">24sp</dimen>
+    <dimen name="city_dialog_title_textsize">40sp</dimen>
     <dimen name="weather_three_little_title_textsize">30sp</dimen>
     <dimen name="weather_city_textSize">50sp</dimen>
     <dimen name="weather_city_below_textSize">24sp</dimen>

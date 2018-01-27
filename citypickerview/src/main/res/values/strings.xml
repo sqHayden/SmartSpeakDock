@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">CityPicker</string>
-    <string name="add_city_sure">OK</string>
-    <string name="add_city_cancel">CANCEL</string>
+    <string name="add_city_sure">确定</string>
+    <string name="add_city_cancel">取消</string>
     <string name="add_city">添加城市</string>
 </resources>

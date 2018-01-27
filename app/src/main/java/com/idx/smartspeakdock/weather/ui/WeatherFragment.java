@@ -99,7 +99,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
     private int mWeather_Voice_flag;
     private WeatherBroadcastReceiver mWeatherBroadcastReceiver;
     private SharedPreferences sp;
-    private AppExecutors mAppExecutors;
+//    private AppExecutors mAppExecutors;
 
 //    private GetCityService.MyBinder mCityBinder;
 //    private ServiceConnection mCityConn = new ServiceConnection() {
@@ -122,7 +122,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
 //        }
 //    };
 
-    //定时更新界面
+    /**
+     * 定时更新天气界面
+     */
     private void initTimer() {
         mTask = new TimerTask() {
             @Override
@@ -132,7 +134,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
                 } else {
                     getWeatherBasic(UNVOICE,mCurrentCounty,"","");
                 }
-                getWeatherAqi(UNVOICE,mCurrentCity,"","");
+                if (judgeCityAqiIsQuery()) {
+                    getWeatherAqi(UNVOICE, mCurrentCity, "", "");
+                }
             }
         };
         mTimer = new Timer();
@@ -141,6 +145,15 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
 
     public WeatherFragment(){}
 
+    /**
+     * 通过语音获取WeatherFragment对象，并传递相关参数
+     *
+     * @param cityName 城市名
+     * @param time 时间
+     * @param fun_flag 所问天气类型
+     * @param flag 是否是语音
+     * @return WeatherFragment对象
+     */
     public static WeatherFragment newInstance(String cityName,String time,String fun_flag,int flag){
         WeatherFragment weatherFragment = new WeatherFragment();
         Bundle args = new Bundle();
@@ -162,8 +175,8 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         mWeather_Voice_flag = -1;
         if (getArguments() != null){
             Bundle args = getArguments();
-            mWeather_city = args.getString("cityname");
-            mWeather_time = args.getString("time");
+            mWeather_city = args.getString("cityname","深圳");
+            mWeather_time = args.getString("time","今天");
             mWeather_fun_flag = args.getString("fun_flag");
             mWeather_Voice_flag = args.getInt("voice_flag");
             Log.i(TAG, "onAttach: mWeather_voice_flag = "+mWeather_Voice_flag);
@@ -188,7 +201,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
             baseActivity.getApplicationContext().bindService(intent, mCityConn, BIND_AUTO_CREATE);
         }*/
 
-        mAppExecutors=new AppExecutors();
+//        mAppExecutors=new AppExecutors();
         if (savedInstanceState != null) {
             mCurrentCity = savedInstanceState.getString("city");
             mCurrentCounty = savedInstanceState.getString("county");
@@ -206,17 +219,20 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
             getWeatherBasic(UNVOICE,mCurrentCounty,"","");
             getWeatherAqi(UNVOICE, mCurrentCity, "", "");
         }
-        initTimer();
+//        initTimer();
         //注册天气语音广播
         registerWeatherVoiceBroadcast();
-        mAppExecutors.getDiskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                CityPickerView.getInstance().init(mContext);
-            }
-        });
+//        mAppExecutors.getDiskIO().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                CityPickerView.getInstance().init(mContext);
+//            }
+//        });
     }
 
+    /**
+     * 注册广播
+     */
     private void registerWeatherVoiceBroadcast() {
         mWeatherBroadcastReceiver = new WeatherBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
@@ -235,10 +251,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
             mVAfterWeek=mWeatherView.findViewById(R.id.weather_vertical_forecast_after_week);
         }
         initView();
-
-
         judgeAirIsShow();
-
         return mWeatherView;
     }
 
@@ -256,9 +269,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
     }
 
     /**
-     * 判断是否查询城市空气质量
+     * 判断是否可以查询城市空气质量
      *
-     * @return true:查询 false:不查询
+     * @return true:可以查询 false:不可以查询
      */
     private boolean judgeCityAqiIsQuery(){
         boolean flag=false;
@@ -270,6 +283,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         return flag;
     }
 
+    /**
+     * view初始化
+     */
     private void initView() {
         mWeatherSelectCity = mWeatherView.findViewById(R.id.weather_choose_city);
         mRefreshWeather = mWeatherView.findViewById(R.id.weather_swipe_refresh);
@@ -311,13 +327,19 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         refresh();
     }
 
-    //语音赋值当前城市名
+    /**
+     * 语音赋值当前城市名
+     *
+     * @param cityName 城市名
+     */
     private void voiceCityName(String cityName) {
         mCurrentCity = cityName;
         mCurrentCounty = cityName;
     }
 
-    //刷新天气
+    /**
+     * 刷新天气
+     */
     private void refresh() {
         mRefreshWeather.setColorSchemeResources(R.color.colorPrimary);
         mRefreshWeather.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -350,6 +372,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         outState.putString("selectCounty", mSelectCounty);
     }
 
+    /**
+     * 显示加载对话框
+     */
     public void loading(){
         try {
             loadingDialog.show();
@@ -358,6 +383,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         }
     }
 
+    /**
+     * 隱藏加载对话框
+     */
     public void compelete(){
         try {
             loadingDialog.dismiss();
@@ -475,7 +503,20 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
 //            ToastUtils.showError(mContext, getResources().getString(R.string.network_not_connected));
 //        }
 //    }
-    
+    @Override
+    public void onResume() {
+        super.onResume();
+        initTimer();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mTimer!=null) {
+            mTimer.cancel();
+        }
+    }
+
     @Override
     public void onDestroy() {
         Logger.info(TAG, "onDestroy: ");
@@ -514,9 +555,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         if (mReturnAnswerCallback!=null){
             mReturnAnswerCallback=null;
         }
-        if (mAppExecutors!=null){
-            mAppExecutors=null;
-        }
+//        if (mAppExecutors!=null){
+//            mAppExecutors=null;
+//        }
         spSaveInfo();
         if (sp!=null){
             sp=null;
@@ -538,6 +579,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
             editor=null;
         }
     }
+
     /**
      * 加载本地天气数据,未找到则加载网络天气信息
      *
@@ -963,16 +1005,17 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
      * 地址选择器
      */
     private void wheel() {
-        CityConfig cityConfig = new CityConfig.Builder(getActivity()).title("添加城市")
-                .titleTextSize(30)
-                .titleTextColor("#0e73ba")
-                .titleBackgroundColor("#C7C7C7")
-                .confirTextColor("#ffffff")
-                .confirmText("OK")
-                .confirmTextSize(16)
-                .cancelTextColor("#ffffff")
-                .cancelText("CANCEL")
-                .cancelTextSize(16)
+        CityConfig cityConfig = new CityConfig.Builder(getActivity())
+                .title(mResources.getString(R.string.weather_add_city))
+//                .titleTextSize(30)
+//                .titleTextColor("#0e73ba")
+//                .titleBackgroundColor("#C7C7C7")
+//                .confirTextColor("#ffffff")
+                .confirmText(mResources.getString(R.string.weather_add_city_sure))
+//                .confirmTextSize(16)
+//                .cancelTextColor("#ffffff")
+                .cancelText(mResources.getString(R.string.weather_add_city_cancel))
+//                .cancelTextSize(16)
 //                .setCityWheelType(mWheelType)
 //                .visibleItemsCount(visibleItems)
                 .province(mSelectProvince)
@@ -983,6 +1026,13 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
 
         CityPickerView.getInstance().setConfig(cityConfig);
         CityPickerView.getInstance().setOnCityItemClickListener(new OnCityItemClickListener() {
+
+            /**
+             * 选择城市回调
+             * @param province 选择省对应bean
+             * @param city 选择市对应bean
+             * @param district 选择县（区）对应bean
+             */
             @Override
             public void onSelected(ProvinceBean province, CityBean city, DistrictBean district) {
                 if (province != null && city != null && district!=null) {
@@ -1012,18 +1062,29 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
                 }
             }
 
+            /**
+             * 取消选择城市
+             */
             @Override
             public void onCancel() {
-                Toast.makeText(getActivity(),"取消",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),mResources.getString(R.string.weather_cancel_select_city),Toast.LENGTH_SHORT).show();
             }
         });
         CityPickerView.getInstance().showCityPicker(getActivity());
     }
 
+    /**
+     * 设置语音回调对象
+     *
+     * @param returnAnswerCallback 回调对象
+     */
     public void setReturnAnswerCallback(ReturnAnswerCallback returnAnswerCallback){
         mReturnAnswerCallback = returnAnswerCallback;
     }
 
+    /**
+     * 定义广播 接收到语音就发广播
+     */
     public class WeatherBroadcastReceiver extends BroadcastReceiver{
 
         @Override
@@ -1041,6 +1102,13 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         }
     }
 
+    /**
+     * 判断所问问题类型(温度、穿衣、紫外线等等)
+     *
+     * @param cityName 城市名
+     * @param time 时间（今天，明天，后天）
+     * @param mWeather_fun_flag 问题类型(温度、穿衣、紫外线等等)
+     */
     private void judgeVoiceAnswer(String cityName,String time,String mWeather_fun_flag) {
         switch (mWeather_fun_flag){
             case "onWeatherInfo":

@@ -36,6 +36,10 @@
     <string name="weather_week_monday">MON</string>
     <string name="weather_week_tuesday">TUE</string>
     <string name="weather_air_not_support">Air quality queries in the area are not currently supported</string>
+    <string name="weather_add_city_sure">OK</string>
+    <string name="weather_add_city_cancel">CANCEL</string>
+    <string name="weather_add_city">ADD CITY</string>
+    <string name="weather_cancel_select_city">Deselect city</string>
 
     //network error
     <string name="network_not_connected">Not any network connected,please set it，and drag out to refresh the interface</string>

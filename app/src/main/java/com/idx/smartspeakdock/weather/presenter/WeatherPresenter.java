@@ -1,6 +1,7 @@
 package com.idx.smartspeakdock.weather.presenter;
 
 /**
+ * MVP：presenter接口
  * Created by danny on 12/21/17.
  */
 

@@ -38,6 +38,10 @@
     <string name="weather_week_monday">周一</string>
     <string name="weather_week_tuesday">周二</string>
     <string name="weather_air_not_support">目前不支持该地区空气质量查询</string>
+    <string name="weather_add_city_sure">确定</string>
+    <string name="weather_add_city_cancel">取消</string>
+    <string name="weather_add_city">添加城市</string>
+    <string name="weather_cancel_select_city">取消选择城市</string>
 
     //network error
     <string name="network_not_connected">网络未连接，页面无法显示,联网后，往下拖动页面刷新</string>

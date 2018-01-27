@@ -3,6 +3,7 @@ package com.idx.smartspeakdock.weather.model;
 import com.idx.smartspeakdock.weather.presenter.OnWeatherListener;
 
 /**
+ * MVP：model接口
  * Created by danny on 12/21/17.
  */
 

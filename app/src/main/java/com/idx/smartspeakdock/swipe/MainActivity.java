@@ -41,6 +41,7 @@ import com.idx.smartspeakdock.utils.PreUtils;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
 import com.idx.smartspeakdock.weather.presenter.WeatherCallback;
+import com.lljjcoder.style.citypickerview.CityPickerView;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -100,6 +101,13 @@ public class MainActivity extends BaseActivity {
 
         //程序是否第一次启动
         isAppFirstStart();
+
+        mAppExecutors.getDiskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                CityPickerView.getInstance().init(MainActivity.this);
+            }
+        });
     }
 
     private void initDrawer() {

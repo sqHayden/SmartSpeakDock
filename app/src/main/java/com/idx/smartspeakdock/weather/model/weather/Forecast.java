@@ -3,6 +3,7 @@ package com.idx.smartspeakdock.weather.model.weather;
 import com.google.gson.annotations.SerializedName;
 
 /**
+ * 天气预报：日期，天气状况，最高最低温度
  * Created by danny on 17-11-14.
  */
 

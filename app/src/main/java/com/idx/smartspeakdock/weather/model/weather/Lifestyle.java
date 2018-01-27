@@ -1,6 +1,7 @@
 package com.idx.smartspeakdock.weather.model.weather;
 
 /**
+ * 生活指数
  * Created by danny on 12/15/17.
  */
 
