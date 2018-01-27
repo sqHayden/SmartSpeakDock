@@ -1,9 +1,11 @@
 package com.idx.smartspeakdock.standby;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
 
 import com.idx.smartspeakdock.BaseActivity;
@@ -25,6 +27,7 @@ public class StandByActivity extends BaseActivity {
         Log.d(TAG, "onCreate: ");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Logger.setEnable(true);
+        hideBottomUIMenu();
         setContentView(R.layout.content_main);
         standByFragment =
                 (StandByFragment) mFragmentManager.findFragmentById(R.id.contentFrame);
@@ -34,6 +37,20 @@ public class StandByActivity extends BaseActivity {
                     mFragmentManager, standByFragment, R.id.contentFrame);
         }
         
+    }
+
+    protected void hideBottomUIMenu() {
+        //隐藏虚拟按键，并且全屏
+        if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
+            View v = this.getWindow().getDecorView();
+            v.setSystemUiVisibility(View.GONE);
+        } else if (Build.VERSION.SDK_INT >= 19) {
+            //for new api versions.
+            View decorView = getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
     }
 
     @Override
