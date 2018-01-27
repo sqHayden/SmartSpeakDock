@@ -26,6 +26,7 @@ public  class Util {
     static   String answer1 = "";
     static   String answer = "";
     static CalendarView mCalendarView;
+    static Boolean isleap;
     public Util(Context context,CalendarView calendarView) {
         this.context = context;
         this.mCalendarView = calendarView;
@@ -236,4 +237,106 @@ public  class Util {
         }
         return englishmonth;
     }
+    /*
+    *根据节日得到日期
+    */
+
+    public static String  getHolidayDate(String holiday){
+         answer = "";
+        switch (holiday){
+            case "元旦":
+                answer = holiday + "是" + "1月1号";
+                break;
+            case "情人节":
+                answer = holiday + "是" + "2月14号";
+                break;
+            case "消权日":
+                answer = holiday + "是" + "3月15号";
+                break;
+            case "愚人节":
+                answer = holiday + "是" + "4月1号";
+                break;
+            case "清明节":
+                answer = holiday + "是" + "4月" + getQingMingDate(mCalendarView.getCurYear()) + "号";
+                break;
+            case "劳动节":
+                answer = holiday + "是" + "5月1号";
+                break;
+            case "青年节":
+                answer = holiday + "是" + "5月4号";
+                break;
+            case "儿童节":
+                answer = holiday + "是" + "6月1号";
+                break;
+            case "建党节":
+                answer = holiday + "是" + "7月1号";
+                break;
+            case "建军节":
+                answer = holiday + "是" + "8月1号";
+                break;
+            case "教师节":
+                answer = holiday + "是" + "9月10号";
+                break;
+            case "国庆节":
+                answer = holiday + "是" + "10月1号";
+                break;
+            case "平安夜":
+                answer = holiday + "是" + "12月24号";
+                break;
+            case "圣诞节":
+                answer = holiday + "是" + "12月25号";
+                break;
+            case "除夕":
+                int numberMonth = LunarCalendar.daysInLunarMonth(mCalendarView.getCurYear(),12);
+                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),12,numberMonth);
+                break;
+            case "春节":
+                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),1,1);
+                break;
+            case "元宵节":
+                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),1,15);
+                break;
+            case "端午节":
+                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),5,5);
+                break;
+            case "七夕节":
+                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),7,7);
+                break;
+            case "中秋节":
+                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),8,15);
+                break;
+            case "重阳节":
+                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),9,9);
+                break;
+            case "腊八节":
+                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),12,8);
+            default:
+                break;
+        }
+        return answer;
+    }
+
+    /*
+    *
+    * 返回节日日期
+    * */
+    public static String getHolidayDate(int year,int month,int day){
+        int[] date;
+        answer = "";
+        if (LunarCalendar.leapMonth(year) == 0){
+            isleap = false;
+        }else {
+            isleap = true;
+        }
+       date =  LunarCalendar.lunarToSolar(year,month,day,isleap);
+        if (date.length != 0){
+            answer = date[1] + "月" + date[2] + "号";
+        }
+        return answer;
+    }
+    public static int getQingMingDate(int year){
+        int number = year - 2000;
+        return (int)Math.floor(number*0.2422 + 4.81) - (int)Math.floor(number/4);
+    }
+
 }

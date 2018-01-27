@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.idx.calendarview.Calendar;
 import com.idx.calendarview.CalendarLayout;
 import com.idx.calendarview.CalendarView;
+import com.idx.calendarview.LunarCalendar;
 import com.idx.calendarview.MessageEvent;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
@@ -84,6 +85,9 @@ public class CalendarFragment extends BaseFragment implements
         super.onCreate(savedInstanceState);
         Logger.setEnable(true);
         Log.d(TAG, "onCreate: ");
+        String aa = Util.getHolidayDate("除夕");
+            Log.d(TAG, "onCreateaaa: "+ aa);
+
         EventBus.getDefault().register(this);
     }
 
