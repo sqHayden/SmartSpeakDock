@@ -136,6 +136,7 @@ public class MapFragment extends BaseFragment implements
     private Context context;
     private PoiItem firstPoiItem,secondPoiItem;
     private boolean isFirstLocation;
+    private boolean isVoice;
 
 
     //无参构造
@@ -159,6 +160,7 @@ public class MapFragment extends BaseFragment implements
         //注册地图语音广播
         registerMapVoiceBroadcast();
         isFirstLocation = true;
+        isVoice = false;
     }
 
     private void registerMapVoiceBroadcast() {
@@ -318,6 +320,8 @@ public class MapFragment extends BaseFragment implements
             clean_view.setVisibility(View.VISIBLE);
             //清除标记
             clearMarkers();
+            //定为语音的
+            isVoice = true;
             //搜索
             doSearchQuery(address,1);
             //显示
@@ -330,23 +334,28 @@ public class MapFragment extends BaseFragment implements
                 setCityCallBack(new CityCallBack() {
                     @Override
                     public void getCityPoint(PoiItem poiItem) {
-                        Log.d("起点位置回调被执行","1");
                         Log.d("poiItem",poiItem.getLatLonPoint().getLatitude()+"---"+poiItem.getLatLonPoint().getLongitude());
                         if(isFirstLocation){
+                            Log.d("起点位置回调被执行","1");
                             firstPoiItem = poiItem;
                             isFirstLocation = false;
+                            isVoice = true;
                             doSearchQuery(toAddress,1);
                         }else {
+                            Log.d("终点位置回调被执行","2");
                             secondPoiItem = poiItem;
                             LatLng startLatlng = new LatLng(firstPoiItem.getLatLonPoint().getLatitude(),firstPoiItem.getLatLonPoint().getLongitude());
                             Log.d("起点坐标：",firstPoiItem.getLatLonPoint().getLatitude()+","+firstPoiItem.getLatLonPoint().getLongitude());
                             LatLng endLatlng = new LatLng(secondPoiItem.getLatLonPoint().getLatitude(),secondPoiItem.getLatLonPoint().getLongitude());
                             Log.d("终点坐标:",secondPoiItem.getLatLonPoint().getLatitude()+","+secondPoiItem.getLatLonPoint().getLongitude());
                             isFirstLocation = true;
-                            //判断距离及出行方式(超过100公里会失败)
-                            float distance = AMapUtils.calculateLineDistance(startLatlng,endLatlng);
-                            int dis = (int)distance/1000;
-                            Log.d("dis:",dis+"");
+                            int dis = 0;
+                            if(!pathWay.equals("驾车")) {
+                                //判断距离及出行方式(超过100公里会失败)
+                                float distance = AMapUtils.calculateLineDistance(startLatlng,endLatlng);
+                                dis = (int)distance/1000;
+                                Log.d("dis:",dis+"");
+                            }
                             if(dis>100){
                                 returnMapAnswerCallBack.onReturnAnswer("您要去的地方太远了，建议选择驾车模式");
                             }else {
@@ -365,6 +374,7 @@ public class MapFragment extends BaseFragment implements
                         }
                     }
                 });
+                isVoice = true;
                 doSearchQuery(fromAddress,1);
             }else{//处理从我的位置去哪里
                 Log.d("处理从我的位置","去哪儿");
@@ -386,6 +396,7 @@ public class MapFragment extends BaseFragment implements
                         SpeakerApplication.getContext().startActivity(intent);
                     }
                 });
+                isVoice = true;
                 doSearchQuery(toAddress,1);
             }
         }
@@ -415,6 +426,7 @@ public class MapFragment extends BaseFragment implements
         super.onDestroyView();
         //解绑广播注册
         context.unregisterReceiver(mMapBroadcastReceiver);
+        mMapBroadcastReceiver = null;
         if (mBigIcon != null) {
             mBigIcon.destroy();
         }
@@ -430,8 +442,27 @@ public class MapFragment extends BaseFragment implements
         mapView = null;
         aMap.clear();
         aMap = null;
-        if (null != mLocationClient) {
+        if (mLocationClient!=null) {
             mLocationClient.onDestroy();
+        }
+        if(currentLocation!=null){
+            currentLocation = null;
+        }
+        if(poiResult!=null){
+            poiResult = null;
+        }
+        if(poiSearch!=null){
+            poiSearch = null;
+        }
+        if(mPoiMarker!= null){
+            mPoiMarker.destroy();
+        }
+        if(poiItems!=null){
+            poiItems.clear();
+            poiItems = null;
+        }
+        if(searchResultAdapter!=null){
+            searchResultAdapter = null;
         }
     }
 
@@ -769,9 +800,11 @@ public class MapFragment extends BaseFragment implements
                 if (result.getQuery().equals(query)) {// 是否是同一条
                     poiResult = result;
                     // 取得搜索到的poiItems有多少页
-                    Log.d("进来搜索了","准备拿值");
+                    Log.d("Poi搜索被执行","获取坐标值");
                     poiItems = poiResult.getPois();
-                    if(cityCallBack!=null) {
+                    Log.d("布尔值监控：",isVoice+"");
+                    if(cityCallBack!=null&&isVoice) {
+                        isVoice = false;
                         cityCallBack.getCityPoint(poiItems.get(0));
                     }
                     //获取第一页的数据
@@ -786,7 +819,6 @@ public class MapFragment extends BaseFragment implements
                         poiOverlay.removeFromMap();
                         poiOverlay.addToMap();
                         zoom = poiOverlay.zoomToSpan();
-                        Log.d("地图等级为：", "" + zoom);
                         //我的位置点显示
                             if (zoom < 13) {
                                 mSmallIcon.setVisible(false);

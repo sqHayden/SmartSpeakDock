@@ -980,9 +980,34 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mMapView.onDestroy();
+        if(mMapView!=null) {
+            mMapView.onDestroy();
+        }
         if (mAMapNavi != null) {
             mAMapNavi.destroy();
+        }
+        if(mAMap!=null){
+            mAMap.clear();
+            mAMap = null;
+        }
+        if(startLatlng!=null||endLatlng!=null){
+            startLatlng = null;
+            endLatlng = null;
+        }
+        if(startList!=null||endList!=null){
+            startList.clear();
+            startList = null;
+            endList.clear();
+            endList = null;
+            wayList.clear();
+            wayList = null;
+        }
+        if(routeOverlays!=null){
+            routeOverlays.clear();
+            routeOverlays = null;
+        }
+        if(mRouteSearch!=null){
+            mRouteSearch = null;
         }
     }
 
@@ -1130,7 +1155,6 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
                 isFirst = true;
                 startDriveNavi();
             }else {
-                dissmissProgressDialog();
                 Log.d("进入到了", "驾车模式");
                 for (int i = 0; i < ints.length; i++) {
                     AMapNaviPath path = paths.get(ints[i]);
@@ -1141,6 +1165,7 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
                 }
             }
             setDriveRouteLineTag(paths, ints);
+            dissmissProgressDialog();
         }else if(way.equals("Walk")) {
             dissmissProgressDialog();
             Log.d("进入到了", "步行模式");
