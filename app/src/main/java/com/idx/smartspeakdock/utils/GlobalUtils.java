@@ -24,6 +24,16 @@ public interface GlobalUtils {
         String FIRST_CHANGE_FRAGMENT = "first.change.fragment";
     }
 
+    interface WhichActivity{
+        //background which activity
+        String BACKGROUND_WHICH_ACTIVITY = "background.which.activity";
+        String MAIN_ACTIVITY_ID = "MainActivity";
+        String SWIPE_ACTIVITY_ID = "SwipeActivity";
+        String ABOUT_ACTIVITY_ID = "AboutActivity";
+        String MUSIC_PLAY_ACTIVITY_ID = "MusicPlayActivity";
+        String STANDBY_ACTIVITY_ID = "StandByActivity";
+    }
+
     interface Shopping {
         //shopping website id
         String SHOPPING_WEBSITES_EXTRA_ID = "shopping.websitpues.extra.id";
@@ -59,9 +69,9 @@ public interface GlobalUtils {
 
     interface Map {
         //map broadcast
-        public static final String MAP_BROADCAST_ACTION = "map.broadcast.action";
+        String MAP_BROADCAST_ACTION = "map.broadcast.action";
         //map part
-        public static final int MAP_VOICE_FLAG = 6;
+        int MAP_VOICE_FLAG = 6;
     }
 
     interface FirstSatrt {

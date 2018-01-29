@@ -72,6 +72,7 @@ public class MainActivity extends BaseActivity {
     private SharePrefrenceUtils mSharedPreferencesUtils;
     private AppExecutors mAppExecutors;
     List<Shopping> mShoppings;
+    String mWhichBackgroundActivity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -299,13 +300,31 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        isTopActivity();
+        isTopFragment();
+        mSharedPreferencesUtils.saveBackgroudActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY,"");
+        Log.i(TAG, "onResume: main");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mSharedPreferencesUtils.saveBackgroudActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY,GlobalUtils.WhichActivity.MAIN_ACTIVITY_ID);
+        Log.i(TAG, "onStop: main");
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.i(TAG, "onDestroy: main");
         if (standByFragment != null) {
             standByFragment = null;
         }
         isDrawer = false;
         if (mSharedPreferencesUtils != null) {
+            mSharedPreferencesUtils.saveBackgroudActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY,"");
             mSharedPreferencesUtils = null;
         }
         if (mAppExecutors != null) {
@@ -320,6 +339,7 @@ public class MainActivity extends BaseActivity {
         }
         //停止ControllerService
         unbindService(myServiceConnection);
+        mWhichBackgroundActivity = "";
 //        stopService(mControllerintent);
         if (mControllerintent != null) {
             mControllerintent = null;
@@ -347,6 +367,7 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void onShoppingCallback(String web_url) {
                     Log.i(TAG, "onShoppingCallback: " + web_url);
+                    mWhichBackgroundActivity = mSharedPreferencesUtils.getBackgroundActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY);
                     revokeMainShoppingVoice(web_url);
                 }
             });
@@ -354,6 +375,8 @@ public class MainActivity extends BaseActivity {
             mControllerBinder.setCalendarControllerListener(new CalendarCallBack() {
                 @Override
                 public void onCalendarCallBack() {
+                    mWhichBackgroundActivity = mSharedPreferencesUtils.getBackgroundActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY);
+                    Log.i(TAG, "onCalendarCallBack: which_activity = "+mWhichBackgroundActivity);
                     revokeMainCalendarVoice();
                 }
             });
@@ -361,7 +384,8 @@ public class MainActivity extends BaseActivity {
             mControllerBinder.setWeatherControllerListener(new WeatherCallback() {
                 @Override
                 public void onWeatherCallback(String cityName, String time, ReturnVoice returnVoice, String func_flag, int flag) {
-                    Log.i(TAG, "onWeatherCallback: ");
+                    mWhichBackgroundActivity = mSharedPreferencesUtils.getBackgroundActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY);
+                    Log.i(TAG, "onWeatherCallBack: which_activity = "+mWhichBackgroundActivity);
                     revokeMainWeatherVoice(cityName, time, returnVoice, func_flag, flag);
                 }
             });
@@ -369,6 +393,7 @@ public class MainActivity extends BaseActivity {
             mControllerBinder.onGetMusicName(new MusicCallBack() {
                 @Override
                 public void onMusicCallBack(String music_name) {
+                    mWhichBackgroundActivity = mSharedPreferencesUtils.getBackgroundActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY);
                     revokeMainMusicVoice(music_name);
                 }
             });
@@ -376,6 +401,7 @@ public class MainActivity extends BaseActivity {
             mControllerBinder.setMapControllerListener(new MapCallBack() {
                 @Override
                 public void onMapCallBack(String name, String address, String fromAddress, String toAddress, PathWay pathWay, ResultCallback result) {
+                    mWhichBackgroundActivity = mSharedPreferencesUtils.getBackgroundActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY);
                     revokeMainMapVoice(name,address,fromAddress,toAddress,pathWay,result);
                 }
             });
@@ -391,69 +417,105 @@ public class MainActivity extends BaseActivity {
 
     private void revokeMainShoppingVoice(String web_url) {
         if (!isActivityTop) {
-            Log.i(TAG, "revokeMainShoppingVoice: 当前Activity不是SwipeActivity");
-            mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.WhichFragment.SHOPPING_FRAGMENT_INTENT_ID);
-            mIntent.putExtra("weburl", web_url);
-            startActivity(mIntent);
-            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
+            startShopping(web_url);
+        }
+        if (mWhichBackgroundActivity.equals(GlobalUtils.WhichActivity.MAIN_ACTIVITY_ID)){
+            Log.i(TAG, "revokeMainShoppingVoice: shopping");
+            startShopping(web_url);
         }
     }
 
     private void revokeMainCalendarVoice() {
         if (!isActivityTop) {
-            Log.i(TAG, "revokeMainCalendarVoice: 当前Activity不是SwipeActivity");
-            mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.WhichFragment.CALENDAR_FRAGMENT_INTENT_ID);
-            startActivity(mIntent);
-            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
+            startCalendar();
+        }
+        if (mWhichBackgroundActivity.equals(GlobalUtils.WhichActivity.MAIN_ACTIVITY_ID)){
+            Log.i(TAG, "revokeMainCalendarVoice: calendar");
+            startCalendar();
         }
     }
 
-
     private void revokeMainWeatherVoice(String cityName, String time, ReturnVoice returnVoice, String func_flag, int flag) {
         if (!isActivityTop) {
-            Log.i(TAG, "revokeMainWeatherVoice: 当前Activity不是SwipeActivity");
-            mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.WhichFragment.WEATHER_FRAGMENT_INTENT_ID);
-            Bundle args = new Bundle();
-            args.putString("cityname", cityName);
-            args.putString("time", time);
-            args.putString("fun_flag", func_flag);
-            args.putInt("voice_flag", flag);
-            mIntent.putExtra("weather", args);
-            startActivity(mIntent);
-            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
+            startWeather(cityName, time, func_flag, flag);
+        }
+        if (mWhichBackgroundActivity.equals(GlobalUtils.WhichActivity.MAIN_ACTIVITY_ID)){
+            Log.i(TAG, "revokeMainWeatherVoice: weather");
+            startWeather(cityName, time, func_flag, flag);
         }
     }
 
     private void  revokeMainMusicVoice(String music_name){
         if (!isActivityTop){
-            Log.d(TAG, "music222: " + music_name);
-            mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.WhichFragment.MUSIC_FRAGMENT_INTENT_ID);
-            mIntent.putExtra("music_name",music_name);
-            startActivity(mIntent);
-            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
+            startMusic(music_name);
+        }
+        if (mWhichBackgroundActivity.equals(GlobalUtils.WhichActivity.MAIN_ACTIVITY_ID)){
+            Log.i(TAG, "revokeMainMusicVoice: music");
+            startMusic(music_name);
         }
     }
 
     private void revokeMainMapVoice(String name, String address, String fromAddress, String toAddress, PathWay pathWay, ResultCallback result){
         if (!isActivityTop) {
-            Log.i(TAG, "revokeMainMapVoice: 当前Activity不是SwipeActivity");
-            mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.WhichFragment.MAP_FRAGMENT_INTENT_ID);
-            Bundle args = new Bundle();
-            args.putString("name", name);
-            args.putString("address", address);
-            args.putString("fromAddress", fromAddress);
-            args.putString("toAddress", toAddress);
-            if(pathWay==null){
-                Log.d("pathWay","是空的");
-                args.putString("pathWay","");
-            }else{
-                Log.d("pathWay不为空，是：",pathWay.getDesc());
-                args.putString("pathWay",pathWay.getDesc());
-            }
-            mIntent.putExtra("map", args);
-            startActivity(mIntent);
-            mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
+            startMap(name, address, fromAddress, toAddress, pathWay);
+        }
+        if (mWhichBackgroundActivity.equals(GlobalUtils.WhichActivity.MAIN_ACTIVITY_ID)){
+            Log.i(TAG, "revokeMainMapVoice: map");
+            startMap(name, address, fromAddress, toAddress, pathWay);
         }
     }
 
+    private void startShopping(String web_url) {
+        Log.i(TAG, "revokeMainShoppingVoice: 当前Activity不是SwipeActivity");
+        mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.WhichFragment.SHOPPING_FRAGMENT_INTENT_ID);
+        mIntent.putExtra("weburl", web_url);
+        startActivity(mIntent);
+        mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
+    }
+
+    private void startCalendar() {
+        Log.i(TAG, "revokeMainCalendarVoice: 当前Activity不是SwipeActivity");
+        mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.WhichFragment.CALENDAR_FRAGMENT_INTENT_ID);
+        startActivity(mIntent);
+        mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
+    }
+
+    private void startWeather(String cityName, String time, String func_flag, int flag) {
+        Log.i(TAG, "revokeMainWeatherVoice: 当前Activity不是SwipeActivity");
+        mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.WhichFragment.WEATHER_FRAGMENT_INTENT_ID);
+        Bundle args = new Bundle();
+        args.putString("cityname", cityName);
+        args.putString("time", time);
+        args.putString("fun_flag", func_flag);
+        args.putInt("voice_flag", flag);
+        mIntent.putExtra("weather", args);
+        startActivity(mIntent);
+        mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
+    }
+
+    private void startMusic(String music_name) {
+        Log.d(TAG, "music222: " + music_name);
+        mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.WhichFragment.MUSIC_FRAGMENT_INTENT_ID);
+        mIntent.putExtra("music_name",music_name);
+        startActivity(mIntent);
+        mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
+    }
+
+    private void startMap(String name, String address, String fromAddress, String toAddress, PathWay pathWay) {
+        Log.i(TAG, "revokeMainMapVoice: 当前Activity不是SwipeActivity");
+        mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.WhichFragment.MAP_FRAGMENT_INTENT_ID);
+        Bundle args = new Bundle();
+        args.putString("name", name);
+        args.putString("address", address);
+        args.putString("fromAddress", fromAddress);
+        args.putString("toAddress", toAddress);
+        if(pathWay==null){
+            args.putString("pathWay","");
+        }else{
+            args.putString("pathWay",pathWay.getDesc());
+        }
+        mIntent.putExtra("map", args);
+        startActivity(mIntent);
+        mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
+    }
 }

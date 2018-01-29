@@ -21,15 +21,46 @@ public interface Actions {
     }
 
     interface Weather {
-        String WEATHER_INFO = "today_weather_info_satisfy";
-        String RANGE_TEMP_INFO = "weather_temp_info_satisfy";
-        String AIR_QUALITY_INFO = "weather_air_quality_info_satisfy";
-        String CURRENT_TEMP_INFO = "weather_current_temp_info_satisfy";
-        String WEATHER_STATUS = "weather_status_info_satisfy";
-        String RAIN_INFO = "weather_rain_info_satisfy";
-        String DRESS_INFO = "weather_dress_info_satisfy";
-        String UITRAVIOLET_LEVEL_INFO = "weather_uitraviolet_level_info_satisfy";
-        String SMOG_INFO = "weather_smog_info_satisfy";
+        // 天气信息
+        String TODAY_WEATHER_INFO = "today_weather_info_satisfy";
+        String CITY_TODAY_WEATHER_INFO = "city_today_weather_info_satisfy";
+        String TIME_TODAY_WEATHER_INFO = "time_today_weather_info_satisfy";
+        String NO_TODAY_WEATHER_INFO = "no_today_weather_info_satisfy";
+        //最温差信息
+        String WEATHER_RANGE_INFO = "weather_temp_info_satisfy";
+        String WEATHER_CITY_RANGE_INFO = "weather_city_temp_info_satisfy";
+        String WEATHER_TIME_RANGE_INFO = "weather_time_temp_info_satisfy";
+        String WEATHER_NO_RANGE_INFO = "weather_no_temp_info_satisfy";
+        //空气质量信息
+        String WEATHER_AIR_QUALITY_INFO = "weather_air_quality_info_satisfy";
+        String WEATHER_CITY_AIR_QUALITY_INFO = "weather_city_air_quality_info_satisfy";
+        String WEATHER_TIME_AIR_QUALITY_INFO = "weather_time_air_quality_info_satisfy";
+        String WEATHER_NO_AIR_QUALITY_INFO = "weather_no_air_quality_info_satisfy";
+        //当前温度信息
+        String WEATHER_CURRENT_TEMP_INFO = "weather_current_temp_info_satisfy";
+        String WEATHER_NO_CURRENT_TEMP_INFO = "weather_no_current_temp_info_satisfy";
+        //天气状况信息
+        String WEATHER_STATUS_INFO = "weather_status_info_satisfy";
+        String WEATHER_CITY_STATUS_INFO = "weather_city_status_info_satisfy";
+        String WEATHER_TIME_STATUS_INFO = "weather_time_status_info_satisfy";
+        String WEATHER_NO_STATUS_INFO = "weather_no_status_info_satisfy";
+        //下雨信息
+        String WEATHER_RAIN_INFO = "weather_rain_info_satisfy";
+        String WEATHER_CITY_RAIN_INFO = "weather_city_rain_info_satisfy";
+        String WEATHER_TIME_RAIN_INFO = "weather_time_rain_info_satisfy";
+        String WEATHER_NO_RAIN_INFO = "weather_no_rain_info_satisfy";
+        //穿衣信息
+        String WEATHER_DRESS_INFO = "weather_dress_info_satisfy";
+        String WEATHER_CITY_DRESS_INFO = "weather_city_dress_info_satisfy";
+        String WEATHER_TIME_DRESS_INFO = "weather_time_dress_info_satisfy";
+        //紫外线强度
+        String WEATHER_UITRAVIOLET_LEVEL_INFO = "weather_uitraviolet_level_info_satisfy";
+        String WEATHER_CITY_UITRA_LEVEL_INFO = "weather_city_uitra_level_info_satisfy";
+        String WEATHER_TIME_UITRA_LEVEL_INFO = "weather_time_uitra_level_info_satisfy";
+        //雾霾信息
+        String WEATHER_SMOG_INFO = "weather_smog_info_satisfy";
+        String WEATHER_CITY_SMOG_INFO = "weather_city_smog_info_satisfy";
+        String WEATHER_TIME_SMOG_INFO = "weather_time_smog_info_satisfy";
     }
 
     interface Map {
@@ -57,20 +88,20 @@ public interface Actions {
     interface Shopping {
         String SHOPPING_SWITCH = "shopping_switch_satisfy";
         String SHOPPING_ME_CLASSIFY = "shopping_me_classify_satisfy";
-        String SHOPPING_DIGITAL_PHONE = "shopping_digital_phone_satisfy";
-        String SHOPPING_DIGITAL_PHONEACCESS = "shopping_digital_phoneaccess_satisfy";
-        String SHOPPING_DIGITAL_SMARTDEVICE = "shopping_digital_smartdevice_satisfy";
-        String SHOPPING_DIGITAL_CARVEHIELEC = "shopping_digital_carvehielec_satisfy";
-        String SHOPPING_DIGITAL_IPHONEACCESSI = "shopping_digital_iphoneaccessi_satisfy";
-        String SHOPPING_COMPUTER_DESKTOP = "shopping_computer_desktop_satisfy";
-        String SHOPPING_COMPUTERS = "SHOPPING_COMPUTERS";
+        String SHOPPING_PHONE = "shopping_phone_satisfy";
+        String SHOPPING_PHONE_ACCESS = "shopping_phone_access_satisfy";
+        String SHOPPING_SMART_DEVICE = "shopping_smart_device_satisfy";
+        String SHOPPING_CAR_VERHIELE = "shopping_car_verhiele_satisfy";
+        String SHOPPING_IPHONE_ACCESS = "shopping_iphone_access_satisfy";
+        String SHOPPING_COM_DESKTOP = "shopping_com_desktop_satisfy";
+        String SHOPPING_COM_COMPUTERS = "shopping_com_computers_satisfy";
         String SHOPPING_COM_PERIPHERALS = "shopping_com_peripherals_satisfy";
         String SHOPPING_SMART_SHARPTV = "shopping_smart_sharptv_satisfy";
-        String SHOPPING_LIFE_ELECTRICAL = "shopping_life_electrical_satisfy";
-        String SHOPPING_SMART_CARE_HEALTH = "shopping_smart_care_health_satisfy";
-        String SHOPPING_SMART_KITCHENSMALL = "shopping_smart_kitchensmall_satisfy";
-        String SHOPPING_SMART_FAMILYAUDIO = "shopping_smart_familyaudio_satisfy";
+        String SHOPPING_SMART_LIFEELECT = "shopping_smart_lifeelect_satisfy";
+        String SHOPPING_SMART_CAREHEALT = "shopping_smart_carehealt_satisfy";
+        String SHOPPING_SMART_KITCHEN = "shopping_smart_kitchen_satisfy";
+        String SHOPPING_SMART_FAMILYAUD = "shopping_smart_familyaud_satisfy";
         String SHOPPING_SMART_ICEBOX = "shopping_smart_icebox_satisfy";
-        String SHOPPING_SMART_WASHMACHINE = "shopping_smart_washmachine_satisfy";
+        String SHOPPING_SMART_WASHMACHI = "shopping_smart_washmachi_satisfy";
     }
 }

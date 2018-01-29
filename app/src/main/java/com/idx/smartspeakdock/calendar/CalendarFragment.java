@@ -23,6 +23,7 @@ import com.idx.calendarview.CalendarLayout;
 import com.idx.calendarview.CalendarView;
 import com.idx.calendarview.LunarCalendar;
 import com.idx.calendarview.MessageEvent;
+import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.swipe.SwipeActivity;

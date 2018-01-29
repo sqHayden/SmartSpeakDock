@@ -697,9 +697,18 @@ public class SwipeActivity extends BaseActivity {
         }
     }
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i(TAG, "onStop: swipe");
+//        mSharePrefrenceUtils.saveBackgroudActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY,GlobalUtils.WhichActivity.SWIPE_ACTIVITY_ID);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.i(TAG, "onDestroy: swipe");
         if (weatherFragment != null) {
             weatherFragment = null;
         }
@@ -721,6 +730,7 @@ public class SwipeActivity extends BaseActivity {
         if (mSharePrefrenceUtils != null) {
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "");
             mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, false);
+//            mSharePrefrenceUtils.saveBackgroudActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY,"");
             mSharePrefrenceUtils = null;
         }
         if (mShoppingBroadcastIntent != null) {
@@ -747,6 +757,7 @@ public class SwipeActivity extends BaseActivity {
             }
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "");
             mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, false);
+//            mSharePrefrenceUtils.saveBackgroudActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY,"");
             super.onBackPressed();
         }
     }

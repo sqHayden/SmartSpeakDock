@@ -38,7 +38,6 @@ public  abstract class BaseActivity extends AppCompatActivity {
 ////            handler.postDelayed(runnable,1000 * 60 * 10);
 //            handler.postDelayed(runnable,1000  * 10);
 //        }
-
         super.onRestart();
     }
 
@@ -59,19 +58,10 @@ public  abstract class BaseActivity extends AppCompatActivity {
     public void unregisterMyOnTouchListener(BaseActivity.MyOnTouchListener myOnTouchListener) {
         onTouchListeners.remove(myOnTouchListener);
     }
-
-
 //    @Override
 //    public boolean dispatchTouchEvent(MotionEvent ev) {
 //        return super.dispatchTouchEvent(ev);
 //    }
-
-    @Override
-    protected void onPause() {
-        Log.d(TAG, "onPause: ");
-        super.onPause();
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,15 +85,17 @@ public  abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i(TAG, "onResume: baseActivity");
+        //当前Activity是否是SwipeActivity
+        isTopActivity();
+        //当前正在显示的Fragment
+        isTopFragment();
 //        if (handler!=null) {
 //            handler.removeCallbacks(runnable);
 ////            handler.postDelayed(runnable,1000 * 60 * 10);
 //            handler.postDelayed(runnable,1000  * 10);
 //        }
     }
-
-
-
 //    @Override
 //    public boolean onTouchEvent(MotionEvent event) {
 //        switch (event.getAction()){
@@ -175,32 +167,40 @@ public  abstract class BaseActivity extends AppCompatActivity {
         isActivityTop = false;
         ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
-        Log.i(TAG, "isTopActivity = " + cn.getClassName());
+        Log.i(TAG, "activity isTopActivity = " + cn.getClassName());
         if (cn.getClassName().contains(fragment_show_activity)) {
             isActivityTop = true;
         }
-        Log.i(TAG, "isTop = " + isActivityTop);
+        Log.i(TAG, "activity isTop = " + isActivityTop);
         return isActivityTop;
     }
 
     public static Fragment isTopFragment() {
         isFragmentTop = null;
         List<Fragment> fragments = mFragmentManager.getFragments();
-        Log.i(TAG, "isTopFragment: size = " + fragments.size());
+        Log.i(TAG, "activity isTopFragment: size = " + fragments.size());
         for (Fragment fragment : fragments) {
 //            if(fragment != null && fragment.isVisible()){
             isFragmentTop = fragment;
 //            }
-            Log.i(TAG, "isTopFragment: " + isFragmentTop.getClass().getSimpleName());
+            Log.i(TAG, "activity isTopFragment: " + isFragmentTop.getClass().getSimpleName());
         }
         return isFragmentTop;
     }
     public interface MyOnTouchListener {
         public boolean onTouch(MotionEvent ev);
     }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.i(TAG, "onDestroy: baseActivity");
         isActivityTop = false;
         if (isFragmentTop != null) {
             isFragmentTop = null;

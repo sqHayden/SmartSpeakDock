@@ -277,11 +277,41 @@ public class ControllerService extends Service {
             }
 
             @Override
+            public void onCityWeatherInfo(String cityName, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
+            public void onTimeWeatherINfo(String time, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
+            public void onNoWeatherInfo(ReturnVoice returnVoice) {
+
+            }
+
+            @Override
             public void onRangeTempInfo(String cityName, String time, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
                     mWeather_return_voice = returnVoice;
                     mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onRangeTempInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
+            }
+
+            @Override
+            public void onCityRangeTempInfo(String cityName, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
+            public void onTimeRangeTempInfo(String time, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
+            public void onNoRangeTempInfo(ReturnVoice returnVoice) {
+
             }
 
             @Override
@@ -293,11 +323,31 @@ public class ControllerService extends Service {
             }
 
             @Override
+            public void onCityAirQualityInfo(String cityName, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
+            public void onTimeAirQualityInfo(String time, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
+            public void onNoAiqQualityInfo(ReturnVoice returnVoice) {
+
+            }
+
+            @Override
             public void onCurrentTempInfo(String cityName, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
                     mWeather_return_voice = returnVoice;
                     mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onCurrentTempInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
+            }
+
+            @Override
+            public void onNoCurrentTempInfo(ReturnVoice returnVoice) {
+
             }
 
             @Override
@@ -309,11 +359,41 @@ public class ControllerService extends Service {
             }
 
             @Override
+            public void onCityWeatherStatus(String cityName, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
+            public void onTimeWeatherStatus(String time, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
+            public void onNoWeatherStatus(ReturnVoice returnVoice) {
+
+            }
+
+            @Override
             public void onRainInfo(String cityName, String time, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
                     mWeather_return_voice = returnVoice;
                     mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onRainInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
+            }
+
+            @Override
+            public void onCityRainInfo(String cityName, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
+            public void onTimeRainInfo(String time, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
+            public void onNoRainInfo(ReturnVoice returnVoice) {
+
             }
 
             @Override
@@ -325,6 +405,16 @@ public class ControllerService extends Service {
             }
 
             @Override
+            public void onCityDressInfo(String cityName, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
+            public void onTimeDressInfo(String time, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
             public void onUitravioletLevelInfo(String cityName, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
                     mWeather_return_voice = returnVoice;
@@ -333,11 +423,31 @@ public class ControllerService extends Service {
             }
 
             @Override
+            public void onCityUitravioletLevelInfo(String cityName, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
+            public void onTimeUitravioletLevelInfo(String time, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
             public void onSmogInfo(String cityName, String time, ReturnVoice returnVoice) {
                 if(mWeatherCallback != null){
                     mWeather_return_voice = returnVoice;
                     mWeatherCallback.onWeatherCallback(cityName,time,returnVoice,"onSmogInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
+            }
+
+            @Override
+            public void onCitySmogInfo(String cityName, ReturnVoice returnVoice) {
+
+            }
+
+            @Override
+            public void onTimeSmogInfo(String time, ReturnVoice returnVoice) {
+
             }
         });
     }

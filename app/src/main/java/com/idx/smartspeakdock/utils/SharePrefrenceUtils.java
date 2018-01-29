@@ -56,4 +56,13 @@ public class SharePrefrenceUtils {
     public boolean getFirstChange(String first_change){
         return mSharedPreferences.getBoolean(first_change,false);
     }
+
+    public void saveBackgroudActivity(String which_background_activity,String back_activity_name){
+        mEditor.putString(which_background_activity,back_activity_name);
+        mEditor.commit();
+    }
+
+    public String getBackgroundActivity(String which_background_activity){
+        return mSharedPreferences.getString(which_background_activity,"");
+    }
 }

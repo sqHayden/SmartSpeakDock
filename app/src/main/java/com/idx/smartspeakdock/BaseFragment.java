@@ -56,13 +56,11 @@ public class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.i("BaseFragment", "onResume: topFragment");
+        Log.i(TAG, "baseFragment onResume: topFragment");
         BaseActivity.isTopFragment();
         handler.removeCallbacks(runnable);
         handler.postDelayed(runnable,60*10*1000);
 //        handler.postDelayed(runnable,10*1000);
-
-        Log.d(TAG, "onResume: ");
         onTouchListener = new BaseActivity.MyOnTouchListener() {
             @Override
             public boolean onTouch(MotionEvent ev) {
@@ -100,7 +98,7 @@ public class BaseFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause: ");
+        Log.d(TAG, "onPause: baseFragment");
         ((BaseActivity) getActivity()).unregisterMyOnTouchListener(onTouchListener);
 
     }
@@ -108,29 +106,14 @@ public class BaseFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
+        Log.d(TAG, "onDestroy: baseFragment");
     }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        Log.d(TAG, "onLowMemory: ");
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        Log.d(TAG, "onStart: ");
-    }
-
-
 
     @Override
     public void onStop() {
         super.onStop();
         handler.removeCallbacks(runnable);
-        Log.d(TAG, "onStop: ");
+        Log.d(TAG, "onStop: baseFragment");
     }
 
     public String judgeCurrentFragment(){
