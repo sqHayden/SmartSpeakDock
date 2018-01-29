@@ -28,7 +28,7 @@ public class WeatherModelImpl implements WeatherModel {
     // bc0418b57b2d4918819d3974ac1285d9     3000次 7天预报
     // 537664b7e2124b3c845bc0b51278d4af     1000次 3天预报
     public static final String TAG=WeatherModelImpl.class.getSimpleName();
-    private static String key="bc0418b57b2d4918819d3974ac1285d9";
+    private static String key="537664b7e2124b3c845bc0b51278d4af";
     private WeatherBasicRepository mWeatherBasicRepository;
     private WeatherAqiRepository mWeatherAqiRepository;
     /**

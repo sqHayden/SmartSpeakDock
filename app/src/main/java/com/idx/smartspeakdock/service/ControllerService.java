@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.idx.calendarview.CalendarView;
 import com.idx.smartspeakdock.R;
@@ -278,17 +279,29 @@ public class ControllerService extends Service {
 
             @Override
             public void onCityWeatherInfo(String cityName, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onCityWeatherInfo: 城市名查今天天气信息");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback(cityName,"今天",returnVoice,"onWeatherInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
             public void onTimeWeatherINfo(String time, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onTimeWeatherINfo: 提供时间查深圳天气信息");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback("深圳",time,returnVoice,"onWeatherInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
             public void onNoWeatherInfo(ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onNoWeatherInfo: 不提供城市和时间查今天深圳天气信息");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback("深圳","今天",returnVoice,"onWeatherInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
@@ -301,17 +314,29 @@ public class ControllerService extends Service {
 
             @Override
             public void onCityRangeTempInfo(String cityName, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onCityRangeTempInfo: 提供城市查今天温度");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback(cityName,"今天",returnVoice,"onRangeTempInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
             public void onTimeRangeTempInfo(String time, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onTimeRangeTempInfo: 提供时间查深圳温度");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback("深圳",time,returnVoice,"onRangeTempInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
             public void onNoRangeTempInfo(ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onNoRangeTempInfo: 不提供时间和城市查今天深圳温度");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback("深圳","今天",returnVoice,"onRangeTempInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
@@ -324,17 +349,29 @@ public class ControllerService extends Service {
 
             @Override
             public void onCityAirQualityInfo(String cityName, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onCityAirQualityInfo: 提供城市查空气质量");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback(cityName,"",returnVoice,"onAirQualityInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
             public void onTimeAirQualityInfo(String time, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onTimeAirQualityInfo: 提供时间查深圳空气质量");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback("深圳",time,returnVoice,"onAirQualityInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
             public void onNoAiqQualityInfo(ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onNoAiqQualityInfo: 查今天深圳空气质量");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback("深圳","",returnVoice,"onAirQualityInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
@@ -347,7 +384,11 @@ public class ControllerService extends Service {
 
             @Override
             public void onNoCurrentTempInfo(ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onNoCurrentTempInfo: 查深圳当前温度");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback("深圳","",returnVoice,"onCurrentTempInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
@@ -360,17 +401,29 @@ public class ControllerService extends Service {
 
             @Override
             public void onCityWeatherStatus(String cityName, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onCityWeatherStatus: 提供城市查今天天气状况");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback(cityName,"今天",returnVoice,"onWeatherStatus",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
             public void onTimeWeatherStatus(String time, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onTimeWeatherStatus: 提供时间查深圳天气状况");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback("深圳",time,returnVoice,"onWeatherStatus",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
             public void onNoWeatherStatus(ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onNoWeatherStatus: 查深圳今天天气状况");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback("深圳","今天",returnVoice,"onWeatherStatus",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
@@ -383,17 +436,29 @@ public class ControllerService extends Service {
 
             @Override
             public void onCityRainInfo(String cityName, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onCityRainInfo: 提供城市查今天是否有雨");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback(cityName,"今天",returnVoice,"onRainInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
             public void onTimeRainInfo(String time, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onTimeRainInfo: 提供时间查今天深圳有雨吗");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback("深圳",time,returnVoice,"onRainInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
             public void onNoRainInfo(ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onNoRainInfo: 查深圳今天有雨吗");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback("深圳","今天",returnVoice,"onRainInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
@@ -406,12 +471,20 @@ public class ControllerService extends Service {
 
             @Override
             public void onCityDressInfo(String cityName, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onCityDressInfo: 提供城市查今天穿衣建议");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback(cityName,"今天",returnVoice,"onDressInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
             public void onTimeDressInfo(String time, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onTimeDressInfo: 提供时间查深圳穿衣建议");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback("深圳",time,returnVoice,"onDressInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
@@ -424,12 +497,20 @@ public class ControllerService extends Service {
 
             @Override
             public void onCityUitravioletLevelInfo(String cityName, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onCityUitravioletLevelInfo: 提空城市查今天空气质量");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback(cityName,"今天",returnVoice,"onUitravioletLevelInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
             public void onTimeUitravioletLevelInfo(String time, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onTimeUitravioletLevelInfo: 提供时间查深圳空气质量");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback("深圳",time,returnVoice,"onUitravioletLevelInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
@@ -442,12 +523,20 @@ public class ControllerService extends Service {
 
             @Override
             public void onCitySmogInfo(String cityName, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onCitySmogInfo: 提供城市查今天深圳有雾吗");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback(cityName,"今天",returnVoice,"onSmogInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
 
             @Override
             public void onTimeSmogInfo(String time, ReturnVoice returnVoice) {
-
+                if(mWeatherCallback != null){
+                    Log.d(TAG, "onTimeSmogInfo: 提供时间查深圳有雾吗");
+                    mWeather_return_voice = returnVoice;
+                    mWeatherCallback.onWeatherCallback("深圳",time,returnVoice,"onSmogInfo",GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                }
             }
         });
     }

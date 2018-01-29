@@ -10,6 +10,8 @@ import com.google.gson.annotations.SerializedName;
 public class Basic {
     @SerializedName("location")
     public String cityName;
+    @SerializedName("parent_city")
+    public String pCityName;
     @SerializedName("cid")
     public String weatherId;
 }

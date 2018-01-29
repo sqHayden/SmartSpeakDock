@@ -175,8 +175,8 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         mWeather_Voice_flag = -1;
         if (getArguments() != null){
             Bundle args = getArguments();
-            mWeather_city = args.getString("cityname","深圳");
-            mWeather_time = args.getString("time","今天");
+            mWeather_city = args.getString("cityname");
+            mWeather_time = args.getString("time");
             mWeather_fun_flag = args.getString("fun_flag");
             mWeather_Voice_flag = args.getInt("voice_flag");
             Log.i(TAG, "onAttach: mWeather_voice_flag = "+mWeather_Voice_flag);
@@ -411,6 +411,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
             @Override
             public void run() {
                 mRefreshWeather.setRefreshing(false);
+                Log.d(TAG, "run: 111111111111");
                 ToastUtils.showError(mContext, mResources.getString(R.string.get_weather_info_error));
             }
         });
@@ -439,6 +440,8 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
      * @param weather 天气
      */
     public void updateWeatherInfo(Weather weather) {
+        mCurrentCounty=weather.basic.cityName;
+        mCurrentCity=weather.basic.pCityName;
         mWeatherNowIcon.setImageResource(HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(weather.now.code)));
         mCond.setText(HandlerWeatherUtil.getWeatherType(Integer.parseInt(weather.now.code)));
         mTemperature.setText(weather.forecastList.get(0).max + "℃ / " + weather.forecastList.get(0).min + "℃");
@@ -1041,15 +1044,15 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
                     mSelectCounty=district.getName();
                     Log.d(TAG, "onSelected: 选择省:"+province.getName()+",选择市:"+city.getName()+",选择区:"+district.getName());
                     if (NetStatusUtils.isWifiConnected(mContext) || NetStatusUtils.isMobileConnected(mContext)) {
-                        mCurrentCity = city.getName();
-                        mCurrentCounty = district.getName();
-                        Log.d(TAG, "onSelected: 市："+mCurrentCity+",县："+mCurrentCounty);
-                        getWeatherBasic(UNVOICE,mCurrentCounty,"","");
+//                        mCurrentCity = city.getName();
+//                        mCurrentCounty = district.getName();
+                        Log.d(TAG, "onSelected: 市："+city.getName()+",县："+district.getName());
+                        getWeatherBasic(UNVOICE,district.getName(),"","");
 //                        mWeatherPresenter.getWeather(district.getName());
                         if (!(province.getName().equals("香港") || province.getName().equals("澳门") ||
                                 province.getName().equals("台湾省"))) {
                             mAirLayout.setVisibility(View.VISIBLE);
-                            getWeatherAqi(UNVOICE,mCurrentCity,"","");
+                            getWeatherAqi(UNVOICE,city.getName(),"","");
 //                            mWeatherPresenter.getWeatherAqi(city.getName());
                         }else{
                             mAirLayout.setVisibility(View.GONE);
