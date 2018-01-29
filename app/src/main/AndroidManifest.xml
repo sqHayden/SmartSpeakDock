@@ -102,8 +102,10 @@
 
         <service android:name=".service.ControllerService" />
 
-        <activity android:name=".music.activity.MusicPlayActivity" />
-        <service android:name=".service.GetCityService"/>
+        <activity android:name=".music.activity.MusicPlayActivity"
+                 android:theme="@style/AppTheme.NoActionBar"/>
+        <service android:name=".service.GetCityService" />
+
     </application>
 
 </manifest>

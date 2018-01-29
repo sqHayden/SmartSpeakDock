@@ -2,6 +2,7 @@ package com.idx.smartspeakdock.music.service;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.util.Log;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import static android.content.Context.AUDIO_SERVICE;
 
 /**
  * Created by sunny on 18-1-23.
@@ -33,16 +36,16 @@ public class MusicPlay {
     // 正在播放的音乐的序号
     private int mPlayingPosition = -1;
     //媒体播放器
-    private MediaPlayer mediaPlayer=new MediaPlayer();
+    private MediaPlayer mediaPlayer;
     //正在播放的音乐
     private Music mPlayingMusic;
 
     private boolean isPlaying = false;
     private Music music;
-
     private Context mContext;
     public MusicPlay(Context context){
         this.mContext=context;
+        mediaPlayer=getMediaPlayer(context);
     }
 
     // 获取正在播放的音乐的序号
@@ -56,7 +59,7 @@ public class MusicPlay {
     }
 
     //获取正在播放音乐的长度
-    public long getCurrentPosition() {
+    public long getCurrentPosition1() {
         if (getPlayingMusic()!=null) {
             return mediaPlayer.getCurrentPosition();
         }else {
@@ -69,8 +72,7 @@ public class MusicPlay {
             pause();
             notifyMusicState(ACTION_MEDIA_PAUSE,false);
         }
-        else if (getCurrentPosition()>0){
-            Log.d(TAG, "playPause: "+getCurrentPosition());
+        else if (getCurrentPosition1()>0){
             continuePlay();
             notifyMusicState(ACTION_MEDIA_PLAY,true);
         }
@@ -91,6 +93,7 @@ public class MusicPlay {
     //停止播放
     public void stop() {
         pause();
+        mediaPlayer.stop();
         mediaPlayer.reset();
     }
     //下一首
@@ -101,7 +104,6 @@ public class MusicPlay {
     }
     //上一首
     public void pre(){
-        Log.d(TAG, "pre: ");
         play(mPlayingPosition - 1);
         notifyMusicState(ACTION_MEDIA_PREVIOUS,true);
     }
@@ -115,7 +117,6 @@ public class MusicPlay {
 
     // 指定播放的位置
     public void seekTo(int position) {
-        Log.d(TAG, "seekTo: ");
         mediaPlayer.seekTo(position);
     }
 
@@ -124,14 +125,11 @@ public class MusicPlay {
         return isPlaying;
     }
 
-
     //按音乐名称播放
     public void play(String name) {
         if (MusicUtil.getMusic().get(name)!=null) {
             music = MusicUtil.getMusic().get(name);
             mPlayingMusic = music;
-            Log.d(TAG, "play: "+name);
-//            Log.d(TAG, "play: 进入musicService,当前音乐位置：" + mPlayingPosition);
             play(music);
             notifyMusicState(ACTION_MEDIA_PLAY,true);
         }else {
@@ -146,7 +144,7 @@ public class MusicPlay {
         if (AppCache.get().getMusicList().size() == 0) {
             return;
         }
-        if (position < 0) {
+        else if (position < 0) {
             position = AppCache.get().getMusicList().size() - 1;
         } else if (position >= AppCache.get().getMusicList().size()) {
             position = 0;
@@ -154,23 +152,20 @@ public class MusicPlay {
         mPlayingPosition = position;
         music = AppCache.get().getMusicList().get(mPlayingPosition);
         mPlayingMusic = music;
-        Log.d(TAG, "play: 进入musicService,当前音乐位置：" + mPlayingPosition);
         play(music);
-
     }
-
-
 
     //播放音乐
     public void play(Music music) {
         mPlayingMusic = music;
         try {
-            Log.d(TAG, "play: 进入musicService，获取当前音乐:"+music.getUrl());
+//            Log.d(TAG, "play: 进入musicService，获取当前音乐:"+music.getUrl());
             mediaPlayer.reset();
-            mediaPlayer.setDataSource(music.getUrl());
-            mediaPlayer.prepareAsync();
             mediaPlayer.setOnPreparedListener(mPreparedListener);
             mediaPlayer.setOnCompletionListener(onCompletionListener);
+            mediaPlayer.setOnErrorListener(mErrorListener);
+            mediaPlayer.setDataSource(music.getUrl());
+            mediaPlayer.prepareAsync();
             notifyMusicState(ACTION_MEDIA_PLAY,true);
         } catch (IOException e) {
             e.printStackTrace();
@@ -189,9 +184,8 @@ public class MusicPlay {
     public MediaPlayer.OnCompletionListener onCompletionListener=new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mediaPlayer) {
-            Log.d(TAG, "onCompletion: ");
-            next();
-            notifyMusicState(ACTION_MEDIA_COMPLETE,true);
+                    next();
+                    notifyMusicState(ACTION_MEDIA_COMPLETE, true);
         }
     };
 
@@ -199,12 +193,18 @@ public class MusicPlay {
     public MediaPlayer.OnPreparedListener mPreparedListener = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
-            Log.d(TAG, "onPrepared: musicService");
             mp.start();
             notifyMusicState(ACTION_MEDIA_PLAY, true);
         }
     };
 
+    public MediaPlayer.OnErrorListener mErrorListener=new MediaPlayer.OnErrorListener() {
+        @Override
+        public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+            notifyMusicState(ACTION_MEDIA_ERROR,false);
+            return false;
+        }
+    };
     //对MediaPlayer进行实例化
     public MediaPlayer getMediaPlayer(Context context) {
         MediaPlayer mediaplayer = new MediaPlayer();

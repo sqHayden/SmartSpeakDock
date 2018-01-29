@@ -16,7 +16,7 @@
 
             <RelativeLayout
                 android:layout_gravity="center"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -29,22 +29,12 @@
                     android:textColor="@color/white"
                     android:text="歌曲" />
 
-                <!--<TextView-->
-                    <!--android:id="@+id/tv_artist"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_marginTop="5dp"-->
-                    <!--android:ellipsize="end"-->
-                    <!--android:singleLine="true"-->
-                    <!--android:text="未知"-->
-                  <!--android:layout_below="@id/tv_title"-->
-                    <!--android:textSize="12sp" />-->
-
                 <TextView
                     android:id="@+id/tv_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
+                    android:layout_toEndOf="@id/tv_title"
+                    android:layout_marginStart="30dp"
                     android:layout_centerVertical="true"
                     android:textColor="@color/white"
                     android:textSize="@dimen/weather_basic_textsize"

@@ -8,12 +8,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -24,8 +29,12 @@ import android.widget.Toast;
 
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.music.service.MusicPlay;
+import com.idx.smartspeakdock.music.util.AppCache;
 import com.idx.smartspeakdock.service.ControllerService;
+import com.idx.smartspeakdock.utils.BitmapUtils;
 import com.idx.smartspeakdock.utils.GlobalUtils;
+import com.idx.smartspeakdock.utils.ToastUtils;
+
 import static com.idx.smartspeakdock.music.entity.Music.formatTime;
 
 
@@ -48,10 +57,10 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     private static final String TAG = MusicPlayActivity.class.getName();
     private PlayServiceConnection conn;
     private MusicBroadcastReceiver musicBroadcastReceiver = new MusicBroadcastReceiver();
-    private ImageView iv_back;
+
     private TextView title;
     private TextView artist;
-    private FrameLayout frameLayout;
+    private ImageView imageView;
     private TextView current;
     private TextView draution;
     private SeekBar seekBar;
@@ -60,24 +69,25 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     private ImageButton ib_start;
     private ControllerService musicService;
     private boolean isPlay=false;
-    public ProgressDialog mProgressDialog;
+    private Toolbar toolbar;
+    private Bitmap mBitmap;
 
     //对组件设置监听
     private void setListener() {
-        iv_back = (ImageView)findViewById(R.id.back);
+
         title = (TextView) findViewById(R.id.title);
         artist = (TextView)findViewById(R.id.artist);
-        frameLayout = (FrameLayout)findViewById(R.id.album);
+        imageView = (ImageView) findViewById(R.id.album);
         current = (TextView)findViewById(R.id.current);
         draution = (TextView) findViewById(R.id.duration);
         seekBar = (SeekBar) findViewById(R.id.seek);
         ib_pre = (ImageButton) findViewById(R.id.iv_pre);
         ib_start = (ImageButton) findViewById(R.id.iv_start);
         ib_next = (ImageButton) findViewById(R.id.iv_next);
-        iv_back.setOnClickListener(this);
+
         title.setOnClickListener(this);
         artist.setOnClickListener(this);
-        frameLayout.setOnClickListener(this);
+        imageView.setOnClickListener(this);
         current.setOnClickListener(this);
         draution.setOnClickListener(this);
         ib_pre.setOnClickListener(this);
@@ -89,7 +99,10 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppCache.get().getMusicList();
         setContentView(R.layout.music_fragment_play);
+        initToolbar();
+        setListener();
         Log.d(TAG, "onCreate: ");
         //调用 bindService 保持与 Service 的通信
         Intent intent = new Intent(MusicPlayActivity.this, ControllerService.class);
@@ -107,16 +120,8 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
         intentFilter.addAction(GlobalUtils.Music.MUSIC_BROADCAST_ACTION);
         registerReceiver(musicBroadcastReceiver, intentFilter);
 
-        setListener();
         handler.post(runnable);
-        //音乐未加载完毕
-        mProgressDialog=new ProgressDialog(MusicPlayActivity.this);
-        mProgressDialog.setTitle("请稍等");
-        mProgressDialog.setMessage("Loading...");
-        mProgressDialog.setCancelable(true);
-
     }
-
 
     //接受广播发送的消息，响应音乐在不同播放状态下ui的变化
     private Handler mHandler=new Handler()   {
@@ -125,16 +130,6 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
             super.handleMessage(msg);
             switch (msg.what) {
                 case CONSTANT_MUSIC_PLAY:
-                    playState();
-                    if (musicService.musicPlay.getPlayingMusic() != null) {
-                        title.setText(musicService.musicPlay.getPlayingMusic().getTitle());
-                        current.setText(formatTime("mm:ss",musicService.musicPlay.getCurrentPosition()));
-                        if (musicService.musicPlay.getPlayingMusic().getArtist()!=null) {
-                            artist.setText(musicService.musicPlay.getPlayingMusic().getArtist());
-                        }else {
-                            artist.setText("未知");
-                        }
-                    }
                     playState();
                     break;
                 case CONSTANT_MUSIC_PAUSE:
@@ -149,8 +144,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
                 case CONSTANT_MUSIC_COMPLETE:
                     pauseState();
                 case CONSTAN_MUSIC_ERROR:
-                    pauseState();
-                    Toast.makeText(MusicPlayActivity.this,"找不到该音乐",Toast.LENGTH_LONG).show();
+                    errorState();
                     break;
                 default:
                     break;
@@ -161,9 +155,6 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.back:
-                finish();
-                break;
             case R.id.iv_pre:
                 prev();
                 break;
@@ -182,7 +173,6 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onProgressChanged(SeekBar seekBar1, int progress, boolean fromUser) {
 
-        Log.d(TAG, "onProgressChanged: "+progress);
         current.setText(formatTime("mm:ss",progress));
 
     }
@@ -197,7 +187,6 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onStopTrackingTouch(SeekBar seekBar1) {
         if (musicService.musicPlay.getPlayingMusic()!=null ) {
-            Log.d(TAG, "onStopTrackingTouch: ");
             int progress = seekBar1.getProgress();
             musicService.musicPlay.seekTo(progress);
         }
@@ -226,16 +215,20 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     private void playState(){
             isPlay=true;
             ib_start.setImageResource(R.mipmap.music_pause);
-            handler.post(runnable);
+
     }
 
     //音乐暂停状态，界面图标显示
     private void pauseState(){
             isPlay=false;
             ib_start.setImageResource(R.mipmap.music_play);
-            mHandler.post(runnable);
     }
 
+    public void errorState(){
+        isPlay=false;
+        ib_start.setImageResource(R.mipmap.music_play);
+        ToastUtils.showMessage(MusicPlayActivity.this,"没有找到该资源");
+    }
     // 通过 Handler 更新 UI 上的组件状态
     public Handler handler = new Handler();
 
@@ -243,30 +236,25 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
         @Override
         public void run() {
             try {
-                if (musicService.musicPlay.getCurrentPosition() == 0 &&
-                        musicService.musicPlay.getPlayingMusic() != null) {
-                    mProgressDialog.show();
-                   }else {
-                    mProgressDialog.dismiss();
-                   }
-                    title.setText(musicService.musicPlay.getPlayingMusic().getTitle());
-                    Log.d(TAG, "run: " + musicService.musicPlay.getCurrentPosition());
-                    current.setText("00:00");
-                    current.setText(formatTime("mm:ss", musicService.musicPlay.getCurrentPosition()));
-                    seekBar.setProgress((int) musicService.musicPlay.getCurrentPosition());
+                    if (musicService.musicPlay.getCurrentPosition1()==0){
+                         seekBar.setProgress(0);
+                         current.setText("00:00");
+                    }else {
+                        seekBar.setProgress((int) musicService.musicPlay.getCurrentPosition1());
+                        current.setText(formatTime("mm:ss", musicService.musicPlay.getCurrentPosition1()));
+                    }
                     seekBar.setMax((int) musicService.musicPlay.getPlayingMusic().getDuration());
+                    title.setText(musicService.musicPlay.getPlayingMusic().getTitle());
                     draution.setText(formatTime("mm:ss", musicService.musicPlay.getPlayingMusic().getDuration()));
                     if (musicService.musicPlay.isPlaying()) {
                         ib_start.setImageResource(R.mipmap.music_pause);
                     } else {
                         ib_start.setImageResource(R.mipmap.music_play);
                     }
-                    handler.postDelayed(runnable, 1000);
-
+                      handler.post(runnable);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
-
         }
     };
 
@@ -294,23 +282,23 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
             String action = intent.getAction();
             switch (action){
                 case MusicPlay.ACTION_MEDIA_PLAY:
-                    Log.d(TAG, "onReceive: playfragment play2222");
+
                     mHandler.sendEmptyMessage(CONSTANT_MUSIC_PLAY);
                     break;
                 case MusicPlay.ACTION_MEDIA_PAUSE:
-                    Log.d(TAG, "onReceive: playfragment pause2222");
+
                     mHandler.sendEmptyMessage(CONSTANT_MUSIC_PAUSE);
                     break;
                 case MusicPlay.ACTION_MEDIA_NEXT:
-                    Log.d(TAG, "onReceive: playfragment next222");
+
                     mHandler.sendEmptyMessage(CONSTANT_MUSIC_NEXT);
                     break;
                 case MusicPlay.ACTION_MEDIA_PREVIOUS:
-                    Log.d(TAG, "onReceive: playfragment pre222");
+
                     mHandler.sendEmptyMessage(CONSTANT_MUSIC_PRE);
                     break;
                 case MusicPlay.ACTION_MEDIA_COMPLETE:
-                    Log.d(TAG, "onReceive: playfragment complete222");
+
                     mHandler.sendEmptyMessage(CONSTANT_MUSIC_COMPLETE);
                     break;
                 case MusicPlay.ACTION_MEDIA_ERROR:
@@ -322,6 +310,37 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    private void initToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.music_back);
+        setSupportActionBar(toolbar);
+        ActionBar ab = getSupportActionBar();
+        mBitmap = BitmapUtils.scaleBitmapFromResources(this,R.drawable.back,15,30);
+        ab.setHomeAsUpIndicator(new BitmapDrawable(mBitmap));
+        ab.setTitle("音乐");
+        ab.setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState: ");
+        handler.post(runnable);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 
     @Override
     public void onDestroy() {
@@ -332,9 +351,6 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
             }
             if (conn!=null){
                 unbindService(conn);
-            }
-            if (musicService!=null){
-                musicService.musicPlay.stop();
             }
         }catch (Exception e){
             e.printStackTrace();

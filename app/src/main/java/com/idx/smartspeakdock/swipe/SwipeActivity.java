@@ -377,38 +377,6 @@ public class SwipeActivity extends BaseActivity {
         }
     }
 
-    //Music后台回退
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                if (musicFragment != null) {
-                    if (musicFragment.isPlaying) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        AlertDialog dialog = builder.setTitle("音乐正在播放")
-                                .setPositiveButton("后台播放", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        SwipeActivity.this.finish();
-                                    }
-                                })
-                                .setNegativeButton("退出", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-//                                        SwipeActivity.super.finish();
-                                    }
-                                }).create();
-
-                        dialog.show();
-                    } else {
-                        super.finish();
-                    }
-                    break;
-                }
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
     //判断当前哪个fragment
     public boolean checkFragment(String frag_name) {
         mCurr_Frag_Name = mSharePrefrenceUtils.getCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID);
@@ -421,9 +389,9 @@ public class SwipeActivity extends BaseActivity {
                         case "calendar":
                             calendarFragment = null;break;
                         case "music":
-                            /*if (musicFragment.isPlaying){
+                            if (musicFragment.musicService.musicPlay.isPlaying()){
                                 musicFragment.pause();
-                            }*/
+                            }
                             musicFragment = null;break;
                         case "shopping":
                             shoppingFragment = null;break;
@@ -442,9 +410,9 @@ public class SwipeActivity extends BaseActivity {
                         case "weather":
                             weatherFragment = null;break;
                         case "music":
-                            /*if (musicFragment.isPlaying){
+                            if (musicFragment.musicService.musicPlay.isPlaying()){
                                 musicFragment.pause();
-                            }*/
+                            }
                             musicFragment = null;break;
                         case "shopping":
                             shoppingFragment = null;break;
@@ -483,9 +451,9 @@ public class SwipeActivity extends BaseActivity {
                         case "calendar":
                             calendarFragment = null;break;
                         case "music":
-                            /*if (musicFragment.isPlaying){
+                            if (musicFragment.musicService.musicPlay.isPlaying()){
                                 musicFragment.pause();
-                            }*/
+                            }
                             musicFragment = null;break;
                         case "map":
                             mapFragment = null;break;
@@ -504,9 +472,9 @@ public class SwipeActivity extends BaseActivity {
                         case "calendar":
                             calendarFragment = null;break;
                         case "music":
-                            /*if (musicFragment.isPlaying){
+                            if (musicFragment.musicService.musicPlay.isPlaying()){
                                 musicFragment.pause();
-                            }*/
+                            }
                             musicFragment = null;break;
                         case "shopping":
                             shoppingFragment = null;break;
@@ -525,9 +493,9 @@ public class SwipeActivity extends BaseActivity {
                         case "calendar":
                             calendarFragment = null;break;
                         case "music":
-                            /*if (musicFragment.isPlaying){
+                            if (musicFragment.musicService.musicPlay.isPlaying()){
                                 musicFragment.pause();
-                            }*/
+                            }
                             musicFragment = null;break;
                         case "shopping":
                             shoppingFragment = null;break;
@@ -757,9 +725,8 @@ public class SwipeActivity extends BaseActivity {
             }
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "");
             mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, false);
-//            mSharePrefrenceUtils.saveBackgroudActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY,"");
-            super.onBackPressed();
         }
+        super.onBackPressed();
     }
     public class ControllerServiceConnection implements ServiceConnection {
 

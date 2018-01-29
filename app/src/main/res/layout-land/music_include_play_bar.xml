@@ -17,6 +17,9 @@
             android:src="@mipmap/music_frame_shadow_music"
             android:layout_width="63dp"
             android:layout_height="63dp"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:scaleType="fitCenter" />
 
         <TextView
@@ -25,33 +28,46 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
-            android:layout_marginTop="20dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
             android:focusable="true"
             android:textSize="@dimen/weather_basic_textsize"
             android:textColor="@color/white"/>
-    </RelativeLayout>
 
-    <ImageButton
-        android:id="@+id/bar_play"
+    </RelativeLayout>
+    <ProgressBar
+        android:id="@+id/progress_show"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:layout_above="@+id/bar_progress"
+        android:layout_centerHorizontal="true" />
+    <ImageButton
+        android:id="@+id/bar_play"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_centerVertical="true"
         android:layout_toStartOf="@+id/bar_next"
-        android:background="#00000000"
-        android:layout_marginEnd="15dp"
-        android:src="@mipmap/music_pause" />
-
+        android:background="?android:selectableItemBackground"
+        android:layout_marginEnd="70dp"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/music_play" />
 
     <ImageButton
         android:id="@+id/bar_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="20dp"
         android:layout_alignBottom="@+id/bar_play"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="13dp"
+        android:layout_marginEnd="45dp"
+        android:scaleType="fitCenter"
         android:background="?android:selectableItemBackground"
         android:src="@mipmap/music_next" />
-    <!--</RelativeLayout>-->
-
+    <ProgressBar
+        android:id="@+id/bar_progress"
+        android:layout_below="@+id/home_titlebar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:progressBarStyleHorizontal" />
 </RelativeLayout>
