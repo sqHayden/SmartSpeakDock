@@ -98,7 +98,6 @@ public class BaseFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause: baseFragment");
         ((BaseActivity) getActivity()).unregisterMyOnTouchListener(onTouchListener);
 
     }
@@ -106,14 +105,12 @@ public class BaseFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: baseFragment");
     }
 
     @Override
     public void onStop() {
         super.onStop();
         handler.removeCallbacks(runnable);
-        Log.d(TAG, "onStop: baseFragment");
     }
 
     public String judgeCurrentFragment(){

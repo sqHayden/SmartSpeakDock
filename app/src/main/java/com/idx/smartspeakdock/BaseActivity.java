@@ -32,7 +32,6 @@ public  abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onRestart() {
-        Log.d(TAG, "onRestart: ");
 //        if (handler!=null) {
 //            handler.removeCallbacks(runnable);
 ////            handler.postDelayed(runnable,1000 * 60 * 10);
@@ -191,6 +190,13 @@ public  abstract class BaseActivity extends AppCompatActivity {
         public boolean onTouch(MotionEvent ev);
     }
 
+    public void isActivityBackground(){
+        if(!isActivityTop){
+            Log.i("ryan", "isActivityBackground: ");
+            ActivityManager am = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE) ;
+            am.moveTaskToFront(getTaskId(), ActivityManager.MOVE_TASK_WITH_HOME);
+        }
+    }
 
     @Override
     protected void onStop() {
@@ -200,7 +206,6 @@ public  abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.i(TAG, "onDestroy: baseActivity");
         isActivityTop = false;
         if (isFragmentTop != null) {
             isFragmentTop = null;

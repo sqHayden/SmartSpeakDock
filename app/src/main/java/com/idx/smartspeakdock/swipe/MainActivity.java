@@ -72,7 +72,6 @@ public class MainActivity extends BaseActivity {
     private SharePrefrenceUtils mSharedPreferencesUtils;
     private AppExecutors mAppExecutors;
     List<Shopping> mShoppings;
-    String mWhichBackgroundActivity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -304,15 +303,11 @@ public class MainActivity extends BaseActivity {
         super.onResume();
         isTopActivity();
         isTopFragment();
-        mSharedPreferencesUtils.saveBackgroudActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY,"");
-        Log.i(TAG, "onResume: main");
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        mSharedPreferencesUtils.saveBackgroudActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY,GlobalUtils.WhichActivity.MAIN_ACTIVITY_ID);
-        Log.i(TAG, "onStop: main");
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override
@@ -324,7 +319,6 @@ public class MainActivity extends BaseActivity {
         }
         isDrawer = false;
         if (mSharedPreferencesUtils != null) {
-            mSharedPreferencesUtils.saveBackgroudActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY,"");
             mSharedPreferencesUtils = null;
         }
         if (mAppExecutors != null) {
@@ -339,7 +333,6 @@ public class MainActivity extends BaseActivity {
         }
         //停止ControllerService
         unbindService(myServiceConnection);
-        mWhichBackgroundActivity = "";
 //        stopService(mControllerintent);
         if (mControllerintent != null) {
             mControllerintent = null;
@@ -367,7 +360,6 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void onShoppingCallback(String web_url) {
                     Log.i(TAG, "onShoppingCallback: " + web_url);
-                    mWhichBackgroundActivity = mSharedPreferencesUtils.getBackgroundActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY);
                     revokeMainShoppingVoice(web_url);
                 }
             });
@@ -375,8 +367,6 @@ public class MainActivity extends BaseActivity {
             mControllerBinder.setCalendarControllerListener(new CalendarCallBack() {
                 @Override
                 public void onCalendarCallBack() {
-                    mWhichBackgroundActivity = mSharedPreferencesUtils.getBackgroundActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY);
-                    Log.i(TAG, "onCalendarCallBack: which_activity = "+mWhichBackgroundActivity);
                     revokeMainCalendarVoice();
                 }
             });
@@ -384,8 +374,6 @@ public class MainActivity extends BaseActivity {
             mControllerBinder.setWeatherControllerListener(new WeatherCallback() {
                 @Override
                 public void onWeatherCallback(String cityName, String time, ReturnVoice returnVoice, String func_flag, int flag) {
-                    mWhichBackgroundActivity = mSharedPreferencesUtils.getBackgroundActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY);
-                    Log.i(TAG, "onWeatherCallBack: which_activity = "+mWhichBackgroundActivity);
                     revokeMainWeatherVoice(cityName, time, returnVoice, func_flag, flag);
                 }
             });
@@ -393,7 +381,6 @@ public class MainActivity extends BaseActivity {
             mControllerBinder.onGetMusicName(new MusicCallBack() {
                 @Override
                 public void onMusicCallBack(String music_name) {
-                    mWhichBackgroundActivity = mSharedPreferencesUtils.getBackgroundActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY);
                     revokeMainMusicVoice(music_name);
                 }
             });
@@ -401,7 +388,6 @@ public class MainActivity extends BaseActivity {
             mControllerBinder.setMapControllerListener(new MapCallBack() {
                 @Override
                 public void onMapCallBack(String name, String address, String fromAddress, String toAddress, PathWay pathWay, ResultCallback result) {
-                    mWhichBackgroundActivity = mSharedPreferencesUtils.getBackgroundActivity(GlobalUtils.WhichActivity.BACKGROUND_WHICH_ACTIVITY);
                     revokeMainMapVoice(name,address,fromAddress,toAddress,pathWay,result);
                 }
             });
@@ -419,18 +405,10 @@ public class MainActivity extends BaseActivity {
         if (!isActivityTop) {
             startShopping(web_url);
         }
-        if (mWhichBackgroundActivity.equals(GlobalUtils.WhichActivity.MAIN_ACTIVITY_ID)){
-            Log.i(TAG, "revokeMainShoppingVoice: shopping");
-            startShopping(web_url);
-        }
     }
 
     private void revokeMainCalendarVoice() {
         if (!isActivityTop) {
-            startCalendar();
-        }
-        if (mWhichBackgroundActivity.equals(GlobalUtils.WhichActivity.MAIN_ACTIVITY_ID)){
-            Log.i(TAG, "revokeMainCalendarVoice: calendar");
             startCalendar();
         }
     }
@@ -439,28 +417,16 @@ public class MainActivity extends BaseActivity {
         if (!isActivityTop) {
             startWeather(cityName, time, func_flag, flag);
         }
-        if (mWhichBackgroundActivity.equals(GlobalUtils.WhichActivity.MAIN_ACTIVITY_ID)){
-            Log.i(TAG, "revokeMainWeatherVoice: weather");
-            startWeather(cityName, time, func_flag, flag);
-        }
     }
 
     private void  revokeMainMusicVoice(String music_name){
         if (!isActivityTop){
             startMusic(music_name);
         }
-        if (mWhichBackgroundActivity.equals(GlobalUtils.WhichActivity.MAIN_ACTIVITY_ID)){
-            Log.i(TAG, "revokeMainMusicVoice: music");
-            startMusic(music_name);
-        }
     }
 
     private void revokeMainMapVoice(String name, String address, String fromAddress, String toAddress, PathWay pathWay, ResultCallback result){
         if (!isActivityTop) {
-            startMap(name, address, fromAddress, toAddress, pathWay);
-        }
-        if (mWhichBackgroundActivity.equals(GlobalUtils.WhichActivity.MAIN_ACTIVITY_ID)){
-            Log.i(TAG, "revokeMainMapVoice: map");
             startMap(name, address, fromAddress, toAddress, pathWay);
         }
     }
