@@ -57,6 +57,10 @@ public class WeatherUtil {
                     basic.date=new Date().toString();
                     basic.weatherBasic=responseText;
                     mWeatherBasicRepository.addWeatherBasic(basic);
+                }else {
+                    if(returnWeather != null){
+                        returnWeather.onReturnWeatherError();
+                    }
                 }
             }
 
@@ -64,7 +68,7 @@ public class WeatherUtil {
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 if(returnWeather != null){
-                    returnWeather.onReturnWeather(null);
+                    returnWeather.onReturnWeatherError();
                 }
             }
         });
@@ -92,6 +96,10 @@ public class WeatherUtil {
                     aqi.date=new Date().toString();
                     aqi.weatherAqi=responseText;
                     mWeatherAqiRepository.addWeatherAqi(aqi);
+                }else {
+                    if (returnWeather != null){
+                        returnWeather.onReturnWeatherError();
+                    }
                 }
             }
 
@@ -99,7 +107,7 @@ public class WeatherUtil {
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 if (returnWeather != null){
-                    returnWeather.onReturnWeather(null);
+                    returnWeather.onReturnWeatherError();
                 }
             }
         });

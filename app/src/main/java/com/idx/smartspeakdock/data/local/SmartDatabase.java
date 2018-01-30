@@ -6,12 +6,6 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
-import com.idx.smartspeakdock.weather.model.area.City;
-import com.idx.smartspeakdock.weather.model.area.CityDao;
-import com.idx.smartspeakdock.weather.model.area.County;
-import com.idx.smartspeakdock.weather.model.area.CountyDao;
-import com.idx.smartspeakdock.weather.model.area.Province;
-import com.idx.smartspeakdock.weather.model.area.ProvinceDao;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherAqi;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherAqiDao;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasic;
@@ -22,19 +16,13 @@ import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicDao;
  * Email: lionel.lp.wu@mail.foxconn.com
  */
 
-@Database(entities = {User.class, Province.class,City.class, County.class, WeatherBasic.class, WeatherAqi.class}, version = 1, exportSchema = false)
+@Database(entities = {User.class, WeatherBasic.class, WeatherAqi.class}, version = 1, exportSchema = false)
 @TypeConverters(Converters.class)
 public abstract class SmartDatabase extends RoomDatabase {
 
     private static SmartDatabase INSTANCE;
 
     public abstract UserDao userDao();
-
-    public abstract ProvinceDao provinceDao();
-
-    public abstract CityDao cityDao();
-
-    public abstract CountyDao countyDao();
 
     public abstract WeatherBasicDao weatherBasicDao();
 

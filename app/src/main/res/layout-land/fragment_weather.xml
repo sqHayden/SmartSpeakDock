@@ -421,12 +421,11 @@
                             android:id="@+id/weather_title_3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
                             android:layout_gravity="center"
                             android:text="@string/weather_air_quality"
                             android:textColor="@color/weather_text_color"
                             android:textSize="@dimen/weather_three_little_title_textsize" />
-
+                        <!--android:layout_centerHorizontal="true"-->
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

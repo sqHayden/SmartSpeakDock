@@ -9,4 +9,5 @@ import com.idx.smartspeakdock.weather.model.weather.Weather;
 //监听从网络获取Weather接口
 public interface ReturnWeather {
     void onReturnWeather(Weather weather);
+    void onReturnWeatherError();
 }

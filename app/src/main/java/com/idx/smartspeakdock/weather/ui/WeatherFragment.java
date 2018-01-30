@@ -61,7 +61,7 @@ import java.util.TimerTask;
  * Email: Ryan_chan01212@yeah.net
  */
 
-public class WeatherFragment extends BaseFragment implements WeatherUi/*, ChooseCityDialogFragment.OnChooseCityCompleted*/ {
+public class WeatherFragment extends BaseFragment implements WeatherUi {
     private static final String TAG = WeatherFragment.class.getSimpleName();
     private static final int VOICE = 0;
     private static final int UNVOICE = 1;
@@ -93,7 +93,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
     private WeatherBasicRepository mWeatherBasicRepository;
     private WeatherAqiRepository mWeatherAqiRepository;
     private ReturnAnswerCallback mReturnAnswerCallback;
-    private String mWeather_city;
+//    private String mWeather_city;
     private String mWeather_time;
     private String mWeather_fun_flag;
     private int mWeather_Voice_flag;
@@ -140,7 +140,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
             }
         };
         mTimer = new Timer();
-        mTimer.schedule(mTask, 60 * 1000, 60 * 1000);
+        mTimer.schedule(mTask, 60 * 1000, 5 * 60 * 1000);
     }
 
     public WeatherFragment(){}
@@ -175,15 +175,18 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         mWeather_Voice_flag = -1;
         if (getArguments() != null){
             Bundle args = getArguments();
-            mWeather_city = args.getString("cityname");
+//            mWeather_city = args.getString("cityname");
+            mCurrentCounty = args.getString("cityname");
+            mCurrentCity = args.getString("cityname");
             mWeather_time = args.getString("time");
             mWeather_fun_flag = args.getString("fun_flag");
             mWeather_Voice_flag = args.getInt("voice_flag");
             Log.i(TAG, "onAttach: mWeather_voice_flag = "+mWeather_Voice_flag);
         }else {
             if (sp!=null){
-                mCurrentCity=sp.getString("city","深圳");
-                mCurrentCounty=sp.getString("county","深圳");
+                mCurrentCity=sp.getString("city",mCurrentCity);
+                mCurrentCounty=sp.getString("county",mCurrentCounty);
+                sp.edit().clear();
             }
         }
     }
@@ -213,7 +216,8 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         mWeatherPresenter = new WeatherPresenterImpl(this);
         if (mWeather_Voice_flag == GlobalUtils.Weather.WEATHER_VOICE_FLAG){
             Log.i(TAG, "onCreate: voice_flag = "+mWeather_Voice_flag);
-            judgeVoiceAnswer(mWeather_city,mWeather_time,mWeather_fun_flag);
+//            judgeVoiceAnswer(mWeather_city,mWeather_time,mWeather_fun_flag);
+            judgeVoiceAnswer(mCurrentCity,mWeather_time,mWeather_fun_flag);
         }else {
             Log.i(TAG, "onCreate: voice_flag_un = "+mWeather_Voice_flag);
             getWeatherBasic(UNVOICE,mCurrentCounty,"","");
@@ -275,10 +279,12 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
      */
     private boolean judgeCityAqiIsQuery(){
         boolean flag=false;
-        if (!(mCurrentCity.equals("香港") || mCurrentCity.equals("澳门") || mCurrentCity.equals("台北") ||
-                mCurrentCity.equals("高雄") ||
-                mCurrentCity.equals("台中"))) {
-            flag=true;
+        if (mCurrentCity!=null) {
+            if (!(mCurrentCity.equals("香港") || mCurrentCity.equals("澳门") || mCurrentCity.equals("台北") ||
+                    mCurrentCity.equals("高雄") ||
+                    mCurrentCity.equals("台中"))) {
+                flag = true;
+            }
         }
         return flag;
     }
@@ -423,13 +429,12 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (weather==null) {
-                    Log.d(TAG, "run: " + weather);
+                if (weather!=null) {
+                    Log.i(TAG, "run: setWeatherInfo = "+weather.basic.cityName);
+                    updateWeatherInfo(weather);
+                    mRefreshWeather.setRefreshing(false);
+                    mTitle.setText(weather.basic.cityName);
                 }
-                Log.i(TAG, "run: setWeatherInfo = "+weather.basic.cityName);
-                updateWeatherInfo(weather);
-                mRefreshWeather.setRefreshing(false);
-                mTitle.setText(weather.basic.cityName);
             }
         });
     }
@@ -441,29 +446,40 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
      */
     public void updateWeatherInfo(Weather weather) {
         mCurrentCounty=weather.basic.cityName;
-        mCurrentCity=weather.basic.pCityName;
+        if (TextUtils.isEmpty(weather.basic.pCityName)){
+            mCurrentCity=weather.basic.cityName;
+        }else {
+            mCurrentCity = weather.basic.pCityName;
+        }
+        Log.d(TAG, "updateWeatherInfo: "+mCurrentCity+":"+mCurrentCounty);
         mWeatherNowIcon.setImageResource(HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(weather.now.code)));
         mCond.setText(HandlerWeatherUtil.getWeatherType(Integer.parseInt(weather.now.code)));
-        mTemperature.setText(weather.forecastList.get(0).max + "℃ / " + weather.forecastList.get(0).min + "℃");
-        mLifestyleClothes.setText(weather.lifestyleList.get(1).brf);
-        mLifestyleCar.setText(weather.lifestyleList.get(6).brf);
-        mLifestyleAir.setText(weather.lifestyleList.get(7).brf);
+        if (weather.forecastList != null) {
+            mTemperature.setText(weather.forecastList.get(0).max + "℃ / " + weather.forecastList.get(0).min + "℃");
+
+            if (mVTomorrowWeek != null) {
+                mVTomorrowWeek.setText(HandlerWeatherUtil.parseDateWeek(weather.forecastList.get(1).date));
+                mVAfterWeek.setText(HandlerWeatherUtil.parseDateWeek(weather.forecastList.get(2).date));
+            }
+            String tomorrow = HandlerWeatherUtil.parseDateLand(weather.forecastList.get(1).date);
+            mTomorrow.setText(tomorrow);
+            mTomorrowTem.setText(weather.forecastList.get(1).max + "℃ / " + weather.forecastList.get(1).min + "℃");
+            mTomorrowIcon.setImageResource(HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(weather.forecastList.get(1).code)));
+
+            String after = HandlerWeatherUtil.parseDateLand(weather.forecastList.get(2).date);
+            mAfter.setText(after);
+            mAfterTem.setText(weather.forecastList.get(2).max + "℃ / " + weather.forecastList.get(2).min + "℃");
+            mAfterIcon.setImageResource(HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(weather.forecastList.get(2).code)));
+
+        }
+        if (weather.lifestyleList != null) {
+            mLifestyleClothes.setText(weather.lifestyleList.get(1).brf);
+            mLifestyleCar.setText(weather.lifestyleList.get(6).brf);
+            mLifestyleAir.setText(weather.lifestyleList.get(7).brf);
+        }
         mDate.setText(HandlerWeatherUtil.parseDate(new Date()));
         mTime.setText(HandlerWeatherUtil.parseTime(new Date()));
         mTitle.setText(weather.basic.cityName);
-        if (mVTomorrowWeek != null) {
-            mVTomorrowWeek.setText(HandlerWeatherUtil.parseDateWeek(weather.forecastList.get(1).date));
-            mVAfterWeek.setText(HandlerWeatherUtil.parseDateWeek(weather.forecastList.get(2).date));
-        }
-        String tomorrow = HandlerWeatherUtil.parseDateLand(weather.forecastList.get(1).date);
-        mTomorrow.setText(tomorrow);
-        mTomorrowTem.setText(weather.forecastList.get(1).max + "℃ / " + weather.forecastList.get(1).min + "℃");
-        mTomorrowIcon.setImageResource(HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(weather.forecastList.get(1).code)));
-
-        String after = HandlerWeatherUtil.parseDateLand(weather.forecastList.get(2).date);
-        mAfter.setText(after);
-        mAfterTem.setText(weather.forecastList.get(2).max + "℃ / " + weather.forecastList.get(2).min + "℃");
-        mAfterIcon.setImageResource(HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(weather.forecastList.get(2).code)));
     }
 
     @Override
@@ -472,8 +488,10 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                updateWeatherAqi(weather);
-                mRefreshWeather.setRefreshing(false);
+                if (weather!=null) {
+                    updateWeatherAqi(weather);
+                    mRefreshWeather.setRefreshing(false);
+                }
             }
         });
     }
@@ -489,23 +507,6 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         mCO.setText(weather.air.co);
     }
 
-//    @Override
-//    public void chooseCityCompleted(String countyName, String cityName) {
-//        Log.d(TAG, "chooseCityCompleted: " + cityName + ":" + countyName);
-//        mCurrentCounty = countyName;
-//        mCurrentCity = cityName;
-//        if (NetStatusUtils.isWifiConnected(mContext) || NetStatusUtils.isMobileConnected(mContext)) {
-//            mWeatherPresenter.getWeather(countyName);
-//            Log.d(TAG, cityName);
-//            Log.d(TAG, "chooseCityCompleted: " + cityName);
-//            if (!(cityName.equals("香港") || cityName.equals("澳门") || cityName.equals("台北") || cityName.equals("高雄") || cityName.equals("台中"))) {
-//                mWeatherPresenter.getWeatherAqi(cityName);
-//            }
-//            mTitle.setText(countyName);
-//        } else {
-//            ToastUtils.showError(mContext, getResources().getString(R.string.network_not_connected));
-//        }
-//    }
     @Override
     public void onResume() {
         super.onResume();
@@ -515,6 +516,10 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
     @Override
     public void onPause() {
         super.onPause();
+//        mWeather_city = "";
+        mWeather_time = "";
+        mWeather_fun_flag = "";
+        mWeather_Voice_flag = -1;
         if (mTimer!=null) {
             mTimer.cancel();
         }
@@ -526,7 +531,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         super.onDestroy();
         //解绑广播注册
         mContext.unregisterReceiver(mWeatherBroadcastReceiver);
-        mWeather_city = "";
+//        mWeather_city = "";
         mWeather_time = "";
         mWeather_fun_flag = "";
         mWeather_Voice_flag = -1;
@@ -624,6 +629,15 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
                                         }
                                     }
                                 }
+
+                                @Override
+                                public void onReturnWeatherError() {
+                                    voice_weather = null;
+                                    voiceReturnJudge(cityName, time, funcTag);
+//                                    if (mReturnAnswerCallback != null){
+//                                        mReturnAnswerCallback.onReturnAnswer(voice_answer);
+//                                    }
+                                }
                             });
                             break;
                     }
@@ -679,6 +693,15 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
                                                 voiceReturnJudge(cityName, time, funcTag);
                                             }
                                         }
+                                    }
+
+                                    @Override
+                                    public void onReturnWeatherError() {
+                                        voice_aqi=null;
+                                        voiceReturnJudge(cityName, time, funcTag);
+//                                        if (mReturnAnswerCallback != null){
+//                                            mReturnAnswerCallback.onReturnAnswer(voice_answer);
+//                                        }
                                     }
                                 });
                             }else {
@@ -748,7 +771,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         if (voice_weather != null && voice_weather.status.equals("ok")){
             voice_answer = "好的,你可以查看"+cityName+"的天气了";
         }else {
-            voice_answer = "查询"+cityName+"天气信息失败";
+            voice_answer = "抱歉，" + cityName+"天气信息未找到";
         }
         if (mReturnAnswerCallback != null){
             mReturnAnswerCallback.onReturnAnswer(voice_answer);
@@ -766,8 +789,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
             Log.i(TAG, "rangeTempInfo: city = " + voice_weather);
             judgeRangeTempInfo(cityName, time);
         } else {
-            voice_answer = "查询" + time + cityName + "温度信息失败";
+            voice_answer = "抱歉，" + time + cityName + "温度信息未找到";
         }
+        Log.d(TAG, "rangeTempInfo: "+voice_answer);
         if (mReturnAnswerCallback != null){
             mReturnAnswerCallback.onReturnAnswer(voice_answer);
         }
@@ -791,7 +815,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
                 voice_answer = cityName + time + "最高温度为" + voice_weather.forecastList.get(2).max + "度,最低温度为" + voice_weather.forecastList.get(2).min + "度";
                 break;
             default:
-                voice_answer = "抱歉，只能查询今天、明天、后天三天以内的天气信息";
+                voice_answer = "抱歉，只能查询今天、明天、后天三天以内的市级或县级天气信息";
                 break;
         }
     }
@@ -806,7 +830,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
         if (voice_aqi != null && voice_aqi.status.equals("ok")) {
             voice_answer = cityName + "空气质量为" + voice_aqi.air.qlty;
         } else {
-            voice_answer = "查询" + cityName + "空气质量信息失败";
+            voice_answer = "抱歉，" + cityName + "空气质量信息未找到";
         }
         if (mReturnAnswerCallback != null){
             mReturnAnswerCallback.onReturnAnswer(voice_answer);
@@ -824,7 +848,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
             Log.i(TAG, "currentTempInfo: city = " + voice_weather.basic.cityName);
             voice_answer = cityName + "当前温度为" + voice_weather.now.tmperature + "度";
         } else {
-            voice_answer = "查询" + cityName + "当前温度信息失败";
+            voice_answer = "抱歉，" + cityName + "当前温度信息未找到";
         }
         if (mReturnAnswerCallback != null){
             mReturnAnswerCallback.onReturnAnswer(voice_answer);
@@ -838,11 +862,11 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
      * @param time 时间（今天，明天，后天）
      */
     private void weatherStatus(String cityName,String time){
-        Log.d(TAG, "weatherStatus: 天气状况" + voice_weather.status);
+//        Log.d(TAG, "weatherStatus: 天气状况" + voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
             judgeStatusInfo(cityName, time);
         } else {
-            voice_answer = "查询" + time + cityName + "天气状况失败";
+            voice_answer = "抱歉，" + time + cityName + "天气状况信息未找到";
         }
         if (mReturnAnswerCallback != null){
             mReturnAnswerCallback.onReturnAnswer(voice_answer);
@@ -870,7 +894,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
                         +"最高温度为" + voice_weather.forecastList.get(2).max + "度,最低温度为" + voice_weather.forecastList.get(2).min + "度";
                 break;
             default:
-                voice_answer = "抱歉，只能查询今天、明天、后天三天以内的天气信息";
+                voice_answer = "抱歉，只能查询今天、明天、后天三天以内的市级或县级天气信息";
                 break;
         }
     }
@@ -882,11 +906,11 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
      * @param time 时间（今天，明天，后天）
      */
     private void rainInfo(String cityName,String time){
-        Log.d(TAG, "rainInfo: 下雨"+voice_weather.status);
+//        Log.d(TAG, "rainInfo: 下雨"+voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
             judgeRainInfo(cityName, time);
         } else {
-            voice_answer = "查询" + time + cityName + "是否下雨失败";
+            voice_answer = "抱歉，" + time + cityName + "是否下雨信息未找到";
         }
         if (mReturnAnswerCallback != null){
             mReturnAnswerCallback.onReturnAnswer(voice_answer);
@@ -911,7 +935,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
                 rainResult(cityName, time);
                 break;
             default:
-                voice_answer = "抱歉，只能查询今天、明天、后天三天以内的天气信息";
+                voice_answer = "抱歉，只能查询今天、明天、后天三天以内的市级或县级天气信息";
                 break;
         }
     }
@@ -953,11 +977,11 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
      * 语音查看穿衣建议
      */
     private void dressInfo(){
-        Log.d(TAG, "dressInfo: 穿衣指数" + voice_weather.status);
+//        Log.d(TAG, "dressInfo: 穿衣指数" + voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
             voice_answer = voice_weather.lifestyleList.get(1).txt;
         } else {
-            voice_answer = "查询穿衣指数失败";
+            voice_answer = "抱歉，穿衣指数信息未找到";
         }
         if (mReturnAnswerCallback != null){
             mReturnAnswerCallback.onReturnAnswer(voice_answer);
@@ -970,11 +994,11 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
      * @param cityName 城市名
      */
     private void uitravioletLevelInfo(String cityName) {
-        Log.d(TAG, "uitravioletLevelInfo: 紫外线强度" + voice_weather.status);
+//        Log.d(TAG, "uitravioletLevelInfo: 紫外线强度" + voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
             voice_answer = cityName + "紫外线强度" + voice_weather.lifestyleList.get(5).brf;
         } else {
-            voice_answer = "查询" + cityName + "紫外线强度失败";
+            voice_answer = "抱歉，" + cityName + "紫外线强度信息未找到";
         }
         if (mReturnAnswerCallback != null){
             mReturnAnswerCallback.onReturnAnswer(voice_answer);
@@ -988,7 +1012,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
      * @param time 时间（今天，明天，后天）
      */
     private void smogInfo(String cityName,String time){
-        Log.d(TAG, "smogInfo: 雾霾" + voice_weather.status);
+//        Log.d(TAG, "smogInfo: 雾霾" + voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
             String weather_type = HandlerWeatherUtil.getWeatherType(Integer.parseInt(voice_weather.now.code));
             if (weather_type.equals("雾")) {
@@ -997,7 +1021,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
                 voice_answer = time + cityName + "没有雾霾";
             }
         } else {
-            voice_answer = "查询" + cityName + "雾霾信息失败";
+            voice_answer = "抱歉，" + cityName + "雾霾信息未找到";
         }
         if (mReturnAnswerCallback != null){
             mReturnAnswerCallback.onReturnAnswer(voice_answer);
@@ -1095,10 +1119,13 @@ public class WeatherFragment extends BaseFragment implements WeatherUi/*, Choose
             Log.i(TAG, "onReceive: actionId = "+intent.getAction());
             switch (intent.getAction()){
                 case GlobalUtils.Weather.WEATHER_BROADCAST_ACTION:
-                    mWeather_city = intent.getStringExtra("cityname");
+//                    mWeather_city = intent.getStringExtra("cityname");
+                    mCurrentCounty = intent.getStringExtra("cityname");
+                    mCurrentCity = intent.getStringExtra("cityname");
                     mWeather_time = intent.getStringExtra("time");
                     mWeather_fun_flag = intent.getStringExtra("flag");
-                    judgeVoiceAnswer(mWeather_city,mWeather_time,mWeather_fun_flag);
+                    judgeVoiceAnswer(mCurrentCity,mWeather_time,mWeather_fun_flag);
+                    Log.d(TAG, "onReceive: "+mCurrentCounty+":"+mCurrentCity);
                     break;
                 default:break;
             }
