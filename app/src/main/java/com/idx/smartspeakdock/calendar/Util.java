@@ -253,6 +253,9 @@ public  class Util {
             case "元旦":
                 answer = holiday + "是" + "1月1号";
                 break;
+            case "元旦节":
+                answer = holiday + "是" + "1月1号";
+                break;
             case "情人节":
                 answer = holiday + "是" + "2月14号";
                 break;
@@ -293,6 +296,13 @@ public  class Util {
                 answer = holiday + "是" + "12月25号";
                 break;
             case "除夕":
+                if (isNewYear(mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay())){
+                    numberMonth = LunarCalendar.daysInLunarMonth(mCalendarView.getCurYear()-1,12);
+                }
+                numberMonth = LunarCalendar.daysInLunarMonth(mCalendarView.getCurYear(),12);
+                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),12,numberMonth);
+                break;
+            case "除夕节":
                 if (isNewYear(mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay())){
                     numberMonth = LunarCalendar.daysInLunarMonth(mCalendarView.getCurYear()-1,12);
                 }
