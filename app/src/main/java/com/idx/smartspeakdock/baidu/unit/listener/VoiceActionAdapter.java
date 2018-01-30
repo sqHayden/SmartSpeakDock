@@ -279,6 +279,9 @@ public class VoiceActionAdapter {
             case Actions.Shopping.SHOPPING_SMART_WASHMACHI:
                 smartWashmachine();
                 return true;
+            case Actions.Shopping.SHOPPING_TV_KINDS:
+                tvKinds();
+                return true;
 
             /**天气指令*/
             /*case Actions.Weather.WEATHER_CHECK_INFO:
@@ -551,6 +554,13 @@ public class VoiceActionAdapter {
 
     private void smartWashmachine() {
         recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_SMART_WASHMACHINE);
+        if (mShoppingListener != null) {
+            jude_word(recoginize_shopping_word);
+        }
+        result(true);
+    }
+    private void tvKinds() {
+        recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_TV_KINDS);
         if (mShoppingListener != null) {
             jude_word(recoginize_shopping_word);
         }
@@ -994,12 +1004,18 @@ public class VoiceActionAdapter {
 
     private void jude_word(String recoginize_shopping_word) {
         Log.i(TAG, "jude_word: recoginize_shopping_word = " + recoginize_shopping_word);
+        String voice_answer = "";
         if (!TextUtils.isEmpty(recoginize_shopping_word)) {
             web_sites_url = mSharePrefrenceUtils.getWebUrl(recoginize_shopping_word);
             Log.i(TAG, "jude_word: recoginize_shopping_word = " + recoginize_shopping_word + ",web_sites_url = " + web_sites_url);
             if (checkVoiceAnswer(web_sites_url)) {
-                mShoppingListener.openSpecifyWebsites(web_sites_url);
+                Log.i(TAG, "jude_word: un_null");
+                voice_answer = mShoppingListener.openSpecifyWebsites(web_sites_url);
+            }else {
+                Log.i(TAG, "jude_word: null");
+                voice_answer = "抱歉,没有该网页的信息或查询信息有误";
             }
+            TTSManager.getInstance().speak(voice_answer);
         }
     }
 

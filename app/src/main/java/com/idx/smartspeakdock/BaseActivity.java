@@ -17,6 +17,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.idx.smartspeakdock.swipe.SwipeActivity;
+import com.idx.smartspeakdock.utils.ActivityStatusUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
     public boolean isActivityTop;
     public static FragmentManager mFragmentManager;
     private ArrayList<SwipeActivity.MyOnTouchListener> onTouchListeners = new ArrayList<SwipeActivity.MyOnTouchListener>(10);
-    public String fragment_show_activity = "SwipeActivity";
+//    public String fragment_show_activity = "SwipeActivity";
 
 
     @Override
@@ -62,18 +63,21 @@ public  abstract class BaseActivity extends AppCompatActivity {
         initPermission();
         //FrgamentManager
         mFragmentManager = getSupportFragmentManager();
-        isTopActivity();
+//        handler.postDelayed(runnable,1000 * 60 * 10);
+//        handler.postDelayed(runnable,1000  * 10);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i(TAG, "onResume: baseActivity");
         //当前Activity是否是SwipeActivity
-        isTopActivity();
-        //当前正在显示的Fragment
-        isTopFragment();
+        isActivityTop = ActivityStatusUtils.isTopActivity(this);
+//        if (handler!=null) {
+//            handler.removeCallbacks(runnable);
+////            handler.postDelayed(runnable,1000 * 60 * 10);
+//            handler.postDelayed(runnable,1000  * 10);
+//        }
     }
 
     // 6.0以上权限获取
@@ -122,40 +126,8 @@ public  abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
-    public boolean isTopActivity() {
-        isActivityTop = false;
-        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
-        Log.i(TAG, "activity isTopActivity = " + cn.getClassName());
-        if (cn.getClassName().contains(fragment_show_activity)) {
-            isActivityTop = true;
-        }
-        Log.i(TAG, "activity isTop = " + isActivityTop);
-        return isActivityTop;
-    }
-
-    public static Fragment isTopFragment() {
-        isFragmentTop = null;
-        List<Fragment> fragments = mFragmentManager.getFragments();
-        Log.i(TAG, "activity isTopFragment: size = " + fragments.size());
-        for (Fragment fragment : fragments) {
-//            if(fragment != null && fragment.isVisible()){
-            isFragmentTop = fragment;
-//            }
-            Log.i(TAG, "activity isTopFragment: " + isFragmentTop.getClass().getSimpleName());
-        }
-        return isFragmentTop;
-    }
     public interface MyOnTouchListener {
         public boolean onTouch(MotionEvent ev);
-    }
-
-    public void isActivityBackground(){
-        if(!isActivityTop){
-            Log.i("ryan", "isActivityBackground: ");
-            ActivityManager am = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE) ;
-            am.moveTaskToFront(getTaskId(), ActivityManager.MOVE_TASK_WITH_HOME);
-        }
     }
 
     @Override
@@ -170,5 +142,6 @@ public  abstract class BaseActivity extends AppCompatActivity {
         if (isFragmentTop != null) {
             isFragmentTop = null;
         }
+        ActivityStatusUtils.onDestroy();
     }
 }

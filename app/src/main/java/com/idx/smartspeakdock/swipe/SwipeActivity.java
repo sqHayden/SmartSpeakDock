@@ -2,7 +2,6 @@ package com.idx.smartspeakdock.swipe;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
@@ -14,17 +13,14 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.setting.SettingFragment;
@@ -40,6 +36,7 @@ import com.idx.smartspeakdock.music.service.MusicCallBack;
 import com.idx.smartspeakdock.service.ControllerService;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
 import com.idx.smartspeakdock.shopping.ShoppingFragment;
+import com.idx.smartspeakdock.utils.ActivityStatusUtils;
 import com.idx.smartspeakdock.utils.ActivityUtils;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
@@ -549,6 +546,7 @@ public class SwipeActivity extends BaseActivity {
         if (mWeather_return_voice != null) {mWeather_return_voice = null;}
         if (mMap_result_callback!=null) {mMap_result_callback = null;}
         music_name = null;
+        ActivityStatusUtils.onDestroy();
         unbindService(mServiceConnection);
     }
 
@@ -562,6 +560,8 @@ public class SwipeActivity extends BaseActivity {
             }
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "");
             mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, false);
+            isFragmentTop = null;
+            isActivityTop = false;
             super.onBackPressed();
         }
     }

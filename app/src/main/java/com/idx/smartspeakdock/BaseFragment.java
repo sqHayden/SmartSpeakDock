@@ -6,15 +6,18 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.idx.smartspeakdock.swipe.MainActivity;
 import com.idx.smartspeakdock.swipe.SwipeActivity;
 import com.idx.smartspeakdock.calendar.CalendarFragment;
 import com.idx.smartspeakdock.map.MapFragment;
 import com.idx.smartspeakdock.music.activity.MusicListFragment;
 import com.idx.smartspeakdock.shopping.ShoppingFragment;
 import com.idx.smartspeakdock.standby.StandByActivity;
+import com.idx.smartspeakdock.utils.ActivityStatusUtils;
 import com.idx.smartspeakdock.utils.NetStatusUtils;
 import com.idx.smartspeakdock.weather.ui.WeatherFragment;
 
@@ -56,8 +59,8 @@ public class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.i(TAG, "baseFragment onResume: topFragment");
-        BaseActivity.isTopFragment();
+       BaseActivity.isFragmentTop = ActivityStatusUtils.isTopFragment(getActivity(),BaseActivity.mFragmentManager);
+
         handler.removeCallbacks(runnable);
         handler.postDelayed(runnable,60*5*1000);
 //        handler.postDelayed(runnable,10*1000);
@@ -66,6 +69,17 @@ public class BaseFragment extends Fragment {
             public boolean onTouch(MotionEvent ev) {
                 switch (ev.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        if (getActivity() instanceof MainActivity){
+                            Log.i(TAG, "onTouch: MainActivity");
+                            Fragment fragment = ActivityStatusUtils.isTopFragment(getActivity(),BaseActivity.mFragmentManager);
+                            if (fragment.getClass().getSimpleName().equals("StandByFragment")){
+                                Log.i(TAG, "onTouch: StandByFragment");
+                                if (!(((MainActivity) getActivity()).mDrawerLayout.isDrawerVisible(GravityCompat.START))){
+                                    Log.i(TAG, "onTouch: drawer inVisible");
+                                    ((MainActivity) getActivity()).mDrawerLayout.openDrawer(GravityCompat.START);
+                                }
+                            }
+                        }
                         if (handler != null) {
                             Log.d(TAG, "onTouch: 你开启了倒计时");
                             handler.removeCallbacks(runnable);
@@ -105,6 +119,7 @@ public class BaseFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        ActivityStatusUtils.onDestroy();
     }
 
     @Override

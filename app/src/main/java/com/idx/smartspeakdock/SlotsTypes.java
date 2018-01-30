@@ -46,6 +46,7 @@ public interface SlotsTypes {
     String USER_SHOPPING_SMART_FAMILYAUDIO = "user_smart_familyaud";
     String USER_SHOPPING_SMART_ICEBOX = "user_smart_icebox";
     String USER_SHOPPING_SMART_WASHMACHINE = "user_smart_washmachi";
+    String USER_SHOPPING_TV_KINDS = "user_tv_kinds";
     //wether
     String USER_WEATHER_CITY = "user_weather_city";
     String USER_WEATHER_TIME = "user_weather_time";

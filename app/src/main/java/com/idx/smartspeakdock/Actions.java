@@ -105,5 +105,6 @@ public interface Actions {
         String SHOPPING_SMART_FAMILYAUD = "shopping_smart_familyaud_satisfy";
         String SHOPPING_SMART_ICEBOX = "shopping_smart_icebox_satisfy";
         String SHOPPING_SMART_WASHMACHI = "shopping_smart_washmachi_satisfy";
+        String SHOPPING_TV_KINDS = "shopping_tv_kinds_satisfy";
     }
 }

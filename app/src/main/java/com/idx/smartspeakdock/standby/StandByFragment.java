@@ -133,7 +133,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     @Override
     public void onResume() {
         super.onResume();
-        BaseActivity.isTopFragment();
+        Log.i("ryan", "onResume: standByFragment");
     }
 
     @Nullable

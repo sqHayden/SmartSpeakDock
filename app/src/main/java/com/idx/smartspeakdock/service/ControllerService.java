@@ -118,10 +118,11 @@ public class ControllerService extends Service {
     public void registerShoppingModule() {
         UnitManager.getInstance(getApplicationContext()).setShoppingVoiceListener(new IShoppingVoiceListener() {
             @Override
-            public void openSpecifyWebsites(String web_sites_url) {
+            public String openSpecifyWebsites(String web_sites_url) {
                 if (mShoppingCallBack != null) {
                     mShoppingCallBack.onShoppingCallback(web_sites_url);
                 }
+                return "好的,即将为你开启";
             }
         });
     }

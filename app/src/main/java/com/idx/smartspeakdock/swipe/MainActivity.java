@@ -57,7 +57,7 @@ import java.util.List;
 
 public class MainActivity extends BaseActivity {
     private final String TAG = "MainActivity";
-    private DrawerLayout mDrawerLayout;
+    public DrawerLayout mDrawerLayout;
     private Intent mIntent;
     private Intent mControllerintent;
     private StandByFragment standByFragment;
@@ -221,7 +221,6 @@ public class MainActivity extends BaseActivity {
                                 break;
                             case R.id.list_navigation_setting:
                                 // TODO: 17-12-16 SettingFargment
-                                Log.i("ryan", "main onNavigationItemSelected: settingFragment");
                                 mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.WhichFragment.SETTING_FRAGMENT_INTENT_ID);
                                 break;
                             default:
@@ -301,8 +300,8 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        isTopActivity();
-        isTopFragment();
+       /* isTopActivity();
+        isTopFragment();*/
     }
 
     @Override
@@ -313,7 +312,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.i(TAG, "onDestroy: main");
         if (standByFragment != null) {
             standByFragment = null;
         }
@@ -338,7 +336,6 @@ public class MainActivity extends BaseActivity {
             mControllerintent = null;
         }
     }
-
     @Override
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
