@@ -6,6 +6,7 @@ package com.idx.smartspeakdock.map.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +25,6 @@ import com.idx.smartspeakdock.SpeakerApplication;
 import com.idx.smartspeakdock.map.CalculateRouteActivity;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
@@ -34,11 +33,11 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  */
 public class SearchResultAdapter extends BaseAdapter {
 
-    private List<PoiItem> data;
     private Context context;
     private AMapLocation aMapLocation;
     private LatLng start_location;
     private LatLonPoint end_location;
+    private PoiItem poiItem;
 
     private int selectedPosition = 0;
 
@@ -46,11 +45,10 @@ public class SearchResultAdapter extends BaseAdapter {
         this.context = context;
         this.aMapLocation = aMapLocation;
         start_location = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
-        data = new ArrayList<>();
     }
 
-    public void setData(List<PoiItem> data) {
-        this.data = data;
+    public void setPoiItem(PoiItem poi) {
+        this.poiItem = poi;
     }
 
     public void setSelectedPosition(int selectedPosition) {
@@ -63,12 +61,12 @@ public class SearchResultAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return data.size();
+        return 1;
     }
 
     @Override
     public Object getItem(int position) {
-        return data.get(position);
+        return poiItem;
     }
 
     @Override
@@ -87,7 +85,7 @@ public class SearchResultAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.bindView(position);
+        viewHolder.bindView();
         return convertView;
     }
 
@@ -102,10 +100,7 @@ public class SearchResultAdapter extends BaseAdapter {
             linearLayout = (LinearLayout) view.findViewById(R.id.route_make);
         }
 
-        public void bindView(int position) {
-            if (position >= data.size())
-                return;
-            final PoiItem poiItem = data.get(position);
+        public void bindView() {
             textTitle.setText(poiItem.getTitle());
             linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -124,6 +119,9 @@ public class SearchResultAdapter extends BaseAdapter {
             });
             //获取距离
             end_location = poiItem.getLatLonPoint();
+            if(end_location==null){
+                Log.d("poiitem的"+"latlngPoint是空得","aaa");
+            }
             LatLng end = new LatLng(end_location.getLatitude(),end_location.getLongitude());
             float distance = AMapUtils.calculateLineDistance(start_location, end);
             if (distance > 1000) {

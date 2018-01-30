@@ -85,7 +85,7 @@
 
         <!--地图相关的文件-->
         <meta-data android:name="com.amap.api.v2.apikey" android:value="997d68f7a99cc7709be6a3df2c013f3d" />
-        <activity android:name=".map.InputTipsActivity"/>
+
         <activity android:name=".map.CalculateRouteActivity">
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
@@ -95,6 +95,7 @@
 
         <activity android:name=".map.bus.BusRouteDetailActivity"/>
         <activity android:name=".map.RouteNaviActivity"/>
+        <activity android:name=".map.InputTipsActivity"/>
         <service android:name="com.amap.api.location.APSService"/>
         <!--地图相关文件结束-->
         <activity android:name=".standby.StandByActivity"

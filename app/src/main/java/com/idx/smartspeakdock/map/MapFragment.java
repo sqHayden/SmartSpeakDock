@@ -49,6 +49,7 @@ import com.amap.api.services.help.Tip;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.SpeakerApplication;
@@ -103,6 +104,8 @@ public class MapFragment extends BaseFragment implements
     private LatLng currentLocation = null;
     //所在城市名称
     private String currentCity = "";
+    //传输对象
+    private Gson gson;
     //搜索时进度条
     private ProgressDialog progDialog = null;
     //搜索Pio的返回结果集
@@ -117,8 +120,18 @@ public class MapFragment extends BaseFragment implements
     private String mKeyWords;
     //List结果集
     private List<PoiItem> poiItems;
+    //List结果集
+    private List<Tip> tipList;
+    //用来转换的结果集
+    private List<PoiItem> is = new ArrayList<>();
+    //单项结果
+    private PoiItem poiItem;
+    private Tip tip;
+    private Marker mMarker;
     //结果集数据对象
     private SearchResultAdapter searchResultAdapter;
+    //定义全局的marker管理
+    private PoiOverlay poiOverlay;
     //搜索结果返回码
     public static final int REQUEST_CODE = 100;
     public static final int RESULT_CODE_INPUTTIPS = 101;
@@ -137,6 +150,7 @@ public class MapFragment extends BaseFragment implements
     private PoiItem firstPoiItem,secondPoiItem;
     private boolean isFirstLocation;
     private boolean isVoice;
+    private boolean isPoiSearch;
 
 
     //无参构造
@@ -161,6 +175,7 @@ public class MapFragment extends BaseFragment implements
         registerMapVoiceBroadcast();
         isFirstLocation = true;
         isVoice = false;
+        gson = new Gson();
     }
 
     private void registerMapVoiceBroadcast() {
@@ -543,7 +558,7 @@ public class MapFragment extends BaseFragment implements
                 LOCATION_MARKER_FLAG = buffer.toString();
                 //创建我的方向位置marker
                 addCircle(currentLocation, 100.0f);//添加定位精度圆
-                addMarker(currentLocation);//添加定位图标
+                addLocationMarker(currentLocation);//添加定位图标
                 mSensorHelper.setCurrentMarker(mSmallIcon);//定位图标旋转
                 toMyLocation(currentLocation);
                 //判断是否有语音
@@ -560,37 +575,44 @@ public class MapFragment extends BaseFragment implements
      */
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.locbtn://定位按钮
-                toMyLocation(currentLocation);
-                break;
-            case R.id.input_text://关键字跳转
-                Log.d("EditText点击监听", "123456");
-                Intent intent = new Intent(getActivity(), InputTipsActivity.class);
-                intent.putExtra("city_name", currentCity);
-                intent.putExtra("style","search");
-                startActivityForResult(intent, REQUEST_CODE);
-                break;
-            case R.id.clean_keywords://关键字清除
-                input_text.setText("");
-                clearMarkers();
-                clean_view.setVisibility(View.GONE);
-                listView.setVisibility(View.GONE);
-                go_style.setVisibility(View.VISIBLE);
-                break;
-            case R.id.go_style://出行
-                Intent intent1 = new Intent(this.getActivity(),CalculateRouteActivity.class);
-                Gson gson = new Gson();
-                //发送点击的模式
-                intent1.putExtra("click_style","startClick");
-                //发送位置信息
-                intent1.putExtra("start_location",gson.toJson(currentLocation));
-                //发送城市名字
-                intent1.putExtra("city_name",currentCity);
-                startActivity(intent1);
-                break;
-            default:
-                break;
+        if(currentLocation==null){
+            Toast.makeText(getContext(),"定位失败，请检查您的网络设置",Toast.LENGTH_LONG).show();
+        }else {
+            switch (v.getId()) {
+                case R.id.locbtn://定位按钮
+                    toMyLocation(currentLocation);
+                    break;
+                case R.id.input_text://跳转提示Activity
+                    Log.d("EditText点击监听", "123456");
+                    Intent intent = new Intent(getActivity(), InputTipsActivity.class);
+                    //传递请求源
+                    intent.putExtra("from", "MapFragment");
+                    //传递当前城市
+                    intent.putExtra("current_city", currentCity);
+                    //传递当前位置
+                    intent.putExtra("current_location", gson.toJson(currentLocation));
+                    startActivityForResult(intent, REQUEST_CODE);
+                    break;
+                case R.id.clean_keywords://关键字清除
+                    input_text.setText("");
+                    clearMarkers();
+                    clean_view.setVisibility(View.GONE);
+                    listView.setVisibility(View.GONE);
+                    go_style.setVisibility(View.VISIBLE);
+                    break;
+                case R.id.go_style://出行
+                    Intent intent1 = new Intent(this.getActivity(), CalculateRouteActivity.class);
+                    //发送点击的模式
+                    intent1.putExtra("click_style", "startClick");
+                    //发送位置信息
+                    intent1.putExtra("start_location", gson.toJson(currentLocation));
+                    //发送城市名字
+                    intent1.putExtra("city_name", currentCity);
+                    startActivity(intent1);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -618,7 +640,7 @@ public class MapFragment extends BaseFragment implements
     /**
      * 添加我的位置覆盖物及浮动窗
      **/
-    private void addMarker(LatLng latlng) {
+    private void addLocationMarker(LatLng latlng) {
         if (mSmallIcon != null) {
             return;
         }
@@ -642,6 +664,16 @@ public class MapFragment extends BaseFragment implements
             marker.hideInfoWindow();
         } else {
             marker.showInfoWindow();
+            int i = (int)marker.getObject();
+            //设置为第i个
+            is.clear();
+            poiItem = poiItems.get(i);
+            //设置文本
+            input_text.setText(poiItem.getTitle());
+            clean_view.setVisibility(View.VISIBLE);
+            searchResultAdapter.setPoiItem(poiItem);
+            listView.setAdapter(searchResultAdapter);
+            listView.setVisibility(View.VISIBLE);
         }
         return true;
     }
@@ -706,47 +738,54 @@ public class MapFragment extends BaseFragment implements
      *
      * @param requestCode
      * @param resultCode
-     * @param data
+     * @param intent
      */
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_CODE_INPUTTIPS && data
-                != null) {
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (resultCode == RESULT_CODE_INPUTTIPS && intent != null) {//单项点击
             //结果返回清除以前标记
             clearMarkers();
-            //得到Item返回的封装对象
-            Tip tip = data.getParcelableExtra(Constants.EXTRA_TIP);
-            Log.d("item点击接收", tip.getName());
-            if (tip.getPoiID() == null || tip.getPoiID().equals("")) {
-                doSearchQuery(tip.getName(),3);
-            } else {
-                Log.d("直接进入了添加marker操作", "123456");
-                addTipMarker(tip);
+            //得到搜索方式
+            isPoiSearch = intent.getBooleanExtra("isPoiSearch",true);
+            if(isPoiSearch){
+                //得到Item返回的封装对象
+                String value = intent.getStringExtra("poiItem");
+                poiItem = gson.fromJson(value,new TypeToken<PoiItem>(){}.getType());
+                input_text.setText(poiItem.getTitle());
+                Log.d("直接进入了poiItem添加marker操作", "123456");
+                addMarker(poiItem);
+                if (!poiItem.getTitle().equals("")) {
+                    clean_view.setVisibility(View.VISIBLE);
+                }
+            }else{
+                //得到Tip的封装对象
+                Tip tip = intent.getParcelableExtra(Constants.EXTRA_TIP);
+                input_text.setText(tip.getName());
+                Log.d("直接进入了Tip添加marker操作", "123456");
+                addMarker(tip);
+                input_text.setText(tip.getName());
+                if (!tip.getName().equals("")) {
+                    clean_view.setVisibility(View.VISIBLE);
+                }
             }
-            input_text.setText(tip.getName());
-            mKeyWords = tip.getName();
-            if (!tip.getName().equals("")) {
-                clean_view.setVisibility(View.VISIBLE);
-            }
-        } else if (resultCode == RESULT_CODE_KEYWORDS && data != null) {
+            //显示框框
+            listView.setVisibility(View.VISIBLE);
+            //隐藏button
+            go_style.setVisibility(View.GONE);
+        } else if (resultCode == RESULT_CODE_KEYWORDS && intent != null) {//搜素返回
             //清除以前标记
             clearMarkers();
-            String keywords = data.getStringExtra(Constants.KEY_WORDS_NAME);
-            if (keywords != null && !keywords.equals("")) {
-                doSearchQuery(keywords,3);
-            }
-            input_text.setText(keywords);
-            if (!keywords.equals("")) {
-                clean_view.setVisibility(View.VISIBLE);
-            }
-            Log.d("item结果接收", keywords);
+            //得到关键字
+            input_text.setText(intent.getStringExtra("key_name"));
+            //得到数据封装对象
+            String value = intent.getStringExtra("poiItems");
+            poiItems = gson.fromJson(value,new TypeToken<List<PoiItem>>(){}.getType());
+            addPoiItemsMarker(poiItems);
+            //隐藏button
+            go_style.setVisibility(View.GONE);
         }
-        //显示框框
-        listView.setVisibility(View.VISIBLE);
-        //隐藏button
-        go_style.setVisibility(View.GONE);
     }
 
     /**
@@ -808,14 +847,14 @@ public class MapFragment extends BaseFragment implements
                         cityCallBack.getCityPoint(poiItems.get(0));
                     }
                     //获取第一页的数据
-                    searchResultAdapter.setData(poiItems);
+                    searchResultAdapter.setPoiItem(poiItems.get(0));
                     listView.setAdapter(searchResultAdapter);
                     // 取得第一页的poiItem数据，页数从数字0开始
                     List<SuggestionCity> suggestionCities = poiResult
                             .getSearchSuggestionCitys();
                     // 当搜索不到poiItem数据时，会返回含有搜索关键字的城市信息
                     if (poiItems != null && poiItems.size() > 0) {
-                        PoiOverlay poiOverlay = new PoiOverlay(aMap, poiItems);
+                        poiOverlay = new PoiOverlay(aMap, poiItems);
                         poiOverlay.removeFromMap();
                         poiOverlay.addToMap();
                         zoom = poiOverlay.zoomToSpan();
@@ -862,27 +901,60 @@ public class MapFragment extends BaseFragment implements
     /**
      * 用marker展示输入提示list选中数据
      *
-     * @param tip
+     * @param object
+     *
      */
-    private void addTipMarker(Tip tip) {
-        if (tip == null) {
-            return;
+    private void addMarker(Object object) {
+        if(isPoiSearch){//处理周边
+            poiItem = (PoiItem) object;
+            if (poiItem == null) {
+                return;
+            }
+            mPoiMarker = aMap.addMarker(new MarkerOptions());
+            LatLonPoint point = poiItem.getLatLonPoint();
+            //list更新操作
+            poiItems.clear();
+            poiItems.add(poiItem);
+            searchResultAdapter.setPoiItem(poiItems.get(0));
+            listView.setAdapter(searchResultAdapter);
+            if (point != null) {
+                LatLng markerPosition = new LatLng(point.getLatitude(), point.getLongitude());
+                mPoiMarker.setPosition(markerPosition);
+                aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPosition, 20));
+            }
+            mPoiMarker.setTitle(poiItem.getTitle());
+        }else{
+            tip = (Tip)object;
+            if (tip == null) {
+                return;
+            }
+            mPoiMarker = aMap.addMarker(new MarkerOptions());
+            LatLonPoint point = tip.getPoint();
+            //list更新操作
+            poiItems.clear();
+            poiItems.add(new PoiItem("id", point, tip.getName(), tip.getAddress()));
+            searchResultAdapter.setPoiItem(poiItems.get(0));
+            listView.setAdapter(searchResultAdapter);
+            if (point != null) {
+                LatLng markerPosition = new LatLng(point.getLatitude(), point.getLongitude());
+                mPoiMarker.setPosition(markerPosition);
+                aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPosition, 20));
+            }
+            mPoiMarker.setTitle(tip.getName());
+            mPoiMarker.setSnippet(tip.getAddress());
         }
-        mPoiMarker = aMap.addMarker(new MarkerOptions());
-        LatLonPoint point = tip.getPoint();
-        //list更新操作
-        poiItems.clear();
-        poiItems.add(new PoiItem("id", point, tip.getName(), tip.getAddress()));
-        searchResultAdapter.setData(poiItems);
-        listView.setAdapter(searchResultAdapter);
-        if (point != null) {
-            LatLng markerPosition = new LatLng(point.getLatitude(), point.getLongitude());
-            mPoiMarker.setPosition(markerPosition);
-            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerPosition, 17));
-        }
-        mPoiMarker.setTitle(tip.getName());
-        mPoiMarker.setSnippet(tip.getAddress());
     }
+
+    /**
+     * 用多Marker展示周边多地搜索
+     * **/
+    private void addPoiItemsMarker(List<PoiItem> poiItems){
+        poiOverlay = new PoiOverlay(aMap,poiItems);
+        poiOverlay.removeFromMap();
+        poiOverlay.addToMap();
+        zoom = poiOverlay.zoomToSpan();
+    }
+
 
     /**
      * 列表点击监听

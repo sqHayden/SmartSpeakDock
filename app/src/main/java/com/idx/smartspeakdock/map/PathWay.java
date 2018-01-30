@@ -8,6 +8,7 @@ public enum PathWay {
     WALK("步行"),
     RIDE("骑车"),
     DRIVE("驾车"),
+    DODRIVE("开车"),
     TRANSIT("公交"),
     DOTRANSIT("坐公交");
     private String desc;

@@ -1213,7 +1213,9 @@ public class VoiceActionAdapter {
         PathWay pathWay;
         if (way.equals(PathWay.DRIVE.getDesc())) {
             pathWay = PathWay.DRIVE;
-        } else if (way.equals(PathWay.RIDE.getDesc())) {
+        }else if(way.equals(PathWay.DODRIVE.getDesc())){
+            pathWay = PathWay.DODRIVE;
+        }else if (way.equals(PathWay.RIDE.getDesc())) {
             pathWay = PathWay.RIDE;
         } else if (way.equals(PathWay.TRANSIT.getDesc())) {
             pathWay = PathWay.TRANSIT;

@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
@@ -38,6 +39,7 @@ import com.amap.api.navi.model.NaviLatLng;
 import com.amap.api.navi.view.RouteOverLay;
 import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.help.Tip;
 import com.amap.api.services.route.BusRouteResult;
 import com.amap.api.services.route.DriveRouteResult;
@@ -53,6 +55,7 @@ import com.idx.smartspeakdock.map.adapter.BusResultListAdapter;
 import com.idx.smartspeakdock.map.util.Constants;
 import com.idx.smartspeakdock.map.util.ToastUtil;
 import com.idx.smartspeakdock.map.util.Utils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,39 +63,23 @@ import java.util.List;
 /**
  * 驾车路径规划并展示对应的路线标签
  */
-public class CalculateRouteActivity extends Activity implements AMapNaviListener, View.OnClickListener,RouteSearch.OnRouteSearchListener{
+public class CalculateRouteActivity extends Activity implements AMapNaviListener, View.OnClickListener, RouteSearch.OnRouteSearchListener {
     private StrategyBean mStrategyBean;
     private static final float ROUTE_UNSELECTED_TRANSPARENCY = 0.3F;
     private static final float ROUTE_SELECTED_TRANSPARENCY = 1F;
-
-    /**
-     * 导航对象(单例)
-     */
+    private static final String TAG = "CalculateRouteActivity";
     private AMapNavi mAMapNavi;
-
     private MapView mMapView;
     private AMap mAMap;
-   // 22.665669,114.045702
     private NaviLatLng startLatlng = null;
-    //22.538667,113.944173
     private NaviLatLng endLatlng = null;
+    //路线起始点、途经点及终点集合对象创建
     private List<NaviLatLng> startList = new ArrayList<NaviLatLng>();
-    /**
-     * 途径点坐标集合
-     */
     private List<NaviLatLng> wayList = new ArrayList<NaviLatLng>();
-    /**
-     * 终点坐标集合［建议就一个终点］
-     */
     private List<NaviLatLng> endList = new ArrayList<NaviLatLng>();
-    /**
-     * 保存当前算好的路线
-     */
+    //当前算路存储
     private SparseArray<RouteOverLay> routeOverlays = new SparseArray<RouteOverLay>();
-    /*
-            * strategyFlag转换出来的值都对应PathPlanningStrategy常量，用户也可以直接传入PathPlanningStrategy常量进行算路。
-            * 如:mAMapNavi.calculateDriveRoute(mStartList, mEndList, mWayPointList,PathPlanningStrategy.DRIVING_DEFAULT);
-            */
+    //驾车算路值初始化
     int strategyFlag = 0;
     private Button mStartNaviButton;
     private LinearLayout mRouteLineLayoutOne, mRouteLinelayoutTwo, mRouteLineLayoutThree;
@@ -102,14 +89,12 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
     private TextView mRouteTextDistanceOne, mRouteTextDistanceTwo, mRouteTextDistanceThree;
     private TextView mCalculateRouteOverView;
     private ImageView mImageTraffic;
-
     //出行方式按钮
-    private RelativeLayout walkButton,driveButton,bikeButton,busButton;
-    private ImageView route_walk,route_drive,route_bike,route_bus;
+    private RelativeLayout walkButton, driveButton, bikeButton, busButton;
+    private ImageView route_walk, route_drive, route_bike, route_bus;
     // 规划线路
     private int routeID = -1;
     private static String way = "";
-
     //公交线路规划
     RouteSearch mRouteSearch = null;
     // 搜索时进度条
@@ -117,25 +102,29 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
     //公交路线
     private ListView mBusResultList;
     private BusRouteResult mBusRouteResult;
-    private String mCurrentCityName="北京";
+    private String mCurrentCityName = "北京";
     private LinearLayout mBusResultLayout;
     private RelativeLayout map_function;
     private LinearLayout threeMessage;
-
     //回退按钮
     private ImageView back;
-
     //判断驾车结果集
     private boolean isFirst;
     private boolean isreturn = false;
-
+    //定义变量控制起点终点的坐标选择返回
+    private boolean isStart;
     //出行地点选择
-    private LinearLayout startLocationChoose,endLocationChoose;
+    private LinearLayout startLocationChoose, endLocationChoose;
     //搜索结果返回码
     public static final int REQUEST_CODE = 100;
     public static final int RESULT_CODE_INPUTTIPS = 101;
+    //返回对象
+    private PoiItem poiItem;
+    private Tip tip;
+    //数据封装
+    private Gson gson;
     //文本框
-    private TextView myLocationName,endLocationName;
+    private TextView myLocationName, endLocationName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,35 +145,52 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
                 startNavi();
                 break;
             case R.id.walk_click://点击步行按钮
-                if(way.equals("Bus")){
-                    //上次是公交则打开视图
-                    openView();
+                //判断终点有没有值
+                if(!endLocationName.getText().toString().equals("输入终点")) {
+                    if (way.equals("Bus")) {
+                        //上次是公交则打开视图
+                        openView();
+                    }
+                    way = "Walk";
+                    isFirst = false;
+                    startWalkNavi();
+                }else{
+                   Toast.makeText(getApplicationContext(),"请输入终点",Toast.LENGTH_SHORT).show();
                 }
-                way = "Walk";
-                isFirst = false;
-                startWalkNavi();
                 break;
             case R.id.drive_click://点击驾车按钮
-                if(way.equals("Bus")){
-                    //上次是公交则打开视图
-                    openView();
+                if(!endLocationName.getText().toString().equals("输入终点")) {
+                    if (way.equals("Bus")) {
+                        //上次是公交则打开视图
+                        openView();
+                    }
+                    mBusResultList.setVisibility(View.GONE);
+                    way = "Drive";
+                    startDriveNavi();
+                }else{
+                    Toast.makeText(getApplicationContext(),"请输入终点",Toast.LENGTH_SHORT).show();
                 }
-                mBusResultList.setVisibility(View.GONE);
-                way = "Drive";
-                startDriveNavi();
                 break;
             case R.id.bike_click://点击骑行按钮
-                if(way.equals("Bus")){
-                    //上次是公交则打开视图
-                    openView();
+                if(!endLocationName.getText().toString().equals("输入终点")) {
+                    if (way.equals("Bus")) {
+                        //上次是公交则打开视图
+                        openView();
+                    }
+                    isFirst = false;
+                    way = "Bike";
+                    startBikeNavi();
+                }else{
+                    Toast.makeText(getApplicationContext(),"请输入终点",Toast.LENGTH_SHORT).show();
                 }
-                isFirst = false;
-                way = "Bike";
-                startBikeNavi();
                 break;
             case R.id.bus_click://点击公交按钮
-                way = "Bus";
-                startBusNavi();
+                if(!endLocationName.getText().toString().equals("输入终点")) {
+                    way = "Bus";
+                    startBusNavi();
+                }else{
+                    Toast.makeText(getApplicationContext(),"请输入终点",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.route_line_one:
                 focuseRouteLine(true, false, false);
@@ -202,30 +208,32 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
                 backToStart();
                 break;
             case R.id.start_location_choose://出发点选择
-                getLocationMessage(0);
+                getLocationMessage(true);
                 break;
             case R.id.end_location_choose://终点选择
-                getLocationMessage(1);
+                getLocationMessage(false);
                 break;
             default:
                 break;
         }
-
     }
-    /**
-     * 处理出发点及终点点击事件
-     * **/
-    private void getLocationMessage(int i){
-        Log.d("去获取了", "123456");
-        Intent intent = new Intent(this, InputTipsActivity.class);
-        intent.putExtra("city_name", mCurrentCityName);
-        intent.putExtra("style","point_to_point");
-        if(i==0){
-            intent.putExtra("what_search","start");
 
-        }else{
-            intent.putExtra("what_search","end");
-        }
+    /**
+     * 处理地点选择点击事件
+     **/
+    private void getLocationMessage(boolean flag) {
+        Log.d(TAG, "getLocationMessage: 去往地点提示页面获取地址");
+        gson = new Gson();
+        //设置返回标志
+        isStart = flag;
+        Intent intent = new Intent(this, InputTipsActivity.class);
+        //传递请求源
+        intent.putExtra("from", "CalculateActivity");
+        //传递当前城市
+        intent.putExtra("current_city", mCurrentCityName);
+        //传递当前位置
+        intent.putExtra("current_location", gson.toJson(startLatlng));
+        //发起请求
         startActivityForResult(intent, REQUEST_CODE);
     }
 
@@ -234,109 +242,144 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
      *
      * @param requestCode
      * @param resultCode
-     * @param data
+     * @param intent
      */
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_CODE_INPUTTIPS && data
-                != null) {
-            //得到Item返回的封装对象
-            Tip tip = data.getParcelableExtra(Constants.EXTRA_TIP);
-            Log.d("item点击接收", tip.getName());
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (resultCode == RESULT_CODE_INPUTTIPS && intent != null) {
+            //得到搜索方式
+            boolean poiSearch = intent.getBooleanExtra("isPoiSearch", true);
+            if (poiSearch) {//如果是模糊词返回
+                //得到Item返回的封装对象
+                String value = intent.getStringExtra("poiItem");
+                poiItem = gson.fromJson(value, new TypeToken<PoiItem>() {
+                }.getType());
+                Log.d(TAG, "onActivityResult: 获取的名称是：" + poiItem.getTitle());
+                setToText(poiItem, poiSearch);
+            } else {//如果是关键字返回
+                Tip tip = intent.getParcelableExtra(Constants.EXTRA_TIP);
+                Log.d(TAG, "onActivityResult: 获取的名称是：" + tip.getName());
+                setToText(tip, poiSearch);
+            }
+        }
+    }
+
+    /**
+     * 设置相关的信息
+     **/
+    private void setToText(Object object, boolean flag) {
+        if (flag) {//是模糊查询
+            poiItem = (PoiItem) object;
             //设置给对应的框
-            String searchResult = data.getStringExtra("what_search_result");
-            if(searchResult!=null) {
-                if (searchResult.equals("start")) {
-                    //起始点赋值
-                    myLocationName.setText(tip.getName());
-                    //起始点坐标赋值
-                    Log.d("坐标为：",""+tip.getPoint().getLatitude()+","+tip.getPoint().getLongitude());
-                    startLatlng = new NaviLatLng(tip.getPoint().getLatitude(), tip.getPoint().getLongitude());
-                    startList.clear();
-                    startList.add(startLatlng);
-                } else {
-                    //目标点赋值
-                    endLocationName.setText(tip.getName());
-                    //目标点坐标赋值
-                    Log.d("坐标为：",""+tip.getPoint().getLatitude()+","+tip.getPoint().getLongitude());
-                    endLatlng = new NaviLatLng(tip.getPoint().getLatitude(), tip.getPoint().getLongitude());
-                    endList.clear();
-                    endList.add(endLatlng);
-                    //直接参数去调用驾车方法
-                    isreturn = true;
-                }
+            if (isStart) {
+                //起始点赋值
+                myLocationName.setText(poiItem.getTitle());
+                //起始点坐标赋值
+                Log.d(TAG, "onActivityResult: 获取的坐标是：" + "" + poiItem.getLatLonPoint().getLatitude() + "," + poiItem.getLatLonPoint().getLongitude());
+                startLatlng = new NaviLatLng(poiItem.getLatLonPoint().getLatitude(), poiItem.getLatLonPoint().getLongitude());
+                startList.clear();
+                startList.add(startLatlng);
+            } else {
+                //目标点赋值
+                endLocationName.setText(poiItem.getTitle());
+                //目标点坐标赋值
+                Log.d(TAG, "onActivityResult: 获取的坐标是：" + "" + poiItem.getLatLonPoint().getLatitude() + "," + poiItem.getLatLonPoint().getLongitude());
+                endLatlng = new NaviLatLng(poiItem.getLatLonPoint().getLatitude(), poiItem.getLatLonPoint().getLongitude());
+                endList.clear();
+                endList.add(endLatlng);
+                //直接参数去调用驾车方法
+                isreturn = true;
+            }
+        } else {
+            tip = (Tip) object;
+            //设置给对应的框
+            if (isStart) {
+                //起始点赋值
+                myLocationName.setText(tip.getName());
+                //起始点坐标赋值
+                Log.d(TAG, "onActivityResult: 获取的坐标是：" + "" + tip.getPoint().getLongitude() + "," + tip.getPoint().getLongitude());
+                startLatlng = new NaviLatLng(tip.getPoint().getLatitude(), tip.getPoint().getLongitude());
+                startList.clear();
+                startList.add(startLatlng);
+            } else {
+                //目标点赋值
+                endLocationName.setText(tip.getName());
+                //目标点坐标赋值
+                Log.d(TAG, "onActivityResult: 获取的坐标是：" + "" + tip.getPoint().getLatitude() + "," + tip.getPoint().getLongitude());
+                endLatlng = new NaviLatLng(tip.getPoint().getLatitude(), tip.getPoint().getLongitude());
+                endList.clear();
+                endList.add(endLatlng);
+                //直接参数去调用驾车方法
+                isreturn = true;
             }
         }
     }
 
     /**
      * 处理回退事件点击操作
-     * **/
+     **/
     private void backToStart() {
-       this.finish();
+        this.finish();
     }
 
     /**
      * 步行路径规划
-     * */
-    private void startWalkNavi(){
-//        NaviLatLng mNaviStart = new NaviLatLng(114.036538,22.664085);
-//        NaviLatLng mNaviEnd = new NaviLatLng(113.923596,22.524022);
-//        mAMapNavi.calculateWalkRoute(mNaviStart, mNaviEnd);
+     */
+    private void startWalkNavi() {
         showProgressDialog();
         mAMapNavi.calculateWalkRoute(startLatlng, endLatlng);
-        Toast.makeText(this,"进入步行方法", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "进入步行方法", Toast.LENGTH_SHORT).show();
         route_walk.setImageResource(R.drawable.route_walk_select);
         route_drive.setImageResource(R.drawable.route_drive_normal);
         route_bike.setImageResource(R.drawable.route_bike_normal);
         route_bus.setImageResource(R.drawable.route_bus_normal);
     }
+
     /**
      * 驾车路径规划
      */
     private void startDriveNavi() {
-       showProgressDialog();
+        showProgressDialog();
         try {
             strategyFlag = mAMapNavi.strategyConvert(mStrategyBean.isCongestion(), mStrategyBean.isCost(), mStrategyBean.isAvoidhightspeed(), mStrategyBean.isHightspeed(), true);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(mAMapNavi!=null&&startList!=null&&endList!=null&&wayList!=null){
-            Log.d("都不是","空得");
-        }
+        Toast.makeText(this, "进入驾车方法", Toast.LENGTH_SHORT).show();
         mAMapNavi.calculateDriveRoute(startList, endList, wayList, strategyFlag);
-        Toast.makeText(this,"进入驾车方法", Toast.LENGTH_SHORT).show();
         route_walk.setImageResource(R.drawable.route_walk_normal);
         route_drive.setImageResource(R.drawable.route_drive_select);
         route_bike.setImageResource(R.drawable.route_bike_normal);
         route_bus.setImageResource(R.drawable.route_bus_normal);
     }
+
     /**
-     *  骑行路径规划
-     * */
-    private void startBikeNavi(){
+     * 骑行路径规划
+     */
+    private void startBikeNavi() {
         showProgressDialog();
-        mAMapNavi.calculateRideRoute(startLatlng,endLatlng);
-        Toast.makeText(this,"进入骑行方法", Toast.LENGTH_SHORT).show();
+        mAMapNavi.calculateRideRoute(startLatlng, endLatlng);
+        Toast.makeText(this, "进入骑行方法", Toast.LENGTH_SHORT).show();
         route_walk.setImageResource(R.drawable.route_walk_normal);
         route_drive.setImageResource(R.drawable.route_drive_normal);
         route_bike.setImageResource(R.drawable.route_bike_select);
         route_bus.setImageResource(R.drawable.route_bus_normal);
     }
+
     /**
      * 公交路径规划
-     * */
-    private void startBusNavi(){
+     */
+    private void startBusNavi() {
         mRouteSearch.setRouteSearchListener(this);
         showProgressDialog();
-        final RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(new LatLonPoint(startLatlng.getLatitude(),startLatlng.getLongitude()),
-               new LatLonPoint(endLatlng.getLatitude(),endLatlng.getLongitude()));
+        final RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(new LatLonPoint(startLatlng.getLatitude(), startLatlng.getLongitude()),
+                new LatLonPoint(endLatlng.getLatitude(), endLatlng.getLongitude()));
         RouteSearch.BusRouteQuery query = new RouteSearch.BusRouteQuery(fromAndTo, RouteSearch.BUS_DEFAULT,
                 mCurrentCityName, 0);// 第一个参数表示路径规划的起点和终点，第二个参数表示公交查询模式，第三个参数表示公交查询城市区号，第四个参数表示是否计算夜班车，0表示不计算
         mRouteSearch.calculateBusRouteAsyn(query);// 异步路径规划公交模式查询
-        Toast.makeText(this,"进入公交方法", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "进入公交方法", Toast.LENGTH_SHORT).show();
         route_walk.setImageResource(R.drawable.route_walk_normal);
         route_drive.setImageResource(R.drawable.route_drive_normal);
         route_bike.setImageResource(R.drawable.route_bike_normal);
@@ -390,10 +433,10 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
         mRouteTextDistanceThree = (TextView) findViewById(R.id.route_line_three_distance);
 
         //获取出行方式视图
-        walkButton = (RelativeLayout)findViewById(R.id.walk_click);
-        driveButton = (RelativeLayout)findViewById(R.id.drive_click);
-        bikeButton = (RelativeLayout)findViewById(R.id.bike_click);
-        busButton = (RelativeLayout)findViewById(R.id.bus_click);
+        walkButton = (RelativeLayout) findViewById(R.id.walk_click);
+        driveButton = (RelativeLayout) findViewById(R.id.drive_click);
+        bikeButton = (RelativeLayout) findViewById(R.id.bike_click);
+        busButton = (RelativeLayout) findViewById(R.id.bus_click);
         walkButton.setOnClickListener(this);
         driveButton.setOnClickListener(this);
         bikeButton.setOnClickListener(this);
@@ -401,19 +444,19 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
 
         //获取出行方式图片视图
         route_walk = (ImageView) findViewById(R.id.route_walk);
-        route_drive = (ImageView)findViewById(R.id.route_drive);
-        route_bike = (ImageView)findViewById(R.id.route_bike);
-        route_bus = (ImageView)findViewById(R.id.route_bus);
+        route_drive = (ImageView) findViewById(R.id.route_drive);
+        route_bike = (ImageView) findViewById(R.id.route_bike);
+        route_bus = (ImageView) findViewById(R.id.route_bus);
 
         //公交list
         mBusResultList = (ListView) findViewById(R.id.bus_result_list);
         mBusResultLayout = (LinearLayout) findViewById(R.id.bus_result);
-        map_function = (RelativeLayout)findViewById(R.id.map_function);
-        threeMessage = (LinearLayout)findViewById(R.id.calculate_route_strategy_tab);
+        map_function = (RelativeLayout) findViewById(R.id.map_function);
+        threeMessage = (LinearLayout) findViewById(R.id.calculate_route_strategy_tab);
 
         //出行
-        startLocationChoose = (LinearLayout)findViewById(R.id.start_location_choose);
-        endLocationChoose = (LinearLayout)findViewById(R.id.end_location_choose);
+        startLocationChoose = (LinearLayout) findViewById(R.id.start_location_choose);
+        endLocationChoose = (LinearLayout) findViewById(R.id.end_location_choose);
         startLocationChoose.setOnClickListener(this);
         endLocationChoose.setOnClickListener(this);
         myLocationName = (TextView) findViewById(R.id.my_location_name);
@@ -435,12 +478,13 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
         mRouteSearch = new RouteSearch(this);
         isFirst = true;
         isreturn = false;
+        isStart = true;
     }
 
     /**
      * 处理其他Activity传递过来的信息
-     * **/
-    private void initOtherActivity(){
+     **/
+    private void initOtherActivity() {
         //拿到传过来的Intent
         LatLng myStartLocation;
         Intent intent = getIntent();
@@ -448,68 +492,67 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
         String value = "";
         //判断传送的方式
         String style = intent.getStringExtra("click_style");
-        if("startClick".equals(style)){//接收到用户初始界面点击事件
+        if ("startClick".equals(style)) {//接收到用户初始界面点击事件
             //拿值
             value = intent.getStringExtra("start_location");
             //拿用户所在城市的名称
             mCurrentCityName = intent.getStringExtra("city_name");
             //获取用户当前位置
-            myStartLocation = gson.fromJson(value,new TypeToken<LatLng>(){}.getType());
+            myStartLocation = gson.fromJson(value, new TypeToken<LatLng>() {
+            }.getType());
             //转换
-            startLatlng = new NaviLatLng(myStartLocation.latitude,myStartLocation.longitude);
-            Log.d("坐标为：",""+startLatlng.getLatitude()+","+startLatlng.getLongitude());
+            startLatlng = new NaviLatLng(myStartLocation.latitude, myStartLocation.longitude);
+            Log.d(TAG, "initOtherActivity: 获取的坐标是" + "" + startLatlng.getLatitude() + "," + startLatlng.getLongitude());
             startList.clear();
             startList.add(startLatlng);
             //显示公交的 空白页面
             closeView();
             mBusResultList.setVisibility(View.VISIBLE);
-        }else {//接收用户地点查询出行
+        } else {//接收用户地点查询出行
             //拿值
             value = intent.getStringExtra("start_location");
             //获取用户当前位置
-            myStartLocation = gson.fromJson(value, new TypeToken<LatLng>(){}.getType());
+            myStartLocation = gson.fromJson(value, new TypeToken<LatLng>() {
+            }.getType());
             //转换
             startLatlng = new NaviLatLng(myStartLocation.latitude, myStartLocation.longitude);
             startList.clear();
             startList.add(startLatlng);
-            Log.d("起始点坐标为：",""+startLatlng.getLatitude()+","+startLatlng.getLongitude());
+            Log.d(TAG, "initOtherActivity: 起点坐标是" + startLatlng.getLatitude() + "," + startLatlng.getLongitude());
             //获取目的地
             value = intent.getStringExtra("end_location");
             //获取用户目的地位置
-            myStartLocation = gson.fromJson(value,new TypeToken<LatLng>(){}.getType());
+            myStartLocation = gson.fromJson(value, new TypeToken<LatLng>() {
+            }.getType());
             //转换
             endLatlng = new NaviLatLng(myStartLocation.latitude, myStartLocation.longitude);
             endList.clear();
             endList.add(endLatlng);
-            Log.d("目的点坐标为：",""+endLatlng.getLatitude()+","+endLatlng.getLongitude());
+            Log.d(TAG, "initOtherActivity: 终点坐标是：" + endLatlng.getLatitude() + "," + endLatlng.getLongitude());
             //目的地设置文本
             endLocationName.setText(intent.getStringExtra("end_name"));
             value = intent.getStringExtra("start_name");
-            if(value!=null){
+            if (value != null) {
                 myLocationName.setText(intent.getStringExtra("start_name"));
             }
             //获取用户的出行方式
             value = intent.getStringExtra("pathWay");
-            switch (value) {
-                case "步行":
-                    way = "Walk";
-                    startWalkNavi();
-                    break;
-                case "骑车":
-                    way = "Bike";
-                    startBikeNavi();
-                    break;
-                case "坐公交":
-                    way = "Bus";
-                    startBusNavi();
-                    break;
-                case "驾车":
-                    way = "Drive";
-                    startDriveNavi();
-                default:
-                    break;
+            if (value.equals("驾车") || value.equals("开车")) {
+                way = "Drive";
+                startDriveNavi();
+            } else if (value.equals("步行") || value.equals("走路")) {
+                way = "Walk";
+                startWalkNavi();
+            } else if (value.equals("骑车") || value.equals("骑电动车") || value.equals("骑自行车")) {
+                way = "Bike";
+                startBikeNavi();
+            } else if (value.equals("坐班车") || value.equals("坐公交") || value.equals("公交")) {
+                way = "Bus";
+                startBusNavi();
             }
         }
+        //打开交通
+        setTraffic();
     }
 
     /**
@@ -552,7 +595,7 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
      * @param routeId 路径规划线路ID
      * @param path    AMapNaviPath
      */
-    private void drawBikeRoute(int routeId, AMapNaviPath path){
+    private void drawBikeRoute(int routeId, AMapNaviPath path) {
         mAMap.moveCamera(CameraUpdateFactory.changeTilt(0));
         RouteOverLay routeOverLay = new RouteOverLay(mAMap, path, this);
         routeOverLay.setTrafficLine(true);
@@ -563,7 +606,7 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
 
     /**
      * 返回公交查询结果
-     * **/
+     **/
     @Override
     public void onBusRouteSearched(BusRouteResult result, int errorCode) {
         dissmissProgressDialog();
@@ -586,12 +629,15 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
             ToastUtil.showerror(this.getApplicationContext(), errorCode);
         }
     }
+
     @Override
     public void onDriveRouteSearched(DriveRouteResult driveRouteResult, int i) {
     }
+
     @Override
     public void onWalkRouteSearched(WalkRouteResult walkRouteResult, int i) {
     }
+
     @Override
     public void onRideRouteSearched(RideRouteResult rideRouteResult, int i) {
     }
@@ -622,7 +668,7 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
      * 开始导航
      */
     private void startNavi() {
-        if (routeID != -1){
+        if (routeID != -1) {
             mAMapNavi.selectRouteId(routeID);
             Intent gpsintent = new Intent(getApplicationContext(), RouteNaviActivity.class);
             gpsintent.putExtra("gps", false); // gps 为true为真实导航，为false为模拟导航
@@ -752,6 +798,7 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
         mRouteTextTimeOne.setText(timeDes);
         String disDes = Utils.getFriendlyDistance(path.getAllLength());
         mRouteTextDistanceOne.setText(disDes);
+        mRouteLineLayoutOne.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -769,6 +816,7 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
         mRouteTextTimeTwo.setText(timeDes);
         String disDes = Utils.getFriendlyDistance(path.getAllLength());
         mRouteTextDistanceTwo.setText(disDes);
+        mRouteLinelayoutTwo.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -786,55 +834,56 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
         mRouteTextTimeThree.setText(timeDes);
         String disDes = Utils.getFriendlyDistance(path.getAllLength());
         mRouteTextDistanceThree.setText(disDes);
+        mRouteLineLayoutThree.setVisibility(View.VISIBLE);
     }
 
     /**
      * 设置步行的内容填充
-     * **/
-    private void setWalkContent(int id){
-        Log.d("步行内容填充","123");
+     **/
+    private void setWalkContent(int id) {
+        Log.d(TAG, "setWalkContent: 步行内容填充");
         routeID = routeOverlays.keyAt(0);
         RouteOverLay overlay = routeOverlays.get(id);
         overlay.zoomToSpan();
         AMapNaviPath path = overlay.getAMapNaviPath();
-        mRouteTextStrategyOne.setText("");
-        mRouteTextTimeOne.setText("");
-        mRouteTextDistanceOne.setText("");
+        //隐藏1路线
+        mRouteLineLayoutOne.setVisibility(View.INVISIBLE);
+        //显示2路线
+        mRouteLinelayoutTwo.setVisibility(View.VISIBLE);
+        //不显示线条
+        mRouteViewTwo.setVisibility(View.GONE);
         mRouteTextStrategyTwo.setText("步行方案");
         String timeDes = Utils.getFriendlyTime(path.getAllTime());
         mRouteTextTimeTwo.setText(timeDes);
         String disDes = Utils.getFriendlyDistance(path.getAllLength());
         mRouteTextDistanceTwo.setText(disDes);
-        //显示中间的
-        mRouteLinelayoutTwo.setVisibility(View.VISIBLE);
-        mRouteTextStrategyThree.setText("");
-        mRouteTextTimeThree.setText("");
-        mRouteTextDistanceThree.setText("");
+        //隐藏3路线
+        mRouteLineLayoutThree.setVisibility(View.INVISIBLE);
         mCalculateRouteOverView.setText(Utils.getRouteOverView(path));
         mCalculateRouteOverView.setVisibility(View.VISIBLE);
     }
 
     /**
      * 设置骑行的内容填充
-     * **/
-    private void setBikeContent(int id){
+     **/
+    private void setBikeContent(int id) {
         routeID = routeOverlays.keyAt(0);
         RouteOverLay overlay = routeOverlays.get(id);
         overlay.zoomToSpan();
         AMapNaviPath path = overlay.getAMapNaviPath();
-        mRouteTextStrategyOne.setText("");
-        mRouteTextTimeOne.setText("");
-        mRouteTextDistanceOne.setText("");
+        //隐藏1路线
+        mRouteLineLayoutOne.setVisibility(View.INVISIBLE);
+        //显示2路线
+        mRouteLinelayoutTwo.setVisibility(View.VISIBLE);
+        //不显示2线条
+        mRouteViewTwo.setVisibility(View.GONE);
         mRouteTextStrategyTwo.setText("骑行方案");
         String timeDes = Utils.getFriendlyTime(path.getAllTime());
         mRouteTextTimeTwo.setText(timeDes);
         String disDes = Utils.getFriendlyDistance(path.getAllLength());
         mRouteTextDistanceTwo.setText(disDes);
-        //骑行显示
-        mRouteLinelayoutTwo.setVisibility(View.VISIBLE);
-        mRouteTextStrategyThree.setText("");
-        mRouteTextTimeThree.setText("");
-        mRouteTextDistanceThree.setText("");
+        //隐藏3路线
+        mRouteLineLayoutThree.setVisibility(View.INVISIBLE);
         mCalculateRouteOverView.setText(Utils.getRouteOverView(path));
         mCalculateRouteOverView.setVisibility(View.VISIBLE);
     }
@@ -849,7 +898,7 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
             return;
         }
         try {
-            RouteOverLay overlay = routeOverlays.get((int)mRouteLineLayoutOne.getTag());
+            RouteOverLay overlay = routeOverlays.get((int) mRouteLineLayoutOne.getTag());
             if (focus) {
                 routeID = (int) mRouteLineLayoutOne.getTag();
                 mCalculateRouteOverView.setText(Utils.getRouteOverView(overlay.getAMapNaviPath()));
@@ -948,7 +997,7 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
     protected void onResume() {
         super.onResume();
         mMapView.onResume();
-        if(isreturn){
+        if (isreturn) {
             //打开视图
             openView();
             way = "Drive";
@@ -980,21 +1029,21 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mMapView!=null) {
+        if (mMapView != null) {
             mMapView.onDestroy();
         }
         if (mAMapNavi != null) {
             mAMapNavi.destroy();
         }
-        if(mAMap!=null){
+        if (mAMap != null) {
             mAMap.clear();
             mAMap = null;
         }
-        if(startLatlng!=null||endLatlng!=null){
+        if (startLatlng != null || endLatlng != null) {
             startLatlng = null;
             endLatlng = null;
         }
-        if(startList!=null||endList!=null){
+        if (startList != null || endList != null) {
             startList.clear();
             startList = null;
             endList.clear();
@@ -1002,11 +1051,11 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
             wayList.clear();
             wayList = null;
         }
-        if(routeOverlays!=null){
+        if (routeOverlays != null) {
             routeOverlays.clear();
             routeOverlays = null;
         }
-        if(mRouteSearch!=null){
+        if (mRouteSearch != null) {
             mRouteSearch = null;
         }
     }
@@ -1058,7 +1107,7 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
 
     @Override
     public void onCalculateRouteFailure(int i) {
-        Toast.makeText(this.getApplicationContext(),"错误码"+i, Toast.LENGTH_LONG).show();
+        Toast.makeText(this.getApplicationContext(), "错误码" + i, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -1147,36 +1196,37 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
     @Override
     public void onCalculateRouteSuccess(int[] ints) {
         cleanRouteOverlay();
-        Log.d("go to paint","demo11");
-        if(way.equals("Drive")) {
+        if (way.equals("Drive")) {
+            Log.d(TAG, "onCalculateRouteSuccess: 开始绘制驾车模式路线");
             HashMap<Integer, AMapNaviPath> paths = mAMapNavi.getNaviPaths();
-            Log.d("paths:",""+paths.size());
-            if(!isFirst){
+            Log.d(TAG, "onCalculateRouteSuccess: 共有 " + paths.size() + " 条路线");
+            if (!isFirst) {
                 isFirst = true;
+                Log.d(TAG, "onCalculateRouteSuccess: 路线未被覆盖，进行驾车再次调用");
                 startDriveNavi();
-            }else {
-                Log.d("进入到了", "驾车模式");
+            } else {
+                Log.d(TAG, "onCalculateRouteSuccess: 直接进入驾车绘制");
                 for (int i = 0; i < ints.length; i++) {
                     AMapNaviPath path = paths.get(ints[i]);
                     if (path != null) {
-                        Log.d("start paint", "123456");
+                        Log.d(TAG, "onCalculateRouteSuccess: 开始绘制路线");
                         drawDriveRoutes(ints[i], path);
                     }
                 }
+                setDriveRouteLineTag(paths, ints);
             }
-            setDriveRouteLineTag(paths, ints);
             dissmissProgressDialog();
-        }else if(way.equals("Walk")) {
+        } else if (way.equals("Walk")) {
             dissmissProgressDialog();
-            Log.d("进入到了", "步行模式");
+            Log.d(TAG, "onCalculateRouteSuccess: 进入到步行模式");
             AMapNaviPath naviPath = mAMapNavi.getNaviPath();
             if (naviPath != null) {
                 drawWalkRoute(ints[0], naviPath);
                 setWalkContent(ints[0]);
             }
-        }else if(way.equals("Bike")) {
+        } else if (way.equals("Bike")) {
             dissmissProgressDialog();
-            Log.d("进入到了","骑行模式");
+            Log.d(TAG, "onCalculateRouteSuccess: 进入到骑行模式");
             AMapNaviPath naviPath = mAMapNavi.getNaviPath();
             if (naviPath != null) {
                 drawBikeRoute(ints[0], naviPath);
@@ -1184,10 +1234,11 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
             }
         }
     }
+
     /**
      * 公交关闭相关视图
-     * **/
-    private void closeView(){
+     **/
+    private void closeView() {
         //隐藏相关的视图
         map_function.setVisibility(View.GONE);
         threeMessage.setVisibility(View.GONE);
@@ -1197,8 +1248,8 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
 
     /**
      * 公交打开相关视图
-     * **/
-    private void openView(){
+     **/
+    private void openView() {
         //打开相关的视图
         //隐藏listView
         mBusResultList.setVisibility(View.GONE);

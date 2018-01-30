@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/map_navi_1" />
+                android:src="@drawable/go" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
