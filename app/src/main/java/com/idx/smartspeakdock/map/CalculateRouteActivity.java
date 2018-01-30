@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
@@ -147,13 +148,21 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
             case R.id.walk_click://点击步行按钮
                 //判断终点有没有值
                 if(!endLocationName.getText().toString().equals("输入终点")) {
-                    if (way.equals("Bus")) {
-                        //上次是公交则打开视图
-                        openView();
+                    LatLng s = new LatLng(startLatlng.getLatitude(),startLatlng.getLongitude());
+                    LatLng e = new LatLng(endLatlng.getLatitude(),endLatlng.getLongitude());
+                    float distance = AMapUtils.calculateLineDistance(s,e);
+                    int dis = (int)distance/1000;
+                    if(dis<100) {
+                        if (way.equals("Bus")) {
+                            //上次是公交则打开视图
+                            openView();
+                        }
+                        way = "Walk";
+                        isFirst = false;
+                        startWalkNavi();
+                    }else{
+                        Toast.makeText(getApplicationContext(),"太远了,无法导航",Toast.LENGTH_SHORT).show();
                     }
-                    way = "Walk";
-                    isFirst = false;
-                    startWalkNavi();
                 }else{
                    Toast.makeText(getApplicationContext(),"请输入终点",Toast.LENGTH_SHORT).show();
                 }

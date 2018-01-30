@@ -342,7 +342,7 @@ public class MapFragment extends BaseFragment implements
             //显示
             listView.setVisibility(View.VISIBLE);
             //返回语音
-            returnMapAnswerCallBack.onReturnAnswer("如果不符合，请说我要选其他结果");
+            returnMapAnswerCallBack.onReturnAnswer("已为您搜索到该位置");
         }else if(!pathWay.equals("")&&!toAddress.equals("")){//说明要去某地
             if(!fromAddress.equals("")){//处理从哪儿去哪儿
                 Log.d("处理从哪儿","去哪儿");
@@ -389,8 +389,10 @@ public class MapFragment extends BaseFragment implements
                         }
                     }
                 });
-                isVoice = true;
-                doSearchQuery(fromAddress,1);
+                if(goStyle()){//如果是的话
+                    isVoice = true;
+                    doSearchQuery(fromAddress,1);
+                }
             }else{//处理从我的位置去哪里
                 Log.d("处理从我的位置","去哪儿");
                 setCityCallBack(new CityCallBack() {
@@ -399,22 +401,73 @@ public class MapFragment extends BaseFragment implements
                         Log.d("终点位置回调被执行","123456");
                         firstPoiItem = poiItem;
                         LatLng endLatlng = new LatLng(firstPoiItem.getLatLonPoint().getLatitude(),firstPoiItem.getLatLonPoint().getLongitude());
-                        //启动导航activity
-                        Intent intent = new Intent(SpeakerApplication.getContext(),CalculateRouteActivity.class);
-                        intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
-                        //添加起点及终点信息
-                        Gson gson = new Gson();
-                        intent.putExtra("start_location",gson.toJson(currentLocation));
-                        intent.putExtra("end_location",gson.toJson(endLatlng));
-                        intent.putExtra("end_name",toAddress);
-                        intent.putExtra("pathWay",pathWay);
-                        SpeakerApplication.getContext().startActivity(intent);
+                        int dis = 0;
+                        if(!pathWay.equals("驾车")) {
+                            //判断距离及出行方式(超过100公里会失败)
+                            float distance = AMapUtils.calculateLineDistance(currentLocation,endLatlng);
+                            dis = (int)distance/1000;
+                            Log.d("dis:",dis+"");
+                        }
+                        if(dis>100){
+                            returnMapAnswerCallBack.onReturnAnswer("您要去的地方太远了，建议选择驾车模式");
+                        }else {
+                            //启动导航activity
+                            Intent intent = new Intent(SpeakerApplication.getContext(),CalculateRouteActivity.class);
+                            intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                            //添加起点及终点信息
+                            Gson gson = new Gson();
+                            intent.putExtra("start_location",gson.toJson(currentLocation));
+                            intent.putExtra("end_location",gson.toJson(endLatlng));
+                            intent.putExtra("end_name",toAddress);
+                            intent.putExtra("pathWay",pathWay);
+                            SpeakerApplication.getContext().startActivity(intent);
+                        }
                     }
                 });
-                isVoice = true;
-                doSearchQuery(toAddress,1);
+                if(goStyle()) {//如果是的话
+                    isVoice = true;
+                    doSearchQuery(toAddress, 1);
+                }
             }
+        }else if(!name.equals("")){//搜索指定词汇(小吃街、公交站)
+            doSearchQuery(name,1);
+            //设置文本为关键字
+            input_text.setText(name);
+            //显示清除图标
+            clean_view.setVisibility(View.VISIBLE);
+            returnMapAnswerCallBack.onReturnAnswer("已为您搜索到附近"+name+"相关地点,请查看");
         }
+    }
+
+    /**
+     * 出行方式判断
+     * **/
+    private boolean goStyle(){
+        //先判断是不是已有的
+        if(pathWay.equals("步行")||pathWay.equals("走着")||pathWay.equals("走路")||pathWay.equals("不行")){
+            pathWay = "步行";
+            isVoice = true;
+            doSearchQuery(toAddress,1);
+        }else if(pathWay.equals("骑自行车")||pathWay.equals("骑电动车")||pathWay.equals("骑车")){
+            pathWay = "骑车";
+            isVoice = true;
+            doSearchQuery(toAddress,1);
+        }else if(pathWay.equals("驾车")||pathWay.equals("开车")){
+            pathWay = "驾车";
+            isVoice = true;
+            doSearchQuery(toAddress,1);
+        }else if(pathWay.equals("坐公交")||pathWay.equals("公交")){
+            pathWay = "公交";
+            isVoice = true;
+            doSearchQuery(toAddress,1);
+        }else if(pathWay.equals("飞机")||pathWay.equals("坐飞机")){
+            returnMapAnswerCallBack.onReturnAnswer("坐飞机,你咋不上天呢");
+            return false;
+        }else{
+            returnMapAnswerCallBack.onReturnAnswer("对不起，暂不支持此方式出行");
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -791,19 +844,56 @@ public class MapFragment extends BaseFragment implements
     /**
      * 开始进行poi搜索
      */
-    protected void doSearchQuery(String keywords,int page) {
+    protected void doSearchQuery(String s,int page) {
+        isPoiSearch = true;
         //显示进度框
         showProgressDialog();
-        //第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
-        query = new PoiSearch.Query(keywords, "", currentCity);
-        //设置每页最多返回多少条poiItem
-        query.setPageSize(page);
-        //设置查第一页
-        query.setPageNum(1);
-        //Poi查询设置
-        poiSearch = new PoiSearch(getContext(), query);
-        poiSearch.setOnPoiSearchListener(this);
-        poiSearch.searchPOIAsyn();
+        //先判断一下
+        if(s.equals("酒店")||s.equals("宾馆")||s.equals("旅社")) {
+            query = new PoiSearch.Query("", "100105", "");
+        }else if(s.equals("美食")||s.equals("小吃街")){
+            query = new PoiSearch.Query("", "050400", "");
+        }else if(s.equals("商场")||s.equals("购物广场")){
+            query = new PoiSearch.Query("", "060101", "");
+        }else if(s.equals("地铁")||s.equals("地铁站")){
+            query = new PoiSearch.Query("", "150500", "");
+        }else if(s.equals("公交")||s.equals("公交站")){
+            query = new PoiSearch.Query("", "150700", "");
+        }else if(s.equals("火车")||s.equals("火车站")){
+            query = new PoiSearch.Query("", "150200", "");
+        }else {
+            //直接查
+            //第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
+            query = new PoiSearch.Query(s, "", currentCity);
+            isPoiSearch = false;
+        }
+        if(isPoiSearch){//周边搜索
+            query.setPageSize(20);// 设置每页最多返回多少条poiitem
+            query.setPageNum(0);//设置查询页码
+            //构造对象并发送检索
+            if (currentLocation != null) {
+                poiSearch = new PoiSearch(getContext(), query);
+                poiSearch.setOnPoiSearchListener(this);
+                if(isPoiSearch) {
+                    //设置搜索区域为以lp点为圆心，其周围5000米范围
+                    LatLonPoint latLonPoint = new LatLonPoint(currentLocation.latitude, currentLocation.longitude);
+                    poiSearch.setBound(new PoiSearch.SearchBound(latLonPoint, 5000, true));
+                }
+                //异步搜索
+                poiSearch.searchPOIAsyn();
+            }else{
+                Log.d("a", "searchSurrend: 传过来的对象是空的");
+            }
+        }else{
+            //设置每页最多返回多少条poiItem
+            query.setPageSize(page);
+            //设置查第一页
+            query.setPageNum(1);
+            //Poi查询设置
+            poiSearch = new PoiSearch(getContext(), query);
+            poiSearch.setOnPoiSearchListener(this);
+            poiSearch.searchPOIAsyn();
+        }
     }
 
     /**
@@ -846,9 +936,15 @@ public class MapFragment extends BaseFragment implements
                         isVoice = false;
                         cityCallBack.getCityPoint(poiItems.get(0));
                     }
-                    //获取第一页的数据
-                    searchResultAdapter.setPoiItem(poiItems.get(0));
-                    listView.setAdapter(searchResultAdapter);
+                    if(isPoiSearch){
+                        addPoiItemsMarker(poiItems);
+                        //隐藏button
+                        go_style.setVisibility(View.GONE);
+                    }else {
+                        //获取第一页的数据
+                        searchResultAdapter.setPoiItem(poiItems.get(0));
+                        listView.setAdapter(searchResultAdapter);
+                    }
                     // 取得第一页的poiItem数据，页数从数字0开始
                     List<SuggestionCity> suggestionCities = poiResult
                             .getSearchSuggestionCitys();
@@ -874,6 +970,7 @@ public class MapFragment extends BaseFragment implements
                     }
                 }
             } else {
+                returnMapAnswerCallBack.onReturnAnswer("对不起,没有找到相关地点");
                 ToastUtil.show(getContext(), R.string.no_result);
             }
         } else {

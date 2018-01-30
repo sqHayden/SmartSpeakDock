@@ -23,17 +23,16 @@ import android.view.View;
 import android.view.WindowManager;
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
-import com.idx.smartspeakdock.setting.SettingFragment;
 import com.idx.smartspeakdock.baidu.unit.listener.ResultCallback;
 import com.idx.smartspeakdock.calendar.CalendarFragment;
 import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
 import com.idx.smartspeakdock.map.Bean.MapCallBack;
 import com.idx.smartspeakdock.map.Bean.ReturnMapAnswerCallBack;
 import com.idx.smartspeakdock.map.MapFragment;
-import com.idx.smartspeakdock.map.PathWay;
 import com.idx.smartspeakdock.music.activity.MusicListFragment;
 import com.idx.smartspeakdock.music.service.MusicCallBack;
 import com.idx.smartspeakdock.service.ControllerService;
+import com.idx.smartspeakdock.setting.SettingFragment;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
 import com.idx.smartspeakdock.shopping.ShoppingFragment;
 import com.idx.smartspeakdock.utils.ActivityStatusUtils;
@@ -138,7 +137,6 @@ public class SwipeActivity extends BaseActivity {
                 initMusic();
                 break;
             case GlobalUtils.WhichFragment.MAP_FRAGMENT_INTENT_ID:
-                Log.d("进来Map了","哇哈哈");
                 Bundle map_args = getIntent().getBundleExtra("map");
                 if (map_args != null) {
                     mMap_voice_name = map_args.getString("name");
@@ -614,14 +612,8 @@ public class SwipeActivity extends BaseActivity {
             //地图语音处理
             mControllerBinder.setMapControllerListener(new MapCallBack() {
                 @Override
-                public void onMapCallBack(String name, String address, String fromAddress, String toAddress, PathWay pathWay, ResultCallback resultCallback) {
-                    if(pathWay!=null) {
-                        Log.d("pathWay","不是空的");
-                        revokeSwipeMapVoice(name, address, fromAddress, toAddress, pathWay.getDesc(), resultCallback);
-                    }else{
-                        Log.d("pathWay","是空的");
-                        revokeSwipeMapVoice(name, address, fromAddress, toAddress, "", resultCallback);
-                    }
+                public void onMapCallBack(String name, String address, String fromAddress, String toAddress, String pathWay, ResultCallback resultCallback) {
+                    revokeSwipeMapVoice(name, address, fromAddress, toAddress, pathWay, resultCallback);
                 }
             });
 

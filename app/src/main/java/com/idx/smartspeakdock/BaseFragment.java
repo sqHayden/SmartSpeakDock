@@ -3,12 +3,12 @@ package com.idx.smartspeakdock;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.util.Log;
 import android.view.MotionEvent;
+
 
 import com.idx.smartspeakdock.swipe.MainActivity;
 import com.idx.smartspeakdock.swipe.SwipeActivity;
@@ -62,7 +62,7 @@ public class BaseFragment extends Fragment {
        BaseActivity.isFragmentTop = ActivityStatusUtils.isTopFragment(getActivity(),BaseActivity.mFragmentManager);
 
         handler.removeCallbacks(runnable);
-        handler.postDelayed(runnable,60*5*1000);
+        handler.postDelayed(runnable,60*10*1000);
 //        handler.postDelayed(runnable,10*1000);
         onTouchListener = new BaseActivity.MyOnTouchListener() {
             @Override
@@ -83,7 +83,7 @@ public class BaseFragment extends Fragment {
                         if (handler != null) {
                             Log.d(TAG, "onTouch: 你开启了倒计时");
                             handler.removeCallbacks(runnable);
-                            handler.postDelayed(runnable, 1000 * 5 * 60);
+                            handler.postDelayed(runnable, 1000 * 10 * 60);
 //                            handler.postDelayed(runnable, 1000 * 10 );
                         }
                         Log.d(TAG, "onTouch: ACTION_DOWN");
