@@ -152,7 +152,8 @@ public class ControllerService extends Service {
 
             @Override
             public String onFestivalDate(String name) {
-                return null;
+                ifmCalendarCallBackNoNull();
+                return util.getHolidayDate(name);
             }
 
             @Override

@@ -3,9 +3,11 @@ package com.idx.smartspeakdock.calendar;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.idx.calendarview.CalendarView;
 import com.idx.calendarview.LunarCalendar;
+import com.idx.calendarview.LunarUtil;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.calendar.bean.Schedule;
 
@@ -17,11 +19,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static com.baidu.speech.core.LogUtil.TAG;
+
 /**
  * Created by geno on 06/01/18.
  */
 
 public  class Util {
+    private static final String TAG = "Util";
     static   Context context;
     static   String answer1 = "";
     static   String answer = "";
@@ -243,6 +248,7 @@ public  class Util {
 
     public static String  getHolidayDate(String holiday){
          answer = "";
+        int numberMonth = 0;
         switch (holiday){
             case "元旦":
                 answer = holiday + "是" + "1月1号";
@@ -287,40 +293,61 @@ public  class Util {
                 answer = holiday + "是" + "12月25号";
                 break;
             case "除夕":
-                int numberMonth = LunarCalendar.daysInLunarMonth(mCalendarView.getCurYear(),12);
+                if (isNewYear(mCalendarView.getCurYear(),mCalendarView.getCurMonth(),mCalendarView.getCurDay())){
+                    numberMonth = LunarCalendar.daysInLunarMonth(mCalendarView.getCurYear()-1,12);
+                }
+                numberMonth = LunarCalendar.daysInLunarMonth(mCalendarView.getCurYear(),12);
                 answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),12,numberMonth);
                 break;
             case "春节":
-                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),1,1);
+                answer = holiday + "是" + Util.getHolidayDates(mCalendarView.getCurYear(),1,1);
                 break;
             case "元宵节":
-                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),1,15);
+                answer = holiday + "是" + Util.getHolidayDates(mCalendarView.getCurYear(),1,15);
                 break;
             case "端午节":
-                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),5,5);
+                answer = holiday + "是" + Util.getHolidayDates(mCalendarView.getCurYear(),5,5);
                 break;
             case "七夕节":
-                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),7,7);
+                answer = holiday + "是" + Util.getHolidayDates(mCalendarView.getCurYear(),7,7);
                 break;
             case "中秋节":
-                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),8,15);
+                answer = holiday + "是" + Util.getHolidayDates(mCalendarView.getCurYear(),8,15);
                 break;
             case "重阳节":
-                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),9,9);
+                answer = holiday + "是" + Util.getHolidayDates(mCalendarView.getCurYear(),9,9);
                 break;
             case "腊八节":
-                answer = holiday + "是" + Util.getHolidayDate(mCalendarView.getCurYear(),12,8);
+                answer = holiday + "是" + Util.getHolidayDates(mCalendarView.getCurYear(),12,8);
             default:
                 break;
         }
         return answer;
     }
+    /*
+    * 判断是否已过当年的元旦,但是还没有过春节
+    * */
+    private static Boolean isNewYear(int year,int month,int day){
+        int[] lunar = LunarUtil.solarToLunar(year,month,day);
+        Boolean isnew = false;
+        if (lunar!= null){
+            if (lunar[0] == year){
+                isnew = false;
+            }else {
+               isnew = true;
+            }
+        }
+        return isnew;
+    }
 
     /*
     *
-    * 返回节日日期
+    * 返回节日日期1
     * */
     public static String getHolidayDate(int year,int month,int day){
+        if (isNewYear(year,mCalendarView.getCurMonth(),mCalendarView.getCurDay())){
+           year = year - 1;
+        }
         int[] date;
         answer = "";
         if (LunarCalendar.leapMonth(year) == 0){
@@ -334,6 +361,28 @@ public  class Util {
         }
         return answer;
     }
+    /*
+   *
+   * 返回节日日期2
+   * */
+    public static String getHolidayDates(int year,int month,int day){
+        if (!isNewYear(year,mCalendarView.getCurMonth(),mCalendarView.getCurDay())){
+            year = year - 1;
+        }
+        int[] date;
+        answer = "";
+        if (LunarCalendar.leapMonth(year) == 0){
+            isleap = false;
+        }else {
+            isleap = true;
+        }
+        date =  LunarCalendar.lunarToSolar(year,month,day,isleap);
+        if (date.length != 0){
+            answer = date[1] + "月" + date[2] + "号";
+        }
+        return answer;
+    }
+
     public static int getQingMingDate(int year){
         int number = year - 2000;
         return (int)Math.floor(number*0.2422 + 4.81) - (int)Math.floor(number/4);

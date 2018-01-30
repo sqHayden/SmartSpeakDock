@@ -86,9 +86,6 @@ public class CalendarFragment extends BaseFragment implements
         super.onCreate(savedInstanceState);
         Logger.setEnable(true);
         Log.d(TAG, "onCreate: ");
-        String aa = Util.getHolidayDate("除夕");
-            Log.d(TAG, "onCreateaaa: "+ aa);
-
         EventBus.getDefault().register(this);
     }
 
