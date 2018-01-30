@@ -319,6 +319,23 @@ public  class Util {
                 break;
             case "腊八节":
                 answer = holiday + "是" + Util.getHolidayDates(mCalendarView.getCurYear(),12,8);
+            case "元宵":
+                answer = holiday + "是" + Util.getHolidayDates(mCalendarView.getCurYear(),1,15);
+                break;
+            case "端午":
+                answer = holiday + "是" + Util.getHolidayDates(mCalendarView.getCurYear(),5,5);
+                break;
+            case "七夕":
+                answer = holiday + "是" + Util.getHolidayDates(mCalendarView.getCurYear(),7,7);
+                break;
+            case "中秋":
+                answer = holiday + "是" + Util.getHolidayDates(mCalendarView.getCurYear(),8,15);
+                break;
+            case "重阳":
+                answer = holiday + "是" + Util.getHolidayDates(mCalendarView.getCurYear(),9,9);
+                break;
+            case "腊八":
+                answer = holiday + "是" + Util.getHolidayDates(mCalendarView.getCurYear(),12,8);
             default:
                 break;
         }

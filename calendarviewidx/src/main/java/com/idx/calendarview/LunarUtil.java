@@ -18,7 +18,7 @@ package com.idx.calendarview;
 /**
  * 农历计算方法
  */
-class LunarUtil {
+public class LunarUtil {
 
 
     private static int[] LUNAR_MONTH_DAYS = {1887, 0x1694, 0x16aa, 0x4ad5, 0xab6, 0xc4b7, 0x4ae, 0xa56, 0xb52a, 0x1d2a,
@@ -75,7 +75,7 @@ class LunarUtil {
      * 公历转农历
      * Solar To Lunar
      */
-    static int[] solarToLunar(int year, int month, int day) {
+  public  static int[] solarToLunar(int year, int month, int day) {
         int[] lunarInt = new int[4];
         int index = year - SOLAR[0];
         int data = (year << 9) | (month << 5) | (day);
