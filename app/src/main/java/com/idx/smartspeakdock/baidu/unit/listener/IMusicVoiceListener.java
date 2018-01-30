@@ -8,14 +8,15 @@ public interface IMusicVoiceListener {
 
     void onPlay(int index);
 
-    void onPlay(String name);
+    void onPlay(String name, ResultCallback resultCallback);
 
     void onPause();
+
+    void onStop();
 
     void onContinue();
 
     void onNext();
 
     void onPrevious();
-    
 }

@@ -150,6 +150,11 @@ public class ControllerService extends Service {
             }
 
             @Override
+            public String onFestivalDate(String name) {
+                return null;
+            }
+
+            @Override
             public String onActInfo(String time) {
                 ifmCalendarCallBackNoNull();
                 return util.getActionInfo(time);
@@ -177,16 +182,27 @@ public class ControllerService extends Service {
             }
 
             @Override
-            public void onPlay(String name) {
-                if (mMusicCallBack!=null) {
-                    mMusicCallBack.onMusicCallBack(name);
-                     musicPlay.play(name);
-                }
+            public void onPlay(String name, ResultCallback resultCallback) {
+
             }
+
+//            @Override
+//            public void onPlay(String name) {
+//                if (mMusicCallBack!=null) {
+//                    mMusicCallBack.onMusicCallBack(name);
+//                     musicPlay.play(name);
+//                }
+//            }
 
             @Override
             public void onPause() {
                  musicPlay.pause();
+
+            }
+
+            @Override
+            public void onStop() {
+                Log.d(TAG, "onStop: music");
 
             }
 
@@ -239,12 +255,17 @@ public class ControllerService extends Service {
             }
 
             @Override
-            public void onPathInfo(String fromAddress, String toAddress, PathWay pathWay, ResultCallback result) {
-                if(mMapCallBack!=null){
-                    mMap_result_callback = result;
-                    mMapCallBack.onMapCallBack("","",fromAddress,toAddress,pathWay,result);
-                }
+            public void onPathInfo(String fromAddress, String toAddress, String pathWay, ResultCallback result) {
+                Log.d(TAG, "onPathInfo: ");
             }
+
+//            @Override
+//            public void onPathInfo(String fromAddress, String toAddress, PathWay pathWay, ResultCallback result) {
+//                if(mMapCallBack!=null){
+//                    mMap_result_callback = result;
+//                    mMapCallBack.onMapCallBack("","",fromAddress,toAddress,pathWay,result);
+//                }
+//            }
         });
     }
     @Override

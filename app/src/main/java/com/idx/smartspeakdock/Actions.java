@@ -15,6 +15,7 @@ public interface Actions {
         String CALENDER_WEEK_INFO = "calender_week_info_satisfy";
         String CALENDER_TIME_INFO = "calender_time_info_satisfy";
         String CALENDER_FESTIVAL_INFO = "calender_festival_info_satisfy";
+        String CALENDER_FESTIVAL_DATE = "calendar_festival_date_satisfy";
         String CALENDER_ACT_INFO = "calender_act_info_satisfy";
         String CALENDER_DATE_INFO = "calender_date_info_satisfy";
         String CALENDER_LUNAR_DATE_INFO = "calender_lunar_date_info_satisfy";
@@ -80,6 +81,7 @@ public interface Actions {
         String MUSIC_NAME = "music_play_user_music_name_clarify";
         String MUSIC_PLAY = "music_play_satisfy";
         String MUSIC_PAUSE = "music_pause_satisfy";
+        String MUSIC_STOP = "music_stop_satisfy";
         String MUSIC_CONTINUE = "music_continue_satisfy";
         String MUSIC_NEXT = "music_next_satisfy";
         String MUSIC_PREVIOUS = "music_previous_satisfy";

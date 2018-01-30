@@ -22,7 +22,6 @@ public class SpeakDialog {
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
         mView = View.inflate(context, R.layout.voice_dialog, null);
-
         params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
         params.format = PixelFormat.TRANSLUCENT;

@@ -11,6 +11,8 @@ public interface ICalenderVoiceListener {
 
     String onFestivalInfo(String time);
 
+    String onFestivalDate(String name);
+
     String onActInfo(String time);
 
     String onDateInfo(String time);

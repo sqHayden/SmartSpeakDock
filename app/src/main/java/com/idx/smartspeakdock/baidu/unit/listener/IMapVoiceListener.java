@@ -21,6 +21,6 @@ public interface IMapVoiceListener {
      * @param pathWay
      * @return
      */
-    void onPathInfo(String fromAddress, String toAddress, PathWay pathWay, ResultCallback result);
+    void onPathInfo(String fromAddress, String toAddress, String pathWay, ResultCallback result);
 
 }

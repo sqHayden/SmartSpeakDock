@@ -5,6 +5,7 @@
         <item>您有啥事儿？</item>
         <item>您有什么事儿？</item>
         <item>您有什么吩咐？</item>
+        <item>您有什么吩咐吗？</item>
         <item>主人，请吩咐。</item>
         <item>什么事儿？</item>
         <item>啥事儿？</item>
@@ -18,9 +19,9 @@
     </string-array>
 
     <string-array name="voice_more">
-        <item>您还有什么吩咐吗？没有请说“再见”。</item>
-        <item>您还有其他事吗？没有请说“再见”。</item>
-        <item>还有事吗？没有请说“再见”。</item>
+        <item>您还有什么吩咐吗？</item>
+        <item>您还有其他事儿吗？</item>
+        <item>还有事儿吗？</item>
     </string-array>
 
     <string-array name="voice_repeat">

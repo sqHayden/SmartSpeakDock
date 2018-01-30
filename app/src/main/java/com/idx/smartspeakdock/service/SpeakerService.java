@@ -88,7 +88,7 @@ public class SpeakerService extends Service implements IStatus {
     /**
      * 唤醒后，识别回溯时长
      */
-    private static final int BACK_TRACK = 1000; //ms
+    private static final int BACK_TRACK = 1000; //1s
     /**
      * 唤醒管理器
      */
@@ -162,14 +162,14 @@ public class SpeakerService extends Service implements IStatus {
         @Override
         public void handleMessage(Message msg) {
             final SpeakerService service = weakReference.get();
-            if (service == null) {
+            if (service == null || service.mHandler == null) {
                 return;
             }
             service.isReceived = true;
             switch (msg.what) {
                 case CONSTANT_WAKE_UP:
                 case CONSTANT_SESSION_START:
-                    // 进入口为wake up，定义CONSTANT_SESSION_START，只为便于将session和wake up区分理解，细化逻辑
+                    // 进入口为wake up，定义CONSTANT_SESSION_START，只为便于将session和wake up区分理解
                     // 语音唤醒后，开启会话，创建会话窗口
                     if (service.isWaked) {
                         long timeNow = System.currentTimeMillis();

@@ -3,13 +3,16 @@ package com.idx.smartspeakdock.baidu.unit.listener;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.idx.smartspeakdock.Actions;
+import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.Modules;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.SlotsTypes;
+import com.idx.smartspeakdock.calendar.CalendarFragment;
 import com.idx.smartspeakdock.swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.TTSManager;
 import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
@@ -154,6 +157,9 @@ public class VoiceActionAdapter {
             case Actions.Music.MUSIC_PAUSE:
                 musicPause();
                 return true;
+            case Actions.Music.MUSIC_STOP:
+                musicStop();
+                return true;
             case Actions.Music.MUSIC_CONTINUE:
                 musicContinue();
                 return true;
@@ -173,6 +179,9 @@ public class VoiceActionAdapter {
                 return true;
             case Actions.Calender.CALENDER_FESTIVAL_INFO:
                 queryFestivalInfo();
+                return true;
+            case Actions.Calender.CALENDER_FESTIVAL_DATE:
+                queryFestivalDate();
                 return true;
             case Actions.Calender.CALENDER_ACT_INFO:
                 queryActInfo();
@@ -788,7 +797,7 @@ public class VoiceActionAdapter {
 
     private void weatherNoStatus() {
         if (mWeatherListener != null) {
-            mWeatherListener.onNoWeatherStatus( new ReturnVoice() {
+            mWeatherListener.onNoWeatherStatus(new ReturnVoice() {
                 @Override
                 public void onReturnVoice(String voice_answer) {
                     if (checkVoiceAnswer(voice_answer)) {
@@ -1065,19 +1074,35 @@ public class VoiceActionAdapter {
         String musicName = mSlots.get(SlotsTypes.USER_MUSIC_NAME);
         if (mMusicListener != null) {
             if (musicIndex != null && !musicIndex.equals("")) {
-                mMusicListener.onPlay(musicIndex);
+//                mMusicListener.onPlay(musicIndex);
             } else if (musicName != null && !musicName.equals("")) {
-                mMusicListener.onPlay(musicName);
+                mMusicListener.onPlay(musicName, new ResultCallback() {
+                    @Override
+                    public void onResult(String result) {
+                        if (result != null && !result.equals("")) {
+                            TTSManager.getInstance().speak(result, mSpeakCallback);
+                        } else {
+                            result(false);
+                        }
+                    }
+                });
             } else {
                 mMusicListener.onPlay(0);
             }
         }
-        result(false);
+
     }
 
     private void musicPause() {
         if (mMusicListener != null) {
             mMusicListener.onPause();
+        }
+        result(true);
+    }
+
+    private void musicStop() {
+        if (mMusicListener != null) {
+            mMusicListener.onStop();
         }
         result(true);
     }
@@ -1123,6 +1148,14 @@ public class VoiceActionAdapter {
         if (mCalenderListener != null) {
             String festivalInfo = mCalenderListener.onFestivalInfo(day);
             TTSManager.getInstance().speak(festivalInfo, mSpeakCallback);
+        }
+    }
+
+    private void queryFestivalDate(){
+        String name = mSlots.get(SlotsTypes.USER_FESTIVAL_NAME);
+        if (mCalenderListener != null) {
+            String festivalDate = mCalenderListener.onFestivalDate(name);
+            TTSManager.getInstance().speak(festivalDate, mSpeakCallback);
         }
     }
 
@@ -1200,7 +1233,7 @@ public class VoiceActionAdapter {
         String way = mSlots.get(SlotsTypes.USER_MAP_PATH_WAY);
         Log.d(TAG, "toName:" + toName + ", fromName:" + fromName + ", way:" + way);
         if (mMapListener != null) {
-            mMapListener.onPathInfo(fromName, toName, convertWay(way), new ResultCallback() {
+            mMapListener.onPathInfo(fromName, toName, way, new ResultCallback() {
                 @Override
                 public void onResult(String result) {
                     TTSManager.getInstance().speak(result, mSpeakCallback);
@@ -1209,24 +1242,6 @@ public class VoiceActionAdapter {
         }
     }
 
-    private PathWay convertWay(String way) {
-        PathWay pathWay;
-        if (way.equals(PathWay.DRIVE.getDesc())) {
-            pathWay = PathWay.DRIVE;
-        }else if(way.equals(PathWay.DODRIVE.getDesc())){
-            pathWay = PathWay.DODRIVE;
-        }else if (way.equals(PathWay.RIDE.getDesc())) {
-            pathWay = PathWay.RIDE;
-        } else if (way.equals(PathWay.TRANSIT.getDesc())) {
-            pathWay = PathWay.TRANSIT;
-        } else if (way.equals(PathWay.DOTRANSIT.getDesc())){
-            pathWay = PathWay.DOTRANSIT;
-        } else {
-            pathWay = PathWay.WALK;
-        }
-
-        return pathWay;
-    }
 
     /**
      * 执行成功后，回调
