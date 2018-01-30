@@ -55,8 +55,7 @@
             <ImageView
                 android:id="@+id/weatherIcon"
                 android:layout_width="@dimen/splash_weather_image_width_size"
-                android:layout_height="@dimen/splash_weather_image_height_size"
-                android:src="@drawable/weather_cloudy"/>
+                android:layout_height="@dimen/splash_weather_image_height_size" />
             <TextView
                 android:id="@+id/standby_weather_tmp"
                 android:layout_width="@dimen/splash_weather_tmp_width"

@@ -30,15 +30,6 @@ public  abstract class BaseActivity extends AppCompatActivity {
     private ArrayList<SwipeActivity.MyOnTouchListener> onTouchListeners = new ArrayList<SwipeActivity.MyOnTouchListener>(10);
     public String fragment_show_activity = "SwipeActivity";
 
-    @Override
-    protected void onRestart() {
-//        if (handler!=null) {
-//            handler.removeCallbacks(runnable);
-////            handler.postDelayed(runnable,1000 * 60 * 10);
-//            handler.postDelayed(runnable,1000  * 10);
-//        }
-        super.onRestart();
-    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -57,10 +48,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
     public void unregisterMyOnTouchListener(BaseActivity.MyOnTouchListener myOnTouchListener) {
         onTouchListeners.remove(myOnTouchListener);
     }
-//    @Override
-//    public boolean dispatchTouchEvent(MotionEvent ev) {
-//        return super.dispatchTouchEvent(ev);
-//    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +62,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
         initPermission();
         //FrgamentManager
         mFragmentManager = getSupportFragmentManager();
-        //当前Activity是否是SwipeActivity
         isTopActivity();
-//        handler.postDelayed(runnable,1000 * 60 * 10);
-//        handler.postDelayed(runnable,1000  * 10);
 
     }
 
@@ -89,32 +74,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
         isTopActivity();
         //当前正在显示的Fragment
         isTopFragment();
-//        if (handler!=null) {
-//            handler.removeCallbacks(runnable);
-////            handler.postDelayed(runnable,1000 * 60 * 10);
-//            handler.postDelayed(runnable,1000  * 10);
-//        }
     }
-//    @Override
-//    public boolean onTouchEvent(MotionEvent event) {
-//        switch (event.getAction()){
-//            case MotionEvent.ACTION_DOWN:
-//                Log.d(TAG, "onTouchEvent: down");
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//                Log.d(TAG, "onTouchEvent: move");
-//                break;
-//            case MotionEvent.ACTION_UP:
-//                Log.d(TAG, "onTouchEvent: up");
-//                break;
-//        }
-//
-//
-//        handler.removeCallbacks(runnable);
-////        handler.postDelayed(runnable,1000 * 60 * 10);
-//        handler.postDelayed(runnable,1000  * 10);
-//        return super.onTouchEvent(event);
-//    }
 
     // 6.0以上权限获取
     private void initPermission() {

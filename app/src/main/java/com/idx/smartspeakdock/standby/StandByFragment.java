@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -51,6 +52,9 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     private String cityname = "深圳市" ;
     private Context mContext;
     private View view;
+    private Bitmap bitmap1;
+    private Bitmap bitmap2;
+    private Bitmap bitmap3;
     long startTime;
 //    private GetCityService.MyBinder myBinder;
 /*    private ServiceConnection connection = new ServiceConnection() {
@@ -166,8 +170,12 @@ public class StandByFragment extends BaseFragment implements IStandByView{
         standby_weather_tmp = view.findViewById(R.id.standby_weather_tmp);
         image_clothes = view.findViewById(R.id.image_clothes);
         image_car = view.findViewById(R.id.image_car);
-        image_clothes.setImageBitmap(BitmapUtils.decodeBitmapFromResources(getContext(),R.drawable.weather_life_clothes));
-        image_car.setImageBitmap(BitmapUtils.decodeBitmapFromResources(getContext(),R.drawable.weather_life_car_wash));
+        bitmap1 = BitmapUtils.decodeBitmapFromResources(getContext(),R.drawable.weather_life_clothes);
+        bitmap2 = BitmapUtils.decodeBitmapFromResources(getContext(),R.drawable.weather_life_car_wash);
+        bitmap3 = BitmapUtils.decodeBitmapFromResources(getContext(),R.drawable.weather_cloudy);
+        image_clothes.setImageBitmap(bitmap1);
+        image_car.setImageBitmap(bitmap2);
+        weatherIcon.setImageBitmap(bitmap3);
         location_textView.setTypeface(FontCustom.setHeiTi(mContext));
         standby_life_clothes.setTypeface(FontCustom.setHeiTi(mContext));
         standby_life_car.setTypeface(FontCustom.setHeiTi(mContext));
@@ -205,20 +213,30 @@ public class StandByFragment extends BaseFragment implements IStandByView{
 
     @Override
     public void onDestroy() {
+        Log.d(TAG, "onDestroy: ");
 //        getActivity().stopService(new Intent(getContext(),GetCityService.class));
         broadcastManager.unregisterReceiver(mReceiver);
         super.onDestroy();
+        if (bitmap1 != null){
+            bitmap1 = null;
+        }
+        if (bitmap2 != null){
+            bitmap2 = null;
+        }
+        if (bitmap2 != null){
+            bitmap2 = null;
+        }
     }
 
     private void showWeatherInfo(Weather weather) {
         if(weather.now.code != null) {
-//            weatherIcon.setImageResource(HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(weather.now.code)));
-            weatherIcon.setImageBitmap(BitmapUtils.decodeBitmapFromResources(getContext(),
-                    HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(weather.now.code))));
+            bitmap3 = BitmapUtils.decodeBitmapFromResources(getContext(),
+                    HandlerWeatherUtil.getWeatherImageResource(Integer.parseInt(weather.now.code)));
+            weatherIcon.setImageBitmap(bitmap3);
         } else {
-            //weatherIcon.setImageResource(R.drawable.weather_unknown);
-            weatherIcon.setImageBitmap(BitmapUtils.decodeBitmapFromResources(getContext(),
-                    R.drawable.weather_unknown));
+            bitmap3 = BitmapUtils.decodeBitmapFromResources(getContext(),
+                    R.drawable.weather_unknown);
+            weatherIcon.setImageBitmap(bitmap3);
         }
         standby_weather_tmp.setText(weather.forecastList.get(0).max + " / " + weather.forecastList.get(0).min + "℃");
         standby_life_clothes.setText(getActivity().getString(R.string.clothes)+": " + weather.lifestyleList.get(1).brf);
