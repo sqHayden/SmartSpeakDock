@@ -65,6 +65,7 @@ public interface GlobalUtils {
         //music
         String MUSIC_NAME_ID = "music.name.id";
         String MUSIC_BROADCAST_ACTION = "music.broadcast.action";
+        int MUSIC_VOICE_FLAG=7;
     }
 
     interface Map {

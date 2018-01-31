@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.util.Log;
 
+import com.idx.smartspeakdock.baidu.unit.listener.ResultCallback;
 import com.idx.smartspeakdock.music.entity.Music;
 import com.idx.smartspeakdock.music.util.AppCache;
 import com.idx.smartspeakdock.music.util.MusicUtil;
@@ -126,14 +127,16 @@ public class MusicPlay {
     }
 
     //按音乐名称播放
-    public void play(String name) {
+    public void play(String name, ResultCallback resultCallback) {
         if (MusicUtil.getMusic().get(name)!=null) {
+            Log.d("music", "拿到资源播放 ");
             music = MusicUtil.getMusic().get(name);
             mPlayingMusic = music;
             play(music);
             notifyMusicState(ACTION_MEDIA_PLAY,true);
         }else {
-            Log.d("ccc", "play: ");
+            resultCallback.onResult("对不起，找不到该资源");
+            Log.d("music", "没有资源 ");
             notifyMusicState(ACTION_MEDIA_ERROR,false);
         }
     }
@@ -159,7 +162,6 @@ public class MusicPlay {
     public void play(Music music) {
         mPlayingMusic = music;
         try {
-//            Log.d(TAG, "play: 进入musicService，获取当前音乐:"+music.getUrl());
             mediaPlayer.reset();
             mediaPlayer.setOnPreparedListener(mPreparedListener);
             mediaPlayer.setOnCompletionListener(onCompletionListener);
@@ -205,6 +207,9 @@ public class MusicPlay {
             return false;
         }
     };
+
+
+
     //对MediaPlayer进行实例化
     public MediaPlayer getMediaPlayer(Context context) {
         MediaPlayer mediaplayer = new MediaPlayer();

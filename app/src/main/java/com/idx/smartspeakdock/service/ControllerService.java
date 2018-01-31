@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.math.MathUtils;
 import android.util.Log;
 
 import com.idx.calendarview.CalendarView;
@@ -21,6 +22,7 @@ import com.idx.smartspeakdock.map.Bean.MapCallBack;
 import com.idx.smartspeakdock.map.PathWay;
 import com.idx.smartspeakdock.music.service.MusicCallBack;
 import com.idx.smartspeakdock.music.service.MusicPlay;
+import com.idx.smartspeakdock.music.util.MusicUtil;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
@@ -186,15 +188,14 @@ public class ControllerService extends Service {
 
             @Override
             public void onPlay(String name, ResultCallback resultCallback) {
-            }
 
-//            @Override
-//            public void onPlay(String name) {
-//                if (mMusicCallBack!=null) {
-//                    mMusicCallBack.onMusicCallBack(name);
-//                     musicPlay.play(name);
-//                }
-//            }
+
+                    if (mMusicCallBack != null) {
+                        mMusicCallBack.onMusicCallBack(name);
+                        musicPlay.play(name, resultCallback);
+                    }
+
+            }
 
             @Override
             public void onPause() {
@@ -205,7 +206,7 @@ public class ControllerService extends Service {
             @Override
             public void onStop() {
                 Log.d(TAG, "onStop: music");
-
+                musicPlay.stop();
             }
 
             @Override
@@ -263,6 +264,7 @@ public class ControllerService extends Service {
                     mMapCallBack.onMapCallBack("", "", fromAddress, toAddress, pathWay, result);
                 }
             }
+
         });
     }
 

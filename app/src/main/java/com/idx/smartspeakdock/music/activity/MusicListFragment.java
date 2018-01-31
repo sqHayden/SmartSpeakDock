@@ -223,14 +223,12 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
 
     //下一首
     public void next() {
-        Log.d(TAG, "next111: ");
         musicService.musicPlay.next();
 
     }
 
     //音乐播放状态，界面图标显示
     public void playState(){
-        Log.d(TAG, "playState111: ");
         isPlaying=true;
         bar_start.setImageResource(R.mipmap.music_pause);
         handler.post(runnable);
@@ -348,7 +346,7 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
                     break;
                 case GlobalUtils.Music.MUSIC_BROADCAST_ACTION:
                     music_name=intent.getStringExtra("music_name");
-                    musicService.musicPlay.play(music_name);
+                    musicService.musicPlay.play(music_name,null);
                     break;
                 default:
                     break;
@@ -356,7 +354,7 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
         }
     }
 
-        @Override
+    @Override
     public void onDestroy() {
         super.onDestroy();
         try {

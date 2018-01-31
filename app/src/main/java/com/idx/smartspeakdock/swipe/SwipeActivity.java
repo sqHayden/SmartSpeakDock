@@ -91,7 +91,8 @@ public class SwipeActivity extends BaseActivity {
     private String mMap_voice_toAddress;
     private String mMap_voice_pathWay;
     private ResultCallback mMap_result_callback;
-
+//    private int mMusic_voice_flag;
+//    private ResultCallback mMusic_result_callback;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +111,7 @@ public class SwipeActivity extends BaseActivity {
         //fragment切换
         mWeather_voice_flag = -1;
         mMap_voice_flag = -1;
+//        mMusic_voice_flag=-1;
         if (mSharePrefrenceUtils.getFirstChange(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT)) {
             changeFragment(extraIntentId);
         }
@@ -134,6 +136,7 @@ public class SwipeActivity extends BaseActivity {
                 break;
             case GlobalUtils.WhichFragment.MUSIC_FRAGMENT_INTENT_ID:
                 music_name = getIntent().getStringExtra("music_name");
+//                mMusic_voice_flag=7;
                 initMusic();
                 break;
             case GlobalUtils.WhichFragment.MAP_FRAGMENT_INTENT_ID:
@@ -329,18 +332,20 @@ public class SwipeActivity extends BaseActivity {
     private void initMusic() {
         if (!checkFragment("music")) {
             actionBar_title = mResources.getString(R.string.music_title);
-            Log.i(TAG, "initMusic: music_name = "+music_name);
-            if (music_name != null) {
-                if (musicFragment == null) {
-                    musicFragment = MusicListFragment.newInstance(music_name);
+
+                Log.i(TAG, "initMusic: music_name = " + music_name);
+                if (music_name != null) {
+                    if (musicFragment == null) {
+                        musicFragment = MusicListFragment.newInstance(music_name);
+                    }
                 }
-            }else {
+            else {
                 if (musicFragment == null) {
                     musicFragment = new MusicListFragment();
                 }
             }
-            ActivityUtils.replaceFragmentInActivity(mFragmentManager, musicFragment, R.id.contentFrame);
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "music");
+            ActivityUtils.replaceFragmentInActivity(mFragmentManager, musicFragment, R.id.contentFrame);
         }
     }
 
@@ -593,6 +598,7 @@ public class SwipeActivity extends BaseActivity {
                     revokeSwipeMusicVoice(music_name);
                 }
             });
+
             //天气语音处理
             mControllerBinder.setWeatherControllerListener(new WeatherCallback() {
                 @Override
@@ -780,10 +786,12 @@ public class SwipeActivity extends BaseActivity {
         Log.d(TAG, "revokeSwipeMusicVoice music_name = "+SwipeActivity.this.music_name);
         initMusic();
         mActionBar.setTitle(actionBar_title);
+
     }
 
     private void sendMusicBroadcast(String music_name) {
         Log.i(TAG, "revokeSwipeMusicVoice: 当前Fragment是MusicFragment");
+
         mMusicBroadcastIntent.putExtra("music", music_name);
         sendBroadcast(mMusicBroadcastIntent);
     }
