@@ -21,16 +21,14 @@ import android.widget.Toast;
 import com.idx.calendarview.Calendar;
 import com.idx.calendarview.CalendarLayout;
 import com.idx.calendarview.CalendarView;
-import com.idx.calendarview.LunarCalendar;
 import com.idx.calendarview.MessageEvent;
-import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
-import com.idx.smartspeakdock.swipe.SwipeActivity;
 import com.idx.smartspeakdock.calendar.adapter.MyRecyclerView;
 import com.idx.smartspeakdock.calendar.bean.Schedule;
 import com.idx.smartspeakdock.calendar.model.Model;
 import com.idx.smartspeakdock.calendar.presenter.Presenter;
+import com.idx.smartspeakdock.swipe.MainActivity;
 import com.idx.smartspeakdock.utils.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -52,7 +50,7 @@ public class CalendarFragment extends BaseFragment implements
     private String date ="";
     private Integer day;
     public MyRecyclerView myRecyclerView;
-    private SwipeActivity.MyOnTouchListener onTouchListener;
+    private MainActivity.MyOnTouchListener onTouchListener;
     private TextView mYear;
     private TextView mMonth;
     int year;

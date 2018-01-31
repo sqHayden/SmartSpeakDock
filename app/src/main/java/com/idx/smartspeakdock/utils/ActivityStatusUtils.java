@@ -16,12 +16,11 @@ import java.util.List;
 
 public class ActivityStatusUtils {
     private static final String TAG = ActivityStatusUtils.class.getSimpleName();
-    public static final String fragment_show_activity = "SwipeActivity";
+    public static final String fragment_show_activity = "MainActivity";
     private static boolean isActivityTop;
     private static Fragment isFragmentTop;
 
     public static boolean isBackground(Context context) {
-        Log.i("ryan", "isBackground: ActivityStatusUtils");
         ActivityManager activityManager = (ActivityManager) context
                 .getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager
@@ -51,28 +50,28 @@ public class ActivityStatusUtils {
     }
 
     public static boolean isTopActivity(Context context) {
-        Log.i("ryan", "isTopActivity: ActivityStatusUtils");
+        Log.i(TAG, "isTopActivity: ActivityStatusUtils");
         isActivityTop = false;
         ActivityManager am = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
         ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
-        Log.i("ryan", "activity isTopActivity = " + cn.getClassName());
+        Log.i(TAG, "activity isTopActivity = " + cn.getClassName());
         if (cn.getClassName().contains(fragment_show_activity)) {
             isActivityTop = true;
         }
-        Log.i("ryan", "activity isTop = " + isActivityTop);
+        Log.i(TAG, "activity isTop = " + isActivityTop);
         return isActivityTop;
     }
 
     public static Fragment isTopFragment(Context context,FragmentManager fragmentManager) {
-        Log.i("ryan", "isTopFragment: ActivityStatusUtils");
+        Log.i(TAG, "isTopFragment: ActivityStatusUtils");
         isFragmentTop = null;
         List<Fragment> fragments = fragmentManager.getFragments();
-        Log.i("ryan", "activity isTopFragment: size = " + fragments.size());
+        Log.i(TAG, "activity isTopFragment: size = " + fragments.size());
         for (Fragment fragment : fragments) {
 //            if(fragment != null && fragment.isVisible()){
             isFragmentTop = fragment;
 //            }
-            Log.i("ryan", "activity isTopFragment: " + isFragmentTop.getClass().getSimpleName());
+            Log.i(TAG, "activity isTopFragment: " + isFragmentTop.getClass().getSimpleName());
         }
         return isFragmentTop;
     }

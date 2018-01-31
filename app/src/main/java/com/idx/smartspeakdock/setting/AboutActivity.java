@@ -23,7 +23,7 @@ import com.idx.smartspeakdock.map.Bean.MapCallBack;
 import com.idx.smartspeakdock.music.service.MusicCallBack;
 import com.idx.smartspeakdock.service.ControllerService;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
-import com.idx.smartspeakdock.swipe.SwipeActivity;
+import com.idx.smartspeakdock.swipe.MainActivity;
 import com.idx.smartspeakdock.utils.BitmapUtils;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.SharePrefrenceUtils;
@@ -55,14 +55,14 @@ public class AboutActivity extends BaseActivity {
         bindService(intent,mControlConnection,0);
         //实例化SharePreferencesUtls
         mSharedPreferencesUtils = new SharePrefrenceUtils(this);
-        mIntent = new Intent(this, SwipeActivity.class);
+        mIntent = new Intent(this, MainActivity.class);
         initToolbar();
         initView();
     }
 
     private void initView() {
         app_version_show = findViewById(R.id.app_version);
-        mBitmap = BitmapUtils.decodeBitmapFromResources(this,R.drawable.back);
+        mBitmap = BitmapUtils.decodeBitmapFromResources(this, R.drawable.back);
         PackageManager pm = getPackageManager();
         PackageInfo packageInfo = null;
         try {
@@ -78,7 +78,7 @@ public class AboutActivity extends BaseActivity {
         toolbar.setBackgroundColor(getResources().getColor(R.color.colorSelfBlack));
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
-        mBitmap = BitmapUtils.scaleBitmapFromResources(this,R.drawable.back,15,30);
+        mBitmap = BitmapUtils.scaleBitmapFromResources(this, R.drawable.back,15,30);
         ab.setHomeAsUpIndicator(new BitmapDrawable(mBitmap));
         ab.setTitle(getResources().getString(R.string.about));
         ab.setDisplayHomeAsUpEnabled(true);
@@ -205,7 +205,7 @@ public class AboutActivity extends BaseActivity {
         if (!isActivityTop){
             Log.d(TAG, "music222: " + music_name);
             mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT,GlobalUtils.WhichFragment.MUSIC_FRAGMENT_INTENT_ID);
+            mIntent.putExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT, GlobalUtils.WhichFragment.MUSIC_FRAGMENT_INTENT_ID);
             mIntent.putExtra("music_name",music_name);
             startActivity(mIntent);
             mSharedPreferencesUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);

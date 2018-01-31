@@ -2,7 +2,6 @@ package com.idx.smartspeakdock;
 
 import android.Manifest;
 import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -11,16 +10,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.idx.smartspeakdock.swipe.SwipeActivity;
 import com.idx.smartspeakdock.utils.ActivityStatusUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 // 只用于继承
 public  abstract class BaseActivity extends AppCompatActivity {
@@ -28,9 +24,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
     public static Fragment isFragmentTop;
     public boolean isActivityTop;
     public static FragmentManager mFragmentManager;
-    private ArrayList<SwipeActivity.MyOnTouchListener> onTouchListeners = new ArrayList<SwipeActivity.MyOnTouchListener>(10);
-//    public String fragment_show_activity = "SwipeActivity";
-
+    private ArrayList<MyOnTouchListener> onTouchListeners = new ArrayList<MyOnTouchListener>(10);
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -73,6 +67,8 @@ public  abstract class BaseActivity extends AppCompatActivity {
         super.onResume();
         //当前Activity是否是SwipeActivity
         isActivityTop = ActivityStatusUtils.isTopActivity(this);
+        isFragmentTop = ActivityStatusUtils.isTopFragment(this,mFragmentManager);
+//        Log.i("ryan", "onResume: baseActivity:isTop = "+isActivityTop+",isFragment = "+isFragmentTop.getClass().getSimpleName());
 //        if (handler!=null) {
 //            handler.removeCallbacks(runnable);
 ////            handler.postDelayed(runnable,1000 * 60 * 10);
@@ -138,10 +134,10 @@ public  abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        isActivityTop = false;
+        /*isActivityTop = false;
         if (isFragmentTop != null) {
             isFragmentTop = null;
         }
-        ActivityStatusUtils.onDestroy();
+        ActivityStatusUtils.onDestroy();*/
     }
 }

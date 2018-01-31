@@ -22,13 +22,21 @@ public interface GlobalUtils {
 
         //first change fragment
         String FIRST_CHANGE_FRAGMENT = "first.change.fragment";
+
+        //fragment name
+        String STANDBY_FRAGMENT_NAME = "standBy";
+        String WEATHER_FRAGMENT_NAME = "weather";
+        String CALENDAR_FRAGMENT_NAME = "calendar";
+        String MUSIC_FRAGMENT_NAME = "music";
+        String MAP_FRAGMENT_NAME = "map";
+        String SHOPPING_FRAGMENT_NAME = "shopping";
+        String SETTING_FRAGMENT_NAME = "setting";
     }
 
     interface WhichActivity{
         //background which activity
         String BACKGROUND_WHICH_ACTIVITY = "background.which.activity";
         String MAIN_ACTIVITY_ID = "MainActivity";
-        String SWIPE_ACTIVITY_ID = "SwipeActivity";
         String ABOUT_ACTIVITY_ID = "AboutActivity";
         String MUSIC_PLAY_ACTIVITY_ID = "MusicPlayActivity";
         String STANDBY_ACTIVITY_ID = "StandByActivity";
@@ -62,7 +70,6 @@ public interface GlobalUtils {
     }
 
     interface Music {
-        //music
         String MUSIC_NAME_ID = "music.name.id";
         String MUSIC_BROADCAST_ACTION = "music.broadcast.action";
         int MUSIC_VOICE_FLAG=7;

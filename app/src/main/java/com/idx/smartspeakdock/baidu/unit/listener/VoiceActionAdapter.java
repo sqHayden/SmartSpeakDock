@@ -3,20 +3,16 @@ package com.idx.smartspeakdock.baidu.unit.listener;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.idx.smartspeakdock.Actions;
-import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.Modules;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.SlotsTypes;
-import com.idx.smartspeakdock.calendar.CalendarFragment;
-import com.idx.smartspeakdock.swipe.SwipeActivity;
 import com.idx.smartspeakdock.baidu.control.TTSManager;
 import com.idx.smartspeakdock.baidu.unit.model.CommunicateResponse;
-import com.idx.smartspeakdock.map.PathWay;
+import com.idx.smartspeakdock.swipe.MainActivity;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.MathTool;
@@ -78,7 +74,7 @@ public class VoiceActionAdapter {
 
     public VoiceActionAdapter(Context context) {
         Logger.setEnable(true);
-        mIntent = new Intent(context, SwipeActivity.class);
+        mIntent = new Intent(context, MainActivity.class);
         mSharePrefrenceUtils = new SharePrefrenceUtils(context);
         mContext = context;
     }
