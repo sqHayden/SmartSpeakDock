@@ -313,7 +313,7 @@ public class ControllerService extends Service {
                 if (mWeatherCallback != null) {
                     Log.d(TAG, "onTimeWeatherINfo: 提供时间查深圳天气信息");
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback("深圳", time, returnVoice, "onWeatherInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback("", time, returnVoice, "onWeatherInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -322,7 +322,7 @@ public class ControllerService extends Service {
                 if (mWeatherCallback != null) {
                     Log.d(TAG, "onNoWeatherInfo: 不提供城市和时间查今天深圳天气信息");
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback("深圳", "今天", returnVoice, "onWeatherInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback("", "今天", returnVoice, "onWeatherInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -348,7 +348,7 @@ public class ControllerService extends Service {
                 if (mWeatherCallback != null) {
                     Log.d(TAG, "onTimeRangeTempInfo: 提供时间查深圳温度");
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback("深圳", time, returnVoice, "onRangeTempInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback("", time, returnVoice, "onRangeTempInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -357,7 +357,7 @@ public class ControllerService extends Service {
                 if (mWeatherCallback != null) {
                     Log.d(TAG, "onNoRangeTempInfo: 不提供时间和城市查今天深圳温度");
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback("深圳", "今天", returnVoice, "onRangeTempInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback("", "今天", returnVoice, "onRangeTempInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -383,7 +383,7 @@ public class ControllerService extends Service {
                 if (mWeatherCallback != null) {
                     Log.d(TAG, "onTimeAirQualityInfo: 提供时间查深圳空气质量");
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback("深圳", time, returnVoice, "onAirQualityInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback("", time, returnVoice, "onAirQualityInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -392,7 +392,7 @@ public class ControllerService extends Service {
                 if (mWeatherCallback != null) {
                     Log.d(TAG, "onNoAiqQualityInfo: 查今天深圳空气质量");
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback("深圳", "", returnVoice, "onAirQualityInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback("", "", returnVoice, "onAirQualityInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -409,7 +409,7 @@ public class ControllerService extends Service {
                 if (mWeatherCallback != null) {
                     Log.d(TAG, "onNoCurrentTempInfo: 查深圳当前温度");
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback("深圳", "", returnVoice, "onCurrentTempInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback("", "", returnVoice, "onCurrentTempInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -435,7 +435,7 @@ public class ControllerService extends Service {
                 if (mWeatherCallback != null) {
                     Log.d(TAG, "onTimeWeatherStatus: 提供时间查深圳天气状况");
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback("深圳", time, returnVoice, "onWeatherStatus", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback("", time, returnVoice, "onWeatherStatus", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -444,7 +444,7 @@ public class ControllerService extends Service {
                 if (mWeatherCallback != null) {
                     Log.d(TAG, "onNoWeatherStatus: 查深圳今天天气状况");
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback("深圳", "今天", returnVoice, "onWeatherStatus", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback("", "今天", returnVoice, "onWeatherStatus", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -470,7 +470,7 @@ public class ControllerService extends Service {
                 if (mWeatherCallback != null) {
                     Log.d(TAG, "onTimeRainInfo: 提供时间查今天深圳有雨吗");
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback("深圳", time, returnVoice, "onRainInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback("", time, returnVoice, "onRainInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -479,7 +479,7 @@ public class ControllerService extends Service {
                 if (mWeatherCallback != null) {
                     Log.d(TAG, "onNoRainInfo: 查深圳今天有雨吗");
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback("深圳", "今天", returnVoice, "onRainInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback("", "今天", returnVoice, "onRainInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -505,7 +505,7 @@ public class ControllerService extends Service {
                 if (mWeatherCallback != null) {
                     Log.d(TAG, "onTimeDressInfo: 提供时间查深圳穿衣建议");
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback("深圳", time, returnVoice, "onDressInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback("", time, returnVoice, "onDressInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -531,7 +531,7 @@ public class ControllerService extends Service {
                 if (mWeatherCallback != null) {
                     Log.d(TAG, "onTimeUitravioletLevelInfo: 提供时间查深圳空气质量");
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback("深圳", time, returnVoice, "onUitravioletLevelInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback("", time, returnVoice, "onUitravioletLevelInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
 
@@ -557,7 +557,7 @@ public class ControllerService extends Service {
                 if (mWeatherCallback != null) {
                     Log.d(TAG, "onTimeSmogInfo: 提供时间查深圳有雾吗");
                     mWeather_return_voice = returnVoice;
-                    mWeatherCallback.onWeatherCallback("深圳", time, returnVoice, "onSmogInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
+                    mWeatherCallback.onWeatherCallback("", time, returnVoice, "onSmogInfo", GlobalUtils.Weather.WEATHER_VOICE_FLAG);
                 }
             }
         });
