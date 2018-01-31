@@ -328,8 +328,8 @@ public class UnitManager {
         mVoiceAdapter.setSessionListener(sessionListener);
     }
 
-    public void enableSession(boolean sessionOver) {
-        enableSession = sessionOver;
+    public void enableSession(boolean enable) {
+        enableSession = enable;
     }
 
     public void release() {

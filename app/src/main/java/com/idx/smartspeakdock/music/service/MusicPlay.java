@@ -130,6 +130,7 @@ public class MusicPlay {
     public void play(String name, ResultCallback resultCallback) {
         if (MusicUtil.getMusic().get(name)!=null) {
             Log.d("music", "拿到资源播放 ");
+            resultCallback.onResult(null);
             music = MusicUtil.getMusic().get(name);
             mPlayingMusic = music;
             play(music);

@@ -218,6 +218,7 @@ public class SpeakerService extends Service implements IStatus {
                 case CONSTANT_RECOGNIZE_FINISH:
                     if (service.mSpeakDialog != null) {
                         service.mSpeakDialog.showReady();
+                        service.stopRecognize();
                     }
                     break;
                 case CONSTANT_TIME_TICK:
@@ -231,6 +232,7 @@ public class SpeakerService extends Service implements IStatus {
                     if (service.mSpeakDialog != null) {
                         service.mSpeakDialog.dismiss();
                         service.mSpeakDialog = null;
+                        service.stopRecognize();
                     }
                     service.isWaked = false;
                     service.mHandler.removeCallbacks(service.timerRunnable);
@@ -341,10 +343,10 @@ public class SpeakerService extends Service implements IStatus {
 
     }
 
-    //百度Demo原函数
     private void stopRecognize() {
+        mRecognizerManager.cancel();
         mRecognizerManager.stop();
-        mRecognizerManager.release();
+
     }
 
     @Override
