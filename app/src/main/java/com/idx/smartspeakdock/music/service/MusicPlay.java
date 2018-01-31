@@ -93,9 +93,7 @@ public class MusicPlay {
 
     //停止播放
     public void stop() {
-        pause();
-        mediaPlayer.stop();
-        mediaPlayer.reset();
+        mediaPlayer.pause();
     }
     //下一首
     public void next() {
@@ -208,8 +206,6 @@ public class MusicPlay {
             return false;
         }
     };
-
-
 
     //对MediaPlayer进行实例化
     public MediaPlayer getMediaPlayer(Context context) {
