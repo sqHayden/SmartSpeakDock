@@ -57,7 +57,6 @@ public class BaseFragment extends Fragment {
     public void onResume() {
         super.onResume();
        BaseActivity.isFragmentTop = ActivityStatusUtils.isTopFragment(getActivity(), BaseActivity.mFragmentManager);
-        Log.i("ryan", "onResume: baseFragment:isFragment = "+ BaseActivity.isFragmentTop.getClass().getSimpleName());
         handler.removeCallbacks(runnable);
         handler.postDelayed(runnable,60*10*1000);
 //        handler.postDelayed(runnable,10*1000);
