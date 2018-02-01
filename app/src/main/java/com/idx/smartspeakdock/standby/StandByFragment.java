@@ -22,8 +22,10 @@ import com.amap.api.location.AMapLocation;
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.service.ControllerService;
 import com.idx.smartspeakdock.service.GetCityService;
 import com.idx.smartspeakdock.standby.presenter.StandByPresenter;
+import com.idx.smartspeakdock.swipe.MainActivity;
 import com.idx.smartspeakdock.utils.BitmapUtils;
 import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.ToastUtils;
@@ -49,48 +51,24 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     private TextView standby_weather_tmp;
     private ImageView weatherIcon;
     private StandByPresenter mStandByPresenter;
-    private String cityname = "深圳市" ;
+    private String cityName = "深圳市" ;
     private Context mContext;
     private View view;
     private Bitmap bitmap1;
     private Bitmap bitmap2;
     private Bitmap bitmap3;
-    long startTime;
-//    private GetCityService.MyBinder myBinder;
-/*    private ServiceConnection connection = new ServiceConnection() {
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d("binder连接已经执行","123456");
-            myBinder = (GetCityService.MyBinder) service;
-            //连接调用
-            myBinder.getCity(new GetCityService.CallBack(){
-                @Override
-<<<<<<< HEAD
-                public void call(AMapLocation aMapLocation) {
-                    mStandByPresenter.requestWeather(aMapLocation.getCity());
-=======
-                public void call(BDLocation bdLocation) {
-                    cityname = bdLocation.getCity();
-                    location_textView.setText(cityname);
-                    mStandByPresenter.requestWeather(cityname);
-
->>>>>>> e0ad539c8325dbb8d03805e41f07e3b871b70dfb
-                }
-            });
-        }
-    };*/
     LocalBroadcastManager broadcastManager;
     IntentFilter intentFilter;
     BroadcastReceiver mReceiver;
+    private ControllerService.MyBinder mControllerBinder;
 
     private WeatherBasicRepository mWeatherBasicRepository;
     private ImageView image_clothes;
     private ImageView image_car;
+
+
+    private Intent mControllerintent;
+    private GetCityNameServiceConnection getCityNameServiceConnection;
 
     @Override
     public void onAttach(Context context) {
@@ -101,8 +79,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
 
-       // outState.putString("cityName",location_textView.getText().toString());
-        outState.putString("cityName",cityname);
+        outState.putString("cityName",cityName);
         Log.d(TAG, "onSaveInstanceState: ");
     }
 
@@ -113,22 +90,53 @@ public class StandByFragment extends BaseFragment implements IStandByView{
         BaseActivity baseActivity = (BaseActivity) getActivity();
         Logger.setEnable(true);
         if (savedInstanceState != null) {
-            if (!cityname.isEmpty()){
-                getWeatherBasic(cityname);
+            if (!cityName.isEmpty()){
+                getWeatherBasic(cityName);
             }
         }else {
-            if(!BaseActivity.isServiceRunning(baseActivity.getApplicationContext(),"com.idx.smartspeakdock.start.GetCityService")) {
-                Log.d("启动服务", "startService");
-            Intent intent = new Intent(baseActivity.getApplicationContext(), GetCityService.class);
-            //启动
-            baseActivity.getApplicationContext().startService(intent);
-            //绑定
+//            if(!BaseActivity.isServiceRunning(baseActivity.getApplicationContext(),"com.idx.smartspeakdock.start.GetCityService")) {
+//                Log.d("启动服务", "startService");
+//            Intent intent = new Intent(baseActivity.getApplicationContext(), GetCityService.class);
+//            //启动
+//            baseActivity.getApplicationContext().startService(intent);
+//            //绑定
 //            baseActivity.getApplicationContext().bindService(intent, connection, BIND_AUTO_CREATE);
-        }
+//        }
+            if (!BaseActivity.isServiceRunning(baseActivity.getApplicationContext(), ControllerService.class.getName())) {
+                mControllerintent = new Intent(baseActivity.getApplicationContext(), ControllerService.class);
+                //启动service
+                baseActivity.getApplicationContext().startService(mControllerintent);
+                //绑定service
+                getCityNameServiceConnection = new GetCityNameServiceConnection();
+                baseActivity.getApplicationContext().bindService(mControllerintent, getCityNameServiceConnection, BIND_AUTO_CREATE);
+            }
+
+
         }
 
-       getWeatherBasic(cityname);
+       getWeatherBasic(cityName);
     }
+
+    public class GetCityNameServiceConnection implements ServiceConnection{
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            mControllerBinder = (ControllerService.MyBinder) iBinder;
+            mControllerBinder.getControlService();
+            
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            if (mControllerBinder != null) {
+                mControllerBinder = null;
+            }
+        }
+
+
+    }
+
 
     @Override
     public void onResume() {
@@ -156,7 +164,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
             @Override
             public void onReceive(Context context, Intent intent){
                 Log.d(TAG, "onReceive: ");
-                getWeatherBasic(cityname);
+                getWeatherBasic(cityName);
             }
         };
         broadcastManager.registerReceiver(mReceiver, intentFilter);
