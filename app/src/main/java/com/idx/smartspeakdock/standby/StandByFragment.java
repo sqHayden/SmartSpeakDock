@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,9 @@ import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicInjection;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicRepository;
 import com.idx.smartspeakdock.weather.utils.HandlerWeatherUtil;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * Created by ryan on 17-12-27.
  * Email: Ryan_chan01212@yeah.net
@@ -49,11 +53,9 @@ public class StandByFragment extends BaseFragment implements IStandByView,Return
     private Bitmap bitmap1;
     private Bitmap bitmap2;
     private Bitmap bitmap3;
-    LocalBroadcastManager broadcastManager;
-    IntentFilter intentFilter;
-    BroadcastReceiver mReceiver;
     private ControllerService.MyBinder mControllerBinder;
-
+    Timer timer;
+    TimerTask timerTask;
     private WeatherBasicRepository mWeatherBasicRepository;
     private ImageView image_clothes;
     private ImageView image_car;
@@ -87,15 +89,28 @@ public class StandByFragment extends BaseFragment implements IStandByView,Return
             ((BaseActivity)getActivity()).setReturnCityName(this);
         }
 
-       getWeatherBasic(cityName);
+      // getWeatherBasic(cityName);
     }
 
     @Override
     public void onResume() {
+        initTimer();
         super.onResume();
+  
+
         Log.i("ryan", "onResume: standByFragment");
     }
-
+    private void initTimer() {
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                getWeatherBasic(cityName);
+                Log.d(TAG, "run: update weather");
+            }
+        };
+        timer = new Timer();
+        timer.schedule(timerTask, 1 * 1000, 10 * 1000);
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -108,17 +123,6 @@ public class StandByFragment extends BaseFragment implements IStandByView,Return
     @Override
     public void onActivityCreated(@Nullable final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        broadcastManager = LocalBroadcastManager.getInstance(getActivity());
-        intentFilter = new IntentFilter();
-        intentFilter.addAction("android.intent.action.CART_BROADCAST_UPDATE_WEATHER");
-        mReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent){
-                Log.d(TAG, "onReceive: ");
-                getWeatherBasic(cityName);
-            }
-        };
-        broadcastManager.registerReceiver(mReceiver, intentFilter);
     }
 
     public void init(){
@@ -173,8 +177,6 @@ public class StandByFragment extends BaseFragment implements IStandByView,Return
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy: ");
-//        getActivity().stopService(new Intent(getContext(),GetCityService.class));
-        broadcastManager.unregisterReceiver(mReceiver);
         super.onDestroy();
         if (bitmap1 != null){
             bitmap1 = null;
