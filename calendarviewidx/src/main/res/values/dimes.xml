@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="calendar_week_textsize">12sp</dimen>
+    <dimen name="calendar_week_height">24dp</dimen>
+    <dimen name="calendar_week_padding">5dp</dimen>
+    <dimen name="calendar_tv_month_margin">7dp</dimen>
+    <dimen name="calendar_tv_month_padding">5dp</dimen>
+    <dimen name="calendar_selectView_padding">4dp</dimen>
+    <dimen name="calendar_vp_calendar_margintop">24dp</dimen>
+    <dimen name="calendar_vp_week_height">30dp</dimen>
+    <dimen name="calendar_vp_week_margintop">24dp</dimen>
+    <dimen name="calendar_line_margin">10dp</dimen>
+    <dimen name="calendar_line_margintop">24dp</dimen>
+    <dimen name="calendar_selectLayout_padding">7dp</dimen>
+    <dimen name="month_textsize">90dp</dimen>
+    <dimen name="month2_textsize">216dp</dimen>
+
+
+    <dimen name="calendar_selectView_textsize">8sp</dimen>
+    <dimen name="calendar_tv_month_textsize">11sp</dimen>
+    <dimen name="calendar_week_textsize">7sp</dimen>
+
 </resources>
