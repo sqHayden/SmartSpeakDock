@@ -22,13 +22,13 @@ public class Music implements Serializable {
     private String url; // 歌曲路径
     private String lrcTitle; // 歌词名称
     private String lrcSize; // 歌词大小
-
+    private int position;
     public Music(){
         super();
     }
     public Music(long id, String title, String album, int albumId,
                  String displayName, String artist, long duration, long size,
-                 String url, String lrcTitle, String lrcSize) {
+                 String url, String lrcTitle, String lrcSize,int position) {
         super();
         this.id = id;
         this.title = title;
@@ -41,6 +41,7 @@ public class Music implements Serializable {
         this.url = url;
         this.lrcTitle = lrcTitle;
         this.lrcSize = lrcSize;
+        this.position=position;
     }
 
     public long getId() {
@@ -129,6 +130,14 @@ public class Music implements Serializable {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     @Override

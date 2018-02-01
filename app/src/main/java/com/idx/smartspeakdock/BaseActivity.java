@@ -9,7 +9,9 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -30,6 +32,7 @@ import com.idx.smartspeakdock.map.Bean.ReturnMapAnswerCallBack;
 import com.idx.smartspeakdock.map.MapFragment;
 import com.idx.smartspeakdock.music.activity.MusicListFragment;
 import com.idx.smartspeakdock.music.service.MusicCallBack;
+import com.idx.smartspeakdock.music.service.MusicPlay;
 import com.idx.smartspeakdock.service.ControllerService;
 import com.idx.smartspeakdock.setting.SettingFragment;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
@@ -92,6 +95,21 @@ public  abstract class BaseActivity extends AppCompatActivity {
     public String mMap_voice_pathWay;
     public ResultCallback mMap_result_callback;
     public String cityName;
+
+    //music handler
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case GlobalUtils.Music.STOP_MUSIC_FLAG:
+                    Log.i("ryan", "handleMessage: ");
+                    stopMusicPlay();
+                    break;
+                default:break;
+            }
+        }
+    };
 
     //voice start Activity
     public Intent mIntent;
@@ -275,6 +293,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
 
     public void initMusic() {
         if (!checkFragment(GlobalUtils.WhichFragment.MUSIC_FRAGMENT_NAME)) {
+            Log.i("ryan", "initMusic: base:init");
             actionBar_title = mResources.getString(R.string.music_title);
             Log.i(TAG, "initMusic: music_name = "+music_name);
             if (music_name != null) {
@@ -322,7 +341,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
     //判断当前哪个fragment
     public boolean checkFragment(String frag_name) {
         mCurr_Frag_Name = mSharePrefrenceUtils.getCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID);
-        Log.i(TAG, "checkFragment: frag_name_curr = " + mCurr_Frag_Name + ",frag_name = " + frag_name);
+        Log.i("ryan", "checkFragment: frag_name_curr = " + mCurr_Frag_Name + ",frag_name = " + frag_name);
         switch (frag_name) {
             case GlobalUtils.WhichFragment.WEATHER_FRAGMENT_NAME:
                 if (mCurr_Frag_Name.equals(frag_name)) {return true;}
@@ -331,9 +350,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
                         case GlobalUtils.WhichFragment.CALENDAR_FRAGMENT_NAME:
                             calendarFragment = null;break;
                         case GlobalUtils.WhichFragment.MUSIC_FRAGMENT_NAME:
-                            if (musicFragment.musicService.musicPlay.isPlaying()){
-                                musicFragment.pause();
-                            }
+                            stopMusicPlay();
                             musicFragment = null;break;
                         case GlobalUtils.WhichFragment.SHOPPING_FRAGMENT_NAME:
                             shoppingFragment = null;break;
@@ -343,7 +360,9 @@ public  abstract class BaseActivity extends AppCompatActivity {
                             settingFragment = null;break;
                         case GlobalUtils.WhichFragment.STANDBY_FRAGMENT_NAME:
                             standByFragment = null;break;
-                        default:break;
+                        default:
+                            stopMusicPlay();
+                            break;
                     }
                 }
                 break;
@@ -354,9 +373,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
                         case GlobalUtils.WhichFragment.WEATHER_FRAGMENT_NAME:
                             weatherFragment = null;break;
                         case GlobalUtils.WhichFragment.MUSIC_FRAGMENT_NAME:
-                            if (musicFragment.musicService.musicPlay.isPlaying()){
-                                musicFragment.pause();
-                            }
+                            stopMusicPlay();
                             musicFragment = null;break;
                         case GlobalUtils.WhichFragment.SHOPPING_FRAGMENT_NAME:
                             shoppingFragment = null;break;
@@ -366,7 +383,9 @@ public  abstract class BaseActivity extends AppCompatActivity {
                             settingFragment = null;break;
                         case GlobalUtils.WhichFragment.STANDBY_FRAGMENT_NAME:
                             standByFragment = null;break;
-                        default:break;
+                        default:
+                            stopMusicPlay();
+                            break;
                     }
                 }
                 break;
@@ -399,9 +418,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
                         case GlobalUtils.WhichFragment.CALENDAR_FRAGMENT_NAME:
                             calendarFragment = null;break;
                         case GlobalUtils.WhichFragment.MUSIC_FRAGMENT_NAME:
-                            if (musicFragment.musicService.musicPlay.isPlaying()){
-                                musicFragment.pause();
-                            }
+                           stopMusicPlay();
                             musicFragment = null;break;
                         case GlobalUtils.WhichFragment.MAP_FRAGMENT_NAME:
                             mapFragment = null;break;
@@ -409,7 +426,9 @@ public  abstract class BaseActivity extends AppCompatActivity {
                             settingFragment = null;break;
                         case GlobalUtils.WhichFragment.STANDBY_FRAGMENT_NAME:
                             standByFragment = null;break;
-                        default:break;
+                        default:
+                            stopMusicPlay();
+                            break;
                     }
                 }
                 break;
@@ -422,9 +441,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
                         case GlobalUtils.WhichFragment.CALENDAR_FRAGMENT_NAME:
                             calendarFragment = null;break;
                         case GlobalUtils.WhichFragment.MUSIC_FRAGMENT_NAME:
-                            if (musicFragment.musicService.musicPlay.isPlaying()){
-                                musicFragment.pause();
-                            }
+                            stopMusicPlay();
                             musicFragment = null;break;
                         case GlobalUtils.WhichFragment.SHOPPING_FRAGMENT_NAME:
                             shoppingFragment = null;break;
@@ -432,7 +449,9 @@ public  abstract class BaseActivity extends AppCompatActivity {
                             settingFragment = null;break;
                         case GlobalUtils.WhichFragment.STANDBY_FRAGMENT_NAME:
                             standByFragment = null;break;
-                        default:break;
+                        default:
+                            stopMusicPlay();
+                            break;
                     }
                 }
                 break;
@@ -445,9 +464,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
                         case GlobalUtils.WhichFragment.CALENDAR_FRAGMENT_NAME:
                             calendarFragment = null;break;
                         case GlobalUtils.WhichFragment.MUSIC_FRAGMENT_NAME:
-                            if (musicFragment.musicService.musicPlay.isPlaying()){
-                                musicFragment.pause();
-                            }
+                            stopMusicPlay();
                             musicFragment = null;break;
                         case GlobalUtils.WhichFragment.SHOPPING_FRAGMENT_NAME:
                             shoppingFragment = null;break;
@@ -456,6 +473,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
                         case GlobalUtils.WhichFragment.STANDBY_FRAGMENT_NAME:
                             standByFragment = null;break;
                         default:
+                            stopMusicPlay();
                             break;
                     }
                 }
@@ -469,9 +487,6 @@ public  abstract class BaseActivity extends AppCompatActivity {
                         case GlobalUtils.WhichFragment.CALENDAR_FRAGMENT_NAME:
                             calendarFragment = null;break;
                         case GlobalUtils.WhichFragment.MUSIC_FRAGMENT_NAME:
-                            if (musicFragment.musicService.musicPlay.isPlaying()){
-                                musicFragment.pause();
-                            }
                             musicFragment = null;break;
                         case GlobalUtils.WhichFragment.SHOPPING_FRAGMENT_NAME:
                             shoppingFragment = null;break;
@@ -490,12 +505,29 @@ public  abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
+    public void stopMusicPlay(){
+        Log.i("ryan", "stopMusicPlay: ");
+        if (mControllerBinder != null){
+            Log.i("ryan", "stopMusicPlay: not null");
+            MusicPlay musicPlay = mControllerBinder.getControlService().musicPlay;
+            if (musicPlay.isPlaying()){
+                musicPlay.stop();
+            }
+        }
+//            Log.i("ryan", "checkFragment: ispalying = "+musicFragment.musicService.musicPlay.isPlaying());
+/*            if (musicFragment.musicService.musicPlay.isPlaying()){
+                musicFragment.pause();
+            }*/
+    }
+
     public class MyServiceConnection implements ServiceConnection {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             Log.d(TAG, "onServiceConnected: 主acitivy服务绑定");
             mControllerBinder = (ControllerService.MyBinder) iBinder;
+            //停止music 播放，切换fragment时
+            mHandler.sendEmptyMessage(GlobalUtils.Music.STOP_MUSIC_FLAG);
 
             //调城市
             mControllerBinder.getControlService().getCityName(new ReturnCityName() {
