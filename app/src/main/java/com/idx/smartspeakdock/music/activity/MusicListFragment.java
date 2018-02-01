@@ -244,7 +244,6 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
 //        Log.d(TAG, "errorState: ");
         isPlaying=false;
         bar_start.setImageResource(R.mipmap.music_play);
-        ToastUtils.showMessage(getContext(),"没有找到该资源");
     }
     //接受广播发送的消息，响应音乐在不同播放状态下ui的变化
     public Handler mHandler =new Handler(){
