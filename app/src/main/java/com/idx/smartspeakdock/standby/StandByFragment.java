@@ -1,14 +1,11 @@
 package com.idx.smartspeakdock.standby;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -25,7 +22,6 @@ import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.service.ControllerService;
 import com.idx.smartspeakdock.standby.presenter.StandByPresenter;
 import com.idx.smartspeakdock.utils.BitmapUtils;
-import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.ToastUtils;
 import com.idx.smartspeakdock.weather.model.weather.Weather;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasic;
@@ -34,14 +30,12 @@ import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicInjection;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicRepository;
 import com.idx.smartspeakdock.weather.utils.HandlerWeatherUtil;
 
-import static android.content.Context.BIND_AUTO_CREATE;
-
 /**
  * Created by ryan on 17-12-27.
  * Email: Ryan_chan01212@yeah.net
  */
 
-public class StandByFragment extends BaseFragment implements IStandByView{
+public class StandByFragment extends BaseFragment implements IStandByView,ReturnCityName{
     private static final String TAG = StandByFragment.class.getSimpleName();
     private TextView location_textView;
     private TextView standby_life_clothes;
@@ -65,9 +59,6 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     private ImageView image_car;
 
 
-    private Intent mControllerintent;
-    private GetCityNameServiceConnection getCityNameServiceConnection;
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -85,53 +76,19 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BaseActivity baseActivity = (BaseActivity) getActivity();
-        Logger.setEnable(true);
         if (savedInstanceState != null) {
             if (!cityName.isEmpty()){
                 getWeatherBasic(cityName);
             }
         }else {
-            if (!BaseActivity.isServiceRunning(baseActivity.getApplicationContext(), ControllerService.class.getName())) {
-                mControllerintent = new Intent(baseActivity.getApplicationContext(), ControllerService.class);
-                //启动service
-                baseActivity.getApplicationContext().startService(mControllerintent);
-                //绑定service
-                getCityNameServiceConnection = new GetCityNameServiceConnection();
-                baseActivity.getApplicationContext().bindService(mControllerintent, getCityNameServiceConnection, BIND_AUTO_CREATE);
-            }
-
-
+            //绑定service
+            getActivity().bindService(((BaseActivity)getActivity()).mControllerintent, ((BaseActivity)getActivity()).myServiceConnection, 0);
+            //设置回调
+            ((BaseActivity)getActivity()).setReturnCityName(this);
         }
 
        getWeatherBasic(cityName);
     }
-
-    public class GetCityNameServiceConnection implements ServiceConnection{
-
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            mControllerBinder = (ControllerService.MyBinder) iBinder;
-            mControllerBinder.getControlService().getCityName(new ReturnCityName() {
-                @Override
-                public void getCityName(String cityname) {
-                    cityName = cityname;
-                    Log.d(TAG, "getCityName: 回调值为:"+cityname);
-                    getWeatherBasic(cityName);
-                }
-            });
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            if (mControllerBinder != null) {
-                mControllerBinder = null;
-            }
-        }
-
-
-    }
-
 
     @Override
     public void onResume() {
@@ -144,7 +101,6 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_standby,container,false);
         init();
-        location_textView.setText(getActivity().getString(R.string.Shenzhen));
         Log.d(TAG, "onCreateView: ");
         return view;
     }
@@ -229,6 +185,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
         if (bitmap2 != null){
             bitmap2 = null;
         }
+        getActivity().unbindService(((BaseActivity)getActivity()).myServiceConnection);
     }
 
     private void showWeatherInfo(Weather weather) {
@@ -244,6 +201,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
         standby_weather_tmp.setText(weather.forecastList.get(0).max + " / " + weather.forecastList.get(0).min + "℃");
         standby_life_clothes.setText(getActivity().getString(R.string.clothes)+": " + weather.lifestyleList.get(1).brf);
         standby_life_car.setText(getActivity().getString(R.string.wash_car)+": " + weather.lifestyleList.get(6).brf);
+        location_textView.setText(weather.basic.cityName);
         Log.d(TAG, "showWeatherInfo: show11111111");
     }
 
@@ -265,5 +223,14 @@ public class StandByFragment extends BaseFragment implements IStandByView{
                 mStandByPresenter.requestWeather(cityName);
             }
         });
+    }
+
+    /**
+     * 回调拿值
+     * **/
+    @Override
+    public void getCityName(String city) {
+        cityName = city;
+        getWeatherBasic(cityName);
     }
 }

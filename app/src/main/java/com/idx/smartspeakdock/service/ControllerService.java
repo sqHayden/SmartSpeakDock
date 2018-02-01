@@ -612,7 +612,7 @@ public class ControllerService extends Service {
             @Override
             public void call(String name) {
                 cityName = name;
-                Log.d(TAG, "call: 定位回调至Fragment");
+                Log.d(TAG, "call: 定位回调至BaseActivity:"+cityName);
                 returnCityName.getCityName(name);
             }
         });

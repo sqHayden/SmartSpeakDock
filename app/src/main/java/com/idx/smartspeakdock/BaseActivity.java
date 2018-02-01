@@ -34,6 +34,7 @@ import com.idx.smartspeakdock.service.ControllerService;
 import com.idx.smartspeakdock.setting.SettingFragment;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
 import com.idx.smartspeakdock.shopping.ShoppingFragment;
+import com.idx.smartspeakdock.standby.ReturnCityName;
 import com.idx.smartspeakdock.standby.StandByFragment;
 import com.idx.smartspeakdock.swipe.MainActivity;
 import com.idx.smartspeakdock.utils.ActivityStatusUtils;
@@ -90,6 +91,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
     public String mMap_voice_toAddress;
     public String mMap_voice_pathWay;
     public ResultCallback mMap_result_callback;
+    public String cityName;
 
     //voice start Activity
     public Intent mIntent;
@@ -495,6 +497,16 @@ public  abstract class BaseActivity extends AppCompatActivity {
             Log.d(TAG, "onServiceConnected: 主acitivy服务绑定");
             mControllerBinder = (ControllerService.MyBinder) iBinder;
 
+            //调城市
+            mControllerBinder.getControlService().getCityName(new ReturnCityName() {
+                @Override
+                public void getCityName(String city) {
+                     cityName = city;
+                     returnCityName.getCityName(cityName);
+                     Log.d("Base里拿到的值：",cityName);
+                }
+            });
+
             //shopping语音处理
             mControllerBinder.onReturnWeburl(new ShoppingCallBack() {
                 @Override
@@ -814,5 +826,11 @@ public  abstract class BaseActivity extends AppCompatActivity {
         args.putString("pathWay",pathWay);
         mIntent.putExtra("map", args);
         startActivity(mIntent);
+    }
+
+    private ReturnCityName returnCityName;
+
+    public void setReturnCityName(ReturnCityName returnCity){
+        returnCityName = returnCity;
     }
 }

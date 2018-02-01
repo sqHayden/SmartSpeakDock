@@ -2,7 +2,6 @@ package com.idx.smartspeakdock.map.util;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -58,7 +57,7 @@ public class MapUtils {
             @Override
             public void onLocationChanged(AMapLocation aMapLocation) {
                 if (aMapLocation != null && aMapLocation.getErrorCode() == 0) {
-                    Log.d(TAG, "onLocationChanged: 定位回调至ControllerService");
+                    Log.d(TAG, "onLocationChanged: 定位回调至ControllerService:"+aMapLocation.getCity());
                     callBack.call(aMapLocation.getCity());
                 } else {
                     callBack.call("查询失败");
@@ -73,7 +72,8 @@ public class MapUtils {
                     if (NetStatusUtils.isMobileConnected(context) || NetStatusUtils.isWifiConnected(context)) {
                         mLocationClient.startLocation();//开启定位比较耗时，在启动的时候就调用
                     } else {
-                        Toast.makeText(context, "你的网络有问题，请连接后重试", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(context, "你的网络有问题，请连接后重试", Toast.LENGTH_SHORT).show();
+                        callBack.call("深圳市");
                     }
                 }
             }.start();

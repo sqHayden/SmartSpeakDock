@@ -307,7 +307,7 @@ public class MainActivity extends BaseActivity {
         if (mMap_result_callback!=null) { mMap_result_callback = null;}
         music_name = null;
         //解绑ControllerService
-        unbindService(myServiceConnection);
+//        unbindService(myServiceConnection);
 //        stopService(mControllerintent);
     }
     @Override
