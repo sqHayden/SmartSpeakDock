@@ -49,6 +49,7 @@ public class SharePrefrenceUtils {
     }
 
     public void saveChangeFragment(String first_change,boolean isFirstChange){
+        Log.i("ryan", "saveChangeFragment: isFirstChange = "+isFirstChange);
         mEditor.putBoolean(first_change,isFirstChange);
         mEditor.commit();
     }

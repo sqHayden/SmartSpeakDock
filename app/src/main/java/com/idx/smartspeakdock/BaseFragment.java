@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.MotionEvent;
-import com.idx.smartspeakdock.swipe.MainActivity;
+
 import com.idx.smartspeakdock.calendar.CalendarFragment;
 import com.idx.smartspeakdock.map.MapFragment;
 import com.idx.smartspeakdock.music.activity.MusicListFragment;
