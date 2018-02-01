@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@color/colorPrimary"/>
+    <item android:drawable="@color/speak_dialog_bg"/>
     <item android:drawable="@drawable/speak_voice1"/>
     <!--<item android:drawable="@drawable/speak_voice2"/>-->
 </layer-list>

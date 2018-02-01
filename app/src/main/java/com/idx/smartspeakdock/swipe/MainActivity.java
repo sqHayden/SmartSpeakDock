@@ -252,6 +252,7 @@ public class MainActivity extends BaseActivity {
         //voice flag
         mWeather_voice_flag = -1;
         mMap_voice_flag = -1;
+        mShoppingBroadcastIntent = new Intent(GlobalUtils.Shopping.SHOPPING_BROADCAST_ACTION);
     }
 
     @Override

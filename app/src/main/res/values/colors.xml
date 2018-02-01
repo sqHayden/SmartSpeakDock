@@ -38,4 +38,7 @@
 
     <!-- Weather -->
     <color name="weather_text_color">#ffffff</color>
+
+    <!-- SpeakDialog -->
+    <color name="speak_dialog_bg">#553F51B5</color>
 </resources>
