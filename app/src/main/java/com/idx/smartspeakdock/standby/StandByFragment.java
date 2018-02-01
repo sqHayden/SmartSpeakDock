@@ -18,14 +18,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.amap.api.location.AMapLocation;
+
 import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.service.ControllerService;
-import com.idx.smartspeakdock.service.GetCityService;
 import com.idx.smartspeakdock.standby.presenter.StandByPresenter;
-import com.idx.smartspeakdock.swipe.MainActivity;
 import com.idx.smartspeakdock.utils.BitmapUtils;
 import com.idx.smartspeakdock.utils.Logger;
 import com.idx.smartspeakdock.utils.ToastUtils;
@@ -51,7 +49,7 @@ public class StandByFragment extends BaseFragment implements IStandByView{
     private TextView standby_weather_tmp;
     private ImageView weatherIcon;
     private StandByPresenter mStandByPresenter;
-    private String cityName = "深圳市" ;
+    public static String cityName = "" ;
     private Context mContext;
     private View view;
     private Bitmap bitmap1;
@@ -94,14 +92,6 @@ public class StandByFragment extends BaseFragment implements IStandByView{
                 getWeatherBasic(cityName);
             }
         }else {
-//            if(!BaseActivity.isServiceRunning(baseActivity.getApplicationContext(),"com.idx.smartspeakdock.start.GetCityService")) {
-//                Log.d("启动服务", "startService");
-//            Intent intent = new Intent(baseActivity.getApplicationContext(), GetCityService.class);
-//            //启动
-//            baseActivity.getApplicationContext().startService(intent);
-//            //绑定
-//            baseActivity.getApplicationContext().bindService(intent, connection, BIND_AUTO_CREATE);
-//        }
             if (!BaseActivity.isServiceRunning(baseActivity.getApplicationContext(), ControllerService.class.getName())) {
                 mControllerintent = new Intent(baseActivity.getApplicationContext(), ControllerService.class);
                 //启动service
@@ -122,9 +112,14 @@ public class StandByFragment extends BaseFragment implements IStandByView{
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             mControllerBinder = (ControllerService.MyBinder) iBinder;
-            mControllerBinder.getControlService();
-            
-
+            mControllerBinder.getControlService().getCityName(new ReturnCityName() {
+                @Override
+                public void getCityName(String cityname) {
+                    cityName = cityname;
+                    Log.d(TAG, "getCityName: 回调值为:"+cityname);
+                    getWeatherBasic(cityName);
+                }
+            });
         }
 
         @Override

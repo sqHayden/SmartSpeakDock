@@ -653,13 +653,16 @@ public class MainActivity extends BaseActivity {
                 shoppingFragment.progDailog.dismiss();
             }
             mCurr_Frag_Name = mSharePrefrenceUtils.getCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID);
-            if (!mCurr_Frag_Name.equals(GlobalUtils.WhichFragment.STANDBY_FRAGMENT_NAME)){
-                Log.i(TAG, "onBackPressed: not standy");
-                initStandBy();
-            }else{
-                Log.i(TAG, "onBackPressed: standy");
-                mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "");
-                super.onBackPressed();
+            if (isActivityTop){
+                Log.i(TAG, "onBackPressed: isTop");
+                if (!mCurr_Frag_Name.equals(GlobalUtils.WhichFragment.STANDBY_FRAGMENT_NAME)){
+                    Log.i(TAG, "onBackPressed: not standy");
+                    initStandBy();
+                }else{
+                    Log.i(TAG, "onBackPressed: standy");
+                    mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "");
+                    super.onBackPressed();
+                }
             }
         }
     }

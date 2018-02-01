@@ -460,7 +460,7 @@ public class MapFragment extends BaseFragment implements
             pathWay = "公交";
             isVoice = true;
             doSearchQuery(toAddress,1);
-        }else if(pathWay.equals("飞机")||pathWay.equals("坐飞机")){
+        }else if(pathWay.equals("飞机")||pathWay.equals("坐飞机")||pathWay.equals("飞")){
             returnMapAnswerCallBack.onReturnAnswer("坐飞机,你咋不上天呢");
             return false;
         }else{

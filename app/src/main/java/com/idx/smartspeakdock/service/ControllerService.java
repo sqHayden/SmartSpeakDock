@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.math.MathUtils;
 import android.util.Log;
 
 import com.idx.calendarview.CalendarView;
@@ -19,11 +18,11 @@ import com.idx.smartspeakdock.baidu.unit.listener.ResultCallback;
 import com.idx.smartspeakdock.calendar.Util;
 import com.idx.smartspeakdock.calendar.service.CalendarCallBack;
 import com.idx.smartspeakdock.map.Bean.MapCallBack;
-import com.idx.smartspeakdock.map.PathWay;
+import com.idx.smartspeakdock.map.util.MapUtils;
 import com.idx.smartspeakdock.music.service.MusicCallBack;
 import com.idx.smartspeakdock.music.service.MusicPlay;
-import com.idx.smartspeakdock.music.util.MusicUtil;
 import com.idx.smartspeakdock.shopping.ShoppingCallBack;
+import com.idx.smartspeakdock.standby.ReturnCityName;
 import com.idx.smartspeakdock.utils.GlobalUtils;
 import com.idx.smartspeakdock.weather.presenter.ReturnVoice;
 import com.idx.smartspeakdock.weather.presenter.WeatherCallback;
@@ -48,6 +47,7 @@ public class ControllerService extends Service {
     CalendarView mCalendarView;
     Util util;
     public MusicPlay musicPlay;
+    private String cityName;
 
     String answer;
 
@@ -57,6 +57,7 @@ public class ControllerService extends Service {
         mCalendarView = new CalendarView(getApplicationContext());
         util = new Util(getApplicationContext(), mCalendarView);
         musicPlay = new MusicPlay(getApplicationContext());
+        cityName = "";
     }
 
     @Nullable
@@ -603,5 +604,18 @@ public class ControllerService extends Service {
         if (musicPlay != null) {
             musicPlay = null;
         }
+    }
+
+    //实现地名获取回调
+    public void getCityName(final ReturnCityName returnCityName){
+        MapUtils.setCallBack(new MapUtils.CallBack() {
+            @Override
+            public void call(String name) {
+                cityName = name;
+                Log.d(TAG, "call: 定位回调至Fragment");
+                returnCityName.getCityName(name);
+            }
+        });
+        MapUtils.getCity(getApplicationContext());
     }
 }
