@@ -1,6 +1,5 @@
 package com.idx.smartspeakdock.map;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -50,6 +49,7 @@ import com.amap.api.services.route.WalkRouteResult;
 import com.autonavi.tbt.TrafficFacilityInfo;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.map.Bean.StrategyBean;
 import com.idx.smartspeakdock.map.adapter.BusResultListAdapter;
@@ -64,7 +64,7 @@ import java.util.List;
 /**
  * 驾车路径规划并展示对应的路线标签
  */
-public class CalculateRouteActivity extends Activity implements AMapNaviListener, View.OnClickListener, RouteSearch.OnRouteSearchListener {
+public class CalculateRouteActivity extends BaseActivity implements AMapNaviListener, View.OnClickListener, RouteSearch.OnRouteSearchListener {
     private StrategyBean mStrategyBean;
     private static final float ROUTE_UNSELECTED_TRANSPARENCY = 0.3F;
     private static final float ROUTE_SELECTED_TRANSPARENCY = 1F;
@@ -133,6 +133,8 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
         setContentView(R.layout.map_activity_calculate_route);
         mMapView = (MapView) findViewById(R.id.navi_view);
         mMapView.onCreate(savedInstanceState);// 此方法必须重写
+        //绑定service
+        bindService(mControllerintent, myServiceConnection, 0);
         initView();
         init();
         initNavi();
@@ -1067,6 +1069,8 @@ public class CalculateRouteActivity extends Activity implements AMapNaviListener
         if (mRouteSearch != null) {
             mRouteSearch = null;
         }
+        //解绑
+        unbindService(myServiceConnection);
     }
 
     @Override

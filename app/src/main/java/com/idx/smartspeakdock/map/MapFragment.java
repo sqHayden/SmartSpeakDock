@@ -151,6 +151,7 @@ public class MapFragment extends BaseFragment implements
     private boolean isFirstLocation;
     private boolean isVoice;
     private boolean isPoiSearch;
+    private static final String TAG = "MapFragment";
 
 
     //无参构造
@@ -158,6 +159,9 @@ public class MapFragment extends BaseFragment implements
     public static MapFragment newInstance(String name1,String address1,String fromAddress1,String toAddress1,String pathWay1){
         MapFragment mapFragment = new MapFragment();
         name = name1;
+        if(name!=null){
+            Log.d(TAG, "newInstance:   name"+"不是空的");
+        }
         address = address1;
         fromAddress = fromAddress1;
         toAddress = toAddress1;
@@ -321,14 +325,14 @@ public class MapFragment extends BaseFragment implements
      * **/
     private void speakMethod(){
         Log.d("地图信息查看：","name:"+name+"---"+"address:"+address+"---"+"fromAddress:"+fromAddress+"---"+"toAddress:"+toAddress+"---"+"pathWay:"+pathWay);
-        if(name.equals("")&&address.equals("")&&toAddress.equals("")) {//说明查位置，直接进行回调
+        if(name.equals("")&&address.equals("")&&fromAddress.equals("")&&toAddress.equals("")&&pathWay.equals("")) {//全空说明查位置，直接进行回调
             //隐藏list
             listView.setVisibility(View.GONE);
             //设置定位在 我的位置
             toMyLocation(currentLocation);
             //返回语音
             returnMapAnswerCallBack.onReturnAnswer("您当前位于"+LOCATION_MARKER_FLAG);
-        }else if(!address.equals("")){//说明搜索某地
+        }else if(name.equals("")&&!address.equals("")&&fromAddress.equals("")&&toAddress.equals("")&&pathWay.equals("")){//说明搜索某地
             //设置文本框
             input_text.setText(address);
             //显示清除符号

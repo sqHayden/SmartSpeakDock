@@ -1,6 +1,5 @@
 package com.idx.smartspeakdock.map;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.Window;
 import android.widget.Toast;
@@ -21,13 +20,14 @@ import com.amap.api.navi.model.AimLessModeCongestionInfo;
 import com.amap.api.navi.model.AimLessModeStat;
 import com.amap.api.navi.model.NaviInfo;
 import com.autonavi.tbt.TrafficFacilityInfo;
+import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.map.util.TTSController;
 
 /**
  * 按照选定策略导航
  */
-public class RouteNaviActivity extends Activity implements AMapNaviListener, AMapNaviViewListener {
+public class RouteNaviActivity extends BaseActivity implements AMapNaviListener, AMapNaviViewListener {
 
 	AMapNaviView mAMapNaviView;
 	AMapNavi mAMapNavi;
@@ -40,7 +40,8 @@ public class RouteNaviActivity extends Activity implements AMapNaviListener, AMa
 		setContentView(R.layout.map_activity_basic_navi);
 		mTtsManager = TTSController.getInstance(getApplicationContext());
 		mTtsManager.init();
-
+		//绑定service
+		bindService(mControllerintent, myServiceConnection, 0);
 		mAMapNaviView = (AMapNaviView) findViewById(R.id.navi_view);
 		mAMapNaviView.onCreate(savedInstanceState);
 		mAMapNaviView.setAMapNaviViewListener(this);
@@ -84,6 +85,8 @@ public class RouteNaviActivity extends Activity implements AMapNaviListener, AMa
 //		mAMapNavi.destroy();
 		mAMapNavi.removeAMapNaviListener(mTtsManager);
 		mTtsManager.destroy();
+		//解绑
+		unbindService(myServiceConnection);
 	}
 
 	@Override
