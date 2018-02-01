@@ -48,11 +48,15 @@ public class MusicUtil {
                             178416,165956,254851,318198,563357,120059,130064,
                             854674,952895, 339670,824137, 335177,216607,600085,
                             90044,316447,230504,1094844};
+        int[] position={20,24,19,11,3,2,22,8,
+                1,15,16,10,14,5,7,13,6,
+                21,4,0,12,25,23,18,9,17};
             for (int i=0;i<nameArray.length;i++) {
                 Music music=new Music();
                 music.setTitle(nameArray[i]);
                 music.setUrl(urlArray[i]);
                 music.setDuration(dataArray[i]);
+                music.setPosition(position[i]);
                 musicHashMap.put(nameArray[i],music);
             }
             return musicHashMap;

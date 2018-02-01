@@ -27,6 +27,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.music.service.MusicPlay;
 import com.idx.smartspeakdock.music.util.AppCache;
@@ -38,7 +39,7 @@ import com.idx.smartspeakdock.utils.ToastUtils;
 import static com.idx.smartspeakdock.music.entity.Music.formatTime;
 
 
-public class MusicPlayActivity extends AppCompatActivity implements View.OnClickListener,
+public class MusicPlayActivity extends BaseActivity implements View.OnClickListener,
         SeekBar.OnSeekBarChangeListener{
 
     //音乐播放状态
@@ -119,6 +120,8 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
         intentFilter.addAction(MusicPlay.ACTION_MEDIA_ERROR);
         intentFilter.addAction(GlobalUtils.Music.MUSIC_BROADCAST_ACTION);
         registerReceiver(musicBroadcastReceiver, intentFilter);
+        //绑定service
+        bindService(mControllerintent, myServiceConnection, 0);
 
         handler.post(runnable);
     }
@@ -227,7 +230,6 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     public void errorState(){
         isPlay=false;
         ib_start.setImageResource(R.mipmap.music_play);
-        ToastUtils.showMessage(MusicPlayActivity.this,"没有找到该资源");
     }
     // 通过 Handler 更新 UI 上的组件状态
     public Handler handler = new Handler();
@@ -346,6 +348,7 @@ public class MusicPlayActivity extends AppCompatActivity implements View.OnClick
     public void onDestroy() {
         super.onDestroy();
         try {
+            unbindService(myServiceConnection);
             if (musicBroadcastReceiver!=null){
                 unregisterReceiver(musicBroadcastReceiver);
             }

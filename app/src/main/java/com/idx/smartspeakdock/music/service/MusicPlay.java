@@ -131,6 +131,7 @@ public class MusicPlay {
             resultCallback.onResult(null);
             music = MusicUtil.getMusic().get(name);
             mPlayingMusic = music;
+            mPlayingPosition=music.getPosition();
             play(music);
             notifyMusicState(ACTION_MEDIA_PLAY,true);
         }else {
@@ -164,7 +165,6 @@ public class MusicPlay {
             mediaPlayer.reset();
             mediaPlayer.setOnPreparedListener(mPreparedListener);
             mediaPlayer.setOnCompletionListener(onCompletionListener);
-            mediaPlayer.setOnErrorListener(mErrorListener);
             mediaPlayer.setDataSource(music.getUrl());
             mediaPlayer.prepareAsync();
             notifyMusicState(ACTION_MEDIA_PLAY,true);
@@ -199,13 +199,6 @@ public class MusicPlay {
         }
     };
 
-    public MediaPlayer.OnErrorListener mErrorListener=new MediaPlayer.OnErrorListener() {
-        @Override
-        public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-            notifyMusicState(ACTION_MEDIA_ERROR,false);
-            return false;
-        }
-    };
 
     //对MediaPlayer进行实例化
     public MediaPlayer getMediaPlayer(Context context) {
