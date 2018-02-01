@@ -114,6 +114,7 @@ public class MainActivity extends BaseActivity {
                 initCalendar();
                 break;
             case GlobalUtils.WhichFragment.MUSIC_FRAGMENT_INTENT_ID:
+                Log.i("ryan", "changeFragment: main:music");
                 initMusic();
                 break;
             case GlobalUtils.WhichFragment.MAP_FRAGMENT_INTENT_ID:
