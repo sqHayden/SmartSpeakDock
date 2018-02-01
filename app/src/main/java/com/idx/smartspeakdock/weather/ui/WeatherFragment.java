@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.idx.smartspeakdock.BaseFragment;
 import com.idx.smartspeakdock.R;
+import com.idx.smartspeakdock.standby.StandByFragment;
 import com.idx.smartspeakdock.standby.Utility;
 import com.idx.smartspeakdock.utils.AppExecutors;
 import com.idx.smartspeakdock.utils.GlobalUtils;
@@ -75,8 +76,8 @@ public class WeatherFragment extends BaseFragment implements WeatherUi {
             mDate, mTime, mTitle, mTomorrow, mTomorrowTem, mAfter, mAfterTem, mLifestyleClothes, mLifestyleCar,
             mLifestyleAir, mPM25, mNO2, mCO, mVTomorrowWeek, mVAfterWeek;
     private LinearLayout mAirLayout;
-    public static String mCurrentCity = "深圳";
-    public static String mCurrentCounty = "深圳";
+    public String mCurrentCity = StandByFragment.cityName;
+    public String mCurrentCounty = StandByFragment.cityName;
     private static String mSelectProvince="北京";
     private static String mSelectCity="北京";
     private static String mSelectCounty="北京";
@@ -98,7 +99,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi {
     private String mWeather_fun_flag;
     private int mWeather_Voice_flag;
     private WeatherBroadcastReceiver mWeatherBroadcastReceiver;
-    private SharedPreferences sp;
+//    private SharedPreferences sp;
 //    private AppExecutors mAppExecutors;
 
 //    private GetCityService.MyBinder mCityBinder;
@@ -168,7 +169,8 @@ public class WeatherFragment extends BaseFragment implements WeatherUi {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        sp=getActivity().getSharedPreferences("city",Context.MODE_PRIVATE);
+//        sp=getActivity().getSharedPreferences("city",Context.MODE_PRIVATE);
+        Log.d(TAG, "onAttach: StandByFragment:"+StandByFragment.cityName);
         mResources = context.getResources();
         mContext = context;
         Logger.setEnable(true);
@@ -177,8 +179,8 @@ public class WeatherFragment extends BaseFragment implements WeatherUi {
             Bundle args = getArguments();
             String mWeather_city = args.getString("cityname");
             if (TextUtils.isEmpty(mWeather_city)){
-                mCurrentCity=sp.getString("city",mCurrentCity);
-                mCurrentCounty=sp.getString("county",mCurrentCounty);
+//                mCurrentCity=sp.getString("city",mCurrentCity);
+//                mCurrentCounty=sp.getString("county",mCurrentCounty);
                 Log.d(TAG, "onAttach: getArguments"+mCurrentCounty+":"+mCurrentCity);
             }else {
                 mCurrentCounty = mWeather_city;
@@ -189,11 +191,11 @@ public class WeatherFragment extends BaseFragment implements WeatherUi {
             mWeather_Voice_flag = args.getInt("voice_flag");
             Log.i(TAG, "onAttach: mWeather_voice_flag = "+mWeather_Voice_flag);
         }else {
-            if (sp!=null){
-                mCurrentCity=sp.getString("city",mCurrentCity);
-                mCurrentCounty=sp.getString("county",mCurrentCounty);
-                sp.edit().clear();
-            }
+//            if (sp!=null){
+//                mCurrentCity=sp.getString("city",mCurrentCity);
+//                mCurrentCounty=sp.getString("county",mCurrentCounty);
+//                sp.edit().clear();
+//            }
         }
     }
 
@@ -534,7 +536,7 @@ public class WeatherFragment extends BaseFragment implements WeatherUi {
     @Override
     public void onStop() {
         super.onStop();
-        spSaveInfo();
+//        spSaveInfo();
         Log.d(TAG, "onStop: 切换fragment");
     }
 
@@ -580,9 +582,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi {
 //            mAppExecutors=null;
 //        }
 //        spSaveInfo();
-        if (sp!=null){
-            sp=null;
-        }
+//        if (sp!=null){
+//            sp=null;
+//        }
 //        if (mWeather_return_voice!=null){
 //            mWeather_return_voice=null;
 //        }
@@ -591,16 +593,16 @@ public class WeatherFragment extends BaseFragment implements WeatherUi {
     /**
      * 保存城市名和县名
      */
-    private void spSaveInfo(){
-        SharedPreferences.Editor editor=sp.edit();
-        Log.d(TAG, "spSaveInfo: "+mCurrentCity+":"+mCurrentCounty);
-        editor.putString("city",mCurrentCity);
-        editor.putString("county",mCurrentCounty);
-        editor.apply();
-        if (editor!=null){
-            editor=null;
-        }
-    }
+//    private void spSaveInfo(){
+//        SharedPreferences.Editor editor=sp.edit();
+//        Log.d(TAG, "spSaveInfo: "+mCurrentCity+":"+mCurrentCounty);
+//        editor.putString("city",mCurrentCity);
+//        editor.putString("county",mCurrentCounty);
+//        editor.apply();
+//        if (editor!=null){
+//            editor=null;
+//        }
+//    }
 
     /**
      * 加载本地天气数据,未找到则加载网络天气信息
@@ -999,13 +1001,25 @@ public class WeatherFragment extends BaseFragment implements WeatherUi {
     private void dressInfo(){
 //        Log.d(TAG, "dressInfo: 穿衣指数" + voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
-            voice_answer = voice_weather.lifestyleList.get(1).txt;
+            judgeDress(voice_weather.lifestyleList.get(1).brf);
         } else {
             voice_answer = "抱歉，穿衣指数信息未找到";
         }
         if (mReturnAnswerCallback != null){
             Log.d(TAG, "dressInfo: 穿衣指数信息");
             mReturnAnswerCallback.onReturnAnswer(voice_answer);
+        }
+    }
+
+    private void judgeDress(String brf) {
+        if (brf.contains("冷")){
+            voice_answer = "天气冷，建议着棉服，羽绒服，皮夹克，羊毛衫等冬季服装。年老体弱者，宜着厚棉衣，冬大衣或厚羽绒服等。";
+        }else if (brf.contains("热")){
+            voice_answer = "天气热，建议着短裙，短裤，短薄外套，T恤等夏季服装。";
+        }else if (brf.contains("舒适")){
+            voice_answer = "天气比较舒适，建议着薄外套，开衫牛仔衫裤等服装。年老体弱者应适当添加衣物，宜着夹克衫，薄毛衣等。";
+        }else {
+            voice_answer = voice_weather.lifestyleList.get(1).txt;
         }
     }
 

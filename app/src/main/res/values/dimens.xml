@@ -138,5 +138,5 @@
     <dimen name="weather_vertical_now_icon_right_line_height">143dp</dimen>//天气大图标右线高度
     <dimen name="weather_vertical_now_icon_below_line_right_left">18dp</dimen>//天气大图标底线左右边距
     <dimen name="weather_vertical_forecast_margin">6dp</dimen>//生活指数小标题与第一行文字间距
-    <dimen name="weather_vertical_basic_textsize">13sp</dimen>//字体
+    <dimen name="weather_vertical_basic_textsize">12sp</dimen>//字体
 </resources>
