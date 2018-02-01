@@ -36,7 +36,9 @@ public class StandByActivity extends BaseActivity {
             ActivityUtils.replaceFragmentInActivity(
                     mFragmentManager, standByFragment, R.id.contentFrame);
         }
-        
+        bindService(mControllerintent, myServiceConnection, 0);
+
+
     }
 
     protected void hideBottomUIMenu() {
@@ -76,5 +78,6 @@ public class StandByActivity extends BaseActivity {
         if(standByFragment != null){
             standByFragment = null;
         }
+        unbindService(myServiceConnection);
     }
 }
