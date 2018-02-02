@@ -94,7 +94,7 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
         Log.d(TAG, "onSaveInstanceState: ");
         super.onSaveInstanceState(outState);
         outState.putString("music_name",music_name);
-        handler.post(runnable);
+//        handler.post(runnable);
     }
 
     @Override
@@ -231,17 +231,14 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
     public void playState(){
         isPlaying=true;
         bar_start.setImageResource(R.mipmap.music_pause);
-        handler.post(runnable);
     }
 
     //音乐暂停状态，界面图标显示
     public void pauseState(){
         isPlaying=false;
         bar_start.setImageResource(R.mipmap.music_play);
-        handler.post(runnable);
     }
     public void errorState(){
-//        Log.d(TAG, "errorState: ");
         isPlaying=false;
         bar_start.setImageResource(R.mipmap.music_play);
     }
@@ -312,7 +309,7 @@ public class MusicListFragment extends BaseFragment implements AdapterView.OnIte
                     } else{
                         bar_start.setImageResource(R.mipmap.music_play);
                     }
-                    handler.postDelayed(runnable, 1000);
+                    handler.post(runnable);
             }catch (Exception e){
                 e.printStackTrace();
             }
