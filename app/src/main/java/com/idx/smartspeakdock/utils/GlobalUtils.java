@@ -81,6 +81,12 @@ public interface GlobalUtils {
         String MAP_BROADCAST_ACTION = "map.broadcast.action";
         //map part
         int MAP_VOICE_FLAG = 6;
+        String MAP_NAME = "name";
+        String MAP_ADDRESS = "address";
+        String MAP_FROM_ADDRESS = "from";
+        String MAP_TO_ADDRESS = "to";
+        String MAP_PATH_WAY = "way";
+        String MAP_VOICE = "voice";
     }
 
     interface FirstSatrt {

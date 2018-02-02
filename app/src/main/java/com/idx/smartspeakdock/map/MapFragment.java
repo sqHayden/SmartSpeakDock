@@ -139,35 +139,57 @@ public class MapFragment extends BaseFragment implements
     private static final int STROKE_COLOR = Color.argb(180, 3, 145, 255);
     private static final int FILL_COLOR = Color.argb(10, 0, 0, 180);
     //语音回调相关参数传递
-    private static String name;
-    private static String address;
-    private static String fromAddress;
-    private static String toAddress;
-    private static String pathWay;
+    private String name;
+    private String address;
+    private String fromAddress;
+    private String toAddress;
+    private String pathWay;
     private MapBroadcastReceiver mMapBroadcastReceiver;
     private Context context;
     private PoiItem firstPoiItem,secondPoiItem;
     private boolean isFirstLocation;
     private boolean isVoice;
+    private int map_voice;
     private boolean isPoiSearch;
     private static final String TAG = "MapFragment";
 
 
     //无参构造
     public MapFragment(){}
-    public static MapFragment newInstance(String name1,String address1,String fromAddress1,String toAddress1,String pathWay1){
+    public static MapFragment newInstance(String name1,String address1,String fromAddress1,String toAddress1,String pathWay1,int map_voice_flag){
+        Log.d("newInstance地图信息查看：","name:"+name1+"---"+"address:"+address1+"---"+"fromAddress:"+fromAddress1+"---"+"toAddress:"+toAddress1+"---"+"pathWay:"+pathWay1+"flag"+map_voice_flag);
         MapFragment mapFragment = new MapFragment();
-        name = name1;
-        if(name!=null){
-            Log.d(TAG, "newInstance:   name"+"不是空的");
-        }
-        address = address1;
-        fromAddress = fromAddress1;
-        toAddress = toAddress1;
-        pathWay = pathWay1;
+        Bundle args = new Bundle();
+        args.putString(GlobalUtils.Map.MAP_NAME,name1);
+        args.putString(GlobalUtils.Map.MAP_ADDRESS,address1);
+        args.putString(GlobalUtils.Map.MAP_FROM_ADDRESS,fromAddress1);
+        args.putString(GlobalUtils.Map.MAP_TO_ADDRESS,toAddress1);
+        args.putString(GlobalUtils.Map.MAP_PATH_WAY,pathWay1);
+        args.putInt(GlobalUtils.Map.MAP_VOICE,map_voice_flag);
+        mapFragment.setArguments(args);
         return mapFragment;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(getArguments() != null){
+            Bundle args = getArguments();
+            name = args.getString(GlobalUtils.Map.MAP_NAME);
+            Log.d("11111","onAttach:name="+name);
+            address = args.getString(GlobalUtils.Map.MAP_ADDRESS);
+            fromAddress = args.getString(GlobalUtils.Map.MAP_FROM_ADDRESS);
+            toAddress = args.getString(GlobalUtils.Map.MAP_TO_ADDRESS);
+            pathWay = args.getString(GlobalUtils.Map.MAP_PATH_WAY);
+            map_voice = args.getInt(GlobalUtils.Map.MAP_VOICE);
+            Log.d("onAttach地图信息查看：","name:"+name+"---"+"address:"+address+"---"+"fromAddress:"+fromAddress+"---"+"toAddress:"+toAddress+"---"+"pathWay:"+pathWay+"flag"+map_voice);
+        }
+        if(name==null) {
+            Log.d("11111", "onAttach: null");
+        }else {
+            Log.d("11111", "name="+name);
+        }
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -177,7 +199,6 @@ public class MapFragment extends BaseFragment implements
         //注册地图语音广播
         registerMapVoiceBroadcast();
         isFirstLocation = true;
-        isVoice = false;
         gson = new Gson();
     }
 
@@ -318,15 +339,15 @@ public class MapFragment extends BaseFragment implements
      * 处理语音执行及回调
      * **/
     private void speakMethod(){
-        Log.d("地图信息查看：","name:"+name+"---"+"address:"+address+"---"+"fromAddress:"+fromAddress+"---"+"toAddress:"+toAddress+"---"+"pathWay:"+pathWay);
-        if(name.equals("")&&address.equals("")&&fromAddress.equals("")&&toAddress.equals("")&&pathWay.equals("")) {//全空说明查位置，直接进行回调
+        Log.d("speakMethod地图信息查看：","name:"+name+"---"+"address:"+address+"---"+"fromAddress:"+fromAddress+"---"+"toAddress:"+toAddress+"---"+"pathWay:"+pathWay+"flag:"+map_voice);
+        if(name.equals("")&&address.equals("")&&fromAddress.equals("")&&toAddress.equals("")&&pathWay.equals("")&&map_voice==6) {//全空说明查位置，直接进行回调
             //隐藏list
             listView.setVisibility(View.GONE);
             //设置定位在 我的位置
             toMyLocation(currentLocation);
             //返回语音
             returnMapAnswerCallBack.onReturnAnswer("您当前位于"+LOCATION_MARKER_FLAG);
-        }else if(name.equals("")&&!address.equals("")&&fromAddress.equals("")&&toAddress.equals("")&&pathWay.equals("")){//说明搜索某地
+        }else if(name.equals("")&&!address.equals("")&&fromAddress.equals("")&&toAddress.equals("")&&pathWay.equals("")&&map_voice==6){//说明搜索某地
             //设置文本框
             input_text.setText(address);
             //显示清除符号
@@ -341,7 +362,7 @@ public class MapFragment extends BaseFragment implements
             listView.setVisibility(View.VISIBLE);
             //返回语音
             returnMapAnswerCallBack.onReturnAnswer("已为您搜索到该位置");
-        }else if(!pathWay.equals("")&&!toAddress.equals("")){//说明要去某地
+        }else if(name.equals("")&&address.equals("")&&!toAddress.equals("")&&!pathWay.equals("")&&map_voice==6){//说明要去某地
             if(!fromAddress.equals("")){//处理从哪儿去哪儿
                 Log.d("处理从哪儿","去哪儿");
                 setCityCallBack(new CityCallBack() {

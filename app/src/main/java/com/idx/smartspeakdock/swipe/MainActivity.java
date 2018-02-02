@@ -99,6 +99,8 @@ public class MainActivity extends BaseActivity {
             Fragment content_ragment = getSupportFragmentManager().findFragmentById(R.id.contentFrame);
             if (content_ragment == null) {
                 initStandBy();
+                //voice flag
+                mMap_voice_flag = -1;
             }
         }
     }
@@ -115,6 +117,16 @@ public class MainActivity extends BaseActivity {
                 initMusic();
                 break;
             case GlobalUtils.WhichFragment.MAP_FRAGMENT_INTENT_ID:
+                mMap_voice_flag = 6;
+                Bundle bundle = getIntent().getBundleExtra("map");
+                //拿到
+                if(bundle!=null){
+                    mMap_voice_name = bundle.getString("name");
+                    mMap_voice_address = bundle.getString("address");
+                    mMap_voice_fromAddress = bundle.getString("fromAddress");
+                    mMap_voice_toAddress = bundle.getString("toAddress");
+                    mMap_voice_pathWay = bundle.getString("pathWay");
+                }
                 initMap();
                 break;
             case GlobalUtils.WhichFragment.SHOPPING_FRAGMENT_INTENT_ID:
@@ -189,9 +201,6 @@ public class MainActivity extends BaseActivity {
         mActionBar.setTitle("");
         mActionBar.setDisplayHomeAsUpEnabled(true);
         mResources = getResources();
-        //voice flag
-        mWeather_voice_flag = -1;
-        mMap_voice_flag = -1;
         mShoppingBroadcastIntent = new Intent(GlobalUtils.Shopping.SHOPPING_BROADCAST_ACTION);
     }
 
@@ -213,26 +222,34 @@ public class MainActivity extends BaseActivity {
                         switch (menuItem.getItemId()) {
                             case R.id.list_navigation_weather:
                                 // TODO: 17-12-16  WeatherFragment
+                                mMap_voice_flag = -1;
+                                Log.d("11111","drawer:weather"+mMap_voice_flag);
                                 initWeather();
                                 break;
                             case R.id.list_navigation_calendar:
                                 // TODO: 17-12-16 CalendarFragment
+                                mMap_voice_flag = -1;
                                 initCalendar();
                                 break;
                             case R.id.list_navigation_music:
                                 // TODO: 17-12-16 MusicFragment
+                                mMap_voice_flag = -1;
                                 initMusic();
                                 break;
                             case R.id.list_navigation_shopping:
                                 // TODO: 17-12-16 ShoppingFragment
+                                mMap_voice_flag = -1;
                                 initShopping("https://mall.flnet.com");
                                 break;
                             case R.id.list_navigation_map:
                                 // TODO: 17-12-16 MapFragemnt
+                                Log.d("11111","mMapFlag:drawer"+mMap_voice_flag);
+                                mMap_voice_flag = -1;
                                 initMap();
                                 break;
                             case R.id.list_navigation_setting:
                                 // TODO: 17-12-16 SettingFargment
+                                mMap_voice_flag = -1;
                                 initSetting();
                                 break;
                             default:
@@ -288,7 +305,7 @@ public class MainActivity extends BaseActivity {
         if (mShoppingBroadcastIntent != null) { mShoppingBroadcastIntent = null;}
         if (mShoppingBroadcastIntent != null) { mWeatherBroadcastIntent = null; }
         mWeather_voice_flag = -1;
-        mMap_voice_flag = -1;
+//        mMap_voice_flag = -1;
         if (mWeather_return_voice != null) { mWeather_return_voice = null;}
         if (mMap_result_callback!=null) { mMap_result_callback = null;}
         music_name = null;

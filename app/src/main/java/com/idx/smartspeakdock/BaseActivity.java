@@ -14,7 +14,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -156,6 +155,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
         super.onResume();
         //当前Activity是否是SwipeActivity
         isActivityTop = ActivityStatusUtils.isTopActivity(this);
+        Log.d("BaseActivity:onResume","isActivityTop"+isActivityTop);
         isFragmentTop = ActivityStatusUtils.isTopFragment(this,getSupportFragmentManager());
 //        if (handler!=null) {
 //            handler.removeCallbacks(runnable);
@@ -250,14 +250,16 @@ public  abstract class BaseActivity extends AppCompatActivity {
     public void initMap() {
         if (!checkFragment(GlobalUtils.WhichFragment.MAP_FRAGMENT_NAME)) {
             Log.d("进来init()了","123456749");
+            Log.d("11111", "mMap_voice_flag: initMap:"+mMap_voice_flag);
             if (mMap_voice_flag == GlobalUtils.Map.MAP_VOICE_FLAG) {
                 if (mapFragment == null) {
                     Log.d("进来语音传值了","12346");
-                    mapFragment = MapFragment.newInstance(mMap_voice_name,mMap_voice_address,mMap_voice_fromAddress,mMap_voice_toAddress,mMap_voice_pathWay);
+                    mapFragment = MapFragment.newInstance(mMap_voice_name,mMap_voice_address,mMap_voice_fromAddress,mMap_voice_toAddress,mMap_voice_pathWay,GlobalUtils.Map.MAP_VOICE_FLAG);
                 }
             } else {
                 if (mapFragment== null) {
                     mapFragment = new MapFragment();
+                    Log.d("initMap","创建了新的MapFragment");
                 }
             }
             actionBar_title = mResources.getString(R.string.map_title);
@@ -650,18 +652,18 @@ public  abstract class BaseActivity extends AppCompatActivity {
 
     //地图模块处理
     private void revokeMainMapVoice(String name,String address,String fromAddress,String toAddress,String pathWay,ResultCallback resultCallback) {
+        Log.d("revoke地图信息查看：","name:"+name+"---"+"address:"+address+"---"+"fromAddress:"+fromAddress+"---"+"toAddress:"+toAddress+"---"+"pathWay:"+pathWay);
         if (isActivityTop) {
+            Log.d("77777","AAAAA");
             if (isFragmentTop != null) {
                 if (isFragmentTop.getClass().getSimpleName().equals("MapFragment")) {
                     sendMapBroadcast(name, address, fromAddress, toAddress, pathWay, resultCallback);
                 } else {
-                    if(name==null){
-                        Log.d(TAG, "revokeMainMapVoice: "+"   name的值是空的");
-                    }
                     replaceMapFragment(name, address, fromAddress, toAddress, pathWay, resultCallback);
                 }
             }
         } else {
+            Log.d("BaseActivity","准备进入MainActivity");
             startMap(name, address, fromAddress, toAddress, pathWay, resultCallback);
         }
     }
@@ -808,6 +810,8 @@ public  abstract class BaseActivity extends AppCompatActivity {
         mMap_voice_toAddress = toAddress;
         mMap_voice_pathWay = pathWay;
         mMap_voice_flag = 6;
+        Log.d("11111","replaceMapFragment:"+mMap_voice_flag);
+        Log.d("11111：","name:"+name+"---"+"address:"+address+"---"+"fromAddress:"+fromAddress+"---"+"toAddress:"+toAddress+"---"+"pathWay:"+pathWay);
         initMap();
         mActionBar.setTitle(actionBar_title);
         returnMapVoicecallBack();
