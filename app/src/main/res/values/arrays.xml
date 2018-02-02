@@ -6,7 +6,6 @@
         <item>您有什么事儿？</item>
         <item>您有什么吩咐？</item>
         <item>您有什么吩咐吗？</item>
-        <item>主人，请吩咐。</item>
         <item>什么事儿？</item>
         <item>啥事儿？</item>
     </string-array>
@@ -40,24 +39,66 @@
 
     <string-array name="help_calender">
         <item>打开日历。</item>
-        <item>今天周几？</item>
-        <item>今天星期几？</item>
-        <item>今天礼拜几？</item>
-        <item>明天是周几？</item>
+        <item>启动日历。</item>
+        <item>开启日历。</item>
+        <item>为我打开日历。</item>
+        <item>替我启动日历。</item>
+        <item>帮我打开日历。</item>
+        <item>帮助我开启日历。</item>
+        <item>请打开日历。</item>
+        <item>麻烦开启日历。</item>
+        <item>请帮我打开日历。</item>
+        <item>我想打开日历。</item>
+        <item>我想看日历。</item>
+        <item>我要看看日历。</item>
+        <item>我想要看一下日历。</item>
+        <item>我要看一看日历。</item>
+        <item>今天是周几？</item>
         <item>明天是星期几？</item>
-        <item>明天是礼拜几？</item>
-        <item>今天什么节假日？</item>
+        <item>今天礼拜几？</item>
+        <item>昨天是啥节假日？</item>
         <item>今天什么节日？</item>
-        <item>今天什么节？</item>
-        <item>明天是什么节假日？</item>
         <item>明天是什么节日？</item>
-        <item>明天是什么节？</item>
-        <item>今天有什么事要做？</item>
-        <item>今天有什么事情要做？</item>
-        <item>今天有什么事务要做？</item>
-        <item>明天有什么事？</item>
+        <item>春节是几号？</item>
+        <item>春节是多少号？</item>
+        <item>春节是哪一天？</item>
+        <item>春节是哪天？</item>
+        <item>春节是什么日子？</item>
+        <item>春节是什么时候？</item>
+        <item>春节是什么时间？</item>
+        <item>几号是春节？</item>
+        <item>多少号是春节？</item>
+        <item>哪一天是春节？</item>
+        <item>哪天是春节？</item>
+        <item>什么日子是春节？</item>
+        <item>什么时候是春节？</item>
+        <item>什么时间是春节？</item>
+        <item>明天什么安排？</item>
         <item>明天有什么事情？</item>
-        <item>明天有什么事务？</item>
+        <item>明天我有什么事情？</item>
+        <item>明天有什么事情吗？</item>
+        <item>明天我有什么事情吗？</item>
+        <item>明天有什么事情要做？</item>
+        <item>明天我有什么事情要做？</item>
+        <item>明天有什么事情要做吗？</item>
+        <item>明天我有什么事情要做吗？</item>
+        <item>明天要做什么？</item>
+        <item>明天要做什么事情？</item>
+        <item>明天要做什么吗？</item>
+        <item>明天要做什么事情吗？</item>
+        <item>明天我要做什么？</item>
+        <item>明天我要做什么吗？</item>
+        <item>明天我要做什么事情？</item>
+        <item>明天我要做什么事情吗？</item>
+        <item>明天有什么需要做的事？</item>
+        <item>明天我有什么需要做的事？</item>
+        <item>明天有什么需要做的事吗？</item>
+        <item>明天我有什么需要做的事吗？</item>
+        <item>明天有要做的事吗？</item>
+        <item>明天我有要做的事吗？</item>
+        <item>明天有我要做的事吗？</item>
+        <item>明天有安排吗？</item>
+        <item>明天我有安排吗？</item>
         <item>今天几号？</item>
         <item>今天是几号？</item>
         <item>明天农历几号？</item>
@@ -82,13 +123,31 @@
 
     <string-array name="help_map">
         <item>打开地图。</item>
-        <item>我在哪儿？</item>
-        <item>这是哪理？</item>
-        <item>我现在在哪里？</item>
-        <item>我当前在哪儿？</item>
-        <item>我此刻在哪里？</item>
+        <item>启动地图。</item>
+        <item>开启地图。</item>
+        <item>为我打开地图。</item>
+        <item>替我启动地图。</item>
+        <item>帮我打开地图。</item>
+        <item>帮助我开启地图。</item>
+        <item>请打开地图。</item>
+        <item>麻烦开启地图。</item>
+        <item>请帮我打开地图。</item>
+        <item>我想打开地图。</item>
+        <item>这是哪?</item>
+        <item>这是什么地方?</item>
+        <item>我在哪里?</item>
+        <item>我在哪儿?</item>
+        <item>我是在什么位置?</item>
+        <item>我现在在哪里?</item>
+        <item>我此刻在什么地方?</item>
+        <item>我当前位于什么位置?</item>
+        <item>请问我在哪里?</item>
+        <item>请问这是在哪儿?</item>
         <item>搜索。</item>
+        <item>帮我搜索。</item>
+        <item>请帮我搜索。</item>
         <item>搜索小吃街，商场，宾馆，酒店，地铁站，公交站或公园。</item>
+        <item>请帮我搜索小吃街，商场，宾馆，酒店，地铁站，公交站或公园。</item>
         <item>我想要搜索小吃街，商场，宾馆，酒店，地铁站，公交站或公园。</item>
         <item>搜索深圳大学。</item>
         <item>我想搜索深圳大学。</item>
@@ -102,8 +161,21 @@
     </string-array>
 
     <string-array name="help_music">
-        <item>打开音乐。</item>
-        <item>播放音乐。</item>
+        <item>打开音乐</item>
+        <item>启动音乐</item>
+        <item>开启音乐</item>
+        <item>为我打开音乐</item>
+        <item>替我启动音乐</item>
+        <item>帮我打开音乐</item>
+        <item>帮助我开启音乐</item>
+        <item>请打开音乐</item>
+        <item>麻烦开启音乐</item>
+        <item>请帮我打开音乐</item>
+        <item>我想打开音乐</item>
+        <item>播放音乐</item>
+        <item>播放歌曲</item>
+        <item>放首歌</item>
+        <item>来点音乐</item>
         <item>播放一剪梅。</item>
         <item>播放上一首。</item>
         <item>上一首。</item>
@@ -112,6 +184,9 @@
         <item>暂停。</item>
         <item>暂停播放。</item>
         <item>暂停播放音乐。</item>
+        <item>停止。</item>
+        <item>停止播放。</item>
+        <item>停止播放音乐。</item>
         <item>继续。</item>
         <item>继续播放。</item>
         <item>继续播放音乐。</item>
