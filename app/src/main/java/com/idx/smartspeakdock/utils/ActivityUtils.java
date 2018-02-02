@@ -22,7 +22,14 @@ public class ActivityUtils {
                                                  @NonNull Fragment fragment, int frameId){
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(frameId, fragment);
-        fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    public static void replaceFragmentInActivityStateLoss(@NonNull FragmentManager fragmentManager,
+                                                          @NonNull Fragment fragment, int frameId){
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(frameId, fragment);
+        fragmentTransaction.commitAllowingStateLoss();
     }
 
     public static void removeFragmentFromActivity(@NonNull FragmentManager fragmentManager,

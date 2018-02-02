@@ -58,7 +58,6 @@ public  abstract class BaseActivity extends AppCompatActivity {
     public Intent mControllerintent;
     public static Fragment isFragmentTop;
     public boolean isActivityTop;
-    public static FragmentManager mFragmentManager;
     private ArrayList<MyOnTouchListener> onTouchListeners = new ArrayList<MyOnTouchListener>(10);
     public String websites_url;
     public String music_name;
@@ -103,7 +102,6 @@ public  abstract class BaseActivity extends AppCompatActivity {
             super.handleMessage(msg);
             switch (msg.what){
                 case GlobalUtils.Music.STOP_MUSIC_FLAG:
-                    Log.i("ryan", "handleMessage: ");
                     stopMusicPlay();
                     break;
                 default:break;
@@ -142,8 +140,6 @@ public  abstract class BaseActivity extends AppCompatActivity {
         int flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
         window.setFlags(flag, flag);
         initPermission();
-        //FrgamentManager
-        mFragmentManager = getSupportFragmentManager();
         //voice start activity
         mIntent = new Intent(this, MainActivity.class);
         mControllerintent = new Intent(this, ControllerService.class);
@@ -160,8 +156,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
         super.onResume();
         //当前Activity是否是SwipeActivity
         isActivityTop = ActivityStatusUtils.isTopActivity(this);
-        isFragmentTop = ActivityStatusUtils.isTopFragment(this,mFragmentManager);
-//        Log.i("ryan", "onResume: baseActivity:isTop = "+isActivityTop+",isFragment = "+isFragmentTop.getClass().getSimpleName());
+        isFragmentTop = ActivityStatusUtils.isTopFragment(this,getSupportFragmentManager());
 //        if (handler!=null) {
 //            handler.removeCallbacks(runnable);
 ////            handler.postDelayed(runnable,1000 * 60 * 10);
@@ -220,11 +215,6 @@ public  abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         /*isActivityTop = false;
@@ -242,7 +232,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
                 standByFragment = new StandByFragment();
             }
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, GlobalUtils.WhichFragment.STANDBY_FRAGMENT_NAME);
-            ActivityUtils.replaceFragmentInActivity(mFragmentManager,standByFragment, R.id.contentFrame);
+            ActivityUtils.replaceFragmentInActivityStateLoss(getSupportFragmentManager(),standByFragment, R.id.contentFrame);
         }
     }
 
@@ -253,7 +243,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
                 settingFragment = new SettingFragment();
             }
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, GlobalUtils.WhichFragment.SETTING_FRAGMENT_NAME);
-            ActivityUtils.replaceFragmentInActivity(mFragmentManager, settingFragment, R.id.contentFrame);
+            ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), settingFragment, R.id.contentFrame);
         }
     }
 
@@ -272,7 +262,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
             }
             actionBar_title = mResources.getString(R.string.map_title);
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, GlobalUtils.WhichFragment.MAP_FRAGMENT_NAME);
-            ActivityUtils.replaceFragmentInActivity(mFragmentManager, mapFragment, R.id.contentFrame);
+            ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), mapFragment, R.id.contentFrame);
         }else{
             Log.d("表示当前是","map");
         }
@@ -286,7 +276,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
                     shoppingFragment = ShoppingFragment.newInstance(web_url);
                 }
                 mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, GlobalUtils.WhichFragment.SHOPPING_FRAGMENT_NAME);
-                ActivityUtils.replaceFragmentInActivity(mFragmentManager, shoppingFragment, R.id.contentFrame);
+                ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), shoppingFragment, R.id.contentFrame);
             }
         }
     }
@@ -305,7 +295,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
                     musicFragment = new MusicListFragment();
                 }
             }
-            ActivityUtils.replaceFragmentInActivity(mFragmentManager, musicFragment, R.id.contentFrame);
+            ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), musicFragment, R.id.contentFrame);
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, GlobalUtils.WhichFragment.MUSIC_FRAGMENT_NAME);
         }
     }
@@ -317,7 +307,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
                 calendarFragment = new CalendarFragment();
             }
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, GlobalUtils.WhichFragment.CALENDAR_FRAGMENT_NAME);
-            ActivityUtils.replaceFragmentInActivity(mFragmentManager, calendarFragment, R.id.contentFrame);
+            ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), calendarFragment, R.id.contentFrame);
         }
     }
 
@@ -334,7 +324,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
             }
             actionBar_title = mResources.getString(R.string.weather_title);
             mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, GlobalUtils.WhichFragment.WEATHER_FRAGMENT_NAME);
-            ActivityUtils.replaceFragmentInActivity(mFragmentManager, weatherFragment, R.id.contentFrame);
+            ActivityUtils.replaceFragmentInActivity(getSupportFragmentManager(), weatherFragment, R.id.contentFrame);
         }
     }
 
@@ -506,18 +496,12 @@ public  abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void stopMusicPlay(){
-        Log.i("ryan", "stopMusicPlay: ");
         if (mControllerBinder != null){
-            Log.i("ryan", "stopMusicPlay: not null");
             MusicPlay musicPlay = mControllerBinder.getControlService().musicPlay;
             if (musicPlay.isPlaying()){
                 musicPlay.stop();
             }
         }
-//            Log.i("ryan", "checkFragment: ispalying = "+musicFragment.musicService.musicPlay.isPlaying());
-/*            if (musicFragment.musicService.musicPlay.isPlaying()){
-                musicFragment.pause();
-            }*/
     }
 
     public class MyServiceConnection implements ServiceConnection {
@@ -645,7 +629,6 @@ public  abstract class BaseActivity extends AppCompatActivity {
                 }
             }
         } else {
-            Log.i("ryan", "revokeMainWeatherVoice: not top");
             startWeather(cityName, time, returnVoice, func_flag, flag);
         }
     }
@@ -661,14 +644,12 @@ public  abstract class BaseActivity extends AppCompatActivity {
                 }
             }
         } else {
-            Log.i(TAG, "revokeMainMusicVoice: not top");
             startMusic(music_name);
         }
     }
 
     //地图模块处理
     private void revokeMainMapVoice(String name,String address,String fromAddress,String toAddress,String pathWay,ResultCallback resultCallback) {
-        Log.d("isActivityTop:",""+isActivityTop);
         if (isActivityTop) {
             if (isFragmentTop != null) {
                 if (isFragmentTop.getClass().getSimpleName().equals("MapFragment")) {
@@ -681,7 +662,6 @@ public  abstract class BaseActivity extends AppCompatActivity {
                 }
             }
         } else {
-            Log.i(TAG, "revokeMainMapVoice: not top");
             startMap(name, address, fromAddress, toAddress, pathWay, resultCallback);
         }
     }
@@ -743,13 +723,13 @@ public  abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void replaceCalendarFragment() {
-        Log.i("ryan", "openSpecifyWebsites: 当前Fragment不是CalendarFragment");
+        Log.i(TAG, "openSpecifyWebsites: 当前Fragment不是CalendarFragment");
         initCalendar();
         mActionBar.setTitle(actionBar_title);
     }
 
     private void startCalendar(){
-        Log.i("ryan", "revokeMainCalendarVoice: 当前Activity不是SwipeActivity");
+        Log.i(TAG, "revokeMainCalendarVoice: 当前Activity不是SwipeActivity");
         mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "");
         mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
         mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -758,7 +738,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void replaceWeatherBroadcast(String cityName, String time, ReturnVoice returnVoice, String func_flag, int flag) {
-        Log.i("ryan", "revokeSwipeWeatherVoice: 当前Fragment不是WeatherFragment");
+        Log.i(TAG, "revokeSwipeWeatherVoice: 当前Fragment不是WeatherFragment");
         mWeather_return_voice = returnVoice;
         mWeather_voice_city = cityName;
         mWeather_voice_time = time;
@@ -770,7 +750,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void sendWeatherBroadcast(String cityName, String time, ReturnVoice returnVoice, String func_flag) {
-        Log.i("ryan", "revokeSwipeWeatherVoice: 当前Fragment是WeatherFragment");
+        Log.i(TAG, "revokeSwipeWeatherVoice: 当前Fragment是WeatherFragment");
         mWeather_return_voice = returnVoice;
         returnVoiceCallback();
         mWeatherBroadcastIntent = new Intent(GlobalUtils.Weather.WEATHER_BROADCAST_ACTION);
@@ -781,7 +761,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void startWeather(String cityName, String time, ReturnVoice returnVoice, String func_flag, int flag){
-        Log.i("ryan", "revokeMainWeatherVoice: 当前Activity不是SwipeActivity");
+        Log.i(TAG, "revokeMainWeatherVoice: 当前Activity不是SwipeActivity");
         mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "");
         mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
         mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -810,7 +790,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void startMusic(String music_name){
-        Log.d(TAG, "music222: " + music_name);
+        Log.i(TAG, "revokeMainMapVoice: 当前Activity不是SwipeActivity");
         mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "");
         mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, true);
         mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

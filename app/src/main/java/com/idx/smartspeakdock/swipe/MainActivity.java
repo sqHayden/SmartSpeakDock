@@ -88,17 +88,15 @@ public class MainActivity extends BaseActivity {
         extraIntentId = getIntent().getStringExtra(GlobalUtils.WhichFragment.RECONGINIZE_WHICH_FRAGMENT);
         //fragment切换
         if (extraIntentId != null) {
-            Log.i("ryan", "onCreate: main:extraid not null");
             boolean isFirstChange = mSharePrefrenceUtils.getFirstChange(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT);
             Log.i("ryan", "onCreate: main:isFirstChange = "+isFirstChange);
             if (isFirstChange) {
-                Log.i("ryan", "onCreate: main:first change");
                 changeFragment(extraIntentId);
             }
             mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, false);
         } else {
             //待机界面
-            Fragment content_ragment = mFragmentManager.findFragmentById(R.id.contentFrame);
+            Fragment content_ragment = getSupportFragmentManager().findFragmentById(R.id.contentFrame);
             if (content_ragment == null) {
                 initStandBy();
             }
@@ -114,7 +112,6 @@ public class MainActivity extends BaseActivity {
                 initCalendar();
                 break;
             case GlobalUtils.WhichFragment.MUSIC_FRAGMENT_INTENT_ID:
-                Log.i("ryan", "changeFragment: main:music");
                 initMusic();
                 break;
             case GlobalUtils.WhichFragment.MAP_FRAGMENT_INTENT_ID:
@@ -268,18 +265,6 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-       /* isTopActivity();
-        isTopFragment();*/
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         isDrawer = false;
@@ -324,6 +309,7 @@ public class MainActivity extends BaseActivity {
                 Log.i(TAG, "onBackPressed: not standy");
                 mSharePrefrenceUtils.saveChangeFragment(GlobalUtils.WhichFragment.FIRST_CHANGE_FRAGMENT, false);
                 initStandBy();
+                mActionBar.setTitle(actionBar_title);
             }else{
                 Log.i(TAG, "onBackPressed: standy");
                 mSharePrefrenceUtils.saveCurrentFragment(GlobalUtils.WhichFragment.CURRENT_FRAGMENT_ID, "");
