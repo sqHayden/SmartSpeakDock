@@ -18,7 +18,7 @@ public interface IWeatherVoiceListener {
     void onTimeRangeTempInfo(String time,ReturnVoice returnVoice);
     void onNoRangeTempInfo(ReturnVoice returnVoice);
     //空气质量信息,城市时间 , 城市 , 时间 ,无任何指定
-    void onAirQualityInfo(String cityName,ReturnVoice returnVoice);
+    void onAirQualityInfo(String cityName,String time,ReturnVoice returnVoice);
     void onCityAirQualityInfo(String cityName,ReturnVoice returnVoice);
     void onTimeAirQualityInfo(String time,ReturnVoice returnVoice);
     void onNoAiqQualityInfo(ReturnVoice returnVoice);
@@ -36,11 +36,11 @@ public interface IWeatherVoiceListener {
     void onTimeRainInfo(String time,ReturnVoice returnVoice);
     void onNoRainInfo(ReturnVoice returnVoice);
     //穿衣信息,城市时间 , 城市 , 时间
-    void onDressInfo(String cityName,ReturnVoice returnVoice);
+    void onDressInfo(String cityName,String time, ReturnVoice returnVoice);
     void onCityDressInfo(String cityName,ReturnVoice returnVoice);
     void onTimeDressInfo(String time,ReturnVoice returnVoice);
     //紫外线强度信息,城市时间 , 城市 , 时间
-    void onUitravioletLevelInfo(String cityName,ReturnVoice returnVoice);
+    void onUitravioletLevelInfo(String cityName,String time,ReturnVoice returnVoice);
     void onCityUitravioletLevelInfo(String cityName,ReturnVoice returnVoice);
     void onTimeUitravioletLevelInfo(String time,ReturnVoice returnVoice);
     //雾霾信息,城市时间 , 城市 , 时间
