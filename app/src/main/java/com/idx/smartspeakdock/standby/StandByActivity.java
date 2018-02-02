@@ -30,11 +30,11 @@ public class StandByActivity extends BaseActivity {
         hideBottomUIMenu();
         setContentView(R.layout.content_main);
         standByFragment =
-                (StandByFragment) mFragmentManager.findFragmentById(R.id.contentFrame);
+                (StandByFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (standByFragment == null) {
             standByFragment = new StandByFragment();
             ActivityUtils.replaceFragmentInActivity(
-                    mFragmentManager, standByFragment, R.id.contentFrame);
+                    getSupportFragmentManager(), standByFragment, R.id.contentFrame);
         }
         bindService(mControllerintent, myServiceConnection, 0);
 

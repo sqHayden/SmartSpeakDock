@@ -56,7 +56,7 @@ public class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-       BaseActivity.isFragmentTop = ActivityStatusUtils.isTopFragment(getActivity(), BaseActivity.mFragmentManager);
+       BaseActivity.isFragmentTop = ActivityStatusUtils.isTopFragment(getActivity(),getActivity().getSupportFragmentManager());
         handler.removeCallbacks(runnable);
         handler.postDelayed(runnable,60*10*1000);
 //        handler.postDelayed(runnable,10*1000);
@@ -67,7 +67,7 @@ public class BaseFragment extends Fragment {
                     case MotionEvent.ACTION_DOWN:
                         /*if (getActivity() instanceof MainActivity){
                             Log.i(TAG, "onTouch: MainActivity");
-                            Fragment fragment = ActivityStatusUtils.isTopFragment(getActivity(),BaseActivity.mFragmentManager);
+                            Fragment fragment = ActivityStatusUtils.isTopFragment(getActivity(),getSupportFragmentManager);
                             if (fragment.getClass().getSimpleName().equals("StandByFragment")){
                                 Log.i(TAG, "onTouch: StandByFragment");
                                 if (!(((MainActivity) getActivity()).mDrawerLayout.isDrawerVisible(GravityCompat.START))){

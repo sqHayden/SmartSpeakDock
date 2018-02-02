@@ -179,13 +179,16 @@ public class StandByFragment extends BaseFragment implements IStandByView,Return
         Log.d(TAG, "onDestroy: ");
         super.onDestroy();
         if (bitmap1 != null){
+            bitmap1.recycle();
             bitmap1 = null;
         }
         if (bitmap2 != null){
+            bitmap2.recycle();
             bitmap2 = null;
         }
-        if (bitmap2 != null){
-            bitmap2 = null;
+        if (bitmap3 != null){
+            bitmap3.recycle();
+            bitmap3 = null;
         }
         getActivity().unbindService(((BaseActivity)getActivity()).myServiceConnection);
     }

@@ -34,7 +34,7 @@
 
     </RelativeLayout>
 
-    <View
+   <!-- <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#3C3F41"
@@ -63,7 +63,7 @@
             android:layout_marginEnd="@dimen/setting_left"
             android:background="@mipmap/device_add_other"
             />
-    </RelativeLayout>
+    </RelativeLayout>-->
 
     <View
         android:layout_width="match_parent"
