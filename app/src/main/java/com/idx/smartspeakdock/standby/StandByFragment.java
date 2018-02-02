@@ -1,15 +1,10 @@
 package com.idx.smartspeakdock.standby;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +26,7 @@ import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicInjection;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicRepository;
 import com.idx.smartspeakdock.weather.utils.HandlerWeatherUtil;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -117,6 +113,7 @@ public class StandByFragment extends BaseFragment implements IStandByView,Return
         view = inflater.inflate(R.layout.activity_standby,container,false);
         init();
         Log.d(TAG, "onCreateView: ");
+        getWeatherInfo();
         return view;
     }
 
@@ -232,7 +229,25 @@ public class StandByFragment extends BaseFragment implements IStandByView,Return
      * **/
     @Override
     public void getCityName(String city) {
+        Log.d(TAG, "中获得的城市为: "+city);
         cityName = city;
         getWeatherBasic(cityName);
+    }
+
+    private void getWeatherInfo(){
+        mWeatherBasicRepository = WeatherBasicInjection.getNoteRepository(getActivity());
+        mWeatherBasicRepository.getWeatherBasics(new WeatherBasicDataSource.LoadWeatherBasicsListCallback() {
+            @Override
+            public void onWeatherBasicsLoaded(List<WeatherBasic> weatherBasic) {
+                for (WeatherBasic weatherBasic1:weatherBasic){
+                    Log.d(TAG, "onWeatherBasicsLoaded: "+weatherBasic1);
+                }
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+
+            }
+        });
     }
 }

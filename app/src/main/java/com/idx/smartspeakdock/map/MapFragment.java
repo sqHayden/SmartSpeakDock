@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -216,11 +215,6 @@ public class MapFragment extends BaseFragment implements
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //设置全屏
-        WindowManager.LayoutParams lp = getActivity().getWindow().getAttributes();
-        lp.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        getActivity().getWindow().setAttributes(lp);
-        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         //获取视图对象
         View view = inflater.inflate(R.layout.map_main, container, false);
         //资源初始化

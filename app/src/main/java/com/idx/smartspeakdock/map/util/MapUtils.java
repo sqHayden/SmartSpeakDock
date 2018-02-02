@@ -60,7 +60,8 @@ public class MapUtils {
                     Log.d(TAG, "onLocationChanged: 定位回调至ControllerService:"+aMapLocation.getCity());
                     callBack.call(aMapLocation.getCity());
                 } else {
-                    callBack.call("查询失败");
+                    Log.d(TAG, "onLocationChanged: 网络没问题，但获取失败默认返回了 深圳市");
+                    callBack.call("深圳市");
                 }
             }
         });
@@ -72,7 +73,7 @@ public class MapUtils {
                     if (NetStatusUtils.isMobileConnected(context) || NetStatusUtils.isWifiConnected(context)) {
                         mLocationClient.startLocation();//开启定位比较耗时，在启动的时候就调用
                     } else {
-//                        Toast.makeText(context, "你的网络有问题，请连接后重试", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "run: 网络有问题,默认返回了 深圳市");
                         callBack.call("深圳市");
                     }
                 }
