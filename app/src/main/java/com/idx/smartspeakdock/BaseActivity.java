@@ -655,6 +655,9 @@ public  abstract class BaseActivity extends AppCompatActivity {
                 if (isFragmentTop.getClass().getSimpleName().equals("MapFragment")) {
                     sendMapBroadcast(name, address, fromAddress, toAddress, pathWay, resultCallback);
                 } else {
+                    if(name==null){
+                        Log.d(TAG, "revokeMainMapVoice: "+"   name的值是空的");
+                    }
                     replaceMapFragment(name, address, fromAddress, toAddress, pathWay, resultCallback);
                 }
             }

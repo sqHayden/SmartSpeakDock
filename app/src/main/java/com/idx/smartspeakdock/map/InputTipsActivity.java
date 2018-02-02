@@ -4,7 +4,6 @@ package com.idx.smartspeakdock.map;
  * Created by hayden on 18-1-15.
  */
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +36,7 @@ import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.idx.smartspeakdock.BaseActivity;
 import com.idx.smartspeakdock.R;
 import com.idx.smartspeakdock.map.adapter.InputItemsAdapter;
 import com.idx.smartspeakdock.map.adapter.InputTipsAdapter;
@@ -46,7 +46,7 @@ import com.idx.smartspeakdock.map.util.ToastUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InputTipsActivity extends Activity implements
+public class InputTipsActivity extends BaseActivity implements
         TextWatcher,OnItemClickListener,View.OnClickListener,
         PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener{
     //输入搜索关键字
@@ -94,6 +94,8 @@ public class InputTipsActivity extends Activity implements
         InitData();
         //获取搜索输入框
         mSearchView = findViewById(R.id.keyWord);
+        //绑定service
+        bindService(mControllerintent, myServiceConnection, 0);
         //设置改变时属性
         final int inputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
         mSearchView.setInputType(inputType);
@@ -364,6 +366,8 @@ public class InputTipsActivity extends Activity implements
         if(currentLatLng!=null){
             currentLatLng = null;
         }
+        //解绑
+        unbindService(myServiceConnection);
     }
 
     /**
