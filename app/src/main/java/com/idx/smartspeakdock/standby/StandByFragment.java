@@ -25,6 +25,7 @@ import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicDataSource;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicInjection;
 import com.idx.smartspeakdock.weather.model.weatherroom.WeatherBasicRepository;
 import com.idx.smartspeakdock.weather.utils.HandlerWeatherUtil;
+import com.idx.smartspeakdock.weather.utils.UpdateWeatherUtil;
 
 import java.util.List;
 import java.util.Timer;
@@ -100,18 +101,20 @@ public class StandByFragment extends BaseFragment implements IStandByView,Return
         timerTask = new TimerTask() {
             @Override
             public void run() {
+                UpdateWeatherUtil.updateWeather();
                 getWeatherBasic(cityName);
                 Log.d(TAG, "run: update weather");
             }
         };
         timer = new Timer();
-        timer.schedule(timerTask, 1 * 1000, 10 * 1000);
+        timer.schedule(timerTask, 1 * 1000, 60 * 10 * 1000);
     }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_standby,container,false);
         init();
+        UpdateWeatherUtil.updateWeather();
         Log.d(TAG, "onCreateView: ");
         getWeatherInfo();
         return view;

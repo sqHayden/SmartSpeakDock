@@ -1,5 +1,6 @@
 package com.idx.smartspeakdock.standby;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -29,6 +30,8 @@ public class StandByActivity extends BaseActivity {
         Logger.setEnable(true);
         hideBottomUIMenu();
         setContentView(R.layout.content_main);
+//        bindService(mControllerintent, myServiceConnection, Context.BIND_AUTO_CREATE);
+        bindService(mControllerintent, myServiceConnection, Context.BIND_AUTO_CREATE);
         standByFragment =
                 (StandByFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (standByFragment == null) {
@@ -36,9 +39,6 @@ public class StandByActivity extends BaseActivity {
             ActivityUtils.replaceFragmentInActivity(
                     getSupportFragmentManager(), standByFragment, R.id.contentFrame);
         }
-        bindService(mControllerintent, myServiceConnection, 0);
-
-
     }
 
     protected void hideBottomUIMenu() {
@@ -78,6 +78,8 @@ public class StandByActivity extends BaseActivity {
         if(standByFragment != null){
             standByFragment = null;
         }
-        unbindService(myServiceConnection);
+//        if (mControllerBinder != null){
+//            unbindService(myServiceConnection);
+//        }
     }
 }

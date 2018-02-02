@@ -846,7 +846,13 @@ public class WeatherFragment extends BaseFragment implements WeatherUi {
     private void airQualityInfo(String cityName){
         Log.i(TAG, "airQualityInfo: cityName = " + cityName);
         if (voice_aqi != null && voice_aqi.status.equals("ok")) {
-            voice_answer = cityName + "空气质量为" + voice_aqi.air.qlty;
+            if((!TextUtils.isEmpty(mWeather_time)) && mWeather_time.equals("今天")){
+                voice_answer = cityName + "空气质量为" + voice_aqi.air.qlty;
+            }else if ((!TextUtils.isEmpty(mWeather_time)) && !mWeather_time.equals("今天")){
+                voice_answer= "抱歉，目前只支持今天空气质量信息查询";
+            }else {
+                voice_answer = cityName + "空气质量为" + voice_aqi.air.qlty;
+            }
         } else {
             voice_answer = "抱歉，" + cityName + "空气质量信息未找到";
         }
@@ -1001,7 +1007,13 @@ public class WeatherFragment extends BaseFragment implements WeatherUi {
     private void dressInfo(){
 //        Log.d(TAG, "dressInfo: 穿衣指数" + voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
-            judgeDress(voice_weather.lifestyleList.get(1).brf);
+            if ((!TextUtils.isEmpty(mWeather_time)) && mWeather_time.equals("今天")) {
+                judgeDress(voice_weather.lifestyleList.get(1).brf);
+            }else if ((!TextUtils.isEmpty(mWeather_time)) && (!mWeather_time.equals("今天"))){
+                voice_answer = "抱歉，目前只支持今天穿衣信息查询";
+            }else {
+                judgeDress(voice_weather.lifestyleList.get(1).brf);
+            }
         } else {
             voice_answer = "抱歉，穿衣指数信息未找到";
         }
@@ -1031,7 +1043,13 @@ public class WeatherFragment extends BaseFragment implements WeatherUi {
     private void uitravioletLevelInfo(String cityName) {
 //        Log.d(TAG, "uitravioletLevelInfo: 紫外线强度" + voice_weather.status);
         if (voice_weather != null && voice_weather.status.equals("ok")) {
-            voice_answer = cityName + "紫外线强度" + voice_weather.lifestyleList.get(5).brf;
+            if ((!TextUtils.isEmpty(mWeather_time)) && mWeather_time.equals("今天")) {
+                voice_answer = cityName + "紫外线强度" + voice_weather.lifestyleList.get(5).brf;
+            }else if ((!TextUtils.isEmpty(mWeather_time)) && (!mWeather_time.equals("今天"))){
+                voice_answer = "抱歉，目前只支持今天紫外线信息查询";
+            }else {
+                voice_answer = cityName + "紫外线强度" + voice_weather.lifestyleList.get(5).brf;
+            }
         } else {
             voice_answer = "抱歉，" + cityName + "紫外线强度信息未找到";
         }
