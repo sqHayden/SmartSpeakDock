@@ -2,23 +2,23 @@
 <shoppings>
     <shopping id="1">
         <webname>手机数码</webname>
-        <weburl>https://mall.flnet.com/gallery-6.html</weburl>
+        <weburl>https://mall.flnet.com/wap/gallery-6.html</weburl>
     </shopping>
     <shopping id="2">
         <webname>电脑办公</webname>
-        <weburl>https://mall.flnet.com/gallery-7.html</weburl>
+        <weburl>https://mall.flnet.com/wap/gallery-7.html</weburl>
     </shopping>
     <shopping id="3">
         <webname>智能家居</webname>
-        <weburl>https://mall.flnet.com/gallery-1.html</weburl>
+        <weburl>https://mall.flnet.com/wap/gallery-1.html</weburl>
     </shopping>
     <shopping id="4">
         <webname>苹果专区</webname>
-        <weburl>https://mall.flnet.com/gallery.html?scontent=n,%E8%8B%B9%E6%9E%9C</weburl>
+        <weburl>https://mall.flnet.com/wap/gallery.html?scontent=n,%E8%8B%B9%E6%9E%9C</weburl>
     </shopping>
     <shopping id="5">
         <webname>夏普专区</webname>
-        <weburl>https://mall.flnet.com/gallery.html?scontent=n,%E5%A4%8F%E6%99%AE</weburl>
+        <weburl>https://mall.flnet.com/wap/gallery.html?scontent=n,%E5%A4%8F%E6%99%AE</weburl>
     </shopping>
     <shopping id="6">
         <webname>发现</webname>
@@ -26,7 +26,7 @@
     </shopping>
     <shopping id="7">
         <webname>企业团购</webname>
-        <weburl>https://mall.flnet.com/enterpriseGroup.html</weburl>
+        <weburl>https://mall.flnet.com/wap/enterpriseGroup.html</weburl>
     </shopping>
     <shopping id="8">
         <webname>登录页面</webname>
@@ -34,419 +34,419 @@
     </shopping>
     <shopping id="9">
         <webname>手机</webname>
-        <weburl>http://mall.flnet.com/gallery-9.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-9.html</weburl>
     </shopping>
     <shopping id="">
         <webname>智能手机</webname>
-        <weburl>http://mall.flnet.com/gallery-10.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-10.html</weburl>
     </shopping>
     <shopping id="10">
         <webname>功能手机</webname>
-        <weburl>http://mall.flnet.com/gallery-11.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-11.html</weburl>
     </shopping>
     <shopping id="11">
         <webname>手机配件</webname>
-        <weburl>http://mall.flnet.com/gallery-12.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-12.html</weburl>
     </shopping>
     <shopping id="12">
         <webname>耳机</webname>
-        <weburl>http://mall.flnet.com/gallery-24.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-24.html</weburl>
     </shopping>
     <shopping id="13">
         <webname>数据线</webname>
-        <weburl>http://mall.flnet.com/gallery-29.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-29.html</weburl>
     </shopping>
     <shopping id="14">
         <webname>手机保护套</webname>
-        <weburl>http://mall.flnet.com/gallery-37.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-37.html</weburl>
     </shopping>
     <shopping id="15">
         <webname>手机贴膜</webname>
-        <weburl>http://mall.flnet.com/gallery-40.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-40.html</weburl>
     </shopping>
     <shopping id="16">
         <webname>移动电源</webname>
-        <weburl>http://mall.flnet.com/gallery-23.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-23.html</weburl>
     </shopping>
     <shopping id="17">
         <webname>创意配件</webname>
-        <weburl>http://mall.flnet.com/gallery-13.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-13.html</weburl>
     </shopping>
     <shopping id="18">
         <webname>智能设备</webname>
-        <weburl>http://mall.flnet.com/gallery-58.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-58.html</weburl>
     </shopping>
     <shopping id="19">
         <webname>智能手表</webname>
-        <weburl>http://mall.flnet.com/gallery-59.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-59.html</weburl>
     </shopping>
     <shopping id="20">
         <webname>智能穿戴</webname>
-        <weburl>http://mall.flnet.com/gallery-71.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-71.html</weburl>
     </shopping>
     <shopping id="21">
         <webname>酷新奇</webname>
-        <weburl>http://mall.flnet.com/gallery-86.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-86.html</weburl>
     </shopping>
     <shopping id="22">
         <webname>其他配件</webname>
-        <weburl>http://mall.flnet.com/gallery-87.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-87.html</weburl>
     </shopping>
     <shopping id="23">
         <webname>车载电器</webname>
-        <weburl>http://mall.flnet.com/gallery-45.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-45.html</weburl>
     </shopping>
     <shopping id="24">
         <webname>车载充电器</webname>
-        <weburl>http://mall.flnet.com/gallery-46.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-46.html</weburl>
     </shopping>
     <shopping id="25">
         <webname>车载配件</webname>
-        <weburl>http://mall.flnet.com/gallery-123.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-123.html</weburl>
     </shopping>
     <shopping id="26">
         <webname>苹果配件</webname>
-        <weburl>http://mall.flnet.com/gallery-15.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-15.html</weburl>
     </shopping>
     <shopping id="27">
         <webname>beats耳机</webname>
-        <weburl>http://mall.flnet.com/gallery-105.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-105.html</weburl>
     </shopping>
     <shopping id="28">
         <webname>苹果手机配件</webname>
-        <weburl>http://mall.flnet.com/gallery-16.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-16.html</weburl>
     </shopping>
     <shopping id="29">
         <webname>电脑办公</webname>
-        <weburl>http://mall.flnet.com/gallery-7.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-7.html</weburl>
     </shopping>
     <shopping id="30">
         <webname>台式机</webname>
-        <weburl>http://mall.flnet.com/gallery-110.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-110.html</weburl>
     </shopping>
     <shopping id="31">
         <webname>一体机</webname>
-        <weburl>http://mall.flnet.com/gallery-89.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-89.html</weburl>
     </shopping>
     <shopping id="32">
         <webname>台式主机</webname>
-        <weburl>http://mall.flnet.com/gallery-112.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-112.html</weburl>
     </shopping>
     <shopping id="33">
         <webname>显示器</webname>
-        <weburl>http://mall.flnet.com/gallery-113.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-113.html</weburl>
     </shopping>
     <shopping id="34">
         <webname>电脑整机</webname>
-        <weburl>http://mall.flnet.com/gallery-67.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-67.html</weburl>
     </shopping>
     <shopping id="35">
         <webname>平板电脑</webname>
-        <weburl>http://mall.flnet.com/gallery-17.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-17.html</weburl>
     </shopping>
     <shopping id="36">
         <webname>笔记本</webname>
-        <weburl>http://mall.flnet.com/gallery-28.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-28.html</weburl>
     </shopping>
     <shopping id="37">
         <webname>平板配件</webname>
-        <weburl>http://mall.flnet.com/gallery-68.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-68.html</weburl>
     </shopping>
     <shopping id="38">
         <webname>游戏本</webname>
-        <weburl>http://mall.flnet.com/gallery-88.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-88.html</weburl>
     </shopping>
     <shopping id="39">
         <webname>平板电脑配件</webname>
-        <weburl>http://mall.flnet.com/gallery-90.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-90.html</weburl>
     </shopping>
     <shopping id="40">
         <webname>笔记本配件</webname>
-        <weburl>http://mall.flnet.com/gallery-108.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-108.html</weburl>
     </shopping>
     <shopping id="41">
         <webname>台式整机</webname>
-        <weburl>http://mall.flnet.com/gallery-109.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-109.html</weburl>
     </shopping>
     <shopping id="42">
         <webname>外设产品</webname>
-        <weburl>http://mall.flnet.com/gallery-18.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-18.html</weburl>
     </shopping>
     <shopping id="43">
         <webname>u盘</webname>
-        <weburl>http://mall.flnet.com/gallery-19.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-19.html</weburl>
     </shopping>
     <shopping id="44">
         <webname>存储卡</webname>
-        <weburl>http://mall.flnet.com/gallery-20.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-20.html</weburl>
     </shopping>
     <shopping id="45">
         <webname>键盘鼠标</webname>
-        <weburl>http://mall.flnet.com/gallery-26.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-26.html</weburl>
     </shopping>
     <shopping id="46">
         <webname>耳机耳麦</webname>
-        <weburl>http://mall.flnet.com/gallery-95.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-95.html</weburl>
     </shopping>
     <shopping id="47">
         <webname>电脑音箱</webname>
-        <weburl>http://mall.flnet.com/gallery-96.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-96.html</weburl>
     </shopping>
     <shopping id="48">
         <webname>键鼠套装</webname>
-        <weburl>http://mall.flnet.com/gallery-97.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-97.html</weburl>
     </shopping>
     <shopping id="49">
         <webname>鼠标垫</webname>
-        <weburl>http://mall.flnet.com/gallery-117.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-117.html</weburl>
     </shopping>
     <shopping id="50">
         <webname>清洁套装</webname>
-        <weburl>http://mall.flnet.com/gallery-118.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-118.html</weburl>
     </shopping>
     <shopping id="51">
         <webname>游戏设备</webname>
-        <weburl>http://mall.flnet.com/gallery-92.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-92.html</weburl>
     </shopping>
     <shopping id="52">
         <webname>打印机</webname>
-        <weburl>http://mall.flnet.com/gallery-93.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-93.html</weburl>
     </shopping>
     <shopping id="53">
         <webname>夏普电视</webname>
-        <weburl>http://mall.flnet.com/gallery-2.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-2.html</weburl>
     </shopping>
     <shopping id="54">
         <webname>8k超清电视</webname>
-        <weburl>http://mall.flnet.com/gallery-3.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-3.html</weburl>
     </shopping>
     <shopping id="55">
         <webname>电视配件</webname>
-        <weburl>http://mall.flnet.com/gallery-76.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-76.html</weburl>
     </shopping>
     <shopping id="56">
         <webname>四十寸以下电视</webname>
-        <weburl>http://mall.flnet.com/gallery-4.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-4.html</weburl>
     </shopping>
     <shopping id="57">
         <webname>四十五到五十寸电视</webname>
-        <weburl>http://mall.flnet.com/gallery-5.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-5.html</weburl>
     </shopping>
     <shopping id="58">
         <webname>六十到七十寸电视</webname>
-        <weburl>http://mall.flnet.com/gallery-74.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-74.html</weburl>
     </shopping>
     <shopping id="59">
         <webname>七十寸以上电视</webname>
-        <weburl>http://mall.flnet.com/gallery-75.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-75.html</weburl>
     </shopping>
     <shopping id="60">
         <webname>生活电器</webname>
-        <weburl>http://mall.flnet.com/gallery-21.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-21.html</weburl>
     </shopping>
     <shopping id="61">
         <webname>口腔护理</webname>
-        <weburl>http://mall.flnet.com/gallery-32.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-32.html</weburl>
     </shopping>
     <shopping id="62">
         <webname>空气净化器</webname>
-        <weburl>http://mall.flnet.com/gallery-33.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-33.html</weburl>
     </shopping>
     <shopping id="63">
         <webname>毛球修剪器</webname>
-        <weburl>http://mall.flnet.com/gallery-56.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-56.html</weburl>
     </shopping>
     <shopping id="64">
         <webname>电风扇</webname>
-        <weburl>http://mall.flnet.com/gallery-60.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-60.html</weburl>
     </shopping>
     <shopping id="65">
         <webname>净水器</webname>
-        <weburl>http://mall.flnet.com/gallery-63.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-63.html</weburl>
     </shopping>
     <shopping id="66">
         <webname>取暖电器</webname>
-        <weburl>http://mall.flnet.com/gallery-106.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-106.html</weburl>
     </shopping>
     <shopping id="67">
         <webname>台灯</webname>
-        <weburl>http://mall.flnet.com/gallery-124.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-124.html</weburl>
     </shopping>
     <shopping id="68">
         <webname>个护健康</webname>
-        <weburl>http://mall.flnet.com/gallery-38.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-38.html</weburl>
     </shopping>
     <shopping id="69">
         <webname>按摩器</webname>
-        <weburl>http://mall.flnet.com/gallery-39.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-39.html</weburl>
     </shopping>
     <shopping id="70">
         <webname>电吹风</webname>
-        <weburl>http://mall.flnet.com/gallery-53.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-53.html</weburl>
     </shopping>
     <shopping id="71">
         <webname>理发器</webname>
-        <weburl>http://mall.flnet.com/gallery-54.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-54.html</weburl>
     </shopping>
     <shopping id="72">
         <webname>剃须刀</webname>
-        <weburl>http://mall.flnet.com/gallery-55.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-55.html</weburl>
     </shopping>
     <shopping id="73">
         <webname>厨房小电</webname>
-        <weburl>http://mall.flnet.com/gallery-49.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-49.html</weburl>
     </shopping>
     <shopping id="74">
         <webname>电压力锅</webname>
-        <weburl>http://mall.flnet.com/gallery-50.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-50.html</weburl>
     </shopping>
     <shopping id="75">
         <webname>豆浆机</webname>
-        <weburl>http://mall.flnet.com/gallery-51.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-51.html</weburl>
     </shopping>
     <shopping id="76">
         <webname>电饭煲</webname>
-        <weburl>http://mall.flnet.com/gallery-52.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-52.html</weburl>
     </shopping>
     <shopping id="77">
         <webname>面包机</webname>
-        <weburl>http://mall.flnet.com/gallery-57.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-57.html</weburl>
     </shopping>
     <shopping id="78">
         <webname>电水壶</webname>
-        <weburl>http://mall.flnet.com/gallery-61.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-61.html</weburl>
     </shopping>
     <shopping id="80">
         <webname>电磁炉</webname>
-        <weburl>http://mall.flnet.com/gallery-62.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-62.html</weburl>
     </shopping>
     <shopping id="81">
         <webname>油烟机</webname>
-        <weburl>http://mall.flnet.com/gallery-72.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-72.html</weburl>
     </shopping>
     <shopping id="82">
         <webname>多用途锅</webname>
-        <weburl>http://mall.flnet.com/gallery-107.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-107.html</weburl>
     </shopping>
     <shopping id="83">
         <webname>家庭影音</webname>
-        <weburl>http://mall.flnet.com/gallery-78.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-78.html</weburl>
     </shopping>
     <shopping id="84">
         <webname>影音娱乐</webname>
-        <weburl>http://mall.flnet.com/gallery-47.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-47.html</weburl>
     </shopping>
     <shopping id="85">
         <webname>迷你音响</webname>
-        <weburl>http://mall.flnet.com/gallery-79.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-79.html</weburl>
     </shopping>
     <shopping id="86">
         <webname>影音配件</webname>
-        <weburl>http://mall.flnet.com/gallery-80.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-80.html</weburl>
     </shopping>
     <shopping id="87">
         <webname>智能健康</webname>
-        <weburl>http://mall.flnet.com/gallery-91.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-91.html</weburl>
     </shopping>
     <shopping id="88">
         <webname>富可视电视</webname>
-        <weburl>http://mall.flnet.com/gallery-121.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-121.html</weburl>
     </shopping>
     <shopping id="89">
         <webname>冰箱</webname>
-        <weburl>http://mall.flnet.com/gallery-77.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-77.html</weburl>
     </shopping>
     <shopping id="90">
         <webname>多门冰箱</webname>
-        <weburl>http://mall.flnet.com/gallery-81.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-81.html</weburl>
     </shopping>
     <shopping id="91">
         <webname>对开门冰箱</webname>
-        <weburl>http://mall.flnet.com/gallery-82.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-82.html</weburl>
     </shopping>
     <shopping id="92">
         <webname>三门冰箱</webname>
-        <weburl>http://mall.flnet.com/gallery-83.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-83.html</weburl>
     </shopping>
     <shopping id="93">
         <webname>双门冰箱</webname>
-        <weburl>http://mall.flnet.com/gallery-84.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-84.html</weburl>
     </shopping>
     <shopping id="94">
         <webname>洗衣机</webname>
-        <weburl>http://mall.flnet.com/gallery-98.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-98.html</weburl>
     </shopping>
     <shopping id="95">
         <webname>滚筒洗衣机</webname>
-        <weburl>http://mall.flnet.com/gallery-100.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-100.html</weburl>
     </shopping>
     <shopping id="96">
         <webname>波轮洗衣机</webname>
-        <weburl>http://mall.flnet.com/gallery-101.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-101.html</weburl>
     </shopping>
     <shopping id="97">
         <webname>音箱</webname>
-        <weburl>http://mall.flnet.com/gallery-24.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-24.html</weburl>
     </shopping>
     <shopping id="98">
         <webname>转接头</webname>
-        <weburl>http://mall.flnet.com/gallery-29.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-29.html</weburl>
     </shopping>
     <shopping id="99">
         <webname>多门</webname>
-        <weburl>http://mall.flnet.com/gallery-81.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-81.html</weburl>
     </shopping>
     <shopping id="100">
         <webname>对开门</webname>
-        <weburl>http://mall.flnet.com/gallery-82.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-82.html</weburl>
     </shopping>
     <shopping id="101">
         <webname>三门</webname>
-        <weburl>http://mall.flnet.com/gallery-83.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-83.html</weburl>
     </shopping>
     <shopping id="102">
         <webname>双门</webname>
-        <weburl>http://mall.flnet.com/gallery-84.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-84.html</weburl>
     </shopping>
     <shopping id="103">
         <webname>滚筒</webname>
-        <weburl>http://mall.flnet.com/gallery-100.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-100.html</weburl>
     </shopping>
     <shopping id="104">
         <webname>波轮</webname>
-        <weburl>http://mall.flnet.com/gallery-101.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-101.html</weburl>
     </shopping>
     <shopping id="105">
         <webname>四十寸以下</webname>
-        <weburl>http://mall.flnet.com/gallery-4.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-4.html</weburl>
     </shopping>
     <shopping id="106">
         <webname>四十五到五十寸</webname>
-        <weburl>http://mall.flnet.com/gallery-5.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-5.html</weburl>
     </shopping>
     <shopping id="107">
         <webname>六十到七十寸</webname>
-        <weburl>http://mall.flnet.com/gallery-74.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-74.html</weburl>
     </shopping>
     <shopping id="108">
         <webname>七十寸以上</webname>
-        <weburl>http://mall.flnet.com/gallery-75.html</weburl>
+        <weburl>http://mall.flnet.com/wap/gallery-75.html</weburl>
     </shopping>
     <shopping>
         <webname>购物车</webname>
-        <weburl>https://mall.flnet.com/cart.html</weburl>
+        <weburl>https://mall.flnet.com/wap/cart.html</weburl>
     </shopping>
     <shopping>
         <webname>富连网</webname>
-        <weburl>https://mall.flnet.com/member.html</weburl>
+        <weburl>https://mall.flnet.com/wap/member.html</weburl>
     </shopping>
     <shopping>
         <webname>订单</webname>
-        <weburl>https://mall.flnet.com/member-orders.html</weburl>
+        <weburl>https://mall.flnet.com/wap/member-orders.html</weburl>
     </shopping>
     <shopping>
         <webname>优惠券</webname>
-        <weburl>https://mall.flnet.com/member-coupon.html</weburl>
+        <weburl>https://mall.flnet.com/wap/member-coupon.html</weburl>
     </shopping>
     <shopping>
         <webname>注册页面</webname>
