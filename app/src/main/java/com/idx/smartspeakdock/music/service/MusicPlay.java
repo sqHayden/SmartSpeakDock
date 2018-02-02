@@ -94,10 +94,11 @@ public class MusicPlay {
     //停止播放
     public void stop() {
         mediaPlayer.pause();
+        notifyMusicState(ACTION_MEDIA_PAUSE, false);
     }
     //下一首
     public void next() {
-        Log.d(TAG, "next: ");
+        Log.d("aaa", "next: ");
         play(mPlayingPosition + 1);
         notifyMusicState(ACTION_MEDIA_NEXT,true);
     }
@@ -160,12 +161,15 @@ public class MusicPlay {
 
     //播放音乐
     public void play(Music music) {
-        mPlayingMusic = music;
         try {
             mediaPlayer.reset();
             mediaPlayer.setOnPreparedListener(mPreparedListener);
             mediaPlayer.setOnCompletionListener(onCompletionListener);
-            mediaPlayer.setDataSource(music.getUrl());
+            try {
+                mediaPlayer.setDataSource(music.getUrl());
+            }catch (IllegalArgumentException e){
+                e.printStackTrace();
+            }
             mediaPlayer.prepareAsync();
             notifyMusicState(ACTION_MEDIA_PLAY,true);
         } catch (IOException e) {
@@ -185,8 +189,9 @@ public class MusicPlay {
     public MediaPlayer.OnCompletionListener onCompletionListener=new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mediaPlayer) {
-                    next();
-                    notifyMusicState(ACTION_MEDIA_COMPLETE, true);
+            Log.d("aaa", "onCompletion: ");
+                next();
+                notifyMusicState(ACTION_MEDIA_COMPLETE, true);
         }
     };
 

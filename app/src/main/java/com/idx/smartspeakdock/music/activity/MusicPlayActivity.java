@@ -56,9 +56,8 @@ public class MusicPlayActivity extends BaseActivity implements View.OnClickListe
     private static final int CONSTAN_MUSIC_ERROR=6;
 
     private static final String TAG = MusicPlayActivity.class.getName();
-    private PlayServiceConnection conn;
     private MusicBroadcastReceiver musicBroadcastReceiver = new MusicBroadcastReceiver();
-
+    private PlayServiceConnection conn;
     private TextView title;
     private TextView artist;
     private ImageView imageView;
@@ -122,7 +121,6 @@ public class MusicPlayActivity extends BaseActivity implements View.OnClickListe
         registerReceiver(musicBroadcastReceiver, intentFilter);
         //绑定service
         bindService(mControllerintent, myServiceConnection, 0);
-
         handler.post(runnable);
     }
 
@@ -247,7 +245,7 @@ public class MusicPlayActivity extends BaseActivity implements View.OnClickListe
                     }
                     seekBar.setMax((int) musicService.musicPlay.getPlayingMusic().getDuration());
                     title.setText(musicService.musicPlay.getPlayingMusic().getTitle());
-                    draution.setText(formatTime("mm:ss", musicService.musicPlay.getPlayingMusic().getDuration()));
+                    draution.setText(formatTime("mm:ss",musicService.musicPlay.getPlayingMusic().getDuration()));
                     if (musicService.musicPlay.isPlaying()) {
                         ib_start.setImageResource(R.mipmap.music_pause);
                     } else {
@@ -273,7 +271,7 @@ public class MusicPlayActivity extends BaseActivity implements View.OnClickListe
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-
+                 musicService=null;
         }
     }
 
