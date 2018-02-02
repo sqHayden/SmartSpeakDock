@@ -79,7 +79,7 @@ public class BaseFragment extends Fragment {
                         if (handler != null) {
                             Log.d(TAG, "onTouch: 你开启了倒计时");
                             handler.removeCallbacks(runnable);
-                            handler.postDelayed(runnable, 1000 * 10 * 60);
+                            handler.postDelayed(runnable, 1000 * 60 * 10);
 //                            handler.postDelayed(runnable, 1000 * 10 );
                         }
                         Log.d(TAG, "onTouch: ACTION_DOWN");
