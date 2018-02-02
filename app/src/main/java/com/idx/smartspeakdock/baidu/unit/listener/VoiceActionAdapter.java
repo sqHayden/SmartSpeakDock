@@ -679,7 +679,7 @@ public class VoiceActionAdapter {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
         if (mWeatherListener != null) {
-            mWeatherListener.onAirQualityInfo(reconginize_city_word, new ReturnVoice() {
+            mWeatherListener.onAirQualityInfo(reconginize_city_word, reconginize_time_word,new ReturnVoice() {
                 @Override
                 public void onReturnVoice(String voice_answer) {
                     if (checkVoiceAnswer(voice_answer)) {
@@ -873,8 +873,9 @@ public class VoiceActionAdapter {
 
     private void derssInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
+        reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
         if (mWeatherListener != null) {
-            mWeatherListener.onDressInfo(reconginize_city_word, new ReturnVoice() {
+            mWeatherListener.onDressInfo(reconginize_city_word,reconginize_time_word, new ReturnVoice() {
                 @Override
                 public void onReturnVoice(String voice_answer) {
                     if (checkVoiceAnswer(voice_answer)) {
@@ -915,8 +916,9 @@ public class VoiceActionAdapter {
 
     private void uitravioletLevelInfo() {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
+        reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
         if (mWeatherListener != null) {
-            mWeatherListener.onUitravioletLevelInfo(reconginize_city_word, new ReturnVoice() {
+            mWeatherListener.onUitravioletLevelInfo(reconginize_city_word,reconginize_time_word, new ReturnVoice() {
                 @Override
                 public void onReturnVoice(String voice_answer) {
                     if (checkVoiceAnswer(voice_answer)) {
