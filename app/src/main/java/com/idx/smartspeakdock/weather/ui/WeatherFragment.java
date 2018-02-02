@@ -846,9 +846,9 @@ public class WeatherFragment extends BaseFragment implements WeatherUi {
     private void airQualityInfo(String cityName){
         Log.i(TAG, "airQualityInfo: cityName = " + cityName);
         if (voice_aqi != null && voice_aqi.status.equals("ok")) {
-            if(mWeather_time.equals("今天")){
+            if((!TextUtils.isEmpty(mWeather_time)) && mWeather_time.equals("今天")){
                 voice_answer = cityName + "空气质量为" + voice_aqi.air.qlty;
-            }else if (!mWeather_time.equals("今天")){
+            }else if ((!TextUtils.isEmpty(mWeather_time)) && !mWeather_time.equals("今天")){
                 voice_answer= "抱歉，目前只支持今天空气质量信息查询";
             }else {
                 voice_answer = cityName + "空气质量为" + voice_aqi.air.qlty;
