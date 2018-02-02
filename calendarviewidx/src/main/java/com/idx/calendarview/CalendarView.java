@@ -313,11 +313,13 @@ public class CalendarView extends FrameLayout {
                    month++;
                    day = 1;
                }
+               day++;
             }else {
                 if (day == 28){
                     month++;
                     day = 1;
                 }
+                day++;
             }
 
         } else {
