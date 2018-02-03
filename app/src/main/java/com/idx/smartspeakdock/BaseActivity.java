@@ -138,6 +138,7 @@ public  abstract class BaseActivity extends AppCompatActivity {
         Window window = getWindow();
         int flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
         window.setFlags(flag, flag);
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         initPermission();
         //voice start activity
         mIntent = new Intent(this, MainActivity.class);
