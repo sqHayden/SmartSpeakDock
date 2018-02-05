@@ -123,7 +123,7 @@ public class UnitManager {
     /**
      * 发送数据至语音云端处理接口
      *
-     * @param message  语音转化后的文本信息
+     * @param message 语音转化后的文本信息
      */
     public void sendMessage(String message) {
         if (TextUtils.isEmpty(accessToken)) {
@@ -152,7 +152,7 @@ public class UnitManager {
     /**
      * 处理数据，播放语音，调用动作执行函数
      *
-     * @param result   解析后的数据
+     * @param result 解析后的数据
      **/
     private void handleResponse(CommunicateResponse result) {
         if (result != null) {
@@ -228,8 +228,8 @@ public class UnitManager {
     }
 
     /**
-     * @param action   执行的动作信息
-     * @param schema   对应的词槽
+     * @param action 执行的动作信息
+     * @param schema 对应的词槽
      */
     private void executeTask(final CommunicateResponse.Action action, final CommunicateResponse.Schema schema) {
         if (mVoiceAdapter != null) {
@@ -238,7 +238,7 @@ public class UnitManager {
                 @Override
                 public void onResult(boolean sayBye) {
                     if (enableSession) {
-                        if (sayBye){
+                        if (sayBye) {
                             //询问是否关闭会话
                             String voice = mVoiceMore[MathTool.randomValue(mVoiceMore.length)];
                             TTSManager.getInstance().speak(voice, new TTSManager.SpeakCallback() {
@@ -279,6 +279,8 @@ public class UnitManager {
                 if (mSessionListener != null) {
                     mSessionListener.onRegContinue();
                 }
+            } else {
+                sessionId = "";
             }
         }
     }
@@ -323,7 +325,7 @@ public class UnitManager {
         }
     }
 
-    public void setSessionListener(ISessionListener sessionListener){
+    public void setSessionListener(ISessionListener sessionListener) {
         mSessionListener = sessionListener;
         mVoiceAdapter.setSessionListener(sessionListener);
     }

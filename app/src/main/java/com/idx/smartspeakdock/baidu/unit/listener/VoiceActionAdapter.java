@@ -28,6 +28,7 @@ import java.util.HashMap;
 
 public class VoiceActionAdapter {
     private static final String TAG = VoiceActionAdapter.class.getSimpleName();
+    private static final int ASK_BYE_DELAY = 2000;
     private static final int voiceHelpNum = 3;
     private Context mContext;
     private Intent mIntent;
@@ -56,14 +57,7 @@ public class VoiceActionAdapter {
 
         @Override
         public void onSpeakFinish() {
-            if (mHandler != null) {
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        result(true);
-                    }
-                }, 1000);
-            }
+            result(true);
         }
 
         @Override
@@ -555,6 +549,7 @@ public class VoiceActionAdapter {
         }
         result(true);
     }
+
     private void tvKinds() {
         recoginize_shopping_word = mSlots.get(SlotsTypes.USER_SHOPPING_TV_KINDS);
         if (mShoppingListener != null) {
@@ -679,7 +674,7 @@ public class VoiceActionAdapter {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
         if (mWeatherListener != null) {
-            mWeatherListener.onAirQualityInfo(reconginize_city_word, reconginize_time_word,new ReturnVoice() {
+            mWeatherListener.onAirQualityInfo(reconginize_city_word, reconginize_time_word, new ReturnVoice() {
                 @Override
                 public void onReturnVoice(String voice_answer) {
                     if (checkVoiceAnswer(voice_answer)) {
@@ -875,7 +870,7 @@ public class VoiceActionAdapter {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
         if (mWeatherListener != null) {
-            mWeatherListener.onDressInfo(reconginize_city_word,reconginize_time_word, new ReturnVoice() {
+            mWeatherListener.onDressInfo(reconginize_city_word, reconginize_time_word, new ReturnVoice() {
                 @Override
                 public void onReturnVoice(String voice_answer) {
                     if (checkVoiceAnswer(voice_answer)) {
@@ -918,7 +913,7 @@ public class VoiceActionAdapter {
         reconginize_city_word = mSlots.get(SlotsTypes.USER_WEATHER_CITY);
         reconginize_time_word = mSlots.get(SlotsTypes.USER_WEATHER_TIME);
         if (mWeatherListener != null) {
-            mWeatherListener.onUitravioletLevelInfo(reconginize_city_word,reconginize_time_word, new ReturnVoice() {
+            mWeatherListener.onUitravioletLevelInfo(reconginize_city_word, reconginize_time_word, new ReturnVoice() {
                 @Override
                 public void onReturnVoice(String voice_answer) {
                     if (checkVoiceAnswer(voice_answer)) {
@@ -1009,7 +1004,7 @@ public class VoiceActionAdapter {
             if (checkVoiceAnswer(web_sites_url)) {
                 Log.i(TAG, "jude_word: un_null");
                 voice_answer = mShoppingListener.openSpecifyWebsites(web_sites_url);
-            }else {
+            } else {
                 Log.i(TAG, "jude_word: null");
                 voice_answer = "抱歉,没有该网页的信息或查询信息有误";
             }
@@ -1170,7 +1165,7 @@ public class VoiceActionAdapter {
         }
     }
 
-    private void queryFestivalDate(){
+    private void queryFestivalDate() {
         String name = mSlots.get(SlotsTypes.USER_FESTIVAL_NAME);
         if (mCalenderListener != null) {
             String festivalDate = mCalenderListener.onFestivalDate(name);
@@ -1267,9 +1262,20 @@ public class VoiceActionAdapter {
      *
      * @param sayBye 是否开启结束询问
      */
-    private void result(boolean sayBye) {
+    private void result(final boolean sayBye) {
         if (mActionCallback != null) {
-            mActionCallback.onResult(sayBye);
+            if (sayBye) {
+                if (mHandler != null) {
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mActionCallback.onResult(sayBye);
+                        }
+                    }, ASK_BYE_DELAY);
+                }
+            } else {
+                mActionCallback.onResult(sayBye);
+            }
         }
     }
 
