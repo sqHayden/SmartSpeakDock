@@ -260,6 +260,275 @@
         <item>北京明天有雾霾吗？</item>
         <item>山东今天外出需要防霾口罩吗？</item>
         <item>明天郑州外出需要防霾口罩吗？</item>
+        <item>启动天气。</item>
+        <item>开启天气。</item>
+        <item>我想打开天气。</item>
+        <item>我要启动天气。</item>
+        <item>我想要开启天气。</item>
+        <item>搜索天气。</item>
+        <item>搜查天气。</item>
+        <item>搜寻天气。</item>
+        <item>我想查看天气。</item>
+        <item>我要搜索天气。</item>
+        <item>我想要看看天气。</item>
+        <item>我要看一下天气。</item>
+        <item>我想要看天气。</item>
+        <item>我想搜查天气。</item>
+        <item>我想要搜寻天气 。</item>
+        <item>我要查询天气 。</item>
+        <item>我想查看深圳明天天气 。</item>
+        <item>我要搜索武汉今天天气 。</item>
+        <item>我想要看看后天厦门天气 。</item>
+        <item>我想要看一下今天广州天气 。</item>
+        <item>我要看成都今天天气 。</item>
+        <item>我想搜查今天佛山天气 。</item>
+        <item>我想要搜寻武汉明天天气 。</item>
+        <item>我想查询今天上海天气 。</item>
+        <item>我要查看深圳天气 。</item>
+        <item>我想要搜索广州天气 。</item>
+        <item>我想看看上海天气 。</item>
+        <item>我要搜寻武汉天气 。</item>
+        <item>我想要查询重庆天气 。</item>
+        <item>我要搜索今天天气 。</item>
+        <item>我想要看看明天天气 。</item>
+        <item>我想查询后天天气 。</item>
+        <item>我想查询天气。</item>
+        <item>我要搜索天气。</item>
+        <item>我想要看看天气。</item>
+        <item>我想要看一下天气。</item>
+        <item>我要看天气。</item>
+        <item>我想要搜查天气。</item>
+        <item>几度。</item>
+        <item>多少度。</item>
+        <item>温度。</item>
+        <item>温度是多少。</item>
+        <item>温度是多少度。</item>
+        <item>温度是几度。</item>
+        <item>温度咋样。</item>
+        <item>温度怎么样。</item>
+        <item>温度如何。</item>
+        <item>温度怎样。</item>
+        <item>今天温度。</item>
+        <item>明天温度是多少。</item>
+        <item>后天温度是多少度。</item>
+        <item>今天温度是几度。</item>
+        <item>明天温度咋样。</item>
+        <item>今天温度怎么样。</item>
+        <item>明天温度如何。</item>
+        <item>后天温度怎样。</item>
+        <item>今天几度。</item>
+        <item>明天多少度。</item>
+        <item>后天是几度。</item>
+        <item>今天是多少度。</item>
+        <item>北京温度。</item>
+        <item>上海温度是多少。</item>
+        <item>广州温度是多少度。</item>
+        <item>福建温度是几度。</item>
+        <item>武汉温度咋样。</item>
+        <item>成都温度怎么样。</item>
+        <item>厦门温度如何。</item>
+        <item>重庆温度怎样。</item>
+        <item>上海多少度。</item>
+        <item>佛山几度。</item>
+        <item>天津是几度。</item>
+        <item>南昌是多少度。</item>
+        <item>明天深圳温度是多少度。</item>
+        <item>今天广州温度是几度。</item>
+        <item>厦门后天温度是多少。</item>
+        <item>福建明天温度。</item>
+        <item>今天武汉温度是多少。</item>
+        <item>南昌后天温度。</item>
+        <item>深圳当前温度是多少。</item>
+        <item>武汉此刻温度是多少度。</item>
+        <item>广州当前是几度。</item>
+        <item>重庆现在温度。</item>
+        <item>哈尔滨当前几度。</item>
+        <item>黑龙江此刻多少度。</item>
+        <item>武汉当前温度咋样。</item>
+        <item>佛山现在温度怎么样。</item>
+        <item>成都现在温度如何。</item>
+        <item>长沙当前温度怎样。</item>
+        <item>当前武汉温度。</item>
+        <item>现在温度是多少。</item>
+        <item>此刻温度是多少度。</item>
+        <item>当前温度是几度。</item>
+        <item>现在温度咋样。</item>
+        <item>此刻温度怎么样。</item>
+        <item>现在温度如何。</item>
+        <item>现在温度怎样。</item>
+        <item>此刻是几度。</item>
+        <item>当前是多少度。</item>
+        <item>当前几度。</item>
+        <item>现在多少度。</item>
+        <item>空气质量咋样。</item>
+        <item>空气质量。</item>
+        <item>空气质量如何。</item>
+        <item>空气质量怎样。</item>
+        <item>空气质量怎么样。</item>
+        <item>空气咋样。</item>
+        <item>空气怎么样。</item>
+        <item>空气怎样。</item>
+        <item>空气如何。</item>
+        <item>今天空气质量。</item>
+        <item>明天空气。</item>
+        <item>后天空气质量咋样。</item>
+        <item>今天空气质量如何。</item>
+        <item>重庆空气怎样 。</item>
+        <item>宝鸡空气怎么样。</item>
+        <item>今天深圳有雾霾吗。</item>
+        <item>武汉明天有雾吗。</item>
+        <item>佛山后天有没有雾霾。</item>
+        <item>北京今天有没有雾。</item>
+        <item>今天有雾吗。</item>
+        <item>明天有雾霾吗。</item>
+        <item>北京有雾吗。</item>
+        <item>上海有雾霾吗。</item>
+        <item>明天有没有雾。</item>
+        <item>后天有没有雾霾。</item>
+        <item>深圳有没有雾。</item>
+        <item>成都有没有雾霾。</item>
+        <item>今天深圳紫外线强度。</item>
+        <item>深圳明天紫外线强度。</item>
+        <item>明天紫外线。</item>
+        <item>后天紫外线。</item>
+        <item>明天紫外线强度。</item>
+        <item>广州紫外线。</item>
+        <item>佛山紫外线强度。</item>
+        <item>北京今天的紫外线怎么样？</item>
+        <item>北京今天的紫外线咋样？</item>
+        <item>北京今天的紫外线如何？</item>
+        <item>北京今天的紫外线怎样？</item>
+        <item>今天紫外线怎么样？</item>
+        <item>明天紫外线咋样？</item>
+        <item>后天紫外线如何？</item>
+        <item>今天紫外线怎样？</item>
+        <item>深圳今天紫外线怎么样？</item>
+        <item>明天武汉紫外线咋样？</item>
+        <item>广州后天紫外线如何？</item>
+        <item>成都今天紫外线怎样？</item>
+        <item>北京紫外线怎么样？</item>
+        <item>武汉紫外线咋样？</item>
+        <item>广州紫外线如何？</item>
+        <item>济南紫外线怎样？</item>
+        <item>明天紫外线强度怎么样？</item>
+        <item>后天紫外线强度咋样？</item>
+        <item>今天紫外线强度如何？</item>
+        <item>明天紫外线强度怎样？</item>
+        <item>深圳紫外线强度怎么？</item>
+        <item>武汉紫外线强度咋样？</item>
+        <item>成都紫外线强度如何？</item>
+        <item>南昌紫外线强度怎样？</item>
+        <item>北京今天有雨吗？</item>
+        <item>武汉后天下雨吗？</item>
+        <item>明天深圳有没有雨。</item>
+        <item>广州今天有雨不。</item>
+        <item>后天重庆下雨不。</item>
+        <item>今天有雨吗？</item>
+        <item>明天下雨吗？</item>
+        <item>后天有没有雨。</item>
+        <item>今天有雨不。</item>
+        <item>明天下雨不。</item>
+        <item>北京有雨吗？</item>
+        <item>深圳下雨吗？</item>
+        <item>成都有没有雨   。</item>
+        <item>上海有雨不。</item>
+        <item>济南下雨不。</item>
+        <item>有雨吗？</item>
+        <item>下雨吗？</item>
+        <item>有没有雨。</item>
+        <item>有雨不。</item>
+        <item>下雨不。</item>
+        <item>北京明天天气适合穿什么衣服 。</item>
+        <item>今天上海天气适合啥衣服 。</item>
+        <item>深圳后天适合穿什么衣服 。</item>
+        <item>今天广州适合穿啥衣服 。</item>
+        <item>成都今天适合什么衣服 。</item>
+        <item>重庆后天适合啥衣服 。</item>
+        <item>广州今天穿什么衣服 。</item>
+        <item>明天深圳穿啥衣服 。</item>
+        <item>深圳今天天气适合穿什么 。</item>
+        <item>武汉明天天气适合穿啥 。</item>
+        <item>济南后天适合穿什么 。</item>
+        <item>济南后天适合穿啥 。</item>
+        <item>深圳今天穿什么 。</item>
+        <item>武汉明天穿啥什么 。</item>
+        <item>今天穿啥 。</item>
+        <item>明天穿啥衣服 。</item>
+        <item>北京穿啥 。</item>
+        <item>武汉穿什么 。</item>
+        <item>广州穿啥衣服 。</item>
+        <item>上海穿什么衣服 。</item>
+        <item>天气 。</item>
+        <item>天气状况 。</item>
+        <item>天气如何 。</item>
+        <item>天气咋样 。</item>
+        <item>天气怎么样 。</item>
+        <item>天气怎样 。</item>
+        <item>天气状况如何 。</item>
+        <item>天气状况咋样 。</item>
+        <item>天气状况怎么样 。</item>
+        <item>天气状况怎样 。</item>
+        <item>今天天气 。</item>
+        <item>明天天气状况 。</item>
+        <item>后天天气如何 。</item>
+        <item>今天天气咋样 。</item>
+        <item>明天天气怎么样 。</item>
+        <item>今天天气怎样 。</item>
+        <item>今天天气状况如何 。</item>
+        <item>明天天气状况咋样 。</item>
+        <item>后天天气状况怎么样 。</item>
+        <item>今天天气状况怎样 。</item>
+        <item>深圳天气 。</item>
+        <item>济南天气状况 。</item>
+        <item>武汉天气咋样 。</item>
+        <item>广州天气如何 。</item>
+        <item>重庆天气怎么样 。</item>
+        <item>上海天气怎样 。</item>
+        <item>佛山天气状况如何 。</item>
+        <item>中山天气状况咋样 。</item>
+        <item>东莞天气状况怎么样 。</item>
+        <item>杭州天气状况怎样 。</item>
+        <item>深圳今天天气如何 。</item>
+        <item>武汉明天天气咋样 。</item>
+        <item>后天广州天气怎么样 。</item>
+        <item>今天重庆天气怎样 。</item>
+        <item>我想知道天气 。</item>
+        <item>我想知道天气状况 。</item>
+        <item>我想知道天气咋样 。</item>
+        <item>我想知道天气如何 。</item>
+        <item>我想知道天气怎样 。</item>
+        <item>我想知道天气怎么样 。</item>
+        <item>我想知道天气状况咋样 。</item>
+        <item>我想知道天气状况如何 。</item>
+        <item>我想知道天气状况怎样 。</item>
+        <item>我想知道天气状况怎么样 。</item>
+        <item>我想知道今天天气 。</item>
+        <item>我想知道明天天气状况 。</item>
+        <item>我想知道后天天气咋样 。</item>
+        <item>我想知道今天天气如何 。</item>
+        <item>我想知道后天天气咋样 。</item>
+        <item>我想知道今天天气怎么样 。</item>
+        <item>我想知道后天天气状况咋样 。</item>
+        <item>我想知道今天天气状况如何 。</item>
+        <item>我想知道明天天气状况怎样 。</item>
+        <item>我想知道今天天气状况怎么样 。</item>
+        <item>我想知道深圳天气 。</item>
+        <item>我想知道武汉天气状况 。</item>
+        <item>我想知道上海天气咋样 。</item>
+        <item>我想知道济南天气如何 。</item>
+        <item>我想知道杭州天气怎么样 。</item>
+        <item>我想知道南京天气状况咋样 。</item>
+        <item>我想知道扬州天气状况如何 。</item>
+        <item>我想知道重庆天气状况怎样 。</item>
+        <item>我想知道天津天气状况怎么样 。</item>
+        <item>我想知道深圳今天天气 。</item>
+        <item>我想知道明天武汉天气状况 。</item>
+        <item>我想知道后天南京天气咋样 。</item>
+        <item>我想知道北京明天天气如何 。</item>
+        <item>我想知道杭州今天天气怎么样 。</item>
+        <item>我想知道后天南京天气状况咋样 。</item>
+        <item>我想知道北京明天天气状况如何 。</item>
+        <item>我想知道杭州今天天气状况怎么样 。</item>
     </string-array>
     <string-array name="help_shopping">
         <item>打开购物。</item>
