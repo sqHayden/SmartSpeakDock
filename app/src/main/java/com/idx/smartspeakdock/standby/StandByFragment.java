@@ -44,7 +44,7 @@ public class StandByFragment extends BaseFragment implements IStandByView,Return
     private TextView standby_weather_tmp;
     private ImageView weatherIcon;
     private StandByPresenter mStandByPresenter;
-    public static String cityName = "" ;
+    public static String cityName = "深圳市" ;
     private Context mContext;
     private View view;
     private Bitmap bitmap1;
@@ -76,14 +76,13 @@ public class StandByFragment extends BaseFragment implements IStandByView,Return
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            if (!cityName.isEmpty()){
+//            if (!cityName.isEmpty()){
                 getWeatherBasic(cityName);
-            }
-        }else {
-            //绑定service
-            getActivity().bindService(((BaseActivity)getActivity()).mControllerintent, ((BaseActivity)getActivity()).myServiceConnection, 0);
+        }  else {
+            Log.d(TAG, "onCreate: 注册回调 城市");
+            getActivity().bindService(((BaseActivity) getActivity()).mControllerintent, ((BaseActivity) getActivity()).myServiceConnection, 0);
             //设置回调
-            ((BaseActivity)getActivity()).setReturnCityName(this);
+            ((BaseActivity) getActivity()).setReturnCityName(this);
         }
 
       // getWeatherBasic(cityName);
@@ -93,9 +92,6 @@ public class StandByFragment extends BaseFragment implements IStandByView,Return
     public void onResume() {
         initTimer();
         super.onResume();
-  
-
-        Log.i("ryan", "onResume: standByFragment");
     }
     private void initTimer() {
         timerTask = new TimerTask() {
@@ -114,7 +110,6 @@ public class StandByFragment extends BaseFragment implements IStandByView,Return
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_standby,container,false);
         init();
-        UpdateWeatherUtil.updateWeather();
         Log.d(TAG, "onCreateView: ");
         getWeatherInfo();
         return view;

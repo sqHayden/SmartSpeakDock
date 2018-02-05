@@ -36,6 +36,7 @@ public class StandByMode implements IStandByMode {
     public void requestWeather(final String cityName, final OnQueryWeatherListener onQueryWeatherListener) {
         mWeatherBasicRepository= WeatherBasicInjection.getNoteRepository(SpeakerApplication.getContext());
         mWeatherBasicRepository.deleteWeatherBasic(cityName+"%");
+        Log.d(TAG, "requestWeather: " + cityName);
         String weatherUrl = "https://free-api.heweather.com/s6/weather?location="+cityName+"&key=537664b7e2124b3c845bc0b51278d4af";
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
             @Override
@@ -54,6 +55,7 @@ public class StandByMode implements IStandByMode {
                             }
                         } else {
                             if(onQueryWeatherListener != null){
+                                Log.d(TAG, "onResponse: 1111");
                                 onQueryWeatherListener.onError(mContext.getResources().getString(R.string.get_weather_info_error));
                             }
                         }
@@ -63,6 +65,8 @@ public class StandByMode implements IStandByMode {
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 if(onQueryWeatherListener != null){
+                    Log.d(TAG, "onResponse: 2222");
+
                     onQueryWeatherListener.onError(mContext.getResources().getString(R.string.get_weather_info_error));
                 }
             }
