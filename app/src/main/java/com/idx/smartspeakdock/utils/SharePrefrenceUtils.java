@@ -16,7 +16,7 @@ public class SharePrefrenceUtils {
 
     public SharePrefrenceUtils(Context context){
         mContext = context;
-        mSharedPreferences = context.getSharedPreferences("shopping",Context.MODE_WORLD_WRITEABLE);
+        mSharedPreferences = context.getSharedPreferences("shopping",Context.MODE_PRIVATE);
         mEditor = mSharedPreferences.edit();
     }
 
