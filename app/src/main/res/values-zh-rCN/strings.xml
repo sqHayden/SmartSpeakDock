@@ -58,6 +58,7 @@
 
     //map
     <string name="no_result">对不起，没有搜索到相关数据！</string>
+    <string name="net_error">网络不给力，请检查您的网络配置！</string>
     //splash
     <string name="Shenzhen">深圳市</string>
     <string name="life_car">洗车：较适宜</string>
