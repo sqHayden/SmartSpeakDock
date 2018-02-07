@@ -404,6 +404,7 @@ public class CalculateRouteActivity extends BaseActivity implements AMapNaviList
     private void initNavi() {
         mStrategyBean = new StrategyBean(false, false, false, false);
         mAMapNavi = AMapNavi.getInstance(getApplicationContext());
+        Log.d("99999",mAMapNavi.toString());
         mAMapNavi.addAMapNaviListener(this);
     }
 
@@ -1040,35 +1041,6 @@ public class CalculateRouteActivity extends BaseActivity implements AMapNaviList
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mMapView != null) {
-            mMapView.onDestroy();
-        }
-        if (mAMapNavi != null) {
-            mAMapNavi.destroy();
-        }
-        if (mAMap != null) {
-            mAMap.clear();
-            mAMap = null;
-        }
-        if (startLatlng != null || endLatlng != null) {
-            startLatlng = null;
-            endLatlng = null;
-        }
-        if (startList != null || endList != null) {
-            startList.clear();
-            startList = null;
-            endList.clear();
-            endList = null;
-            wayList.clear();
-            wayList = null;
-        }
-        if (routeOverlays != null) {
-            routeOverlays.clear();
-            routeOverlays = null;
-        }
-        if (mRouteSearch != null) {
-            mRouteSearch = null;
-        }
         //解绑
         unbindService(myServiceConnection);
     }
