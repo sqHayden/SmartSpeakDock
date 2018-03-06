@@ -35,8 +35,8 @@ public class RouteNaviActivity extends BaseActivity implements AMapNaviListener,
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.map_activity_basic_navi);
 		mTtsManager = TTSController.getInstance(getApplicationContext());
 		mTtsManager.init();
